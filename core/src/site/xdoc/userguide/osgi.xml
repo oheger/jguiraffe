@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- $Id: osgi.xml 212 2012-07-14 15:22:35Z oheger $ -->
+
+<document>
+
+ <properties>
+  <title>OSGi</title>
+  <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+ </properties>
+
+<body>
+  <section name="JGUIraffe and OSGi">
+  <p>
+    OSGi is a framework focusing on modularity of Java applications. It becomes
+    more and more popular, so you may want to run your <em>JGUIraffe</em>
+    application in an OSGi container. This is possible, but there are some
+    aspects to be aware of. In this chapter these topics are discussed.
+  </p>
+
+  <subsection name="Bundles">
+  <p>
+    In order to deploy an application into an OSGi framework, it has to be
+    packaged in so-called <em>bundles</em> - jar archives containing special
+    meta data. From version 1.2 on the <em>JGUIraffe</em> jar is a valid OSGi
+    bundle. It contains the necessary meta data and thus can be directly
+    deployed into your OSGi container of choice.
+  </p>
+  <p>
+    Unfortunately, this is not true for all the libraries <em>JGUIraffe</em>
+    depends on (see <a href="../dependencies.html">Dependencies</a>). Newer releases of the
+    <a href="http://commons.apache.org">Apache Commons</a> components
+    referenced by <em>JGUIraffe</em> already contain OSGi meta data, but some of
+    the older releases do not. Especially the Commons Jelly jar is (at the time of this writing) not provided
+    as an OSGi bundle. Because these dependencies have to be satisfied when
+    installing the <em>JGUIraffe</em> bundle in an OSGi framework you have to
+    obtain OSGi-enabled versions of the affected libraries. One option could be
+    to re-package the jars as OSGi bundles yourself. Using the
+    <a href="http://felix.apache.org/site/apache-felix-maven-bundle-plugin-bnd.html">
+    Apache felix maven bundle plug-in</a> this is not too complicated. For
+    instance,
+    <a href="http://www.sonatype.com/index.php/Support/Books/The-Maven-Cookbook">
+    The Maven Cookbook</a> contains a chapter about OSGi development which
+    also covers the creation of OSGi bundles for existing jars.
+  </p>
+  </subsection>
+
+  <subsection name="Class loading">
+  <p>
+    A major feature of OSGi is that it enforces a very strict class loading
+    architecture allowing each bundle only access to classes it explicitly
+    references in its OSGi meta data. Especially for the dependency injection
+    framework of <em>JGUIraffe</em> this has a big impact because classes have
+    to be used which are defined in client bundles unknown to <em>JGUIraffe</em>.
+  </p>
+  <p>
+    The dependency injection framework uses an object implementing the
+    <code><a href="../apidocs/net/sf/jguiraffe/di/ClassLoaderProvider.html">
+    ClassLoaderProvider</a></code> interface to resolve classes. When starting
+    up, the central
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code> object creates and initializes such a
+    <code>ClassLoaderProvider</code> object. Per default, it sets the class
+    loader which loaded the custom application class as default class loader.
+    For many simple applications this is exactly what you want because this is
+    typically the class loader of the client bundle. So referenced classes can
+    directly be obtained from this bundle. If you have a more complicated
+    setup, you should override the <code>initClassLoaderProvider()</code>
+    method of your <code>Application</code> class to register all involved
+    class loaders with specific names. In your builder scripts you have to
+    make sure that the correct class loaders are referenced.
+  </p>
+  <p>
+    There is one caveat: To ensure that the current
+    <code>ClassLoaderProvider</code> is actually used in a builder script,
+    always specify class references using tag attributes ending on
+    <code>ClassName</code>. Do not use the simpler attributes with the
+    <code>Class</code> suffix. For instance, the following fragment shows a
+    <strong>wrong example</strong> of declaring a <code>FileSystemManager</code>
+    bean from the Apache Commons VFS project (using a static factory method) in
+    an OSGi environment:
+  </p>
+  <source><![CDATA[
+  <di:bean name="fileSystemManager"
+    beanClass="org.apache.commons.vfs2.FileSystemManager">
+    <di:factory>
+      <di:methodInvocation method="getManager"
+        targetClass="org.apache.commons.vfs2.VFS">
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+  ]]></source>
+  <p>
+    Note the usage of the <code>beanClass</code> and <code>targetClass</code>
+    attributes. The <strong>correct</strong> bean declaration is as follows:
+  </p>
+  <source><![CDATA[
+  <di:bean name="fileSystemManager"
+    beanClassName="org.apache.commons.vfs2.FileSystemManager">
+    <di:factory>
+      <di:methodInvocation method="getManager"
+        targetClassName="org.apache.commons.vfs2.VFS">
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+  ]]></source>
+  <p>
+    Here the problematic attributes have been replaced by variants ending on
+    <code>ClassName</code>. There are some more attributes falling into this
+    category, e.g. <code>parameterClassName</code>. The reason why the
+    attributes ending on <code>Class</code> cause problems in an OSGi container
+    is that they are directly evaluated by the Jelly engine processing the
+    builder script. This engine does not know about the
+    <code>ClassLoaderProvider</code> object and thus will probably use a wrong
+    class loader. The <code>ClassName</code> attributes in contrast are
+    processed by <em>JGUIraffe</em>; here different class loaders can be taken
+    into account. Note that for each <code>ClassName</code> attribute there is
+    a companion attribute ending on <code>Loader</code>. With this attribute a
+    special class loader can be selected. In simple applications these
+    attributes are typically not needed; if they are missing the default class
+    loader is used. However, if an application deals with multiple OSGi
+    bundles (and therefore multiple class loaders), it may be necessary to
+    specify the correct class loader explicitly. In such a case the value of
+    the <code>Loader</code> attribute must match the name of a class loader as
+    it has been registered at the <code>ClassLoaderProvider</code>.
+  </p>
+  </subsection>
+
+  <subsection name="Startup and shutdown">
+  <p>
+    The OSGi environment also affects starting and shutdown of applications.
+    Rather than providing a static <code>main()</code> method, application
+    bundles are installed in an OSGi container and are started automatically by
+    an OSGi-specific mechanism. One possibility is a <em>bundle activator</em>,
+    i.e. a class implementing the <code>org.osgi.framework.BundleActivator</code>
+    interface. The activator must be referenced from the bundle's manifest file.
+  </p>
+  <p>
+    Stand-alone <em>JGUIraffe</em> applications typically define a class
+    derived from
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code> with a static <code>main()</code> method. The
+    method creates an instance of this class and invokes the static
+    <code>startup()</code> method inherited from <code>Application</code>. The
+    bundle activator has to do the same in its <code>start()</code> method.
+    Because starting up the application is an expensive operation - bean
+    declarations have to be read, the UI is constructed, etc. - this should be
+    done in a new thread, so that control can be passed back to the OSGi
+    framework immediately. Also, an alternative
+    <a href="application.html#Exit_handlers">exit handler</a> should be set to
+    prevent that the Java virtual machine is just terminated. Rather, the
+    OSGi framework should be shut down in a graceful way. This can be achieved
+    by obtaining a reference to the system bundle using the reserved bundle ID
+    0 and calling the <code>stop()</code> method on it.
+  </p>
+  <p>
+    The following listing shows a full example of a bundle activator
+    implementation. It can serve as a basis for own implementations. It assumes
+    that there is a class called <code>Main</code> derived from
+    <code>Application</code>; this is the application class to be started.
+  </p>
+  <source><![CDATA[
+public class Activator implements BundleActivator
+{
+    /** The logger. */
+    private final Log log = LogFactory.getLog(getClass());
+
+    @Override
+    public void start(BundleContext context) throws Exception
+    {
+        log.info("Starting application bundle.");
+        final Runnable exitHandler = createExitHandler(context);
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                Main main = new Main();
+                main.setExitHandler(exitHandler);
+                try
+                {
+                    Main.startup(main, new String[0]);
+                }
+                catch (ApplicationException e)
+                {
+                    log.error("Could not start application!", e);
+                }
+            }
+        }.start();
+    }
+
+    @Override
+    public void stop(BundleContext context) throws Exception
+    {
+        log.info("Stopping application bundle.");
+    }
+
+    /**
+     * Creates the exit handler for the application. This handler will shutdown
+     * the OSGi framework by stopping the system bundle.
+     *
+     * @param context the bundle context
+     * @return the exit handler
+     */
+    private Runnable createExitHandler(final BundleContext context)
+    {
+        return new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Bundle sysBundle = context.getBundle(0);
+                try
+                {
+                    sysBundle.stop();
+                }
+                catch (BundleException bex)
+                {
+                    log.error("Could not stop OSGi framework!", bex);
+                }
+            }
+        };
+    }
+  ]]></source>
+  </subsection>
+  </section>
+</body>
+
+</document>

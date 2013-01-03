@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+  Jelly test script for defining icons.
+  $Id: icon.jelly 211 2012-07-10 19:49:13Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:f="formBuilder">
+  <f:label ifName="TEST_ICON">
+    <f:icon resource="myicon.gif"/>
+  </f:label>
+
+  <f:label ifName="ERROR_BUILDER">
+    <f:icon/>
+  </f:label>
+
+  <!-- A stand alone icon tag -->
+  <f:icon resource="myicon.gif" ifName="ERR_STAND_ALONE"/>
+
+  <!-- An icon that is stored in a variable -->
+  <f:icon resource="myicon.gif" var="varIcon" ifName="TEST_VAR"/>
+  <!-- ...and then passed to another icon tag -->
+  <f:label ifName="TEST_VAR">
+    <f:icon ref="varIcon"/>
+  </f:label>
+
+  <!-- An icon tag that refers to a locator defined in the current bean context-->
+  <f:label ifName="TEST_LOCATOR">
+    <f:icon locator="iconLocator"/>
+  </f:label>
+
+  <!-- An icon tag that refers to a non existing icon reference -->
+  <f:label ifName="ERR_UNKN_REF">
+    <f:icon ref="a non existing icon"/>
+  </f:label>
+
+  <!-- An icon tag with too many attributes -->
+  <f:label ifName="ERR_OVERDEF">
+    <f:icon ref="TEST_VAR" url="http://www.icons.org/myicon.gif"
+      resource="myicon.gif"/>
+  </f:label>
+
+  <!-- An icon tag referring to a non existing locator -->
+  <f:label ifName="ERR_UNKN_LOC">
+    <f:icon locator="a non existing locator"/>
+  </f:label>
+
+  <!-- An icon tag referencing an unknown class loader -->
+  <f:label ifName="ERR_UNKN_CL">
+    <f:icon resource="myicon.gif" resourceLoader="unknownClassLoader"/>
+  </f:label>
+</j:jelly>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+  Jelly test script for the tags related to table definitions.
+  $Id: table.jelly 205 2012-01-29 18:29:57Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:f="formBuilder">
+  <!-- Definition of a very basic table -->
+  <f:table ifName="TEST_TABLE" model="tabModel" selectionBackground="blue"
+    selectionForeground="white" var="tableTag" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="String" width="5 cm"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+  </f:table>
+
+  <!-- A simple table that defines a preferred scroll size -->
+  <f:table ifName="TEST_TABLESCROLL" model="tabModel" scrollWidth="10cm"
+    scrollHeight="3in" var="tableTag" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="String" width="5 cm"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+  </f:table>
+
+  <!-- A simple table that uses percent values as column widths -->
+  <f:table ifName="TEST_TABLEPERCENT" model="tabModel" selectionBackground="blue"
+    selectionForeground="white" var="tableTag" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" percentWidth="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="String" percentWidth="35"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" percentWidth="30"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+  </f:table>
+
+  <!-- Another simple table that uses empty renderer and editor tags. These
+       tags should not have any effect.
+  -->
+  <f:table ifName="TEST_EMPTYRENDER" model="tabModel" selectionBackground="blue"
+    selectionForeground="white" var="tableTag" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name">
+      <f:colrenderer/>
+    </f:column>
+    <f:column name="lastName" columnClass="string" width="5 cm"
+      headerres="TABLE_COL_LASTNAME">
+      <f:colrenderer/>
+    </f:column>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true">
+      <f:coleditor/>
+    </f:column>
+  </f:table>
+
+  <!-- Definition of a table that also uses renderers and editors -->
+  <f:table ifName="TEST_TABLEEDIT" model="tabModel" editable="true"
+    var="tableTag" name="testTable">
+    <f:column name="firstName" width="25" headerres="TABLE_COL_FIRSTNAME">
+      <f:colrenderer>
+        <f:statictext name="firstName" noField="false"/>
+      </f:colrenderer>
+      <f:coleditor>
+        <f:textfield name="firstName" maxlength="25"/>
+      </f:coleditor>
+    </f:column>
+    <f:column name="lastName" columnClass="java.lang.String" width="5 cm"
+      headerres="TABLE_COL_LASTNAME">
+      <f:coleditor>
+        <f:panel>
+          <f:textfield name="middleName" maxlength="25"/>
+          <f:textfield name="lastName" maxlength="25"/>
+        </f:panel>
+      </f:coleditor>
+    </f:column>
+    <f:column name="age" width="1in"
+      headerres="TABLE_COL_AGE" editable="false">
+      <f:transformer class="net.sf.jguiraffe.transform.DummyTransformer"
+        type="Write"/>
+    </f:column>
+  </f:table>
+
+  <!-- Definition of a table with a column that defines a label that is linked
+       to a text field. This constellation can be used for testing the callback
+       mechanism in table sub forms.
+  -->
+  <f:table ifName="TEST_CALLBACK" model="tabModel" editable="true" name="testTable">
+    <f:column name="firstName" width="25" headerres="TABLE_COL_FIRSTNAME">
+      <f:coleditor>
+        <f:panel>
+          <f:label text="First name:" componentref="firstName"/>
+          <f:textfield name="firstName" maxlength="25"/>
+        </f:panel>
+      </f:coleditor>
+    </f:column>
+  </f:table>
+
+  <!-- A table definition with custom selection and validation handlers -->
+  <f:table ifName="TEST_HANDLERS" model="tabModel" var="tableTag" name="testTable">
+    <f:selectionHandler editor="true" ref="editorSelectionHandler"/>
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:selectionHandler ref="rendererSelectionHandler"/>
+    <f:validationHandler ref="validationHandler"/>
+  </f:table>
+
+  <!-- A table definition with a validation handler tag that defines a title
+       for a validation error message box.
+  -->
+  <f:table ifName="TEST_VALERRTITLE" model="tabModel" var="tableTag" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="STRING" width="5 cm"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+    <f:validationHandler validationErrorTitle="Validation error"/>
+  </f:table>
+
+  <!-- A table definition with a validation handler tag that defines a title
+       for a validation error message box using a resource key.
+  -->
+  <f:table ifName="TEST_VALERRTITLERES" model="tabModel" var="tableTag"
+    name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="String" width="5 cm"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+    <f:validationHandler validationErrorTitleres="TABLE_VALERR_TITLE"/>
+  </f:table>
+
+  <!-- A table definition with a validation handler tag that defines a title
+       for a validation error message box using a resource key and a resource
+       group.
+  -->
+  <f:table ifName="TEST_VALERRTITLERESGRP" model="tabModel" var="tableTag"
+    name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="StrinG" width="5 cm"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+    <f:validationHandler validationErrorTitleres="TABLE_VALERR_TITLE"
+      validationErrorTitlegroup="testformbuilderresources"/>
+  </f:table>
+
+  <!-- A definition for a table supporting multi-selection -->
+  <f:table ifName="TEST_MULTISELECT" model="tabModel" multiSelection="true"
+    name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="String" width="5 cm"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" width="1in"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+  </f:table>
+
+  <!-- A table definition with the noField attribute set to false. For this
+       table a field should be added to the form.
+  -->
+  <f:table ifName="TEST_NOFIELDFALSE" model="tabModel" name="testTable"
+    noField="false">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+  </f:table>
+
+  <!-- A table definition without a model. This will cause an error! -->
+  <f:table ifName="ERR_NOMODEL" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:column name="firstName" width="25" headerres="TABLE_COL_FIRSTNAME">
+      <f:coleditor>
+        <f:panel>
+          <f:label text="Name:" componentref="firstName"/>
+          <f:textfield name="firstName" maxlength="25"/>
+        </f:panel>
+      </f:coleditor>
+    </f:column>
+  </f:table>
+
+  <!-- A table definition that refers to a non existing or invalid model. This
+       will cause an error!
+  -->
+  <f:table ifName="ERR_INVALIDMODEL" model="InvalidModel" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+  </f:table>
+
+  <!-- A table definition that contains invalid tags in its body. This will
+       cause an error!
+  -->
+  <f:table ifName="ERR_WRONGCONTENT" model="tabModel" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:textfield name="firstName" maxlength="25"/>
+  </f:table>
+
+  <!-- A table definition that contains a layout object. This is not allowed.-->
+  <f:table ifName="ERR_LAYOUT" model="tabModel" name="testTable">
+    <f:borderlayout/>
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+  </f:table>
+
+  <!-- A column definition that uses an editor with too many components. This
+       will cause an error.
+  -->
+  <f:table ifName="ERR_RENDERERTOOMANY" model="tabModel" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name">
+      <f:colrenderer>
+        <f:textfield name="middleName" maxlength="25"/>
+        <f:textfield name="lastName" maxlength="25"/>
+      </f:colrenderer>
+    </f:column>
+  </f:table>
+
+  <!-- A column definition that is not nested inside a table. This will cause
+       an error!
+  -->
+  <f:column name="firstName" columnClass="java.lang.String" width="25"
+    header="First name" ifName="ERR_COLNESTED"/>
+
+  <!-- A definition of a renderer that is not nested inside a column tag. This
+       should cause an error!
+  -->
+  <f:table ifName="ERR_RENDERERNESTED" model="tabModel" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="25"
+      header="First name"/>
+    <f:colrenderer>
+      <f:statictext name="firstName" noField="false"/>
+    </f:colrenderer>
+  </f:table>
+
+  <!-- A renderer tag that is not even nested inside a table tag. This should
+       really cause an error!
+  -->
+  <f:colrenderer ifName="ERR_RENDERERNESTEDNOTAB">
+    <f:statictext name="firstName" noField="false"/>
+  </f:colrenderer>
+
+  <!-- A table without columns. This will cause an error! -->
+  <f:table ifName="ERR_NOCOLUMNS" model="tabModel" name="testTable">
+  </f:table>
+
+  <!-- A table column definition with an invalid width. This should cause an
+       error.
+  -->
+  <f:table ifName="ERR_INVNUMBER" model="tabModel" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" width="invalid"
+      header="First name"/>
+  </f:table>
+
+  <!-- A selection handler tag that is not nested in a table tag. This should
+       cause an error.
+  -->
+  <f:selectionHandler ifName="ERR_SELHANDLERNESTED" ref="selectionHandler"/>
+
+  <!-- A validation handler tag that is not nested in a table tag. This should
+       cause an error.
+  -->
+  <f:validationHandler ifName="ERR_VALHANDLERNESTED" ref="validationHandler"/>
+
+  <!-- A table with percent values as column widths that sum up to more than 100.
+       This is not allowed.
+  -->
+  <f:table ifName="ERR_TABLEPERCENT" model="tabModel" selectionBackground="blue"
+    selectionForeground="white" var="tableTag" name="testTable">
+    <f:column name="firstName" columnClass="java.lang.String" percentWidth="25"
+      header="First name"/>
+    <f:column name="lastName" columnClass="String" percentWidth="55"
+      headerres="TABLE_COL_LASTNAME"/>
+    <f:column name="age" columnClass="java.lang.Integer" percentWidth="30"
+      headerres="TABLE_COL_AGE" resgrp="testformbuilderresources"
+      editable="true"/>
+  </f:table>
+</j:jelly>

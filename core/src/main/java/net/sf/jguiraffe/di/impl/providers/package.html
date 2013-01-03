@@ -1,0 +1,46 @@
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+
+<body>
+<p>
+In the <code>providers</code> sub package different implementations of the
+<code>BeanProvider</code> interface can be found.
+</p>
+<p>
+The implementations in this package can be divided into two groups:
+<ul>
+<li>Simple providers are only responsible for creating new bean instances, which
+can happen in a bunch of different ways (e.g. calling <code>Class.newInstance()</code>,
+invoking a constructor, using a constant object).</li>
+<li><em>Life-cycle providers</em> wrap a simple provider and add a certain
+semantic to the create operation. So an implementation exists that calls its
+simple provider only once and then caches the returned bean. This provider
+de facto implements a <em>singleton</em>. Another implementation will create a
+new bean instance for every transaction. These life-cycle providers also support
+enhanced initialization (e.g. by invoking methods on the created beans).</li>
+</ul>
+</p>
+<p>
+<font size="-2">$Id: package.html 205 2012-01-29 18:29:57Z oheger $</font>
+</p>
+</body>
+</html>

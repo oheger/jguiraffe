@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- $Id: commands.xml 205 2012-01-29 18:29:57Z oheger $ -->
+
+<document>
+
+ <properties>
+  <title>Commands</title>
+  <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+ </properties>
+
+<body>
+  <section name="Commands">
+  <p>
+    Popular UI libraries like Swing or SWT are not thread-safe. They use a
+    specialized thread, the so-called <em>event dispatch thread</em> that is
+    the only instance which is allowed to interact with UI components. This
+    thread also processes all user input. Because the <em>JGUIraffe</em> library
+    is implemented on top of these libraries similar restrictions apply.
+  </p>
+  <p>
+    Naive UI programming often uses event listeners that are registered at UI
+    components like buttons or menu items and implement the corresponding
+    functionality. This approach is problematic for multiple reasons:
+    <ul>
+    <li>Java makes it convenient to implement event listeners as anonymous
+    inner classes defined directly in the code that constructs the UI. This
+    causes the business logic to be located next to UI code and leads to code
+    that is hardly maintainable.</li>
+    <li>All event listeners are invoked in the <em>event dispatch thread</em>.
+    If processing of an event takes a while, the thread is blocked and cannot
+    update the UI any more. Thus the user gets the impression that the
+    application hangs.</li>
+    <li>There is no standard way of accessing central data required by event
+    listeners. Each application has to invent its own solution. Often all needed
+    data is kept in member fields of the main window class because from here it
+    can easily be accessed by anonymous event listener classes.</li>
+    </ul>
+  </p>
+  <p>
+    The <em>JGUIraffe</em> library supports a different programming model. Here
+    logic is implemented in so-called <em>command objects</em>.
+  </p>
+
+  <subsection name="The concept of commands">
+  <p>
+    <em>Command objects</em> are an application of the <em>command pattern</em>
+    described by Gamma et al. They are implemented by classes that adhere to a
+    specific interface. When the user interacts with the application command
+    objects are created and passed to the central
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code> object to be executed. <code>Application</code>
+    maintains a single worker thread that executes the commands passed to it
+    one after another. After their execution in the worker thread commands get
+    the chance to update the UI in order to display the results of their
+    execution. This is automatically synchronized with the special <em>event
+    dispatch thread</em>.
+  </p>
+  <p>
+    So the concept of commands is pretty simple. Nevertheless it has a number of
+    advantages:
+    <ul>
+    <li>Logic is executed in a separate worker thread. Therefore the UI stays
+    responsive because the event dispatch thread is not blocked.</li>
+    <li>The programmer does not have to deal with thread creation or management
+    as this is handled transparently by the framework.</li>
+    <li>Because commands are executed by a single worker thread many
+    synchronization tasks are simplified. For instance, two command objects
+    cannot conflict with each other because they are executed in isolation.</li>
+    <li>Command objects provide a pretty stringent programming model: They
+    conform to object-oriented design principles. For instance, all data required
+    by a command can be stored in member fields of the command class; it can be
+    automatically injected before the command is executed. That way the logic
+    implemented by an application can be centralized much better and becomes
+    easier to maintain.</li>
+    </ul>
+    We will now have a deeper look over the interface of a command object.
+  </p>
+  </subsection>
+
+  <subsection name="Fundamental interfaces and classes">
+  <p>
+    The <em>JGUIraffe</em> library defines an interface for command objects:
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/cmd/Command.html">
+    Command</a></code>. This interface defines the following methods:
+    <ul>
+    <li><code>execute()</code> is the main execution method of the command. This
+    method is invoked in a background thread. It contains the main execution
+    logic of the command, however, from this method no GUI updates are allowed.
+    <code>execute()</code> does not expect any parameters, but it can throw an
+    exception.</li>
+    <li>Exceptions thrown by the <code>execute()</code> method are caught by
+    the executing task. If an exception is detected, the <code>onException()</code>
+    method of the command object is invoked (also in the background thread). So
+    this is the place for error handling logic.</li>
+    <li><code>onFinally()</code> is the last method invoked on the background
+    thread. As the name implies, this method is always invoked - whether an
+    exception was thrown or not. An implementation may for instance free
+    resources used by the command.</li>
+    <li>After background processing ends the command object gets the chance to
+    update the UI. For this purpose the <code>Command</code> interface defines
+    the <code>getGUIUpdater()</code> method. <code>getGUIUpdater()</code> can
+    return a <code>Runnable</code> object, which is then executed in the event
+    dispatch thread. Therefore it can access all UI components and perform
+    arbitrary updates.</li>
+    </ul>
+  </p>
+  <p>
+    As can be seen, the <code>Command</code> interface is slightly more complex.
+    There is not only a single <code>execute()</code> method, but the interface
+    contains also methods for handling exceptions. To simplify the
+    implementation of custom command classes the library provides an abstract
+    base class for commands:
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/cmd/CommandBase.html">
+    CommandBase</a></code>. <code>CommandBase</code> provides an implementation
+    of <code>onException()</code> that simply logs the exception and stores it
+    in a member field. (It can be queried using the <code>getException()</code>
+    method.) There is also an empty default implementation of the
+    <code>onFinally()</code> method. Concrete sub classes mainly have to
+    define the <code>execute()</code> method to implement the actual logic.
+  </p>
+  <p>
+    <code>CommandBase</code> also supports UI updates. It provides the
+    protected <code>performGUIUpdate()</code> method in which code that needs
+    to access the UI can be placed. The base class ensures that this method is
+    automatically called in the event dispatch thread after execution of the
+    command. Whether UI updates should actually be performed can be specified
+    when a <code>CommandBase</code> object is created: The constructor can be
+    passed a boolean flag which determines whether the
+    <code>performGUIUpdate()</code> should be called. Commands that do not need
+    UI updates should call the super constructor with the parameter <b>false</b>,
+    then this method is skipped.
+  </p>
+  </subsection>
+
+  <subsection name="An example command">
+  <p>
+    Now that we have introduced the API of command objects let's implement an
+    example command. The command should read the content of a directory and
+    update the model of a table component to display this data. (Because table
+    components have not been discussed so far, we have to give some notes to
+    make the example understandable: A table can be accessed through the
+    <code>TableHandler</code> interface. This interface provides access to the
+    table's model which is simply a list with data objects. To update the
+    table's content we can fill new data objects into this list and then notify
+    the table that its model has changed. For this example we put the
+    <code>java.io.File</code> objects directly into the table model and assume
+    that the table was configured to display their properties.)
+  </p>
+  <p>
+    Our command class extends <code>CommandBase</code>, the abstract base class
+    for command objects. It needs some parameters to fulfill its task which are
+    passed to the constructor:
+    <ul>
+    <li>A <code>java.io.File</code> object for the directory to be read.</li>
+    <li>The <code>TableHandler</code> reference representing the table to be
+    filled.</li>
+    </ul>
+    The following code fragment shows the class declaration and the constructor:
+  </p>
+    <source><![CDATA[
+public class ReadDirectoryCommand extends CommandBase
+{
+    /** The directory to be read. */
+    private final File directory;
+
+    /** The table handler. */
+    private final TableHandler tableHandler;
+
+    /** The list with the files read. */
+    private List<File> files;
+
+    public ReadDirectoryCommand(File dir, TableHandler handler)
+    {
+        directory = dir;
+        tableHandler = handler;
+    }
+    ]]></source>
+  <p>
+    This code simply stores the arguments passed to the constructor in member
+    fields. The class also defines a list field for the files found in the
+    current directory. This field is filled by the <code>execute()</code>
+    method which is shown in the following fragment:
+  </p>
+    <source><![CDATA[
+    @Override
+    public void execute() throws Exception
+    {
+        files = new ArrayList<File>();
+
+        // add the content of the directory to the list
+        files.addAll(Arrays.asList(directory.listFiles()));
+
+        // do some further manipulations, e.g. sort the list or apply a filter
+    }
+    ]]></source>
+  <p>
+    After <code>execute()</code> terminates the data managed by this command is
+    stored in the <code>files</code> list. For this example command we do not
+    implement any exception handling logic. Thus we can live with the default
+    implementations of <code>onException()</code> and <code>onFinally()</code>.
+    However, the command needs to update the GUI. This is done in the
+    <code>performGUIUpdate()</code> method which is automatically called after
+    background execution is complete. In our implementation we have to add the
+    files read by <code>execute()</code> to the model of the table. This can
+    look as follows:
+  </p>
+    <source><![CDATA[
+    @Override
+    protected void performGUIUpdate()
+    {
+        List<Object> model = tableHander.getModel();
+        // first clear the model
+        model.clear();
+
+        // Now add the new files
+        for (File f : files)
+        {
+            model.add(f);
+        }
+
+        // Notify the table about the change of its model
+        tableHandler.tableDataChanged();
+    }
+    ]]></source>
+  <p>
+    So far the complete implementation of the command class. Executing this
+    command is easy: A new instance has to be created and passed to the
+    <code>execute()</code> method of the central
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code> object. If done by hand, this could look as follows:
+  </p>
+    <source><![CDATA[
+File dirToRead = ...;
+TableHandler table = ...;
+ReadDirectoryCommand cmd = new ReadDirectoryCommand(dirToRead, table);
+application.execute(cmd);
+    ]]></source>
+  <p>
+    Note: Typically the developer does not have to care about the creation and
+    execution of command objects. Rather, this is done behind the scenes by the
+    framework in reaction of user actions. We discuss this later in this guide.
+  </p>
+  </subsection>
+  </section>
+</body>
+
+</document>

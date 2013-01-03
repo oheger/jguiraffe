@@ -1,0 +1,356 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- $Id: overview.xml 205 2012-01-29 18:29:57Z oheger $ -->
+<document>
+
+  <properties>
+    <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+    <title>JGuiraffe Overview</title>
+  </properties>
+
+  <body>
+    <section name="Overview">
+      <p>
+        In this section we provide an overview about this library. We will
+        discuss some of the key concepts and show briefly how a developer can
+        benefit from them.
+      </p>
+
+      <subsection name="The Main Application Object">
+      <p>
+        In each JGUIraffe application there is a single object, which represents
+        the application as a whole. This object is also the main entry point in
+        the application. It is an instance of the
+        <code><a href="apidocs/net/sf/jguiraffe/gui/app/Application.html">
+        Application</a></code> class or a class derived from it. (The base
+        class usually works out of the box. If you have special requirements,
+        e.g. for parameter processing or initialization, you can create a
+        custom sub class of this class.)
+      </p>
+      <p>
+        When your application starts this <code>Application</code> object
+        performs a couple of initialization tasks. Among other things it
+        <ul>
+          <li>Reads in the application's configuration data.</li>
+          <li>Initializes the whole framework based on the data obtained from
+          the application's configuration.</li>
+          <li>Sets up a <em>resource manager</em> for accessing data that
+          depends on the user's locale.</li>
+          <li>Creates the application's GUI. This step is discussed in more
+          detail in the next section.</li>
+        </ul>
+      </p>
+      <p>
+        When the application is up and running all interested components can
+        easily obtain a reference to the central <code>Application</code>
+        instance. This instance provides some important services like
+        <ul>
+          <li>Access to configuration data.</li>
+          <li>Access to the application's resources, e.g. internationalized
+          texts.</li>
+          <li>A simple means for creating message boxes to be displayed to the
+          user, e.g. for showing info screens or issuing error messages.</li>
+          <li>The <code>Application</code> object holds a reference to an
+          <em>application context</em>. This is an object, in which central data
+          can be stored that is needed by multiple components.</li>
+          <li>From the <code>Application</code> instance a factory object for
+          creating the <em>GUI builder</em> can be obtained. The GUI builder
+          allows the easy creation of GUI elements like windows and dialogs.
+          More on that below.</li>
+        </ul>
+      </p>
+      <p>
+        The typical way of starting a JGUIraffe application is to execute the
+        <code>main()</code> method of the <code>Application</code> class.
+        This will start the initialization phase, in which the configuration
+        files are searched and processed and all necessary initialization steps
+        are performed. If no problems occur, the application's main window is
+        shown.
+      </p>
+      </subsection>
+
+      <subsection name="Defining the GUI">
+      <p>
+        For the definition of the application's graphical user interface
+        JGUIraffe goes a special way: Windows, dialogs, and their content are
+        defined in XML files. These files are interpreted using
+        <a href="http://commons.apache.org/">Apache Commons</a>'s
+        <a href="http://commons.apache.org/jelly/">Jelly</a>.
+        They can contain elements that correspond to typical user
+        interface controls like labels, text fields, and radio buttons. In
+        addition all of the standard tags provided by Jelly and its tag
+        libraries can be used. We refer to this approach as the <em>GUI
+        builder</em>.
+      </p>
+      <p>
+        Defining the user interface in separate configuration files instead of
+        hard coding it in Java code has many advantages. It simplyfies a
+        separation between GUI and business logic. Changing the GUI can be done
+        without having to rebuild the code. With this approach even dynamically
+        generated GUIs are possible.
+      </p>
+      <!-- TODO: Provide a simple example script here. -->
+      <p>
+        All tags for constructing GUI elements directly support
+        internationalization. All texts to be displayed to the user can be
+        defined as resource identifiers and are then resolved using the
+        application's resource manager. Of course it is also possible to use
+        text literals directly, but for applications that should present
+        themselves in mutliple languages this is not recommended.
+      </p>
+      <p>
+        It is important to notice that the XML tags do not directly create the
+        corresponding GUI controls. Instead this task is delegated to a factory.
+        It is thinkable to have different implementations of this factory. At
+        the moment a factory implementation is provided that produces Swing
+        controls. But another implementation that uses SWT/JFace would also be
+        feasible. Because the JGUIraffe API hides the underlying GUI toolkit
+        it would be possible to write programs that are indipendent on a concrete
+        GUI toolkit; just by replacing the factory a different toolkit is used
+        (well, in theory; this feature is a bit experimental).
+      </p>
+      <p>
+        Scripts interpreted by the <em>GUI builder</em> are not limited to the
+        definition of UI elements. In fact, JGUIraffe implements a lean, but
+        fully functional <em>dependency injection framework</em>. This
+        framework allows the definition of arbitrary Java objects in builder
+        scripts with all their dependencies. This feature is especially useful
+        for combining business logic with the user interface. For instance,
+        controller objects can be defined and associated with UI elements like
+        windows or input fields.
+      </p>
+      </subsection>
+
+      <subsection name="Layouts">
+      <p>
+        Complex layouts of GUI controls are always hard to deal with in Java
+        applications. The fact that different GUI toolkits provide different
+        layout managers does not simplify a developer's task either. For
+        instance the layout managers used in SWT distinguish from the ones
+        supported by Swing.
+      </p>
+      <p>
+        Because JGUIraffe is intended to support a certain level of independence
+        of a specific GUI toolkit a solution is needed to provide a set of
+        powerful layout managers that can easily be ported to multiple target
+        GUI toolkits. This is achieved through the family of the
+        <em>Percent Layout Managers</em>.
+      </p>
+      <p>
+        The basic idea behind these layout managers is to implement the layouting
+        algorithm in a way independent on a concrete graphics library. To port
+        such a layout to a specific GUI toolkit an adapter class must be
+        provided, which deals with specifics like obtaining the preferred size
+        of a control, setting its bounds, or implementing the appropriate
+        layout manager interface. Again such an adapter exists for Swing so far,
+        others should not be too complicated to implement.
+      </p>
+      <p>
+        The fundamental layout class implemented in this library is the
+        <code><a href="apidocs/net/sf/jguiraffe/gui/layout/PercentLayoutBase.html">
+        PercentLayoutBase</a></code> class. <code>PercentLayoutBase</code> is
+        especially useful for regular layouts, e.g. when multiple successive lines
+        all have the same structure (for instance two or more columns
+        consisting of a label and an input field). It devides the available
+        space into a grid of rows and columns. For each row and column properties
+        can be defined, which determine its size. So the size can be fixed or
+        determined by the minimum or preferred width/height of the contained
+        controls. In addition a weight factor can be provided that controls
+        how additional space is assigned to the rows and columns. So for
+        instance you can specify that when the user enlarges a dialog the text
+        fields grow, but the labels remain their size.
+      </p>
+      <p>
+        Based on this fundamental and mighty layout manager class there are
+        some other useful layout manager implementations:
+        <ul>
+          <li><code><a href="apidocs/net/sf/jguiraffe/gui/layout/BorderLayout.html">
+          BorderLayout</a></code> is a slightly more powerful implementation of
+          AWT's layout manager with the same name. Its main purpose is to
+          bring this easy yet convenient layouting scheme to other GUI toolkits
+          that do not support it (SWT for instance).</li>
+          <li><code><a href="apidocs/net/sf/jguiraffe/gui/layout/ButtonLayout.html">
+          ButtonLayout</a></code> is well suited for creating bars that hold
+          the buttons (e.g. <em>Close</em>, <em>Cancel</em>, <em>Apply</em>) of
+          a dialog. It ensures that all buttons have the same size and the
+          spaces between the buttons are equal. The button bar can be aligned to
+          the left, the right, or centered.</li>
+        </ul>
+      </p>
+      </subsection>
+
+      <subsection name="Actions and Command Objects">
+      <p>
+        So by now you have a generic <code>Application</code> object and can
+        create a GUI using the <em>GUI builder</em>. A question remains: what
+        about the application's logic?
+      </p>
+      <p>
+        JGUIraffe makes heavy use of the <em>Action</em> concept also known from
+        other GUI toolkits like Swing or SWT. An action contains a piece of code
+        that gets executed when a GUI control was triggered by the user.
+        Usually actions are associated with menu items or toolbar buttons,
+        i.e. the typical controls for representing commands to be executed.
+      </p>
+      <p>
+        The actions supported by the JGUIraffe library can be defined in the
+        XML scripts, from which the GUI is generated. In addition to more
+        graphical properties like a name, a tooltip, or an icon (which are used
+        to define the controls the action is associated with), an action must be
+        assigned a <em>task</em> object. This is a normal Java object that
+        implements the <code>Runnable</code> interface (which should be familar
+        to everybody who has ever started a thread). The task can directly be
+        defined in the XML file using the <em>dependency injection framework</em>
+        mentioned above. So a typical approach would be to define your
+        application's logic in a set of task classes and associate instances of
+        these classes with actions, which are itself associated with GUI
+        controls.
+      </p>
+      <p>
+        One problem with GUI oriented Java applications are long running tasks.
+        If an action is triggered, its code is typically executed on the same
+        thread that is also responsible for maintaining the GUI. So if the
+        the action's task needs a while to finish, for this time the GUI will
+        be blocked.
+      </p>
+      <p>
+        As a solution to this problem JGUIraffe introduces so called
+        <em>Command Objects</em>. Command objects are an implementation of the
+        popular GoF <em>Command</em> pattern. They are similar to an action's
+        task in that they define a single method for executing the command.
+        A command object can be passed to the central <code>Application</code>
+        object. This object will take care that the command object is executed
+        in a background thread, so the GUI will stay responsive. If the
+        command object needs to update the GUI after it has run, it can do so
+        by placing the corresponding code in a special method; this method
+        will be executed on the special GUI thread, which will ensure proper
+        synchronization.
+      </p>
+      <p>
+        To combine the concept of actions with the concept of command objects
+        there is a special action task class called
+        <code><a href="apidocs/net/sf/jguiraffe/gui/app/CommandActionTask.html">
+        CommandActionTask</a></code>. Instances of this class can be used as
+        tasks for actions. They hold a reference to a command object. When
+        they are invoked (because the associated action was triggered by the
+        user) they pass their command object to the central
+        <code>Application</code> object so that it is executed in a background
+        thread. <code>CommandActionTask</code> objects can be fully defined in
+        GUI builder XML files.
+      </p>
+      </subsection>
+
+      <subsection name="Working with Forms">
+      <p>
+        GUI centric applications typically use dialogs or forms for gathering
+        input data from their users. Creating and managing such a form is a
+        tedious task in standard Java programming: When the form's GUI has been
+        set up the developer has to ensure that all input fields are
+        correctly populated with data from the application's model. This may
+        involve some transformations of data types, e.g. if a date value is to
+        be entered in a text field, it must be converted into a proper text
+        format.
+      </p>
+      <p>
+        After the user has completed the input task and pressed the
+        &quot;OK&quot; button the entered values have to be checked if they
+        are valid. For instance the date the user might have entered into a
+        field might not exist or be syntactically wrong. When all fields are
+        valid their values must be written back into the application's model
+        for further processing, e.g. for storing in a database. Here again
+        data transformations may happen (of course the date object should be
+        stored as a <code>java.util.Date</code> rather than plain text).
+      </p>
+      <p>
+        If all these tasks have to be performed manually, each form requires a
+        fair amount of boiler-plate code. To simplify the management of forms
+        the JGUIraffe library provides the concept of <em>Form</em> objects. A
+        form is represented by an instance of the
+        <code><a href="apidocs/net/sf/jguiraffe/gui/forms/Form.html">Form</a></code>
+        class. Instances of this class store all the fields the form contains
+        and allow easy access to their current values.
+      </p>
+      <p>
+        Each field of a form can be associated with a couple of helper objects,
+        which are responsible for correctly managing the field's data. These
+        are the following:
+        <ul>
+          <li>A <em>write transformer</em>: This object is responsible for
+          performing necessary transformations of the field's native data so
+          that it can be edited using a specific GUI element. In our example
+          with the date field the write transformer would convert the date
+          value to a string that can be assigned to a standard text field.</li>
+          <li>A <em>read transformer</em>: A read transformer does the
+          opposite transformation than a write transformer. It is invoked when
+          the form's data is to be extracted from the GUI input elements. In
+          the case of a date field the user's input must be converted from text
+          to date again.</li>
+          <li>A <em>field level validator</em>: The task of this object is to
+          check whether the data the user has entered in an input element is
+          syntactically correct. So for instance for date fields it must be
+          checked if the string the user has typed into a text field does
+          indeed represent an existing date value.</li>
+          <li>A <em>form level validator</em>: After syntatic checks of all of
+          the form's input elements have been successfull an additional check
+          on the semantic level can be performed. This is an optional second
+          validation phase, in which for instance relations between multiple
+          input elements can be evaluated. So it could be checked whether the
+          value in the field <em>date of delivery</em> lies at least a week in
+          the future if the <em>express delivery</em> checkbox is unchecked.</li>
+        </ul>
+      </p>
+      <p>
+        A form object has methods for reading and writing form data that
+        automatically invoke these helper objects -- if they are defined -- at
+        the correct points in time. As source and destination of form data an
+        arbitrary Java bean can be used. The bean's properties are mapped to
+        form fields based on their name. This makes handling of forms quite
+        convenient. Let's say for example we have a form for editing the data
+        of a customer. Then we can do the following steps:
+        <ol>
+          <li>We obtain the bean that represents the customer to be edited. In
+          a typical application this would be loaded from a database.</li>
+          <li>On our form object we call the <code>initFields()</code> method
+          and pass in the customer bean. This will cause all input fields that
+          can be matched to properties of the bean to be automatically
+          populated.</li>
+          <li>When the user hits the &quot;OK&quot; button the
+          <code>validateFields()</code> method is to be called on the form.
+          This method returns information about all fields that contain
+          invalid data. If there are such fields, we can display a message
+          box with appropriate information and hints.</li>
+          <li>If all fields are valid, we call the <code>readFields()</code>
+          method and again pass in the customer bean. This will cause the
+          current values of the input fields to be written back to the bean.
+          We could then update the bean in the database.</li>
+        </ol>
+      </p>
+      <p>
+        And now comes the best part: such a form object can be automatically
+        created for you! Every time you use the <em>GUI builder</em> (see
+        above) for generating a GUI a <code>Form</code> object is automatically
+        constructed and for each processed input element a field object is
+        added. In the XML document that controls the GUI building process
+        special tags can be used for defining transformers and validators for
+        the input elements. So you get a fully initialized form object for free.
+      </p>
+      </subsection>
+    </section>
+  </body>
+</document>

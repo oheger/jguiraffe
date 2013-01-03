@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+  Jelly test script for defining text areas.
+  $Id: textarea.jelly 205 2012-01-29 18:29:57Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:f="formBuilder">
+  <!-- A very simple text area -->
+  <f:textarea name="desc1" ifName="BUILDER_SIMPLE"/>
+
+  <!-- A text area with columns and rows. -->
+  <f:textarea name="desc2" columns="40" rows="5" wrap="true"
+    ifName="BUILDER_COLS"/>
+
+  <!-- A text area with a maximum length.-->
+  <f:textarea name="desc3" maxlength="300" wrap="false" ifName="BUILDER_LEN"/>
+
+  <!-- A text area with scroll width and height.-->
+  <f:textarea name="desc4" scrollWidth="2in" scrollHeight="3cm"
+    ifName="BUILDER_SCROLLSIZE"/>
+</j:jelly>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- Jelly script with definitions for the background task execution. This
+     script defines two dialog windows: One dialog allows configuring the
+     background execution, the other one is an information dialog that is
+     displayed during execution. Both are defined in this script because the
+     command class implementing background execution needs references to
+     components of both windows.
+     $Id: bgtask.jelly 205 2012-01-29 18:29:57Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder" xmlns:f="formBuilder"
+  xmlns:a="actionBuilder" xmlns:w="windowBuilder">
+
+  <!-- The form bean. This object acts as the model of the dialog.-->
+  <di:bean name="bgTaskModel"
+    beanClass="net.sf.jguiraffe.examples.tutorial.bgtask.BgTaskData"/>
+
+  <!-- The info window with visual feedback about the progress of the task -->
+  <w:dialog name="infoDialog" titleres="bgtask_info_title" center="true"
+    resizable="true" modal="false" autoClose="false" closeOnEsc="false">
+    <f:borderlayout/>
+    <f:panel>
+      <f:borderconstr name="CENTER"/>
+      <f:percentlayout columns="4dlu full/preferred(5cm) 4dlu"
+        rows="4dlu preferred 4dlu"/>
+        <f:progressbar name="progress" min="0" max="100">
+          <f:percentconstr col="1" row="1"/>
+        </f:progressbar>
+    </f:panel>
+    <f:panel>
+      <f:borderconstr name="SOUTH"/>
+      <f:buttonlayout align="center"/>
+      <f:button name="btnCancelExecution" textres="bgtask_btn_cancel"/>
+    </f:panel>
+  </w:dialog>
+
+  <!-- The command to be executed when the Start button is pressed. -->
+  <di:bean name="startCommand"
+    beanClass="net.sf.jguiraffe.examples.tutorial.bgtask.BgTaskCommand">
+    <di:constructor>
+      <di:param refName="jguiraffe.guiSynchronizer"/>
+      <di:param refName="window:infoDialog"/>
+      <di:param refName="bgTaskModel"/>
+      <di:param refName="comp:progress"/>
+    </di:constructor>
+  </di:bean>
+
+  <a:eventListener component="btnCancelExecution" eventType="ACTION"
+    beanName="startCommand"/>
+
+  <!-- The bean for the form controller.-->
+  <di:bean name="controller"
+    beanClass="net.sf.jguiraffe.gui.builder.window.ctrl.FormController">
+    <di:setProperty property="btnOkName" value="btnStart"/>
+    <di:setProperty property="btnCancelName" value="btnCancel"/>
+    <di:setProperty property="okCommand" refName="startCommand"/>
+  </di:bean>
+
+  <!-- The dialog window for configuring the task execution -->
+  <w:dialog titleres="bgtask_config_title" center="true" resizable="true">
+    <f:borderlayout/>
+    <f:panel>
+      <f:borderconstr name="CENTER"/>
+      <f:percentlayout columns="4dlu start/preferred 3dlu full/preferred(6cm)/100 4dlu"
+        rows="4dlu preferred 3dlu preferred 4dlu"/>
+      <f:label textres="bgtask_lab_duration">
+        <f:percentconstr col="1" row="1"/>
+      </f:label>
+      <f:slider name="duration" min="0" max="30" minorTicks="5" majorTicks="10"
+        showTicks="true" showLabels="true" tooltipres="bgtask_duration_tip">
+        <f:percentconstr col="3" row="1"/>
+      </f:slider>
+      <f:checkbox name="visual" textres="bgtask_cbx_visual"
+        mnemonicres="bgtask_cbx_visual_mnemo">
+        <f:percentconstr col="1" row="3"/>
+      </f:checkbox>
+    </f:panel>
+
+    <f:panel>
+      <f:borderconstr name="SOUTH"/>
+      <f:buttonlayout/>
+      <f:button name="btnStart" textres="bgtask_btn_start"
+        mnemonicres="bgtask_btn_start_mnemo" command="start" default="true"/>
+      <f:button name="btnCancel" textres="bgtask_btn_cancel"
+        mnemonicres="bgtask_btn_cancel_mnemo"/>
+    </f:panel>
+
+    <!-- Connect the form controller -->
+    <w:formController beanName="controller" formBeanName="bgTaskModel">
+    </w:formController>
+  </w:dialog>
+</j:jelly>

@@ -1,0 +1,434 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- $Id: validators.xml 205 2012-01-29 18:29:57Z oheger $ -->
+
+<document>
+
+ <properties>
+  <title>Transformers and Validators</title>
+  <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+ </properties>
+
+<body>
+  <section name="Transformers and Validators">
+  <p>
+    A library that provides support for input forms also has to deal with the
+    data entered by the user:
+    <ul>
+    <li>The input fields of the form have to be validated to ensure that the
+    user has entered correct data.</li>
+    <li>Data type conversion may also be required. Input fields used within
+    forms (e.g. plain text input fields) usually store their context as strings
+    only and are not aware of any specific data type. For instance, if an input
+    field is used for entering a date, it contains only a text representation
+    of a valid date. To provide the application with meaningful data this text
+    representation has to be converted to a <code>java.util.Date</code> object.
+    </li>
+    </ul>
+  </p>
+  <p>
+    In the <em>JGUIraffe</em> library this topic is covered by so-called
+    <code>Validator</code> and <code>Transformer</code> classes, which are
+    located in the <code>net.sf.jguiraffe.transform</code> package. In the
+    following sub sections we discuss their usage.
+  </p>
+
+  <subsection name="Fundamental interfaces">
+  <p>
+    The fundamental interfaces in the <code>tranform</code> packages are
+    <code>Validator</code> and <code>Transformer</code>.
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/Validator.html">Validator</a></code>
+    is responsible for validation of data entered by the user. The interface
+    defines a single method with the following signature:
+    <source><![CDATA[
+ValidationResult isValid(Object o, TransformerContext ctx);
+    ]]></source>
+    This method signature basically means that a <code>Validator</code> is passed
+    an object and has to decide whether this object is valid or not.
+    (We will explain the helper classes <code>ValidationResult</code> and
+    <code>TransformerContext</code> in a moment.)
+  </p>
+  <p>
+    A <code><a href="../apidocs/net/sf/jguiraffe/transform/Transformer.html">Transformer</a></code>
+    deals with data conversions from one data type into another one. Focusing on
+    use cases related to forms such conversions are necessary twice in the
+    life-cycle of a typical form:
+    <ul>
+    <li>When the form is opened its input fields have to be initialized with data
+    from the application's data model. This typically involves a transformation
+    from model-specific data types (e.g. numbers, dates) to strings needed for
+    GUI controls.</li>
+    <li>When the user presses the OK button the data entered into the input
+    fields has to be stored in the model. This implies the inverse transformation,
+    i.e. from plain strings to model-specific data types. Of course, this
+    transformation can only be successful if the data entered by the user adheres
+    to the expected format. So usually a <code>Validator</code> is involved, too,
+    which checks the validity of the data entered before the transformation is
+    actually performed.</li>
+    </ul>
+    The <code>Transformer</code> interface also consists only of a single method
+    that looks as follows:
+    <source><![CDATA[
+Object transform(Object o, TransformerContext ctx) throws Exception;
+    ]]></source>
+    This can be read as: an object comes in and another one (the result of the
+    transformation applied by this <code>Transformer</code>) goes out.
+  </p>
+  <p>
+    In both method signatures an argument of type
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/TransformerContext.html">
+    TransformerContext</a></code> appeared. An object implementing this interface
+    provides useful information for the <code>Transformer</code> or
+    <code>Validator</code> that may be needed for performing the transformation
+    or validation. The major part of the <code>TransformerContext</code>
+    interface is related to internationalization, which is an important aspect
+    of the tasks to be performed by <code>Transformer</code> and
+    <code>Validator</code> implementations. For instance, different countries
+    use different formats for dates or numbers, so transformers dealing with
+    such data types have to be aware of the current locale.
+    The <code>TransformerContext</code> interface can be used for obtaining the
+    following information:
+    <ul>
+    <li>The current <code>Locale</code>.</li>
+    <li>The current <em>resource manager</em>. This may be useful if
+    lanugage-specific texts need to be generated.</li>
+    <li>A <code>ValidationMessageHandler</code> object (this is discussed later).
+    </li>
+    <li>A map with properties that can be used to alter the behavior of
+    <code>Transformer</code> or <code>Validator</code> implementations.</li>
+    </ul>
+  </p>
+  <p>
+    The <code>isValid()</code> method of the <code>Validator</code> interface
+    returns an object implementing the
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/ValidationResult.html">
+    ValidationResult</a></code>. Through this interface the status of the
+    validation can be obtained. There are two methods:
+    <ul>
+    <li><code>isValid()</code> returns a boolean flag that determines whether
+    the validation was successful. If <code>isValid()</code> returns <b>true</b>,
+    the user has entered valid data.</li>
+    <li><code>getErrorMessages()</code> returns one or more error messages
+    related to the validation. Error messages are only available if
+    <code>isValid()</code> returns <b>false</b>. In this case it is important to
+    tell the user what exactly was wrong. This information is contained in the
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/ValidationMessage.html">
+    ValidationMessage</a></code> objects returned by <code>getErrorMessages()</code>.
+    A <code>ValidationMessage</code> consists of a key and a text to be displayed
+    to the user. More details about <code>ValidationMessage</code> and how
+    instances can be created will be discussed later.</li>
+    </ul>
+  </p>
+  </subsection>
+
+  <subsection name="Existing classes">
+  <p>
+    The library ships with a number of default transformers and validators that
+    support the most primitive data types (including date and time) and can be
+    used out of the box. These implementations are pretty powerful and provide
+    enhanced validation capabilities, e.g. comparing an input object with a
+    reference value. The basic pattern is that there are abstract base classes
+    like <code><a href="../apidocs/net/sf/jguiraffe/transform/DateTransformerBase.html">
+    DateTransformerBase</a></code> or
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/NumberTransformerBase.html">
+    NumberTransformerBase</a></code> that implement both the <code>Transformer</code>
+    and the <code>Validator</code> interface in a generic way. They provide the
+    major part of the functionality required. Then there are a bunch of
+    concrete classes derived from these base classes that are specialized for
+    concrete data types (e.g. Date, Integer, Long, Float, ...). The Javadocs of
+    these classes list the various configuration options of these classes and
+    also the validation error messages they can produce.
+  </p>
+  <p>
+    In addition to the implementations dealing with specific data types there
+    are some more fully functional classes that can be used for special
+    purposes:
+    <ul>
+    <li><code><a href="../apidocs/net/sf/jguiraffe/transform/ToStringTransformer.html">
+    ToStringTransformer</a></code> implements a generic way for transforming
+    objects to a text representation. Some special types of objects are directly
+    recognized and formatted accordingly to the current locale, e.g. date types
+    and numbers. On unknown objects the <code>toString()</code> method is
+    invoked.</li>
+    <li><code><a href="../apidocs/net/sf/jguiraffe/transform/RequiredValidator.html">
+    RequiredValidator</a></code> is a fully functional <code>Validator</code>
+    implementation that can be assigned to input fields that are mandatory. It
+    can deal with different types of objects like strings, collections, or arrays.
+    and can check whether they are empty. In this case validation fails. A value
+    of <b>null</b> is of course always considered invalid.</li>
+    <li><code><a href="../apidocs/net/sf/jguiraffe/transform/RegexValidator.html">
+    RegexValidator</a></code> uses a regular expression to validate user input.
+    An instance can be initialized with a regular expression string that must be
+    compatible with the regular expression syntax defined for the
+    <code>java.util.regex.Pattern</code> class. The user input to be validated
+    is transformed to a string and matched against the defined pattern. If this
+    is not possible, a validation error is produced. This is a very powerful
+    means to enforce certain input patterns.</li>
+    <li><code><a href="../apidocs/net/sf/jguiraffe/transform/ChainValidator.html">
+    ChainValidator</a></code> allows combining multiple validators so that an
+    input value is considered valid only if all of these child validators return
+    a positive result. This is useful if multiple conditions have to be checked
+    that are implemented by different <code>Validator</code> implementations. A
+    good use case are required input fields of a specific data type: The
+    existing validators for primitive types (e.g. dates or numbers) all accept
+    <b>null</b> input. In order to declare mandatory input fields these validators
+    can be combined with a <code>RequiredValidator</code> using
+    <code>ChainValidator</code>.
+    </li>
+    </ul>
+  </p>
+  </subsection>
+
+  <subsection name="Creating a custom transformer">
+  <p>
+    Implementing a custom <code>Transformer</code> is a pretty straight forward
+    task. A <code>Transformer</code> class requires the <code>transform()</code>
+    method. Here a custom implementation is free to do whatever it wants. It
+    can even throw an arbitrary exception if the transformation fails for some
+    reason. The <code><a href="../apidocs/net/sf/jguiraffe/transform/TransformerContext.html">
+    TransformerContext</a></code> object being passed to the
+    <code>transform()</code> method can be queried for specific properties set
+    in the context or for information about the current locale.
+  </p>
+  <p>
+    Transformers are typically specific for a given data type. So there are no
+    general rules that can be stated here. However, one important point is that
+    a transformer is typically combined with a validator: the validator first
+    checks the input of the user, and if this validations succeeds, the
+    transformation should be possible without throwing an exception. Because of
+    this narrow relationship between validation and transformation many of the
+    functional classes in the <code>transform</code> package implement both the
+    <code>Transformer</code> and the <code>Validator</code> interfaces.
+  </p>
+  </subsection>
+
+  <subsection name="Creating a custom validator">
+  <p>
+    Implementing a custom <code>Validator</code> is usually more involved than a
+    new <code>Transformer</code> implementation because the validator has to
+    provide concrete information to the user if something goes wrong. This
+    includes the definition of meaningful error messages that are returned as
+    part of the <code><a href="../apidocs/net/sf/jguiraffe/transform/ValidationResult.html">
+    ValidationResult</a></code> object returned by the validator. As an example
+    we are going to develop a validator that checks whether a password entered
+    by the user is strong enough. The password must have at least a configurable
+    number of characters and include characters from all the three groups
+    letters, digits, and special characters.
+  </p>
+  <p>
+    We can start by thinking about the possible error messages our new validator
+    can produce. There are two error conditions: the password may be too short,
+    and it may be too simple (i.e. it does not contain characters from all three
+    character groups defined above). To define the exact error texts we define
+    a new resource group, say <em>validationerrors</em>. (The framework has
+    already a resource group <em>validators</em>, which contains the error
+    messages of the default <code>Validator</code> classes.) So we create a
+    file <code>validationerrors.properties</code> with the following content:
+    <source><![CDATA[
+ERR_PWD_TOOSHORT = The passowrd must have at least {0} characters.
+ERR_PWD_TOOSIMPLE = The password must contain letters, digits, and special characters.
+    ]]></source>
+  </p>
+  <p>
+    Important are the keys used for the resource texts. They are later used by
+    the implementation class to refer to the error messages. Notice that the
+    first error message contains a place holder for the number of characters a
+    password must have; this value can be configured, so we cannot specify a fix
+    number.
+  </p>
+  <p>
+    Error messages are obtained from an object implementing the
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/ValidationMessageHandler.html">
+    ValidationMessageHandler</a></code> interface that lives in the
+    <code>TransformerContext</code>. The default implementation of this
+    interface is provided by the
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/DefaultValidationMessageHandler.html">
+    DefaultValidationMessageHandler</a></code> class.
+    The <code>ValidationMessageHandler</code> interface defines a
+    <code>getValidationMessage()</code> method, which is passed the key of an
+    error message and returns a <code>ValidationMessage</code> object with the
+    corresponding message. <code>DefaultValidationMessageHandler</code>
+    implements this method by first checking whether an object with the passed
+    in key can be found in the properties of the current
+    <code>TransformerContext</code>. If this is the case, this object is used
+    as error message. Otherwise, the key is interpreted as a resource identifier,
+    and a resource lookup is performed. Per default the class searches in the
+    reserved <code>validators</code> resource group. But it can be configured
+    to look in other resource groups, too. To do this we have to add a bean
+    declaration like the following one in a bean definition file of our
+    application:
+    <source><![CDATA[
+<di:bean name="jguiraffe.validationMessageHandler"
+  beanClass="net.sf.jguiraffe.transform.DefaultValidationMessageHandler">
+  <di:setProperty property="alternativeResourceGroups"
+    value="validationerrors"/>
+</di:bean>
+    ]]></source>
+    This bean declaration overrides the default declaration for the
+    <code>validationMessageHandler</code> bean. In the new declaration we set
+    the <em>alternativeResourceGroups</em> property. Here a comma-separated
+    list of resource group names can be specified that are searched for error
+    texts. This basically means that <code>DefaultValidationMessageHandler</code>
+    searches for an error key in these resource groups first. If search is
+    successful, the found resource text is used as error message. Otherwise it
+    looks up the key in the default resource group.
+  </p>
+  <p>
+    With the error messages in place we can start with the actual coding of the
+    new <code>PasswordValidator</code> class. The <code>isValid()</code>
+    method of this class has to check the length of the user input and whether
+    the password is sufficiently complex. If this is true, a
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/ValidationResult.html">
+    ValidationResultr</a></code> object indicating a successful validation has
+    to be returned. Otherwise a result object has to be created with the
+    appropriate error messages:
+    <source><![CDATA[
+public class PasswordValidator implements Validator
+{
+    /** Error key for a password that is too short. */
+    public static final String ERR_PWD_TOOSHORT = "ERR_PWD_TOOSHORT";
+
+    /** Error key for a password that is too simple. */
+    public static final String ERR_PWD_TOOSIMPLE = "ERR_PWD_TOOSIMPLE";
+
+    /** Constant for the default minimum length of a password. */
+    private static final int DEFAULT_MIN_LENGTH = 6;
+
+    /** The minimum number of characters for a valid password. */
+    private int minimumLength = DEFAULT_MIN_LENGTH;
+
+    /**
+     * Returns the minimum length a password must have.
+     * @return the minimum length of a valid password
+     */
+    public int getMinimumLength()
+    {
+        return minimumLength;
+    }
+
+    /**
+     * Sets the minimum length a password must have.
+     * @param len the minimum length of a valid password
+     */
+    public void setMinimumLength(int len)
+    {
+        minimumLength = len;
+    }
+
+    /**
+     * Performs the validation.
+     */
+    public ValidationResult isValid(Object o, TransformerContext ctx)
+    {
+        String pwd = (o == null) ? "" : String.valueOf(o);
+
+        // long enough?
+        boolean tooShort = pwd.length() < getMinimumLength();
+
+        // complexity?
+        int letters = 0;
+        int digits = 0;
+        int special = 0;
+        for (int i = 0; i < pwd.length(); i++)
+        {
+            char c = pwd.charAt(i);
+
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            {
+                letters++;
+            }
+            else if (c >= '0' && c <= '9')
+            {
+                digits++;
+            }
+            else
+            {
+                special++;
+            }
+        }
+        boolean tooSimple = letters < 1 || digits < 1 || special < 1;
+
+        // Everything okay?
+        if (!tooShort && !tooSimple)
+        {
+            return DefaultValidationResult.VALID;
+        }
+
+        // Otherwise create correct error messages
+        ValidationMessageHandler msgHandler = ctx.getValidationMessageHandler();
+        DefaultValidationResult.Builder builder =
+            new DefaultValidationResult.Builder();
+
+        if (tooShort)
+        {
+            builder.addErrorMessage(msgHandler.getValidationMessage(ctx,
+                ERR_PWD_TOOSHORT, getMinimumLength()));
+        }
+        if (tooSimple)
+        {
+            builder.addErrorMessage(msgHandler.getValidationMessage(ctx,
+                ERR_PWD_TOOSIMPLE));
+        }
+
+        return builder.build();
+    }
+}
+    ]]></source>
+  </p>
+  <p>
+    At the beginning of the class we declare some constants for the possible
+    error messages. The values of these constants must match the keys we used
+    for the resources of the error texts. The minimum length of valid passwords
+    should be configurable, so we created a property with get and set methods
+    for it.
+  </p>
+  <p>
+    The <code>isValid()</code> method contains the actual logic. First we
+    convert the object passed in to a string (because it can be <b>null</b> a
+    corresponding check is required). Then we implement our checks. If they
+    succeed, the <code>VALID</code> constant of the class
+    <code><a href="../apidocs/net/sf/jguiraffe/transform/DefaultValidationResult.html">
+    DefaultValidationResultr</a></code> is returned, which represents a valid
+    result.
+  </p>
+  <p>
+    The remaining part of the code deals with the construction of a
+    <code>ValidationResult</code> object that contains the appropriate error
+    messages. In order to obtain the error messages we need a
+    <code>ValidationMessageHandler</code> object, which can be queried from the
+    <code>TransformerContext</code>. Objects of the class
+    <code>DefaultValidationResult</code> cannot be created directly, rather the
+    class defines a nested <code>Builder</code> class (an application of the
+    <em>builder</em> pattern). Such a <code>Builder</code> object is created,
+    then the error messages for the failed checks are added to it. Notice that
+    for the error <code>ERR_PWD_TOOSHORT</code> the required minimum length is
+    passed as parameter to the <code>getValidationMessage()</code> method. It
+    will become part of the error message to be displayed to the user.
+  </p>
+  <p>
+    This concludes our excourse in writing custom validators. The validator and
+    transformer classes shipped with the library are also good examples for
+    more or less complex validation tasks; so having a look at them may be
+    useful.
+  </p>
+  </subsection>
+  </section>
+</body>
+
+</document>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+  This bean builder script defines the beans used internally by the framework.
+  Here important beans are defined that will directly be accessed by the
+  central application object.
+  Overriding these beans is possible by using the same bean names in specific
+  builder scripts that must be loaded during initialization of an application.
+  
+  $Id: defaultbeans.jelly 211 2012-07-10 19:49:13Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder">
+
+  <!--
+    The resource loader.
+    This object is used by the resource manager to actually load the resource
+    information. The default implementation uses Java's resource bundles.
+  -->
+  <di:bean name="jguiraffe.resourceLoader"
+    beanClassName="net.sf.jguiraffe.resources.impl.bundle.BundleResourceLoader">
+    <di:constructor>
+      <di:param refName="jguiraffe.classLoaderProvider"/>
+      <di:param><di:null/></di:param>
+    </di:constructor>
+  </di:bean>
+
+  <!--
+    The resource manager.
+    This object provides access to the application's resources. Usually the
+    default implementation can be used as is. It is the resource loader, which
+    needs to be changed for specific resource processing.
+  -->
+  <di:bean name="jguiraffe.resourceManager"
+    beanClassName="net.sf.jguiraffe.resources.impl.ResourceManagerImpl">
+    <di:setProperty property="defaultResourceGroup"
+      refName="jguiraffe.defaultResourceGroup"/>
+    <di:setProperty property="resourceLoader"
+      refName="jguiraffe.resourceLoader"/>
+  </di:bean>
+
+  <!--
+    The message output object.
+    This object is used for creating message boxes. Per default we use an output
+    object that creates Swing message boxes.
+  -->
+  <di:bean name="jguiraffe.messageOutput"
+    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.utils.SwingMessageOutput"/>
+
+  <!--
+    The validation message handler.
+    This object lives in the application context and is used by validators to
+    obtain error messages for invalid user input. The default object is fully
+    functional. If an application wants to use different validation messages,
+    it can either change the resource groups, in which to look for messages, or
+    use a custom implementation of this interface.
+  -->
+  <di:bean name="jguiraffe.validationMessageHandler"
+    beanClassName="net.sf.jguiraffe.transform.DefaultValidationMessageHandler"/>
+
+  <!--
+    The validation message format object.
+    This object is used for generating error messages from a failed form
+    validation that are to be displayed to the end user. The typical use case
+    is that a user hits the OK button of a form that contains input fields with
+    invalid data. In this case the form must not be closed, but a message box
+    describing the affected input fields is displayed. By overriding this bean
+    the format of the error messages produced can be customized.
+  -->
+  <di:bean name="jguiraffe.validationMessageFormat"
+    beanClassName="net.sf.jguiraffe.gui.forms.FormValidationMessageFormat"/>
+
+  <!--
+    The class loader provider.
+    This object is used for resolving classes specified by name by selecting
+    an appropriate class loader. It is possible to register specific class
+    loaders at this object that are then used for resolving class names. Here
+    a default class loader provider is declared with no specific class loaders
+    registered. Initialization of the class loader provider can also be done by
+    overriding the initClassLoaderProvider() method in Application.
+  -->
+  <di:bean name="jguiraffe.classLoaderProvider"
+    beanClassName="net.sf.jguiraffe.di.impl.DefaultClassLoaderProvider"/>
+
+  <!--
+    The application context.
+    This object holds the global state of the application. It is associated with
+    a bunch of helper objects performing specific tasks.
+    Usually the default implementation can be used as is. For customization the
+    helper objects can be overridden.
+  -->
+  <di:bean name="jguiraffe.applicationContext"
+    beanClassName="net.sf.jguiraffe.gui.app.ApplicationContextImpl">
+    <!-- Some properties set by the application during start up.-->
+    <di:setProperty property="configuration" refName="jguiraffe.configuration"/>
+    <di:setProperty property="locale" refName="jguiraffe.locale"/>
+    <di:setProperty property="beanContext" refName="jguiraffe.globalContext"/>
+    <di:setProperty property="validationMessageHandler"
+      refName="jguiraffe.validationMessageHandler"/>
+
+    <!-- References to helper objects -->
+    <di:setProperty property="resourceManager"
+      refName="jguiraffe.resourceManager"/>
+    <di:setProperty property="messageOutput" refName="jguiraffe.messageOutput"/>
+    <di:setProperty property="classLoaderProvider"
+      refName="jguiraffe.classLoaderProvider"/>
+  </di:bean>
+
+  <!--
+    The GUI synchronizer.
+    This object must be used when updating GUI components from a different thread
+    than the main event dispatch thread.
+  -->
+  <di:bean name="jguiraffe.guiSynchronizer"
+    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.utils.SwingGUISynchronizer"/>
+
+  <!--
+    The command queue.
+    This object is used for executing commands in a background thread.
+  -->
+  <di:bean name="jguiraffe.commandQueue"
+    beanClassName="net.sf.jguiraffe.gui.cmd.CommandQueueImpl">
+    <di:constructor>
+      <di:param refName="jguiraffe.guiSynchronizer"/>
+    </di:constructor>
+  </di:bean>
+
+  <!--
+    The binding strategy for Form objects.
+    The binding strategy interacts with the model objects populate the input
+    fields of a form with data from the model and to save back user input. Per
+    default a binding strategy that works with Java beans is provided. If an
+    application uses different model objects (e.g. SDO), it should override this
+    bean definition.
+  -->
+  <di:bean name="jguiraffe.bindingStrategy"
+    beanClassName="net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy"/>
+
+  <!--
+    The default form validation trigger.
+    This object determines when a form is validated (in addition to the
+    default validations that happen in the regular life-cycle of the form).
+    Validating a form causes the current validation error messages to be
+    displayed to the user, so it is immediately obvious, which input fields
+    contain invalid data.
+  -->
+  <di:bean name="jguiraffe.formValidationTrigger" singleton="false"
+    beanClassName="net.sf.jguiraffe.gui.builder.window.ctrl.FormValidationTriggerFocus"/>
+
+  <!--
+    The default field marker.
+    This object can be used by form controllers to mark input fields based on their
+    validation status. This way it is possible to detect invalid fields on a
+    single glance.
+    The default field marker is a ColorFieldMarker, which uses different colors
+    to mark invalid input fields. The colors used are also defined here.
+  -->
+  <!-- Background color for invalid fields -->
+  <di:bean name="jguiraffe.fieldMarker.invalidBg"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.Color">
+    <di:factory>
+      <di:methodInvocation method="resolveColor"
+        targetClassName="net.sf.jguiraffe.gui.builder.components.ColorHelper">
+        <di:param value="RED"/>
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+
+  <!-- Foreground color for invalid fields -->
+  <di:bean name="jguiraffe.fieldMarker.invalidFg"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.Color">
+    <di:factory>
+      <di:methodInvocation method="resolveColor"
+        targetClassName="net.sf.jguiraffe.gui.builder.components.ColorHelper">
+        <di:param value="WHITE"/>
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+
+  <!-- Background color for fields in warning state -->
+  <di:bean name="jguiraffe.fieldMarker.warningBg"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.Color">
+    <di:factory>
+      <di:methodInvocation method="resolveColor"
+        targetClassName="net.sf.jguiraffe.gui.builder.components.ColorHelper">
+        <di:param value="YELLOW"/>
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+
+  <!-- Foreground color for fields in warning state -->
+  <di:bean name="jguiraffe.fieldMarker.warningFg"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.Color">
+    <di:factory>
+      <di:methodInvocation method="resolveColor"
+        targetClassName="net.sf.jguiraffe.gui.builder.components.ColorHelper">
+        <di:param value="BLACK"/>
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+
+  <!-- Background color for not visited invalid fields -->
+  <di:bean name="jguiraffe.fieldMarker.notVisitedInvalidBg"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.Color">
+    <di:factory>
+      <di:methodInvocation method="resolveColor"
+        targetClassName="net.sf.jguiraffe.gui.builder.components.ColorHelper">
+        <di:param value="ORANGE"/>
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+
+  <!-- Foreground color for invalid fields -->
+  <di:bean name="jguiraffe.fieldMarker.notVisitedInvalidFg"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.Color">
+    <di:factory>
+      <di:methodInvocation method="resolveColor"
+        targetClassName="net.sf.jguiraffe.gui.builder.components.ColorHelper">
+        <di:param value="WHITE"/>
+      </di:methodInvocation>
+    </di:factory>
+  </di:bean>
+
+  <di:bean name="jguiraffe.fieldMarker" singleton="false"
+    beanClassName="net.sf.jguiraffe.gui.builder.window.ctrl.ColorFieldMarker">
+    <di:setProperty property="invalidBackground"
+      refName="jguiraffe.fieldMarker.invalidBg"/>
+    <di:setProperty property="invalidForeground"
+      refName="jguiraffe.fieldMarker.invalidFg"/>
+    <di:setProperty property="warningBackground"
+      refName="jguiraffe.fieldMarker.warningBg"/>
+    <di:setProperty property="warningForeground"
+      refName="jguiraffe.fieldMarker.warningFg"/>
+    <di:setProperty property="notVisitedInvalidBackground"
+      refName="jguiraffe.fieldMarker.notVisitedInvalidBg"/>
+    <di:setProperty property="notVisitedInvalidForeground"
+      refName="jguiraffe.fieldMarker.notVisitedInvalidFg"/>
+  </di:bean>
+
+  <!--
+    The component manager.
+    This object is used by the builder for creating GUI components. The default
+    implementation uses Swing for this purpose.
+  -->
+  <di:bean name="jguiraffe.componentManager"
+    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.components.SwingComponentManager"/>
+
+  <!--
+    The action manager.
+    This object is used by the builder for creating menus, tool bars and actions.
+    The default implementation uses Swing classes for this purpose.
+  -->
+  <di:bean name="jguiraffe.actionManager"
+    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.action.SwingActionManager"/>
+
+  <!--
+    The window manager.
+    This object is used by the builder for creating different kinds of windows.
+    The default implementation uses Swing classes for this purpose.
+  -->
+  <di:bean name="jguiraffe.windowManager"
+    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.window.SwingWindowManager"/>
+
+  <!--
+    The tool tip manager.
+    This object can be used to modify the tool tips of UI components created
+    during a builder operation. It is associated with the ComponentBuilderData
+    instance.
+  -->
+  <di:bean name="jguiraffe.toolTipManager" singleton="false"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.DefaultToolTipManager">
+    <di:constructor>
+      <di:param refName="jguiraffe.componentBuilderData"/>
+    </di:constructor>
+  </di:bean>
+
+  <!--
+    The ComponentBuilderData object.
+    This object stores central information during a builder process. After the
+    builder operation all components can be accessed from here. This bean
+    definition defines a standard (non-singleton) instance. By overriding it in
+    a custom bean definition script, an alternative implementation can be
+    injected into the builder process.
+  -->
+  <di:bean name="jguiraffe.componentBuilderData" singleton="false"
+    beanClassName="net.sf.jguiraffe.gui.builder.components.ComponentBuilderData">
+    <di:setProperty property="toolTipManager" refName="jguiraffe.toolTipManager"/>
+  </di:bean>
+
+  <!-- Default converters.
+       These converters are automatically registered at the builder so that they
+       are available in each builder script per default.
+  -->
+  <di:bean name="jguiraffe.LocatorConverter"
+    beanClassName="net.sf.jguiraffe.locators.LocatorConverter">
+    <di:constructor>
+      <di:param refName="jguiraffe.classLoaderProvider"/>
+    </di:constructor>
+  </di:bean>
+
+  <di:bean name="jguiraffe.ElementEnablerConverter"
+    beanClassName="net.sf.jguiraffe.gui.builder.enablers.EnablerConverter"/>
+
+  <!--
+    The builder.
+    This object processes builder scripts creating GUI resources and related
+    objects like actions. The default implementation reads Jelly scripts. Note
+    that each time a builder is requested a new instance will be created.
+  -->
+  <di:bean name="jguiraffe.builder" singleton="false"
+    beanClassName="net.sf.jguiraffe.gui.builder.impl.JellyBuilder">
+    <di:setProperty property="componentManager"
+      refName="jguiraffe.componentManager"/>
+    <di:setProperty property="actionManager"
+      refName="jguiraffe.actionManager"/>
+    <di:setProperty property="windowManager"
+      refName="jguiraffe.windowManager"/>
+
+    <di:methodInvocation method="addDefaultBaseClassConverters">
+      <di:param>
+        <di:map keyClass="java.lang.String">
+          <di:entry key="net.sf.jguiraffe.locators.Locator"
+            refName="jguiraffe.LocatorConverter"/>
+          <di:entry key="net.sf.jguiraffe.gui.builder.enablers.ElementEnabler"
+            refName="jguiraffe.ElementEnablerConverter"/>
+        </di:map>
+      </di:param>
+      <di:param refName="jguiraffe.classLoaderProvider"/>
+    </di:methodInvocation>
+  </di:bean>
+
+</j:jelly>

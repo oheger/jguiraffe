@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- The Jelly script defining the main window of the JGUIraffe tutorial
+    application.
+    $Id: main.jelly 205 2012-01-29 18:29:57Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder" xmlns:f="formBuilder"
+  xmlns:a="actionBuilder" xmlns:w="windowBuilder">
+
+  <!-- Global beans and overrides of framework beans -->
+
+  <!-- The validation message handler. We override the standard bean to
+       instruct it that it searches in the main resource group for error
+       messages, too.
+  -->
+  <di:bean name="jguiraffe.validationMessageHandler"
+    beanClass="net.sf.jguiraffe.transform.DefaultValidationMessageHandler">
+    <di:setProperty property="alternativeResourceGroups"
+      value="tutorial-resources"/>
+  </di:bean>
+
+  <!-- Definitions for actions and their tasks -->
+
+  <!-- The action for application shutdown -->
+  <a:action name="exitAction" textres="EXIT_ACTION_TEXT"
+    tooltipres="EXIT_ACTION_TOOLTIP" mnemonicres="EXIT_ACTION_MNEMO"
+    resgrp="application" taskBean="exitTask"/>
+
+  <!-- File new action -->
+  <a:action name="fileNewAction" textres="act_filenew_text"
+    tooltipres="act_filenew_tip" mnemonicres="act_filenew_mnemo"
+    acceleratorDef="CONTROL F1" taskBean="openNewFileDialogTask">
+    <f:icon resource="new.gif"/>
+  </a:action>
+
+  <!-- File open action -->
+  <a:action name="fileOpenAction" textres="act_fileopen_text"
+    tooltipres="act_fileopen_tip" mnemonicres="act_fileopen_mnemo"
+    group="SINGLE_SEL" taskBean="fileOpenTask">
+    <f:icon resource="open.gif"/>
+  </a:action>
+
+  <!-- File edit action -->
+  <a:action name="fileEditAction" textres="act_fileedit_text"
+    tooltipres="act_fileedit_tip" mnemonicres="act_fileedit_mnemo"
+    group="SINGLE_FILE" taskBean="fileEditTask">
+    <f:icon resource="edit.gif"/>
+  </a:action>
+
+  <!-- File print action -->
+  <a:action name="filePrintAction" textres="act_fileprint_text"
+    tooltipres="act_fileprint_tip" mnemonicres="act_fileprint_mnemo"
+    group="SINGLE_FILE" taskBean="filePrintTask">
+    <f:icon resource="print.gif"/>
+  </a:action>
+
+  <!-- Edit cut action -->
+  <a:action name="editCutAction" textres="act_editcut_text"
+    tooltipres="act_editcut_tip" mnemonicres="act_editcut_mnemo"
+    group="SELECTION" acceleratorDef="control x" taskBean="dummyTask"/>
+
+  <!-- Edit copy action -->
+  <a:action name="editCopyAction" textres="act_editcopy_text"
+    tooltipres="act_editcopy_tip" mnemonicres="act_editcopy_mnemo"
+    group="SELECTION" acceleratorDef="control c" taskBean="dummyTask"/>
+
+  <!-- Edit paste action -->
+  <a:action name="editPasteAction" textres="act_editpaste_text"
+    tooltipres="act_editpaste_tip" mnemonicres="act_editpaste_mnemo"
+    group="SELECTION" acceleratorDef="control v" taskBean="dummyTask"/>
+
+  <!-- Edit delete action -->
+  <a:action name="editDeleteAction" textres="act_editdelete_text"
+    tooltipres="act_editdelete_tip" mnemonicres="act_editdelete_mnemo"
+    group="SELECTION" taskBean="dummyTask"/>
+
+  <!-- Edit refresh action -->
+  <a:action name="editRefreshAction" textres="act_editrefresh_text"
+    tooltipres="act_editrefresh_tip" mnemonicres="act_editrefresh_mnemo"
+    acceleratorDef="F5" taskBean="refreshTask">
+    <f:icon resource="refresh.gif"/>
+  </a:action>
+
+  <!-- Extras view definition action -->
+  <a:action name="extrasViewDefAction" textres="act_extrviewdef_text"
+    tooltipres="act_extrviewdef_tip" mnemonicres="act_extrviewdef_mnemo"
+    taskBean="openViewDefsDialogTask">
+    <f:icon resource="view.gif"/>
+  </a:action>
+
+  <!-- Extras settings action -->
+  <a:action name="extrasSettingsAction" textres="act_extrsettings_text"
+    tooltipres="act_extrsettings_tip" mnemonicres="act_extrsettings_mnemo"
+    taskBean="dummyTask">
+    <f:icon resource="settings.gif"/>
+  </a:action>
+
+  <!-- Extras long operation action -->
+  <a:action name="extrasLongOpAction" textres="act_extrlongop_text"
+    tooltipres="act_extrlongop_tip" mnemonicres="act_extrlongop_mnemo"
+    taskBean="longOperationTask">
+  </a:action>
+
+  <!-- The main menu -->
+  <a:menubar name="mainMenu">
+    <a:menu textres="menu_file_text" mnemonicres="menu_file_mnemo">
+      <a:menuitem actionName="fileNewAction"/>
+      <a:menuitem actionName="fileOpenAction"/>
+      <a:menuitem actionName="fileEditAction"/>
+      <a:menuitem actionName="filePrintAction"/>
+      <a:separator/>
+      <a:menuitem actionName="exitAction"/>
+    </a:menu>
+    <a:menu textres="menu_edit_text" mnemonicres="menu_edit_mnemo">
+      <a:menuitem actionName="editCutAction"/>
+      <a:menuitem actionName="editCopyAction"/>
+      <a:menuitem actionName="editPasteAction"/>
+      <a:separator/>
+      <a:menuitem actionName="editRefreshAction"/>
+      <a:separator/>
+      <a:menuitem actionName="editDeleteAction"/>
+    </a:menu>
+    <a:menu textres="menu_extras_text" mnemonicres="menu_extras_text">
+      <a:menuitem actionName="extrasViewDefAction"/>
+      <a:separator/>
+      <a:menuitem actionName="extrasSettingsAction"/>
+      <a:menuitem actionName="extrasLongOpAction"/>
+    </a:menu>
+  </a:menubar>
+
+  <!-- The model of the combobox -->
+  <di:bean name="fileSystemModel"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.FileSystemListModel">
+  </di:bean>
+
+  <!-- The model of the tree.
+       We also set an alternative expression engine with a property delimiter
+       that does not interfere with file names.
+  -->
+  <di:bean name="treeModel"
+    beanClass="org.apache.commons.configuration.HierarchicalConfiguration">
+    <di:setProperty property="expressionEngine">
+      <di:bean beanClass="org.apache.commons.configuration.tree.DefaultExpressionEngine">
+        <di:setProperty property="propertyDelimiter" value="|"/>
+      </di:bean>
+    </di:setProperty>
+  </di:bean>
+
+  <!-- The model of the table. This is a plain array list.-->
+  <di:bean name="tableModel" beanClass="java.util.ArrayList"/>
+
+  <!-- Read in some icons -->
+  <f:icon resource="file.jpg" var="icon_file"/>
+  <f:icon resource="folder.jpg" var="icon_folder"/>
+
+  <!-- A font for special labels -->
+  <di:map name="labelFontAttributes">
+    <di:entry key="UNDERLINE">
+      <di:const targetClass="java.awt.font.TextAttribute" field="UNDERLINE_ON"/>
+    </di:entry>
+    <di:entry key="INPUT_METHOD_UNDERLINE">
+      <di:const targetClass="java.awt.font.TextAttribute"
+        field="UNDERLINE_LOW_TWO_PIXEL"/>
+    </di:entry>
+  </di:map>
+
+  <f:font var="labelFont" name="Serif" size="14" italic="true"
+    attributes="labelFontAttributes"/>
+
+  <!-- The main window -->
+  <w:frame titleres="main_title" menu="mainMenu" autoClose="false">
+    <f:panel>
+      <f:borderlayout/>
+      <!-- A tool bar at the top of the window's content -->
+      <a:toolbar>
+        <f:borderconstr name="NORTH"/>
+        <a:toolbutton actionName="fileNewAction"/>
+        <a:separator/>
+        <a:toolbutton actionName="fileOpenAction"/>
+        <a:toolbutton actionName="fileEditAction"/>
+        <a:toolbutton actionName="filePrintAction"/>
+        <a:separator/>
+        <a:toolbutton actionName="editRefreshAction"/>
+      </a:toolbar>
+
+      <f:splitter orientation="horizontal" resizeWeight="0.25">
+        <f:borderconstr name="CENTER"/>
+        <!-- The left panel contains the combobox with the file systems and the
+             tree view for the current file system.
+        -->
+        <f:panel>
+          <f:percentlayout columns="4dlu end/preferred 3dlu full/preferred(10dlu)/100 4dlu"
+            rows="4dlu preferred 3dlu full/preferred(10dlu)/100 4dlu"
+            canShrink="true"/>
+          <f:label textres="main_lab_fs" mnemonicres="main_lab_fs_mnemo"
+            componentref="comboFS" fontRef="labelFont">
+            <f:percentconstr col="1" row="1"/>
+          </f:label>
+          <f:combo name="comboFS" modelRef="fileSystemModel" editable="false">
+            <f:percentconstr col="3" row="1"/>
+          </f:combo>
+          <f:tree name="tree" model="treeModel" rootVisible="false"
+            scrollWidth="5cm">
+            <f:percentconstr col="1" row="3" spanx="3" targetCol="3"/>
+          </f:tree>
+        </f:panel>
+
+        <!-- The right panel contains the table with the content of the current
+             directory.
+        -->
+        <f:panel>
+          <f:borderlayout canShrink="true"/>
+          <f:table name="table" model="tableModel" multiSelection="true"
+            scrollWidth="500">
+            <f:borderconstr name="CENTER"/>
+            <f:column name="icon" width="20px" columnClass="Icon"/>
+            <f:column name="name" percentWidth="50" headerres="main_tcol_name"
+              columnClass="String"/>
+            <f:column name="lastModified" percentWidth="30"
+              headerres="main_tcol_modified">
+              <f:transformer class="net.sf.jguiraffe.transform.DateTimeTransformer"
+                type="write"/>
+            </f:column>
+            <f:column name="size" percentWidth="20" headerres="main_tcol_size">
+              <f:transformer type="write"
+                class="net.sf.jguiraffe.examples.tutorial.mainwnd.FileSizeTransformer"/>
+            </f:column>
+
+            <!-- An event filter that delegates double click events to the
+                 open action.
+            -->
+            <a:mouseEvent actionName="fileOpenAction">
+              <a:eventFilter eventType="MOUSE_DOUBLE_CLICKED"
+                class="net.sf.jguiraffe.gui.builder.event.filter.TypeEventFilter"/>
+            </a:mouseEvent>
+
+            <!-- Add a context menu to the table -->
+            <a:popup class="net.sf.jguiraffe.examples.tutorial.mainwnd.TablePopupHandler"/>
+          </f:table>
+        </f:panel>
+      </f:splitter>
+    </f:panel>
+
+    <!-- An event listener that delegates the window closing event to the
+         application exit action.
+    -->
+    <w:windowEvent actionName="exitAction">
+      <a:eventFilter eventType="WINDOW_CLOSING"
+        class="net.sf.jguiraffe.gui.builder.event.filter.TypeEventFilter"/>
+    </w:windowEvent>
+  </w:frame>
+
+  <!-- The bean representing the window controller.
+  -->
+  <di:bean name="windowController"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.MainWndController">
+    <di:constructor>
+      <di:param refName="jguiraffe.application"/>
+      <di:param refName="comp:tree"/>
+      <di:param refName="comp:table"/>
+      <di:param refName="widget:table"/>
+    </di:constructor>
+    <di:setProperty property="iconFile" refName="icon_file"/>
+    <di:setProperty property="iconDirectory" refName="icon_folder"/>
+  </di:bean>
+
+  <!-- The event listener for the tree view -->
+  <di:bean name="treeListener"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.TreeChangeListener">
+    <di:constructor>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+
+  <a:eventListener component="tree" eventType="CHANGE" beanName="treeListener"/>
+
+  <!-- The event listener for the table -->
+  <di:bean name="tableListener"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.TableChangeListener">
+    <di:constructor>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+
+  <a:eventListener component="table" eventType="CHANGE" beanName="tableListener"/>
+
+  <!-- The event listener for the combobox with the file systems -->
+  <di:bean name="comboListener"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.FileSystemChangeListener">
+    <di:constructor>
+      <di:param refName="windowController"/>
+      <di:param refName="comp:comboFS"/>
+    </di:constructor>
+  </di:bean>
+
+  <a:eventListener component="comboFS" eventType="CHANGE" beanName="comboListener"/>
+
+  <!-- Action tasks and commands -->
+
+  <!-- A dummy action task. This task is associated with actions for which no
+       implementation exists.
+  -->
+  <di:bean name="dummyTask"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.DummyActionTask"/>
+
+  <!-- The action task for quitting the application -->
+  <di:bean name="exitTask"
+    beanClass="net.sf.jguiraffe.gui.app.ApplicationShutdownActionTask">
+  </di:bean>
+
+  <!-- Task for the refresh action -->
+  <di:bean name="refreshTask"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.RefreshActionTask">
+    <di:constructor>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+
+  <!-- File new action command and task -->
+  <di:bean name="openNewFileDialogCommand"
+    beanClass="net.sf.jguiraffe.gui.app.OpenWindowCommand">
+    <di:constructor>
+      <di:param value="classpath:newfile.jelly"/>
+    </di:constructor>
+  </di:bean>
+
+  <di:bean name="openNewFileDialogTask"
+    beanClass="net.sf.jguiraffe.gui.app.CommandActionTask">
+    <di:setProperty property="commandBeanName" value="openNewFileDialogCommand"/>
+    <di:setProperty property="beforeEnabler" value="action:fileNewAction"/>
+  </di:bean>
+
+  <!-- File open action task -->
+  <di:bean name="fileOpenTask" 
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.OpenDesktopTask">
+    <di:constructor>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+
+  <!-- File edit action task -->
+  <di:bean name="fileEditTask" 
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.EditDesktopTask">
+    <di:constructor>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+
+  <!-- File print action task -->
+  <di:bean name="filePrintTask" 
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.PrintDesktopTask">
+    <di:constructor>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+
+  <!-- Extras view definitions command and task -->
+  <di:bean name="openViewDefsDialogCommand"
+    beanClass="net.sf.jguiraffe.examples.tutorial.viewset.OpenViewSettingsDlgCommand">
+  </di:bean>
+
+  <di:bean name="openViewDefsDialogTask"
+    beanClass="net.sf.jguiraffe.gui.app.CommandActionTask">
+    <di:setProperty property="commandBeanName" value="openViewDefsDialogCommand"/>
+    <di:setProperty property="beforeEnabler" value="action:extrasViewDefAction"/>
+  </di:bean>
+
+  <!-- Extras long operation command and task -->
+  <di:bean name="longOperationCommand"
+    beanClass="net.sf.jguiraffe.gui.app.OpenWindowCommand">
+    <di:constructor>
+      <di:param value="classpath:bgtask.jelly"/>
+    </di:constructor>
+  </di:bean>
+
+  <di:bean name="longOperationTask"
+    beanClass="net.sf.jguiraffe.gui.app.CommandActionTask">
+    <di:setProperty property="commandBeanName" value="longOperationCommand"/>
+    <di:setProperty property="beforeEnabler" value="action:extrasLongOpAction"/>
+  </di:bean>
+</j:jelly>

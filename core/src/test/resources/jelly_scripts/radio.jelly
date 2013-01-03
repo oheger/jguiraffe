@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+  Jelly test script for creating radio buttons.
+  $Id: radio.jelly 205 2012-01-29 18:29:57Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:f="formBuilder">
+  <!-- A complete radio group with button declarations -->
+  <f:radioGroup name="pizze" ifName="BUILDER_INGROUP">
+    <f:radio name="rad1" text="Magherita" backColor="white" alignment="center">
+      <f:icon resource="icon.gif"/>
+    </f:radio>
+    <f:radio name="rad2" textres="RADIO1" resgrp="testformbuilderresources"
+      noField="false"/>
+    <f:radio name="rad3" textres="RADIO2" mnemonicres="RADIO2"/>
+    <f:radio name="rad4" textres="RADIO3"/>
+  </f:radioGroup>
+
+  <!-- A radio group with external button declarations -->
+  <f:radioGroup name="pizze" ifName="BUILDER_EXGROUP"/>
+  <f:radio name="rad1" text="Magherita" backColor="white" alignment="center"
+    noField="true" groups="pizze" ifName="BUILDER_EXGROUP">
+    <f:icon resource="icon.gif"/>
+  </f:radio>
+  <f:radio name="rad2" textres="RADIO1" resgrp="testformbuilderresources"
+    groups="pizze" ifName="BUILDER_EXGROUP" noField="false"/>
+  <f:radio name="rad3" textres="RADIO2" mnemonicres="RADIO2" groups="pizze"
+    noField="true" ifName="BUILDER_EXGROUP"/>
+  <f:radio name="rad4" textres="RADIO3" groups="pizze" noField="true"
+    ifName="BUILDER_EXGROUP"/>
+
+  <!-- A radio group with both internal and external button declarations -->
+  <f:radioGroup name="pizze" ifName="BUILDER_MIXED">
+    <f:radio name="rad1" text="Magherita" backColor="white" alignment="center">
+      <f:icon resource="icon.gif"/>
+    </f:radio>
+    <f:radio name="rad2" textres="RADIO1" resgrp="testformbuilderresources"
+      noField="false"/>
+    <f:radio name="rad3" textres="RADIO2" mnemonicres="RADIO2"/>
+  </f:radioGroup>
+  <f:radio name="rad4" textres="RADIO3" groups="pizze" noField="true"
+    ifName="BUILDER_MIXED"/>
+
+  <!-- A radio group with an alternative button handler -->
+  <f:radioGroup name="pizze" ifName="BUILDER_HANDLER">
+    <f:radio name="rad1" text="Magherita" backColor="white" alignment="center">
+      <f:icon resource="icon.gif"/>
+    </f:radio>
+    <f:radio name="rad2" textres="RADIO1" resgrp="testformbuilderresources"
+      noField="false"/>
+    <f:radio name="rad3" textres="RADIO2" mnemonicres="RADIO2"/>
+    <f:radio name="rad4" textres="RADIO3"/>
+    <f:componentHandler
+      class="net.sf.jguiraffe.gui.builder.components.tags.TestRadioButtonTagScript$RadioButtonHandlerTestImpl"/>
+  </f:radioGroup>
+
+  <!-- A radio group that is assigned an invalid component handler. -->
+  <f:radioGroup name="pizze" ifName="BUILDER_ERRHANDLER">
+    <f:radio name="rad1" text="Magherita" backColor="white" alignment="center">
+      <f:icon resource="icon.gif"/>
+    </f:radio>
+    <f:componentHandler class="net.sf.jguiraffe.gui.forms.ComponentHandlerImpl"/>
+  </f:radioGroup>
+</j:jelly>

@@ -1,0 +1,405 @@
+<!--
+   Copyright 2006-2012 The GUIraffe Team.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<!-- ===================================================================== -->
+<!-- $Id: pom.xml 217 2012-11-14 20:58:20Z oheger $ -->
+<!-- ===================================================================== -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.sf.jguiraffe</groupId>
+  <artifactId>jguiraffe-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1.3-SNAPSHOT</version>
+
+  <modules>
+    <module>core</module>
+    <module>examples</module>
+  </modules>
+
+  <name>JGUIraffe Parent</name>
+  <url>http://jguiraffe.sourceforge.net/</url>
+  <organization>
+    <name>The JGUIraffe Team</name>
+  </organization>
+  <description>
+    The parent pom of the JGUIraffe project.
+  </description>
+  <issueManagement>
+    <system>SourceForge</system>
+    <url>https://sourceforge.net/tracker/?func=add&amp;group_id=162864&amp;atid=825469</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:svn:https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe</connection>
+    <url>http://jguiraffe.svn.sourceforge.net/viewvc/jguiraffe/</url>
+  </scm>
+  <mailingLists>
+    <mailingList>
+      <name>JGUIraffe developers</name>
+      <post>jguiraffe-developers@lists.sourceforge.net</post>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/jguiraffe-developers</subscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=jguiraffe-developers</archive>
+    </mailingList>
+  </mailingLists>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <developers>
+    <developer>
+      <id>oheger</id>
+      <name>Oliver Heger</name>
+      <email>oheger@users.sourceforge.net</email>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- Inter project dependencies -->
+      <dependency>
+        <groupId>net.sf.jguiraffe</groupId>
+        <artifactId>jguiraffe</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- Common dependencies -->
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.8</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.10</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.11</version>
+          <configuration>
+            <forkMode>once</forkMode>
+            <argLine>-enableassertions</argLine>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.5.1</version>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.5.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.2</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>${maven.user}</Built-By>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.8.1</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>${maven.user}</Built-By>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+
+        <!--
+            A configuration of the antrun plugin which copies the license files
+            into the generated Javadocs jar.
+        -->
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.7</version>
+          <executions>
+            <execution>
+              <id>javadoc.resources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <tasks>
+                  <copy todir="target/apidocs/META-INF">
+                    <fileset dir="../">
+                      <include name="LICENSE.txt"/>
+                      <include name="NOTICE.txt"/>
+                    </fileset>
+                  </copy>
+                </tasks>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.mycila.maven-license-plugin</groupId>
+          <artifactId>maven-license-plugin</artifactId>
+          <version>1.9.0</version>
+          <configuration>
+            <header>../conf/License-Header.txt</header>
+            <includes>
+              <include>src/**</include>
+              <include>pom.xml</include>
+              <include>../conf/*.xml</include>
+            </includes>
+            <mapping>
+              <java>SLASHSTAR_STYLE</java>
+              <jelly>XML_STYLE</jelly>
+            </mapping>
+            <properties>
+              <year>2012</year>
+            </properties>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>${maven.user}</Built-By>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <url>scp://shell.sourceforge.net/home/project-web/jguiraffe/htdocs</url>
+    </site>
+  </distributionManagement>
+
+  <profiles>
+    <!--
+      Configure site plugin to support both Maven2 and Maven3, see:
+      http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Using_the_same_version_of_maven-site-plugin_for_both_Maven_2_and_Maven_3
+    -->
+    <profile>
+      <id>maven-3</id>
+      <activation>
+        <file>
+          <exists>${basedir}</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                  <groupId>org.apache.maven.wagon</groupId>
+                  <artifactId>wagon-ssh</artifactId>
+                  <version>2.2</version>
+                </dependency>
+              </dependencies>
+            <executions>
+              <execution>
+                <id>attach-descriptor</id>
+                <goals>
+                  <goal>attach-descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  <!--
+    The following profiles are used to create the artifacts required for a
+    release. The required commands are as follows:
+
+    mvn clean install site:site -P release,sign -Dmaven.user=user
+    mvn install -N -P dist,sign
+  -->
+    <profile>
+      <id>release</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <build>
+        <resources>
+          <resource>
+            <targetPath>META-INF</targetPath>
+            <directory>${basedir}/../</directory>
+            <includes>
+              <include>LICENSE.txt</include>
+              <include>NOTICE.txt</include>
+            </includes>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+
+    <profile>
+      <id>sign</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-5</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <finalName>jguiraffe-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/assembly/bin.xml</descriptor>
+                <descriptor>src/assembly/src.xml</descriptor>
+              </descriptors>
+              <tarLongFileMode>gnu</tarLongFileMode>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

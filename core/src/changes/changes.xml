@@ -1,0 +1,67 @@
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- ===================================================================== -->
+<!-- $Id: changes.xml 218 2012-11-15 20:56:00Z oheger $ -->
+<!-- ===================================================================== -->
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <properties>
+    <title>JGUIraffe Changes Report definition</title>
+    <author email="oheger@sourceforge.net">Oliver Heger</author>
+  </properties>
+  <body>
+    <release version="1.2" date="2012-11-15"
+      description="Adding OSGi support">
+      <action dev="oheger" issue="3535847" type="add">
+        Added OSGi support.
+      </action>
+    </release>
+
+    <release version="1.1" date="2012-02-12"
+      description="First maintenance release">
+      <action dev="oheger" issue="3480996" type="add">
+        Improvements of the dependency injection framework related to factory
+        beans and builder classes.
+      </action>
+      <action dev="oheger" issue="3380233" type="add">
+        SwingTableComponentHandler now ensures that a newly selected row
+        (in single-selection mode) becomes visible. If necessary, it changes the
+        position of the scroll pane.
+      </action>
+      <action dev="oheger" issue="3380231" type="update">
+        Updated test dependency to EasyMock to the most recent version 3.0.
+      </action>
+      <action dev="oheger" issue="3368763" type="add">
+        Added a transformer to StaticTextData objects which simpliefies usage
+        of static text controls in forms.
+      </action>
+      <action dev="oheger" issue="3368750" type="fix">
+        Builders could throw an undocumented LocatorException. Such exceptions
+        are now caught and re-thrown as BuilderException exceptions.
+      </action>
+      <action dev="oheger" issue="3299754" type="fix">
+        Fixed a NullPointerException which can occur in the dependency injection
+        framework when looking up beans by classes rather than bean names.
+      </action>
+    </release>
+
+    <release version="1.0" date="2010-09-03" description="First release">
+    </release>
+  </body>
+</document>

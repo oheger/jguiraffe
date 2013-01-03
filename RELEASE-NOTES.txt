@@ -1,0 +1,38 @@
+$Id: RELEASE-NOTES.txt 214 2012-11-13 21:19:44Z oheger $
+
+                           JGUIraffe Library
+                               Version 1.2
+                              Release Notes
+
+
+INTRODUCTION
+============
+
+This document contains the release notes for this version of the JGUIraffe
+library. JGUIraffe is a framework supporting the implementation of Java
+desktop applications using concepts like declarative UI definition, action and
+command objects, and dependency injection.
+
+The 1.2 release stands under a single topic: OSGi support. The jar file is now
+an OSGi bundle, many classes have been updated to work properly in an OSGi
+environment, and a new chapter dealing with JGUIraffe and OSGi has been added
+to the user's guide.
+
+Below is the full list of fixed tracker issues:
+
+NEW FEATURES
+============
+* [3535847]
+  Added OSGi support.
+
+OTHER CHANGES
+=============
+* The dependency to Commons Configuration has been updated to version 1.9.
+  (The older version 1.8 still works.)
+
+Comprehensive documentation about the JGUIraffe library is available on
+the project's web site
+    http://jguiraffe.sourceforge.net/
+
+A user's guide can be found at
+    http://jguiraffe.sourceforge.net/jguiraffe/userguide/user_guide.html

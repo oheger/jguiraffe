@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder" xmlns:f="formBuilder"
+  xmlns:a="actionBuilder" xmlns:w="windowBuilder">
+  <!-- A simple bean declaration.-->
+  <di:bean name="rootBean" beanClass="net.sf.jguiraffe.di.ReflectionTestClass"/>
+
+  <!-- A bean that is initialized with some objects created during the builder
+       operation.
+  -->
+  <di:bean name="testBean"
+    beanClass="net.sf.jguiraffe.gui.builder.impl.TestJellyBuilder$JellyBuilderTestBean">
+    <di:setProperty property="compData" refName="COMPONENT_BUILDER_DATA"/>
+    <di:setProperty property="textField" refName="testText"/>
+  </di:bean>
+
+  <!-- Definition of a menu bar for the window -->
+  <a:menubar name="windowMenu">
+    <a:menu text="File" mnemonic="F">
+      <a:menuitem text="Exit"/>
+    </a:menu>
+  </a:menubar>
+
+  <!-- A window definition -->
+  <w:frame title="A window" menu="windowMenu" unlessName="container">
+    <f:icon resource="icon.gif"/>
+    <f:label text="A label" componentref="testText"/>
+    <f:textfield name="testText"/>
+  </w:frame>
+
+  <!-- A container definition -->
+  <f:panel ifName="container">
+    <f:label text="A label" componentref="testText"/>
+    <f:textfield name="testText"/>
+
+    <!-- This bean definition should be visible only if the bean builder runs-->
+    <di:bean name="containerBean" value="containerBean"/>
+  </f:panel>
+</j:jelly>

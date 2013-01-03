@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<!-- $Id: building.xml 213 2012-07-14 19:40:51Z oheger $ -->
+<document>
+
+  <properties>
+    <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+    <title>Building from SVN</title>
+  </properties>
+
+<body>
+  <section name="Building from Subversion">
+  <p>
+    <em>JGUIraffe</em> uses <a href="http://maven.apache.org">Apache Maven</a>
+    as its build tool. The build should be compatible with both Maven 2 and
+    Maven 3. When you check out the source code from
+    <a href="http://subversion.apache.org/">Subversion</a> using the command
+  </p>
+    <source><![CDATA[
+svn co https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe/trunk jguiraffe
+    ]]></source>
+  <p>
+    you get a maven aggregator project with the following modules:
+    <ul>
+      <li><code>core</code> is the actual library. The jar file created when
+      building this project is the one which needs to be present in the class
+      path of your application.</li>
+      <li><code>examples</code> contains some sample code and also the complete
+      tutorial application.</li>
+    </ul>
+  </p>
+  <p>
+    For convenience the top-level directory contains a <code>pom.xml</code> for
+    building the whole project including all its modules. Just execute the
+    following command in this directory:
+  </p>
+    <source><![CDATA[
+mvn clean install
+    ]]></source>
+  <p>
+    This requires a JDK 1.6 because the <code>examples</code> module uses some
+    1.6 features. The <code>core</code> is compatible with JDK 1.5. It can be
+    built with a 1.5 compiler by issuing the same command in the <code>core</code>
+    subdirectory. The resulting jar file containing all classes of the
+    <em>JGUIraffe</em> library can be found in the <code>core/target</code>
+    folder.
+  </p>
+  <p>
+    <em>Note:</em> If you get an <code>OutOfMemoryError</code>, you have to
+    increase the heap size for the Maven build. This can be achieved by setting
+    the <em>MAVEN_OPTS</em> environment variable correspondingly, e.g.
+    <code>MAVEN_OPTS=-Xmx256m</code> would increase the size of the heap space
+    to 256 M.
+  </p>
+  <p>
+    The pom defines a profile named <em>release</em> which creates some
+    additional artifacts. If it is activated, jars with Javadocs and the
+    project's sources are produced. These jars can be integrated in typical IDEs.
+    To activate this profile and generate the additional artifacts enter the
+    following command (either in the top-level or in the <code>core</code>
+    directory):
+  </p>
+    <source><![CDATA[
+mvn clean install -P release
+    ]]></source>
+  </section>
+</body>
+
+</document>

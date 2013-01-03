@@ -1,0 +1,62 @@
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+
+<body>
+<p>
+This package contains the platform-independent base classes and helper classes
+for the layout managers provided by the <em>JGUIraffe</em> library.
+</p>
+<p>
+The most important class in this package is <code>PercentLayoutBase</code>
+which implements the basic functionality of the <em>percent layout</em> layout
+manager. <em>Percent layout</em> organizes components in a tabular structure.
+For each cell of the table properties like the initial size, the alignment, or
+a weight factor can be defined. The weight factor controls how additional space
+that becomes available if the user resizes the window is assigned to the cells
+comprising the layout. The properties of a cell are specified by an instance of
+<code>CellConstraints</code>.
+</p>
+<p>
+The <code>PercentLayout</code> class is the platform-independent implementation
+of <em>percent layout</em>. Based on the same concepts there are some other
+platform-independent layout manager implementations:
+<ul>
+<li><code>BorderLayout</code> provides the same functionality as the AWT layout
+manager with the same name with some slight enhancements.</li>
+<li><code>ButtonLayout</code> is specialized on layouting the command buttons of
+a dialog (e.g. a bar at the bottom of the dialog containing buttons like
+<em>Save</em>, <em>Cancel</em>, or <em>Help</em>. All buttons have the same size
+and space between them.</li>
+</ul>
+</p>
+<p>
+The term <em>platform-independent</em> in this context means that the layout
+manager classes defined in this package implement the basic layouting
+algorithms, but they do not adhere to special layout manager interfaces. Other
+packages provide concrete sub classes of these classes that can be used in
+specific GUI toolkits, e.g. Swing.
+</p>
+<p>
+<font size="-2">$Id: package.html 205 2012-01-29 18:29:57Z oheger $</font>
+</p>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- $Id: application.xml 212 2012-07-14 15:22:35Z oheger $ -->
+
+<document>
+
+ <properties>
+  <title>Application</title>
+  <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+ </properties>
+
+<body>
+  <section name="The central Application class">
+  <p>
+    Each <em>JGUIraffe</em> application is represented by an object derived
+    from the central
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code> class. <code>Application</code> provides fundamental
+    services that can be used by concrete applications, e.g. life-cycle events,
+    configuration support, handling of a main window, and many more. It also
+    serves as the entry point in the application, i.e. it provides a
+    <code>main()</code> method that can directly be used.
+  </p>
+  <p>
+    Starting an application is a complex operation. A lot of initialization
+    steps have to be performed until the main window is displayed, and the
+    application is ready for user interaction. This section describes these
+    steps and discusses hooks for customization.
+  </p>
+  <p>
+    After that we discuss what happens when an application terminates.
+  </p>
+
+  <subsection name="Initializations at startup">
+  <p>
+    The main entry point into a JGUIraffe application is the static
+    <code>startup()</code> method of
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code>. This method is called with the <code>Application</code>
+    instance to launch. This can either be a direct instance of the
+    <code>Application</code> class or of a derived class.
+    <code>Application</code> is fully functional and can be used out of the box.
+    In this case there is no need to define a custom <code>main()</code> method;
+    the one provided by <code>Application</code> can be used directly.
+    Only if special customization is required, a sub class can be created, which
+    overrides some of the hook methods.
+  </p>
+  <p>
+    During the startup phase the following initializations are performed (in
+    this order):
+    <ul>
+      <li>The location of the main configuration file of the application is
+      determined. For this purpose system properties are evaluated.</li>
+      <li>A hook method for command line processing is invoked.</li>
+      <li>The main configuration file of the application is read.</li>
+      <li>The <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/BeanBuilderFactory.html">
+      BeanBuilderFactory</a></code> to be used by the application is created
+      from the configuration and installed.</li>
+      <li>The global <code><a href="../apidocs/net/sf/jguiraffe/di/BeanContext.html">
+      BeanContext</a></code> of the application is created and initialized. It
+      is populated with the default bean definitions shipped with the framework.</li>
+      <li>The global <code><a href="../apidocs/net/sf/jguiraffe/di/ClassLoaderProvider.html">
+      ClassLoaderProvider</a></code> is created.</li>
+      <li>Further bean definition files that can be specified in the main
+      configuration file are read.</li>
+      <li>The <code><a href="../apidocs/net/sf/jguiraffe/gui/app/ApplicationContext.html">
+      ApplicationContext</a></code> and its helper objects are created from the
+      global <code><a href="../apidocs/net/sf/jguiraffe/di/BeanContext.html">
+      BeanContext</a></code>.</li>
+      <li>The main builder script defining the UI of the application is
+      determined from the configuration. If it is specified, it is processed,
+      and the main application window is created from it. However, this is
+      optional. An application may choose not to define its main window this
+      way.</li>
+      <li>If a main window is defined, it is initialized. This includes setting
+      its position and size to the values stored at the last execution of the
+      application.</li>
+      <li>The applications's <code><a href="../apidocs/net/sf/jguiraffe/gui/cmd/CommandQueue.html">
+      CommandQueue</a></code> is created and installed.</li>
+      <li>If a main window is defined, it is displayed now.</li>
+    </ul>
+  </p>
+  </subsection>
+
+  <subsection name="Hooks">
+  <p>
+    The initialization steps outlined above are performed by well-defined methods
+    of the <code><a href="../apidocs/net/sf/jguiraffe/gui/app/Application.html">
+    Application</a></code> class. In many cases it is possible to hook into
+    the initialization process by overriding corresponding methods. This
+    section discusses the methods that can be used as hooks and provides further
+    information about the initialization procedure.
+  </p>
+  <p>
+    <strong>Determining the main configuration file</strong><br/>
+      A JGUIraffe application uses the <a href="http://commons.apache.org/configuration">
+      Commons Configuration</a> library for reading configuration data. It
+      expects the configuration data to be defined in a so-called
+      <em>configuration definition file</em>, which is an XML document
+      referring to an arbitrary number of configuration files (or other
+      configuration sources). The name of this configuration definition file
+      must be known in order to read it. It can be specified in the following
+      ways:
+      <ul>
+        <li>As resource name: In this case it will be searched in the class
+        path. This is appropriate, for instance, if the whole configuration can
+        be shipped with the application in a jar archive.</li>
+        <li>As URL: Using this approach an arbitrary URL to the configuration
+        file can be specified, e.g. pointing to a file or to a web server.</li>
+      </ul>
+      The <code>Application</code> class has the properties <code>configResourceName</code>
+      and <code>configURL</code> for specifying the location of the configuration
+      file either as resource name or as URL. They can be set before the
+      <code>Application</code> to be started is passed to the static
+      <code>startup()</code> method. If they are not set, the framework reads
+      the values of the following system properties:
+      <ul>
+        <li><code>net.sf.jguiraffe.configName</code> for obtaining the resource
+        name of the configuration file or</li>
+        <li><code>net.sf.jguiraffe.configURL</code> for obtaining the URL
+        pointing to the configuration file.</li>
+      </ul>
+      If neither the properties of the <code>Application</code> instance nor the
+      system properties are defined, the framework uses the default name
+      <em>config.xml</em> and tries to load the file from the class path.
+    </p>
+    <p>
+      <strong>Command line processing</strong><br/>
+      For this purpose the <code>processCommandLine(String[] args)</code> method
+      is invoked. The default implementation of this method is empty. A class
+      derived from <code>Application</code> can override this method to perform
+      arbitrary evaluations of the command line arguments passed to the
+      application at startup.
+    </p>
+    <p>
+      <strong>Reading the configuration</strong><br/>
+      The application's configuration file is actually read by the
+      <code>createConfiguration()</code> method. An application that needs a
+      completely different mechanism of defining the location of the configuration
+      file can override this method. The <code>HierarchicalConfiguration</code>
+      object returned by this method will become the global configuration of
+      this application.
+    </p>
+    <p>
+      <strong>Setting up the <code>BeanBuilderFactory</code></strong><br/>
+      The <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/BeanBuilderFactory.html">
+      BeanBuilderFactory</a></code> is needed for obtaining a reference to the
+      <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/BeanBuilder.html">
+      BeanBuilder</a></code>, i.e. the component that processes bean definition
+      files. Because the <code>BeanBuilderFactory</code> cannot be specified in
+      bean definition file itself, it is obtained from the application's
+      configuration. An application may specify a custom factory class; a
+      fragment of a configuration file which does exactly this could look as
+      follows:
+            <source><![CDATA[
+<config>
+  <framework>
+    <builder>
+      <beanBuilderFactory config-class="my.bean.FactoryClass">
+      </beanBuilderFactory>
+      ...
+    </builder>
+    ...
+  </framework>
+  ...
+         ]]></source>
+         However, using a custom bean builder factory should only be necessary
+         for applications with very specific requirements.
+    </p>
+    <p>
+      <strong>Setting up the <code>BeanContext</code></strong><br/>
+      With the <code>BeanBuilderFactory</code> up and running the bean definition
+      files can now be processed and a <code><a href="../apidocs/net/sf/jguiraffe/di/BeanContext.html">
+      BeanContext</a></code> allowing access to the beans defined there can be
+      created. At first a bean definition file with default declarations for
+      fundamental service beans is read. This file is shipped with the framework
+      and produces a default configuration. It is possible to override these
+      default beans with custom ones, which is explained in a few minutes.
+  </p>
+  <p>
+    <strong>Setting up the <code>ClassLoaderProvider</code></strong><br/>
+    A <code><a href="../apidocs/net/sf/jguiraffe/di/ClassLoaderProvider.html">
+    ClassLoaderProvider</a></code> plays an important role in a complex
+    application setup using multiple class loaders: In bean definition files
+    the classes of the beans to be created are defined using their fully
+    qualified names. When the beans are actually created these names have to
+    be resolved to concrete <code>Class</code> objects. For each bean it is
+    possible to specify a concrete <code>ClassLoader</code> to be used for this
+    purpose. A <code>ClassLoaderProvider</code> is a kind of registry for
+    class loaders. Class loaders can be registered under a symbolic name. In
+    bean declarations these symbolic names can be used again for referring to
+    a specific class loader. If no name for a class loader is provided in a bean
+    definition, the default class loader is used. For the most desktop
+    applications this default should be appropriate.
+  </p>
+  <p>
+    If an enhanced class loader setup is required, the
+    <code>initClassLoaderProvider()</code> method can be overriden. This
+    method is passed the default <code>ClassLoaderProvider</code> object, which
+    was created from the default bean definitions. A custom implementation of
+    this method can register application-specific class loaders at the passed
+    in provider, or, alternatively, create a completely different
+    <code>ClassLoaderProvider</code> - the object returned from this method will
+    become the global <code>ClassLoaderProvider</code> used by all bean builder
+    operations.
+  </p>
+  <p>
+    <strong>Custom bean definitions</strong><br/>
+    After the creation of the <code>ClassLoaderProvider</code> the framework
+    searches the configuration for additional bean definitions to be read. Per
+    default, a special section of the application's configuration file is
+    evaluated for determining the names of additional bean definition files.
+    The following example shows a fragment of a configuration file that defines
+    additional bean definition files:
+  </p>
+  <source><![CDATA[
+<config>
+  <framework>
+    <builder>
+      <beandefinitions>
+        <beandefinition>classpath:/jelly_scripts/applicationbeans.jelly</beandefinition>
+        <beandefinition>url:http://www.myserver.com/config.jelly</beandefinition>
+      </beandefinitions>
+      ...
+  ]]></source>
+  <p>
+    Under <code>&lt;beandefinitions&gt;</code> an arbitrary number of
+    <code>&lt;beandefinition&gt;</code> elements can occur. Each specifies the
+    name of a bean definition file. Bean definition files define service beans
+    that are available for the application. We will provide more information
+    about this topic when we discuss <a href="dibuilder.html">the dependency
+    injection builder</a> in a later chapter. Here we just focus on the way
+    such bean definitions can be passed to the application.
+  </p>
+  <p>
+    The easiest way of adding further bean definitions is to list the files to
+    be processed in this section in the configuration file. If an application
+    needs more flexibility, it can override the <code>findBeanDefinitions()</code>
+    method. This method returns a collection of
+    <code><a href="../apidocs/net/sf/jguiraffe/locators/Locator.html">Locator
+    </a></code> objects pointing to the bean definitions to be processed. The
+    base implementation of the <code>findBeanDefinitions()</code> method uses
+    an instance of the
+    <code><a href="../apidocs/net/sf/jguiraffe/locators/LocatorConverter.html">
+    LocatorConverter</a></code> class to transform textual representations to
+    concrete <code>Locator</code> implementations. Such textual representations
+    start with a prefix (e.g. <em>classpath:</em> or <em>url:</em>) followed by
+    the actual data of the <code>Locator</code>. Refer to the documentation of
+    the <code><a href="../apidocs/net/sf/jguiraffe/locators/LocatorConverter.html">
+    LocatorConverter</a></code> class for more details.
+  </p>
+  <p>
+    Providing custom bean definitions is a powerful means of defining the
+    application's behavior. It is good practice to define central services of
+    the application as beans, which can be accessed by all application
+    components acting as clients of these services. It is also possible to
+    override any or all of the default beans defined by the framework. To do
+    this, just define a bean with the same name as a standard bean in an
+    additional bean definition file. The new bean will replace the standard bean.
+    This also works if the bean that was replaced is referenced by other
+    standard beans: these beans will also use the new bean. More information
+    about standard beans can be found in the sub section
+    <a href="dibuilder.html#standard_beans">Application standard beans</a>.
+  </p>
+  <p>
+    <strong>Setting up the <code>ApplicationContext</code></strong><br/>
+    Each application is associated with a single instance of the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/ApplicationContext.html">
+    ApplicationContext</a></code> class. This instance especially holds references
+    to some fundamental service objects (like the resource manager, the
+    configuration, or the GUI synchronizer), and provides some important
+    functionality often needed by applications.
+  </p>
+  <p>
+    Creation of the <code>ApplicationContext</code> is done by the
+    <code>createApplicationContext()</code>. The default implementation of
+    <code>createApplicationContext()</code> performs some of the initializations
+    already discussed (reading the configuration, setting up the
+    <code>BeanContext</code> and the <code>ClassLoaderProvider</code>, processing
+    additional bean definition files). Finally, it has a fully initialized
+    <code>BeanContext</code>. From this context the application context is
+    obtained. So for applications that want to replace the standard
+    <code>ApplicationContext</code> by a custom implementation, the easiest way
+    is to override the bean definition for the application context bean. To do
+    this a bean with the name <em>jguiraffe.applicationContext</em> has to be
+    defined in an additional bean definition file.
+  </p>
+  <p>
+    <strong>Initializing the main window</strong><br/>
+    An important feature of the JGUIraffe library is its support for builder
+    scripts defining UI elements. So it is naturally that this feature is also
+    used here for defining the application's main GUI. Initialization of the
+    GUI is performed by the <code>initGUI()</code> method. The default
+    implementation obtains the name of the builder script with the GUI
+    definition from the main configuration file. It can be defined there as in
+    the following example:
+  </p>
+  <source><![CDATA[
+<config>
+  <framework>
+    <builder>
+      <mainScript>/jelly_scripts/mainWindow.jelly</mainScript>
+      ...
+  ]]></source>
+  <p>
+    If the <code>mainScript</code> property is defined, the referenced builder
+    is load from the class path and executed. If this results in a window,
+    <code>setMainWindow()</code> is called on the <code>ApplicationContext</code>
+    to install the application's main window. Applications that want to use a
+    different way of defining their GUI can override <code>initGUI()</code>.
+    It does not matter how the actually create their main window. All they have
+    to do is calling <code>setMainWindow()</code> to register the main window
+    with the application context.
+  </p>
+  <p>
+    <strong>Setting up the <code>CommandQueue</code></strong><br/>
+    Longer-running tasks must not be run on the event dispatch thread because
+    otherwise the GUI will block. JGUIraffe uses an object implementing the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/cmd/CommandQueue.html">
+    CommandQueue</a></code> interface for offering support for background tasks.
+    The concrete implementation of this interface is created by the
+    <code>createCommandQueue()</code> method. The default implementation just
+    obtains the queue object from the global <code>BeanContext</code>.
+  </p>
+  <p>
+    It should rarely be necessary to replace the <code>CommandQueue</code>
+    implementation. In such cases, the best was is to override the
+    <em>jguiraffe.commandQueue</em> bean definition. Overriding
+    <code>createCommandQueue()</code> may make sense, for instance, if an
+    application wants to register specific listeners at the queue; these
+    listeners can receive notifications e.g. when commands are executed or if
+    the queue changes from the idle to the busy state or vice versa.
+  </p>
+  <p>
+    So far the most important hook methods defined by the <code>Application</code>
+    class. Note that for all of these methods fully functional default
+    implementations are provided, which should be sufficient in many cases.
+    Only if specific behavior is required, some of these methods can be
+    overridden.
+  </p>
+  </subsection>
+
+  <subsection name="Shutdown">
+  <p>
+    The <code>Application</code> class is responsible for the whole life-cycle
+    of the application it represents. Consequently, it also provides methods
+    for terminating the application: the <code>shutdown()</code> methods.
+  </p>
+  <p>
+    There are two overloaded variants of the <code>shutdown()</code> method: one
+    is interactive, the other is not. Interactive in this context means that the
+    method first checks whether it is safe to exit the application now and
+    prompts the user if necessary. A <em>JGUIraffe</em> application can start
+    long-running tasks in a background thread. It is possible that such a
+    background task is still running when the user decides to exit the
+    application (e.g. by clicking the close icon of the main window). In this
+    case the <code>shutdown()</code> method displays a message box with a
+    corresponding warning and asks whether the user really wants to exit the
+    application. Only if the user confirms this message box, the shutdown
+    sequence continues. (For more information about background tasks refer to
+    the <a href="commands.html">Commands</a> section.)
+  </p>
+  <p>
+    The content of the message to be displayed to the user if there are still
+    background threads running is determined by the arguments passed to the
+    <code>shutdown()</code> method. Here a resource ID for the caption and one
+    for the actual message can be specified. The sub section
+    <a href="resources.html#Convenience_methods">Convenience methods</a> provides
+    more information about these resource IDs.
+  </p>
+  <p>
+    The overloaded <code>shutdown()</code> method does not take any arguments.
+    It does not check whether background tasks are running. So this step of the
+    shutdown sequence is skipped.
+  </p>
+  <p>
+    If there are no more background tasks or the user decided to exit anyway,
+    <code>Application</code> processes all registered <em>shutdown
+    listeners</em>. At any time of the lifetime of the central
+    <code>Application</code> object before <code>shutdown()</code> is called
+    event listeners of type
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/app/ApplicationShutdownListener.html">
+    ApplicationShutdownListener</a></code> can be registered by calling the
+    <code>addShutdownListener()</code> method. The
+    <code>ApplicationShutdownListener</code> interface defines two methods:
+    <ul>
+    <li><code>canShutdown()</code> is invoked first and checks whether the
+    application can shutdown now. If an <code>ApplicationShutdownListener</code>
+    implementation returns <b>false</b>, the shutdown sequence is aborted. A use
+    case for this method could be to check whether there are still unsafed
+    changes and prompt the user whether the application should really exit. If
+    the user denies this, the listener can abort the operation. (The same could
+    also be achieved by registering a listener at the application's main window.)
+    </li>
+    <li>Only if all registered <code>ApplicationShutdownListener</code> objects
+    have returned <b>true</b> in their <code>canShutdown()</code> method, the
+    second method, <code>shutdown()</code>, is invoked on all listeners. This
+    method notifies the listeners that the application is actually going to
+    exit. An implementation could for instance perform some cleanup or free
+    resources used by the application.</li>
+    </ul>
+  </p>
+  <p>
+    In the next phase the protected <code>onShutdown()</code> method of
+    <code>Application</code> is called. The base implementation of this method
+    takes care that the <em>user configuration</em> is stored correctly. The
+    user configuration is a configuration object managed by the application which
+    can be populated with arbitrary data. Here also the position and the size of
+    the main window are stored so that they can be restored when the application
+    starts the next time. The user configuration is stored in the user's home
+    directory. So if the application is started by different users, they all
+    have their own user configuration.
+  </p>
+  <p>
+    After that some internal cleanup is performed. Resources obtained during the
+    execution of the builder scripts executed in the initialization phase
+    are released. Eventually the <code>exitApplication()</code> method is
+    invoked which calls <code>System.exit()</code> and terminates the
+    application.
+  </p>
+  </subsection>
+
+  <subsection name="Exit handlers">
+  <p>
+    Well, in fact calling <code>System.exit()</code> is just the default
+    behavior at the end of a successful shutdown operation. There may be
+    scenarios in which it is not desired to terminate the whole Java virtual
+    machine, e.g. when the application is running in a managed environment.
+    For such cases <code>Application</code> allows setting a so-called
+    <em>exit handler</em>.
+  </p>
+  <p>
+    An exit handler simply has to implement the <code>Runnable</code>
+    interface. It can be passed to the <code>setExitHandler()</code> method of
+    <code>Application</code>. At the end of a shutdown operation - if there is
+    no veto from a shutdown listener - the exit handler is invoked. This is
+    the last operation performed by the <code>Application</code> object. It is
+    then in the responsibility of the concrete exit handler implementation to
+    actually complete the shutdown. As was already mentioned, the default exit
+    handler calls <code>System.exit()</code>. If you need other shutdown logic,
+    create a <code>Runnable</code> object implementing the desired behavior and
+    pass it to <code>Application</code>'s <code>setExitHandler()</code> method.
+  </p>
+  </subsection>
+  </section>
+</body>
+
+</document>

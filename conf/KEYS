@@ -1,0 +1,42 @@
+This file contains the keys used for signing JGUIraffe artifacts.
+Import the keys using one of the following commands:
+    pgp < KEYS
+    gpg --import KEYS
+
+After that pgp or gpg can be used to verify the signatures of downloaded
+JGUIraffe artifacts.
+
+pub   1024D/D75CF3DC 2005-02-09
+uid                  Oliver Heger (CODE SIGNING KEY) <oheger@apache.org>
+sig 3        D75CF3DC 2005-02-09  Oliver Heger (CODE SIGNING KEY) <oheger@apache.org>
+sig 3        D75CF3DC 2005-02-09  Oliver Heger (CODE SIGNING KEY) <oheger@apache.org>
+sub   1024g/E5A7764F 2005-02-09
+sig          D75CF3DC 2005-02-09  Oliver Heger (CODE SIGNING KEY) <oheger@apache.org>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.10 (MingW32)
+
+mQGiBEIKY9oRBACP354Cc/RrUGb19JCaNTpnJi/QlOVGg9VMcumnVf+/NPKEwm8x
+rAGFkL/OpDXYbMPP0yEZ9W1ABaor5azA0U3C6QhQrf4wHcGAUmfytcu5AcdJQEAB
+iIn+R9hlsWm4X7yOokHiEF0x35YZW1dFJA14RERalrdMd0ynkfSX3uT+swCgsfKb
+4pena5krbWZQE+cVMkQC7T0D/RThlQHlePkpmV/GBi7wahJBUOTRj4oRPkcJJq0N
+Ov3RrG70gJXsaZOTFgSZNrXY2y/1imn/ijnMtZx/fC/+ILol5FnkvIqWjLD6wg7k
+Q5c5JysTjlBLNf29/uzoHDMHGzFTU6xrB/hdVXG6vjUtd5bZ6NNVMbepNocWo19s
+LEjAA/4nOTD5BOto6CYbvQqvYkxdTGUw520sx101bDnITA5Wuooa4yoi5VtWxD4B
+b9lZWtA43WPS/cmTYq2PVlMK1ckAMc+5CvI4EKuRQbK3V6PvDMSHqCG/QCtJ5SQr
+dTh3o9eIP0AcTdy63Bui6/omQ+JIYhs7M+BH/D2XVorHqmfU4LQzT2xpdmVyIEhl
+Z2VyIChDT0RFIFNJR05JTkcgS0VZKSA8b2hlZ2VyQGFwYWNoZS5vcmc+iF4EExEC
+AB4FAkIKY9oCGwMGCwkIBwMCAxUCAwMWAgECHgECF4AACgkQfEUEpNdc89yaEQCc
+CK8LVZ6Thm4ovu7klWWDTSEQElsAoKCL8z3AHK/gSfRypEPum4z3LfnFiF4EExEC
+AB4FAkIKY9oCGwMGCwkIBwMCAxUCAwMWAgECHgECF4AACgkQfEUEpNdc89yaEQCb
+BlRHNMtpv4SoV3ZE4Lk4QVqECqYAoJxZ7kNpGRXpHNmgRLqAWYXRbbQHuQENBEIK
+Y98QBADvq3R8EJ7idASVqvvQaxbD13WAGdGV+eAQA8Y0jJy2b1jIvNNk1AT6wcDh
+CQcByLpVlfK+4lJ3HY8jr481qYhzRzq+yVRXy3asd5lgCEWpEf/4eQDsYkAyU0/q
+hu3ZoyihzaRdREzVMh8miXdVs09iPo5uBvmk5dpAIlLHiZHf4wADBgQA4Umfa+Ao
+Xjqtsmeao67GIZIDtaBCFztaIHPSrqASLgdWMjIRJ/92xEXRyqeiAy/oxUado1No
+S+kJ9qY+21O0FXPkIt8CvH4Mh0HZDMyS6W3O4w/9hDSploj9wmHNMkEON4uYMgMn
+8+I4wCrPkEJMyaWuV1iTB+SxkdOI0UbKGpmISAQYEQIACQUCQgpj3wIbDAAKCRB8
+RQSk11zz3LAMAJICwier2ykv/kNdQLFoEjhZS/vdAJ9zWXBgSKARkMcT3OdjwoOv
+1sGStw==
+=xKwh
+-----END PGP PUBLIC KEY BLOCK-----
