@@ -28,13 +28,20 @@
   </parent>
 
   <groupId>net.sf.jguiraffe</groupId>
-  <artifactId>jguiraffe</artifactId>
+  <artifactId>jguiraffe-swing</artifactId>
   <packaging>jar</packaging>
 
-  <name>JGUIraffe</name>
-  <description>Java GUI Resource and Application Framework with Form Extensions</description>
+  <name>JGUIraffe Swing</name>
+  <description>
+    JGUIraffe Swing integration.
+  </description>
 
   <dependencies>
+    <dependency>
+      <groupId>net.sf.jguiraffe</groupId>
+      <artifactId>jguiraffe</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
@@ -43,24 +50,6 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.8.3</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-      <version>1.8</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-jelly</groupId>
-      <artifactId>commons-jelly</artifactId>
-      <version>1.0</version>
     </dependency>
 
     <dependency>
@@ -93,13 +82,13 @@
       </plugin>
 
       <plugin>
-        <groupId>com.mycila.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
       </plugin>
 
       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

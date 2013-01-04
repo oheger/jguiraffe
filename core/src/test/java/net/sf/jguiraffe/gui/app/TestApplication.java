@@ -57,8 +57,6 @@ import net.sf.jguiraffe.gui.cmd.CommandQueue;
 import net.sf.jguiraffe.gui.cmd.CommandQueueEvent;
 import net.sf.jguiraffe.gui.cmd.CommandQueueImpl;
 import net.sf.jguiraffe.gui.cmd.CommandQueueListener;
-import net.sf.jguiraffe.gui.platform.swing.builder.utils.SwingGUISynchronizer;
-import net.sf.jguiraffe.gui.platform.swing.builder.utils.SwingMessageOutput;
 import net.sf.jguiraffe.locators.ClassPathLocator;
 import net.sf.jguiraffe.locators.Locator;
 import net.sf.jguiraffe.locators.URLLocator;
@@ -258,8 +256,6 @@ public class TestApplication
         ApplicationContext ctx = app.createApplicationContext();
         MessageOutput mo = ctx.getMessageOutput();
         assertNotNull("No message output set", mo);
-        assertEquals("Wrong messageoutput object", SwingMessageOutput.class, mo
-                .getClass());
     }
 
     /**
@@ -328,8 +324,6 @@ public class TestApplication
         assertNotNull("No command queue created", q);
         GUISynchronizer sync = q.getGUISynchronizer();
         assertNotNull("No GUI synchronizer created", sync);
-        assertTrue("Wrong synchronizer class: " + sync,
-                sync instanceof SwingGUISynchronizer);
     }
 
     /**
@@ -920,6 +914,18 @@ public class TestApplication
     }
 
     /**
+     * Creates a mock for a GUISynchronizer object.
+     *
+     * @return the synchronizer object
+     */
+    private static GUISynchronizer createSynchronizer()
+    {
+        GUISynchronizer sync = EasyMock.createNiceMock(GUISynchronizer.class);
+        EasyMock.replay(sync);
+        return sync;
+    }
+
+    /**
      * Test an aborted shutdown operation.
      */
     @Test
@@ -927,7 +933,7 @@ public class TestApplication
     {
         app.setConfigResourceName(CONFIG_MAX);
         app.setApplicationContext(app.createApplicationContext());
-        app.setCommandQueue(new CommandQueueImpl(new SwingGUISynchronizer())
+        app.setCommandQueue(new CommandQueueImpl(createSynchronizer())
         {
             @Override
             public synchronized boolean isPending()
@@ -1029,7 +1035,7 @@ public class TestApplication
         EasyMock.expect(factory.getBeanBuilder()).andThrow(
                 new BuilderException("Test exception!"));
         EasyMock.replay(factory);
-        app.setCommandQueue(new CommandQueueImpl(new SwingGUISynchronizer()));
+        app.setCommandQueue(new CommandQueueImpl(createSynchronizer()));
         app.mockFactory = factory;
         TestExitHandler eh = new TestExitHandler(app);
         app.setExitHandler(eh);
