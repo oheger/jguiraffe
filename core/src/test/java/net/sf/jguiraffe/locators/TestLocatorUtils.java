@@ -37,8 +37,10 @@ import java.net.URLConnection;
 import java.util.Date;
 
 import org.easymock.EasyMock;
-import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test class for LocatorUtils.
@@ -48,58 +50,41 @@ import org.junit.Test;
  */
 public class TestLocatorUtils
 {
-    /** Constant for the name of the target directory. */
-    private static final String TARGET_DIR = "target";
-
-    /** Constant for the name of the directory of the test classes. */
-    private static final String TEST_CLS_DIR = "test-classes";
-
     /** Constant for a test URL. */
     private static final String TEST_URL = "http://www.testurl.com/test/resource.html";
 
     /** Constant for a test resource file. */
     private static final String TEST_RESOURCE = "icon.gif";
 
-    /** A test file that should be located. */
-    private static final File TEST_FILE = new File(new File(TARGET_DIR),
-            "test.txt");
-
     /** Text contained in the test file. */
     private static final String TEST_FILE_CONTENT = "Hello World at"
             + new Date();
 
-    @After
-    public void tearDown() throws Exception
+    private static URL resourceURL;
+
+    /** A helper object for creating temporary files. */
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
     {
-        if (TEST_FILE.exists())
-        {
-            assertTrue("Test file could not be removed!", TEST_FILE.delete());
-        }
+        resourceURL = TestLocatorUtils.class.getResource("/" + TEST_RESOURCE);
     }
 
     /**
      * Creates a test file and writes some content into it.
      *
+     * @return the newly created test file
      * @throws Exception if an error occurs
      */
-    private void createTempFile() throws IOException
+    private File createTempFile() throws IOException
     {
-        PrintWriter out = new PrintWriter(new FileWriter(TEST_FILE));
+        File f = folder.newFile();
+        PrintWriter out = new PrintWriter(new FileWriter(f));
         out.print(TEST_FILE_CONTENT);
         out.close();
-    }
-
-    /**
-     * Creates the URL to a test file loaded from class path.
-     *
-     * @return the URL
-     */
-    private URL createResourceURL()
-    {
-        File file = new File(TARGET_DIR);
-        file = new File(file, TEST_CLS_DIR);
-        file = new File(file, TEST_RESOURCE);
-        return LocatorUtils.fileURL(file);
+        return f;
     }
 
     /**
@@ -108,8 +93,8 @@ public class TestLocatorUtils
     @Test
     public void testFileURL() throws IOException
     {
-        createTempFile();
-        URL url = LocatorUtils.fileURL(TEST_FILE);
+        File f = createTempFile();
+        URL url = LocatorUtils.fileURL(f);
         assertEquals("Wrong protocol", "file", url.getProtocol());
         URLConnection con = url.openConnection();
         con.setUseCaches(false);
@@ -190,10 +175,9 @@ public class TestLocatorUtils
     @Test
     public void testLocateURLFileName() throws IOException
     {
-        createTempFile();
-        assertEquals("Wrong URL for file name",
-                LocatorUtils.fileURL(TEST_FILE), LocatorUtils
-                        .locateURL(TEST_FILE.getAbsolutePath()));
+        File f = createTempFile();
+        assertEquals("Wrong URL for file name", LocatorUtils.fileURL(f),
+                LocatorUtils.locateURL(f.getAbsolutePath()));
     }
 
     /**
@@ -263,7 +247,7 @@ public class TestLocatorUtils
         try
         {
             Thread.currentThread().setContextClassLoader(null);
-            assertEquals("Wrong URL", createResourceURL(), LocatorUtils
+            assertEquals("Wrong URL", resourceURL, LocatorUtils
                     .locateResource(TEST_RESOURCE));
         }
         finally
@@ -278,7 +262,7 @@ public class TestLocatorUtils
     @Test
     public void testLocateResourceNormal() throws Exception
     {
-        assertEquals("Wrong URL", createResourceURL(), LocatorUtils
+        assertEquals("Wrong URL", resourceURL, LocatorUtils
                 .locateResource(TEST_RESOURCE));
     }
 
@@ -288,7 +272,7 @@ public class TestLocatorUtils
     @Test
     public void testLocateResourceSlash()
     {
-        assertEquals("Wrong URL", createResourceURL(), LocatorUtils
+        assertEquals("Wrong URL", resourceURL, LocatorUtils
                 .locateResource("/" + TEST_RESOURCE));
     }
 
@@ -304,7 +288,7 @@ public class TestLocatorUtils
             ClassLoader mockLoader = EasyMock.createMock(ClassLoader.class);
             EasyMock.replay(mockLoader);
             Thread.currentThread().setContextClassLoader(mockLoader);
-            assertEquals("Wrong URL", createResourceURL(),
+            assertEquals("Wrong URL", resourceURL,
                     LocatorUtils.locateResource(TEST_RESOURCE, getClass()
                             .getClassLoader()));
         }
@@ -380,11 +364,11 @@ public class TestLocatorUtils
     @Test
     public void testLocateValidURL() throws IOException
     {
-        createTempFile();
+        File f = createTempFile();
         checkLocateValidURL(TEST_URL, new URL(TEST_URL));
-        URL fileURL = LocatorUtils.fileURL(TEST_FILE);
+        URL fileURL = LocatorUtils.fileURL(f);
         checkLocateValidURL(fileURL.toString(), fileURL);
-        checkLocateValidURL(TEST_FILE.getAbsolutePath(), fileURL);
+        checkLocateValidURL(f.getAbsolutePath(), fileURL);
     }
 
     /**
@@ -393,7 +377,7 @@ public class TestLocatorUtils
     @Test
     public void testLocateValidResource()
     {
-        URL resURL = createResourceURL();
+        URL resURL = resourceURL;
         assertEquals("Wrong result for null URL", resURL, LocatorUtils.locate(
                 null, TEST_RESOURCE));
         assertEquals("Wrong result for non existing URL", resURL, LocatorUtils
@@ -412,7 +396,7 @@ public class TestLocatorUtils
             ClassLoader clMock = EasyMock.createMock(ClassLoader.class);
             EasyMock.replay(clMock);
             Thread.currentThread().setContextClassLoader(clMock);
-            assertEquals("Wrong result", createResourceURL(),
+            assertEquals("Wrong result", resourceURL,
                     LocatorUtils.locate(null, TEST_RESOURCE, getClass()
                             .getClassLoader()));
         }
@@ -455,7 +439,7 @@ public class TestLocatorUtils
             ClassLoader clMock = EasyMock.createMock(ClassLoader.class);
             EasyMock.replay(clMock);
             Thread.currentThread().setContextClassLoader(clMock);
-            assertEquals("Wrong result", createResourceURL(),
+            assertEquals("Wrong result", resourceURL,
                     LocatorUtils.locateEx(null, TEST_RESOURCE, getClass()
                             .getClassLoader()));
         }
@@ -504,12 +488,12 @@ public class TestLocatorUtils
     @Test
     public void testOpenStreamFromURL() throws IOException
     {
-        createTempFile();
+        File f = createTempFile();
         Locator mockLoc = EasyMock.createMock(Locator.class);
         EasyMock.expect(mockLoc.getInputStream()).andReturn(null);
         EasyMock.expect(mockLoc.getFile()).andReturn(null);
         EasyMock.expect(mockLoc.getURL()).andReturn(
-                LocatorUtils.fileURL(TEST_FILE));
+                LocatorUtils.fileURL(f));
         EasyMock.replay(mockLoc);
         checkStream(LocatorUtils.openStream(mockLoc));
         EasyMock.verify(mockLoc);
@@ -521,10 +505,10 @@ public class TestLocatorUtils
     @Test
     public void testOpenStreamFromFile() throws IOException
     {
-        createTempFile();
+        File f = createTempFile();
         Locator mockLoc = EasyMock.createMock(Locator.class);
         EasyMock.expect(mockLoc.getInputStream()).andReturn(null);
-        EasyMock.expect(mockLoc.getFile()).andReturn(TEST_FILE);
+        EasyMock.expect(mockLoc.getFile()).andReturn(f);
         EasyMock.replay(mockLoc);
         checkStream(LocatorUtils.openStream(mockLoc));
         EasyMock.verify(mockLoc);
@@ -536,10 +520,10 @@ public class TestLocatorUtils
     @Test
     public void testOpenSreamFromStream() throws IOException
     {
-        createTempFile();
+        File f = createTempFile();
         Locator mockLoc = EasyMock.createMock(Locator.class);
         EasyMock.expect(mockLoc.getInputStream()).andReturn(
-                new FileInputStream(TEST_FILE));
+                new FileInputStream(f));
         EasyMock.replay(mockLoc);
         checkStream(LocatorUtils.openStream(mockLoc));
         EasyMock.verify(mockLoc);
