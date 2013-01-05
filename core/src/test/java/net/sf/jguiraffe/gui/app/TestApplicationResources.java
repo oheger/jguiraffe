@@ -22,6 +22,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Locale;
 
 import net.sf.jguiraffe.resources.Message;
+import net.sf.jguiraffe.resources.ResourceManager;
+import net.sf.jguiraffe.resources.impl.ResourceManagerImpl;
+import net.sf.jguiraffe.resources.impl.bundle.BundleResourceLoader;
 
 import org.junit.Test;
 
@@ -33,9 +36,6 @@ import org.junit.Test;
  */
 public class TestApplicationResources
 {
-    /** Constant for the name of a test configuration file. */
-    private static final String CONFIG = "testappconfigfactorymin.xml";
-
     /**
      * Tests whether the resource ID can be extracted from a literal.
      */
@@ -98,13 +98,13 @@ public class TestApplicationResources
      */
     private void checkKeys(Locale loc)
     {
-        Application app = new Application();
-        app.setConfigResourceName(CONFIG);
-        ApplicationContext ctx = app.createApplicationContext();
+        ResourceManager rm =
+                new ResourceManagerImpl(new BundleResourceLoader());
         for (ApplicationResources.Keys key : ApplicationResources.Keys.values())
         {
-            assertNotNull("No text for key " + key, ctx
-                    .getResource(ApplicationResources.message(key)));
+            assertNotNull("No text for key " + key, rm.getText(loc,
+                    ApplicationResources.APPLICATION_RESOURCE_GROUP,
+                    ApplicationResources.resourceID(key)));
         }
     }
 
