@@ -44,10 +44,8 @@ import javax.swing.SwingUtilities;
 import net.sf.jguiraffe.gui.builder.event.FormMouseListener;
 import net.sf.jguiraffe.gui.builder.window.WindowClosingStrategy;
 import net.sf.jguiraffe.gui.builder.window.WindowData;
-import net.sf.jguiraffe.gui.builder.window.WindowDataImpl;
 import net.sf.jguiraffe.gui.builder.window.WindowEvent;
-import net.sf.jguiraffe.gui.builder.window.WindowImpl;
-import net.sf.jguiraffe.gui.builder.window.WindowListenerImpl;
+import net.sf.jguiraffe.gui.builder.window.WindowListener;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventAdapter;
 
 import org.easymock.EasyMock;
@@ -228,8 +226,13 @@ public class TestWindowHelper
         setupHelper(true);
         JPanel c = new JPanel();
         c.setSize(150, 100);
-        WindowImpl parent = new WindowImpl();
-        parent.setBounds(10, 20, 400, 250);
+        net.sf.jguiraffe.gui.builder.window.Window parent =
+                EasyMock.createMock(net.sf.jguiraffe.gui.builder.window.Window.class);
+        EasyMock.expect(parent.getXPos()).andReturn(10);
+        EasyMock.expect(parent.getYPos()).andReturn(20);
+        EasyMock.expect(parent.getWidth()).andReturn(400);
+        EasyMock.expect(parent.getHeight()).andReturn(250);
+        EasyMock.replay(parent);
         helper.center(c, parent);
         assertEquals("X pos incorrect", 135, c.getX());
         assertEquals("Y pos incorrect", 95, c.getY());
@@ -294,12 +297,12 @@ public class TestWindowHelper
     @Test
     public void testRemoveWindowListener()
     {
+        WindowListener l = EasyMock.createMock(WindowListener.class);
+        EasyMock.replay(l);
         setupHelper(true);
-        WindowListenerImpl l = new WindowListenerImpl();
         helper.addWindowListener(l);
         helper.removeWindowListener(l);
         helper.fireWindowOpened(this);
-        l.check();
         EasyMock.verify(mockWindow);
     }
 

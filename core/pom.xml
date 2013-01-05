@@ -64,6 +64,11 @@
     </dependency>
 
     <dependency>
+      <groupId>net.sf.jguiraffe</groupId>
+      <artifactId>jguiraffe-test-helper</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>

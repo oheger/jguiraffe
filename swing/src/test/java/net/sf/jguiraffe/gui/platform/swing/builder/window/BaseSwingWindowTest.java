@@ -27,11 +27,9 @@ import java.util.Collection;
 
 import net.sf.jguiraffe.gui.builder.event.FormEventManager;
 import net.sf.jguiraffe.gui.builder.event.FormMouseListener;
-import net.sf.jguiraffe.gui.builder.event.PlatformEventManagerImpl;
+import net.sf.jguiraffe.gui.builder.event.PlatformEventManager;
 import net.sf.jguiraffe.gui.builder.window.Window;
-import net.sf.jguiraffe.gui.builder.window.WindowBaseTest;
 import net.sf.jguiraffe.gui.builder.window.WindowClosingStrategy;
-import net.sf.jguiraffe.gui.builder.window.WindowListenerImpl;
 import net.sf.jguiraffe.gui.builder.window.WindowUtils;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.MouseEventAdapter;
 
@@ -53,7 +51,7 @@ import org.junit.Test;
  * @author Oliver Heger
  * @version $Id: BaseSwingWindowTest.java 205 2012-01-29 18:29:57Z oheger $
  */
-public abstract class BaseSwingWindowTest extends WindowBaseTest
+public abstract class BaseSwingWindowTest
 {
     /** Stores the window to test. */
     protected SwingWindow swingWindow;
@@ -62,6 +60,71 @@ public abstract class BaseSwingWindowTest extends WindowBaseTest
     public void setUp() throws Exception
     {
         swingWindow = createSwingWindow();
+    }
+
+    /**
+     * Tests setting and getting the window's coordinates.
+     */
+    @Test
+    public void testBounds()
+    {
+        getWindow().setBounds(10, 20, 200, 100);
+        assertEquals("Wrong xpos", 10, getWindow().getXPos());
+        assertEquals("Wrong ypos", 20, getWindow().getYPos());
+        assertEquals("Wrong width", 200, getWindow().getWidth());
+        assertEquals("Wrong height", 100, getWindow().getHeight());
+    }
+
+    /**
+     * Tests if a closing strategy can be set and accessed.
+     */
+    @Test
+    public void testClosingStrategy()
+    {
+        WindowClosingStrategy strategy = EasyMock.createMock(WindowClosingStrategy.class);
+        EasyMock.replay(strategy);
+        assertNotNull("Closing strategy is null", getWindow()
+                .getWindowClosingStrategy());
+        getWindow().setWindowClosingStrategy(strategy);
+        assertSame("Closing strategy was not stored", strategy, getWindow()
+                .getWindowClosingStrategy());
+        getWindow().setWindowClosingStrategy(null);
+        assertNotNull("Closing strategy is null", getWindow()
+                .getWindowClosingStrategy());
+    }
+
+    /**
+     * Tests opening and closing the window.
+     */
+    @Test
+    public void testOpenAndClose()
+    {
+        getWindow().open();
+        assertTrue("Window not visible", getWindow().isVisible());
+        getWindow().close(true);
+        assertFalse("Window is not hidden", getWindow().isVisible());
+    }
+
+    /**
+     * Tests showing and hiding the window.
+     */
+    @Test
+    public void testVisible()
+    {
+        getWindow().setVisible(true);
+        assertTrue("Window not visible", getWindow().isVisible());
+        getWindow().setVisible(false);
+        assertFalse("Window is not hidden", getWindow().isVisible());
+    }
+
+    /**
+     * Tests accessing the window's title.
+     */
+    @Test
+    public void testWindowTitle()
+    {
+        getWindow().setTitle("My window");
+        assertEquals("Title not set", "My window", getWindow().getTitle());
     }
 
     /**
@@ -119,9 +182,11 @@ public abstract class BaseSwingWindowTest extends WindowBaseTest
     @Test
     public void testAddWindowListenerReflection()
     {
+        PlatformEventManager pe =
+                EasyMock.createNiceMock(PlatformEventManager.class);
+        EasyMock.replay(pe);
         WindowListenerImpl listener = new WindowListenerImpl();
-        FormEventManager evMan = new FormEventManager(
-                new PlatformEventManagerImpl());
+        FormEventManager evMan = new FormEventManager(pe);
         evMan.addEventListenerToObject(swingWindow, "Window", listener);
         assertEquals("Window listener was not registered", 1, swingWindow
                 .getWindowListeners().size());
@@ -229,7 +294,6 @@ public abstract class BaseSwingWindowTest extends WindowBaseTest
      *
      * @return the test window
      */
-    @Override
     protected Window getWindow()
     {
         return swingWindow;

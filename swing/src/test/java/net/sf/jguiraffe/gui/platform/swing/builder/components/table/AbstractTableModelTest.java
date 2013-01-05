@@ -23,19 +23,20 @@ import javax.swing.JTable;
 
 import net.sf.jguiraffe.di.impl.DefaultBeanContext;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
-import net.sf.jguiraffe.gui.builder.components.ComponentManagerImpl;
+import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnTag;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
 import net.sf.jguiraffe.gui.builder.impl.JellyContextBeanStore;
 import net.sf.jguiraffe.gui.forms.DefaultFieldHandler;
-import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
 import net.sf.jguiraffe.gui.layout.Unit;
+import net.sf.jguiraffe.transform.TransformerContext;
 
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.Tag;
+import org.easymock.EasyMock;
 
 /**
  * An abstract test class for tests of Swing table functionality. This class
@@ -107,11 +108,13 @@ public abstract class AbstractTableModelTest
             String scrollWidth, String scrollHeight) throws JellyTagException,
             FormBuilderException
     {
+        ComponentManager cm = EasyMock.createNiceMock(ComponentManager.class);
+        TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.class);
+        EasyMock.replay(cm, tctx);
         JellyContext ctx = new JellyContext();
         ComponentBuilderData builderData = new ComponentBuilderData();
-        builderData.setComponentManager(new ComponentManagerImpl());
-        builderData.initializeForm(new TransformerContextImpl(),
-                new BeanBindingStrategy());
+        builderData.setComponentManager(cm);
+        builderData.initializeForm(tctx, new BeanBindingStrategy());
         builderData.setBeanContext(new DefaultBeanContext(
                 new JellyContextBeanStore(ctx, null)));
         builderData.put(ctx);

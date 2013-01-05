@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.sf.jguiraffe.gui.builder.window.WindowEvent.Type;
-import net.sf.jguiraffe.gui.builder.window.WindowListenerImpl;
 
 import org.easymock.EasyMock;
 import org.junit.Before;

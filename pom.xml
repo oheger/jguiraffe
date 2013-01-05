@@ -27,6 +27,7 @@
   <version>1.3-SNAPSHOT</version>
 
   <modules>
+    <module>test-helper</module>
     <module>core</module>
     <module>examples</module>
     <module>swing</module>
@@ -90,6 +91,13 @@
         <groupId>net.sf.jguiraffe</groupId>
         <artifactId>jguiraffe-swing</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.jguiraffe</groupId>
+        <artifactId>jguiraffe-test-helper</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
       </dependency>
 
       <!-- Common dependencies -->

@@ -44,10 +44,9 @@ import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.window.Window;
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData;
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderException;
-import net.sf.jguiraffe.gui.builder.window.WindowDataImpl;
 import net.sf.jguiraffe.gui.builder.window.WindowUtils;
-import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
+import net.sf.jguiraffe.transform.TransformerContext;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -585,6 +584,8 @@ public class TestSwingWindowManager
      */
     private WindowDataImpl createWindowData(boolean bounds)
     {
+        TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.class);
+        EasyMock.replay(tctx);
         WindowDataImpl data = new WindowDataImpl();
         data.setController(TEST_CONTROLLER);
         data.setTitle(TEST_TITLE);
@@ -596,8 +597,7 @@ public class TestSwingWindowManager
         bar.add(menu);
         data.setMenuBar(bar);
         ComponentBuilderData builderData = new ComponentBuilderData();
-        builderData.initializeForm(new TransformerContextImpl(),
-                new BeanBindingStrategy());
+        builderData.initializeForm(tctx, new BeanBindingStrategy());
         data.setComponentBuilderData(builderData);
 
         if (bounds)

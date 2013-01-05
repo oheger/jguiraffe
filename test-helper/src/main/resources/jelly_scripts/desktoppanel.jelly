@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright 2006-2012 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+  Jelly script for testing the desktop panel tag.
+  $Id: desktoppanel.jelly 205 2012-01-29 18:29:57Z oheger $
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:f="formBuilder">
+  <!-- A simple desktop panel. Drag mode should be set to default.-->
+  <f:desktopPanel backColor="white" ifName="DP_DEFDRAG"/>
+
+  <!-- A desktop panel with a drag mode definition -->
+  <f:desktopPanel dragmode="OutLine" ifName="DP_DRAG"/>
+
+  <!-- A desktop panel with an invalid drag mode definition -->
+  <f:desktopPanel dragmode="Not an allowed drag mode!" ifName="DP_DRAGINV"/>
+</j:jelly>

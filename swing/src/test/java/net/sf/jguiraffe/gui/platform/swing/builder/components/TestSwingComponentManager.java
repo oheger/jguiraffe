@@ -113,7 +113,6 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableEditorValidationH
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableSelectionHandler;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
-import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
 import net.sf.jguiraffe.gui.layout.Unit;
@@ -125,6 +124,7 @@ import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventManager;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
 import net.sf.jguiraffe.locators.ClassPathLocator;
 import net.sf.jguiraffe.locators.Locator;
+import net.sf.jguiraffe.transform.TransformerContext;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
@@ -178,13 +178,14 @@ public class TestSwingComponentManager
      */
     private void initTag(FormBaseTag tag) throws JellyTagException
     {
+        TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.class);
+        EasyMock.replay(tctx);
         tag.setContext(context);
         ComponentBuilderData builderData = new ComponentBuilderData();
         builderData.put(context);
         builderData.setRootContainer(new JPanel());
         builderData.setComponentManager(manager);
-        builderData.initializeForm(new TransformerContextImpl(),
-                new BeanBindingStrategy());
+        builderData.initializeForm(tctx, new BeanBindingStrategy());
         builderData.setFieldHandlerFactory(new DefaultFieldHandlerFactory());
         tag.setBody(new TagScript());
     }
@@ -1407,7 +1408,7 @@ public class TestSwingComponentManager
         assertNotNull("No table created", tabHandler.getTable());
         assertTrue("Incorrect model: " + tabHandler.getTableModel(), tabHandler
                 .getTableModel() instanceof SwingTableModel);
-        SwingTableModel model = (SwingTableModel) tabHandler.getTableModel();
+        SwingTableModel model = tabHandler.getTableModel();
         assertSame("Wrong underlying tag", tag, model.getTableTag());
         assertNotNull("No validation handler set", model.getTableTag()
                 .getEditorValidationHandler());

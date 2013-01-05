@@ -25,6 +25,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.util.EnumSet;
+import java.util.Locale;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -52,11 +53,15 @@ import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData;
 import net.sf.jguiraffe.gui.builder.event.Keys;
 import net.sf.jguiraffe.gui.builder.event.Modifiers;
-import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
+import net.sf.jguiraffe.gui.forms.BindingStrategy;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.SwingButtonHandler;
+import net.sf.jguiraffe.resources.ResourceManager;
+import net.sf.jguiraffe.transform.TransformerContext;
 
+import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -223,7 +228,7 @@ public class TestSwingActionManager
         JMenu menu = createMenu(data, menuBar);
         assertEquals("Text was not set", "File", menu.getText());
         assertEquals("Icon was not set", ACTION_ICON, menu.getIcon());
-        assertEquals("Mnemonic was not set", (int) 'F', menu.getMnemonic());
+        assertEquals("Mnemonic was not set", 'F', menu.getMnemonic());
         assertEquals("Menu was not added to bar", 1, menuBar.getMenuCount());
     }
 
@@ -238,8 +243,8 @@ public class TestSwingActionManager
         data.setMnemonicResID("MEN_FILE_MNEMO");
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = createMenu(data, menuBar);
-        assertEquals("Text was not set", "File", menu.getText());
-        assertEquals("Mnemonic was not set", (int) 'F', menu.getMnemonic());
+        assertEquals("Text was not set", "RES_null_MEN_FILE_TXT", menu.getText());
+        assertEquals("Mnemonic was not set", 'R', menu.getMnemonic());
         assertEquals("Menu was not added to bar", 1, menuBar.getMenuCount());
     }
 
@@ -729,13 +734,49 @@ public class TestSwingActionManager
         ActionTag tag = new ActionTag();
         try
         {
-            tag.setContext(TransformerContextImpl.setUpTransformerCtxInJelly());
+            JellyContext context = new JellyContext();
+            ComponentBuilderData data = new ComponentBuilderData();
+            data.put(context);
+            TransformerContext tctx = setUpTransformerContext();
+            BindingStrategy strat =
+                    EasyMock.createNiceMock(BindingStrategy.class);
+            EasyMock.replay(strat);
+            data.initializeForm(tctx, strat);
+            tag.setContext(context);
         }
         catch (JellyTagException e)
         {
             fail("Error when initializing action tag!");
         }
         return tag;
+    }
+
+    /**
+     * Creates a mock for the transformer context. This method also mocks the
+     * resource manager.
+     *
+     * @return the mock transformer context
+     */
+    public TransformerContext setUpTransformerContext()
+    {
+        TransformerContext tctx =
+                EasyMock.createNiceMock(TransformerContext.class);
+        ResourceManager rm = EasyMock.createMock(ResourceManager.class);
+        final Locale testLocale = Locale.ENGLISH;
+        EasyMock.expect(tctx.getLocale()).andReturn(testLocale).anyTimes();
+        EasyMock.expect(
+                rm.getText(EasyMock.eq(testLocale), EasyMock.anyObject(),
+                        EasyMock.anyObject())).andAnswer(new IAnswer<String>()
+        {
+            public String answer() throws Throwable
+            {
+                return "RES_" + EasyMock.getCurrentArguments()[1] + "_"
+                        + EasyMock.getCurrentArguments()[2];
+            }
+        }).anyTimes();
+        EasyMock.expect(tctx.getResourceManager()).andReturn(rm).anyTimes();
+        EasyMock.replay(rm, tctx);
+        return tctx;
     }
 
     static

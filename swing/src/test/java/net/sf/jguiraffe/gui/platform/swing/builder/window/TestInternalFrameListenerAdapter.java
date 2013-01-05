@@ -21,7 +21,6 @@ import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sf.jguiraffe.gui.builder.window.WindowEvent.Type;
-import net.sf.jguiraffe.gui.builder.window.WindowListenerImpl;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
