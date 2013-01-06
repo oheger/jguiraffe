@@ -352,6 +352,13 @@ public class Application
     private static final Locator DEFAULT_BEANS = ClassPathLocator.getInstance(
             "defaultbeans.jelly");
 
+    /**
+     * Constant for the locator to the script with platform-specific bean
+     * definitions.
+     */
+    private static final Locator PLATFORM_BEANS = ClassPathLocator
+            .getInstance("platformbeans.jelly");
+
     /** The logger to use. */
     protected final Log log = LogFactory.getLog(Application.class);
 
@@ -926,9 +933,13 @@ public class Application
      * {@link Locator} objects which can be converted using the
      * {@link LocatorConverter} class. Strings that do not contain a locator
      * type prefix (e.g. {@code classpath:} or {@code url:} are expected to be
-     * names of bean definition files, which can be read from the class path. If
-     * an application has different requirements for specifying additional bean
-     * definition files, this method can be overridden.
+     * names of bean definition files, which can be read from the class path. In
+     * addition, the {@link #getPlatformBeansLocator()} method is called to
+     * obtain a {@code Locator} for a file with platform-specific bean
+     * declarations; if this method returns a non-<b>null</b> value, this
+     * {@code Locator} is added to the list, too. If an application has
+     * different requirements for specifying additional bean definition files,
+     * this method can be overridden.
      *
      * @param config the main configuration source
      * @param beanCtx the current {@code BeanContext}
@@ -948,7 +959,12 @@ public class Application
         }
 
         Collection<Locator> result =
-                new ArrayList<Locator>(defLocators.size() + locs.size());
+                new ArrayList<Locator>(defLocators.size() + locs.size() + 1);
+        Locator platformLocator = getPlatformBeansLocator();
+        if (platformLocator != null)
+        {
+            result.add(platformLocator);
+        }
         result.addAll(locs);
         LocatorConverter converter = null;
 
@@ -973,6 +989,28 @@ public class Application
             }
         }
         return result;
+    }
+
+    /**
+     * Returns a {@code Locator} object pointing to a file with bean
+     * declarations related to the platform or UI toolkit. This method is called
+     * when additional bean declaration files to be loaded during application
+     * initialization are detected. The base implementation returns a locator
+     * pointing to a class path resource with the name
+     * {@code platformbeans.jelly}. This file contains declarations for beans
+     * like the platform-specific component manager, window manager, etc. In a
+     * standard JGUIraffe application a single file with this name exists which
+     * contains definitions compatible to the supported platform. A derived
+     * class may override this method and return a different {@code Locator}.
+     * Result can be <b>null</b>, then no additional bean declaration file is
+     * loaded.
+     *
+     * @return a {@code Locator} pointing to platform-specific bean declarations
+     * @since 1.3
+     */
+    protected Locator getPlatformBeansLocator()
+    {
+        return PLATFORM_BEANS;
     }
 
     /**

@@ -48,6 +48,7 @@ import net.sf.jguiraffe.gui.builder.BeanBuilderResult;
 import net.sf.jguiraffe.gui.builder.Builder;
 import net.sf.jguiraffe.gui.builder.BuilderException;
 import net.sf.jguiraffe.gui.builder.impl.JellyBeanBuilderFactory;
+import net.sf.jguiraffe.gui.builder.utils.GUIRuntimeException;
 import net.sf.jguiraffe.gui.builder.utils.GUISynchronizer;
 import net.sf.jguiraffe.gui.builder.utils.MessageOutput;
 import net.sf.jguiraffe.gui.builder.window.Window;
@@ -89,6 +90,10 @@ public class TestApplication
 
     /** Constant for the name of the maximum configuration file. */
     private static final String CONFIG_MAX = "testappconfigfactorymax.xml";
+
+    /** A locator for test platform-specific bean declarations. */
+    private static final Locator PLATFORM_BEANS = ClassPathLocator
+            .getInstance("testplatformbeans.jelly");
 
     /** Constant for the name of the sub dir that stores the user config. */
     private static final String USER_CONF_DIR = ".testapp";
@@ -165,6 +170,18 @@ public class TestApplication
     {
         File f = new File("nonExistingConfig.xml");
         app.createConfiguration(f.toURI().toURL());
+    }
+
+    /**
+     * Tests the default locator for platform-specific beans.
+     */
+    @Test
+    public void testGetPlatformBeansLocatorDefault()
+    {
+        app.setOverrideGetPlatformBeansLocator(false);
+        ClassPathLocator loc = (ClassPathLocator) app.getPlatformBeansLocator();
+        assertEquals("Wrong default name", "platformbeans.jelly",
+                loc.getResourceName());
     }
 
     /**
@@ -299,7 +316,7 @@ public class TestApplication
      * Tests whether initClassLoaderProvider() can override the CLP.
      */
     @Test
-    public void testCreateAppCtxlOverridCLP()
+    public void testCreateAppCtxlOverrideCLP()
     {
         app.clpOverride = new DefaultClassLoaderProvider();
         app.setConfigResourceName(CONFIG_MIN);
@@ -319,11 +336,13 @@ public class TestApplication
     public void testCreateCommandQueue()
     {
         app.setConfigResourceName(CONFIG_MIN);
+        app.setPlatformBeansLocator(PLATFORM_BEANS);
         ApplicationContext ctx = app.createApplicationContext();
         CommandQueue q = app.createCommandQueue(ctx);
         assertNotNull("No command queue created", q);
         GUISynchronizer sync = q.getGUISynchronizer();
-        assertNotNull("No GUI synchronizer created", sync);
+        assertTrue("Wrong GUI synchronizer: " + sync,
+                sync instanceof GUISynchronizerTestImpl);
     }
 
     /**
@@ -386,6 +405,7 @@ public class TestApplication
     public void testRun() throws Exception
     {
         app.setConfigResourceName(CONFIG_MAX);
+        app.mockInitGUI = true;
         app.run();
         checkRunningApp(app);
     }
@@ -402,6 +422,7 @@ public class TestApplication
         {
             System.setProperty(Application.PROP_CONFIG_NAME, CONFIG_MAX);
             TestApp myapp = new TestApp();
+            myapp.mockInitGUI = true;
             Application.startup(myapp, args);
             assertTrue("Parameter not found", myapp.isParamFound());
             checkRunningApp(myapp);
@@ -515,6 +536,7 @@ public class TestApplication
         TestShutdownListener l = new TestShutdownListener();
         app.addShutdownListener(l);
         app.setConfigResourceName(CONFIG_MAX);
+        app.mockInitGUI = true;
         app.run();
         app.shutdown("test1", "test1");
         assertTrue("canShutdown not called", l.isCanShutdownCalled());
@@ -669,6 +691,7 @@ public class TestApplication
         final String[] scripts =
         { SCRIPT, "anotherScript", "moreScripts" };
         config.addProperty(Application.PROP_BEAN_DEFS, scripts);
+        app.setPlatformBeansLocator(null);
         Collection<Locator> locs = app.findBeanDefinitions(config, bctx);
         assertEquals("Wrong number of scripts", scripts.length, locs.size());
         int idx = 0;
@@ -702,6 +725,7 @@ public class TestApplication
         config.addProperty(Application.PROP_BEAN_DEFS, "classpath:" + resource
                 + ";" + loader);
         config.addProperty(Application.PROP_BEAN_DEFS, "url:" + url);
+        app.setPlatformBeansLocator(null);
         Collection<Locator> locs = app.findBeanDefinitions(config, bctx);
         assertEquals("Wrong number of scripts", 2, locs.size());
         Iterator<Locator> it = locs.iterator();
@@ -721,6 +745,7 @@ public class TestApplication
     {
         BeanContext bctx = EasyMock.createMock(BeanContext.class);
         EasyMock.replay(bctx);
+        app.setPlatformBeansLocator(null);
         assertTrue("Got bean definitions",
                 app.findBeanDefinitions(new HierarchicalConfiguration(), bctx)
                         .isEmpty());
@@ -909,7 +934,7 @@ public class TestApplication
     {
         app.setConfigResourceName(CONFIG_MAX);
         app.createApplicationContext();
-        assertEquals("Wrong number of builder results", 2, app
+        assertEquals("Wrong number of builder results", 3, app
                 .getIninitializedBuilderResults().size());
     }
 
@@ -1114,7 +1139,7 @@ public class TestApplication
      * @param app the application to be tested
      * @throws Exception if an error occurs
      */
-    protected void checkRunningApp(Application app) throws Exception
+    protected void checkRunningApp(ApplicationTestImpl app) throws Exception
     {
         ApplicationContext appCtx = app.getApplicationContext();
         assertNotNull("No application context set", appCtx);
@@ -1122,7 +1147,7 @@ public class TestApplication
         assertEquals("Cannot resolve resource", "Hello", appCtx.getResource(
                 RES_GRP, "test1"));
 
-        assertNotNull("No main window set", appCtx.getMainWindow());
+        assertEquals("UI not initialized", 1, app.initGUICount);
         assertNotNull("No command queue set", app.getCommandQueue());
         TestQueueListener l = new TestQueueListener();
         app.getCommandQueue().addQueueListener(l);
@@ -1299,6 +1324,12 @@ public class TestApplication
         /** A flag whether showMainWindow() should be mocked. True by default!*/
         boolean mockShowWindow = true;
 
+        /** A counter for initGUI() invocations. */
+        int initGUICount;
+
+        /** A flag whether initGUI() should be mocked. */
+        boolean mockInitGUI;
+
         /** The CLP passed to initClassLoaderProvider().*/
         ClassLoaderProvider clpInit;
 
@@ -1311,6 +1342,66 @@ public class TestApplication
         /** A mock factory to be returned by getBeanBuilderFactory().*/
         BeanBuilderFactory mockFactory;
 
+        /** A locator to be returned for platform-specific beans. */
+        private Locator platformBeansLocator = PLATFORM_BEANS;
+
+        /**
+         * A flag whether platform-specific beans should be handled by this
+         * class.
+         */
+        private boolean overrideGetPlatformBeansLocator = true;
+
+        /**
+         * Returns the locator for platform-specific bean declarations.
+         *
+         * @return the {@code Locator} for platform beans
+         */
+        @Override
+        public Locator getPlatformBeansLocator()
+        {
+            return isOverrideGetPlatformBeansLocator() ? platformBeansLocator
+                    : super.getPlatformBeansLocator();
+        }
+
+        /**
+         * Sets the locator for platform-specific bean declarations. This
+         * locator is returned by the overridden
+         * {@link #getPlatformBeansLocator()} method.
+         *
+         * @param platformBeansLocator the {@code Locator} for platform beans
+         */
+        public void setPlatformBeansLocator(Locator platformBeansLocator)
+        {
+            this.platformBeansLocator = platformBeansLocator;
+        }
+
+        /**
+         * Returns a flag whether an alternative locator for platform beans
+         * should be returned.
+         *
+         * @return the overrideGetPlatformBeansLocator flag
+         */
+        public boolean isOverrideGetPlatformBeansLocator()
+        {
+            return overrideGetPlatformBeansLocator;
+        }
+
+        /**
+         * Sets a flag whether an alternative locator for platform beans should
+         * be used. If set to <b>true</b>, {@link #getPlatformBeansLocator()}
+         * returns the locator set by {@link #setPlatformBeansLocator(Locator)};
+         * otherwise, the super method is called.
+         *
+         * @param overrideGetPlatformBeansLocator the
+         *        overrideGetPlatformBeansLocator flag
+         */
+        public void setOverrideGetPlatformBeansLocator(
+                boolean overrideGetPlatformBeansLocator)
+        {
+            this.overrideGetPlatformBeansLocator =
+                    overrideGetPlatformBeansLocator;
+        }
+
         /**
          * Records this invocation. Optionally calls the super method.
          */
@@ -1321,6 +1412,23 @@ public class TestApplication
             if (!mockShowWindow)
             {
                 super.showMainWindow(window);
+            }
+        }
+
+        /**
+         * Records this invocation. Optionally calls the super method.
+         */
+        @Override
+        protected void initGUI(ApplicationContext appCtx)
+        {
+            initGUICount++;
+            if (!mockInitGUI)
+            {
+                super.initGUI(appCtx);
+            }
+            else
+            {
+                appCtx.setMainWindow(EasyMock.createMock(Window.class));
             }
         }
 
@@ -1429,5 +1537,40 @@ public class TestApplication
     public static class BeanBuilderFactoryTestImpl extends
             JellyBeanBuilderFactory
     {
+    }
+
+    /**
+     * A test implementation of a GUISynchronizer. This is just used to test
+     * whether a corresponding bean declaration is correctly evaluated.
+     */
+    public static class GUISynchronizerTestImpl implements GUISynchronizer
+    {
+        public void asyncInvoke(Runnable runnable)
+        {
+            runnable.run();
+        }
+
+        public void syncInvoke(Runnable runnable) throws GUIRuntimeException
+        {
+            runnable.run();
+        }
+
+        public boolean isEventDispatchThread()
+        {
+            throw new UnsupportedOperationException("Unexpected method call!");
+        }
+    }
+
+    /**
+     * A test implementation of a MessageOutput. This class is referenced by
+     * the script with test platform bean definitions.
+     */
+    public static class MessageOutputTestImpl implements MessageOutput
+    {
+        public int show(Window parent, Object message, String title,
+                int messageType, int buttonType)
+        {
+            throw new UnsupportedOperationException("Unexpected method call!");
+        }
     }
 }

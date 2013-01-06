@@ -55,14 +55,6 @@
   </di:bean>
 
   <!--
-    The message output object.
-    This object is used for creating message boxes. Per default we use an output
-    object that creates Swing message boxes.
-  -->
-  <di:bean name="jguiraffe.messageOutput"
-    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.utils.SwingMessageOutput"/>
-
-  <!--
     The validation message handler.
     This object lives in the application context and is used by validators to
     obtain error messages for invalid user input. The default object is fully
@@ -120,14 +112,6 @@
     <di:setProperty property="classLoaderProvider"
       refName="jguiraffe.classLoaderProvider"/>
   </di:bean>
-
-  <!--
-    The GUI synchronizer.
-    This object must be used when updating GUI components from a different thread
-    than the main event dispatch thread.
-  -->
-  <di:bean name="jguiraffe.guiSynchronizer"
-    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.utils.SwingGUISynchronizer"/>
 
   <!--
     The command queue.
@@ -251,30 +235,6 @@
     <di:setProperty property="notVisitedInvalidForeground"
       refName="jguiraffe.fieldMarker.notVisitedInvalidFg"/>
   </di:bean>
-
-  <!--
-    The component manager.
-    This object is used by the builder for creating GUI components. The default
-    implementation uses Swing for this purpose.
-  -->
-  <di:bean name="jguiraffe.componentManager"
-    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.components.SwingComponentManager"/>
-
-  <!--
-    The action manager.
-    This object is used by the builder for creating menus, tool bars and actions.
-    The default implementation uses Swing classes for this purpose.
-  -->
-  <di:bean name="jguiraffe.actionManager"
-    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.action.SwingActionManager"/>
-
-  <!--
-    The window manager.
-    This object is used by the builder for creating different kinds of windows.
-    The default implementation uses Swing classes for this purpose.
-  -->
-  <di:bean name="jguiraffe.windowManager"
-    beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.window.SwingWindowManager"/>
 
   <!--
     The tool tip manager.
