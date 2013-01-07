@@ -1,5 +1,5 @@
 <!--
-   Copyright 2006-2012 The GUIraffe Team.
+   Copyright 2006-2013 The GUIraffe Team.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -291,7 +291,7 @@
               <jelly>XML_STYLE</jelly>
             </mapping>
             <properties>
-              <year>2012</year>
+              <year>2013</year>
             </properties>
           </configuration>
           <executions>
