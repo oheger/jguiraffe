@@ -31,6 +31,7 @@
     <module>core</module>
     <module>examples</module>
     <module>swing</module>
+    <module>java-fx</module>
   </modules>
 
   <name>JGUIraffe Parent</name>
@@ -60,6 +61,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.scala>2.10.0</version.scala>
   </properties>
 
   <developers>
@@ -95,6 +97,12 @@
 
       <dependency>
         <groupId>net.sf.jguiraffe</groupId>
+        <artifactId>jguiraffe-java-fx</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.jguiraffe</groupId>
         <artifactId>jguiraffe-test-helper</artifactId>
         <version>${project.version}</version>
         <scope>test</scope>
@@ -111,6 +119,12 @@
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>2.6</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${version.scala}</version>
       </dependency>
 
       <dependency>
