@@ -57,6 +57,21 @@
       <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
       <scope>system</scope>
     </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_2.9.0</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
