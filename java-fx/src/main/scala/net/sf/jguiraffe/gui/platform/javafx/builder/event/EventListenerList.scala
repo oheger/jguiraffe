@@ -18,15 +18,14 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.event
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * An implementation of ''EventSender'' which manages an arbitrary number
- * of event listeners.
+ * A class managing a list of event listeners.
  *
  * This class provides methods for adding and removing event listeners of
  * the managed type. These methods can be called from an arbitrary thread.
  * When an event is fired, all listeners registered at this point of time
  * are invoked.
  */
-class MultiEventSender[E, L <: AnyRef] extends EventSender[E, L] {
+class EventListenerList[E, L <: AnyRef] {
   /** Stores the list with registered listeners. */
   private final val listeners = new AtomicReference[List[L]](Nil)
 

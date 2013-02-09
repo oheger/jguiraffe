@@ -24,17 +24,29 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.event
  * registered listeners. The way listeners are organized is specific to a
  * concrete implementation.
  *
+ * There are mainly two different flavors of event listeners/receivers in
+ * JGUIraffe:
+ * - classic event listeners can be added to a component in an unlimited
+ * number
+ * - the ''FormEventManager'' class can act as event receiver; it provides an
+ * implementation of event multi-plexing
+ *
+ * This trait should be generic enough to support both flavors of event
+ * listeners. Concrete implementations have to ensure that events are
+ * correctly passed.
+ *
  * @param E the type of events handled by this object
- * @param L the type of event listeners handled by this object
  */
-trait EventSender[E, L] {
+trait EventSender[E] {
   /**
-   * Fires an event. A concrete implementation iterates over all registered
-   * event listeners and invokes the passed in function on each listener.
-   * Note that the event is a by-name parameter; an implementation should
-   * evaluate it once only if listeners are available for this event.
+   * Fires an event. The event is passed to the method, a concrete
+   * implementation has to do whatever is necessary to deliver it to the
+   * correct receivers. Note that the event is a by-name parameter; an
+   * implementation should evaluate it once only if listeners are available for
+   * this event. If there are no listeners, the event must not be accessed.
+   * That way a conversion of the event is only done if there are actually
+   * receivers.
    * @param event the event to be fired
-   * @param f the function for invoking the event listener
    */
-  def fire(event: => E, f: (L, E) => Unit): Unit
+  def fire(event: => E): Unit
 }

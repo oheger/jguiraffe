@@ -24,17 +24,17 @@ import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 
 /**
- * Test class for ''MultiEventSender''.
+ * Test class for ''EventListenerList''.
  */
-class TestMultiEventSender extends JUnitSuite {
+class TestEventListenerList extends JUnitSuite {
   /** A counter for generating 'events'. */
   private var counter = 0
 
   /** The object to be tested. */
-  private var sender: MultiEventSender[Int, Collection[Int]] = _
+  private var sender: EventListenerList[Int, Collection[Int]] = _
 
   @Before def setUp() {
-    sender = new MultiEventSender
+    sender = new EventListenerList
   }
 
   /**
