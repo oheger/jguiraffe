@@ -62,6 +62,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.scala>2.9.2</version.scala>
+    <powermock.version>1.5</powermock.version>
   </properties>
 
   <developers>
@@ -153,6 +154,19 @@
         <version>2.0.M5</version>
         <scope>test</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-easymock</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>  
     </dependencies>
   </dependencyManagement>
 
