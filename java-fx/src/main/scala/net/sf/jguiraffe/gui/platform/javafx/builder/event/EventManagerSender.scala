@@ -32,8 +32,8 @@ import net.sf.jguiraffe.gui.builder.event.FormListenerType
  * @param manager the event manager
  * @param listenerType the concrete listener type of the managed event
  */
-class EventManagerSender[E <: FormEvent](manager: FormEventManager,
-  listenerType: FormListenerType) extends EventSender[E] {
+class EventManagerSender[E <: FormEvent](val manager: FormEventManager,
+  val listenerType: FormListenerType) extends EventSender[E] {
   /**
    * @inheritdoc This implementation directly delegates to the event manager.
    */
