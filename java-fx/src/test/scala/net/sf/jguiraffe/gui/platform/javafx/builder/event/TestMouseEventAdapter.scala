@@ -35,6 +35,7 @@ import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.api.easymock.PowerMock
 import net.sf.jguiraffe.gui.builder.event.Modifiers
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 
 /**
  * Test class for ''MouseEventAdapter''.
@@ -50,9 +51,6 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
 
   /** A default y coordinate for a mouse event. */
   private val EventY = 222
-
-  /** Holds an event received by a mouse listener. */
-  private var receivedEvent: Option[FormMouseEvent] = None
 
   /**
    * Tests whether an instance can be created which serves a form event
@@ -163,21 +161,18 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
    * and stores it in the global option variable.
    * @return the answer object
    */
-  private def eventAnswer() =
-    new IAnswer[Object] {
-      def answer(): Object = {
-        val event = EasyMock.getCurrentArguments()(0).asInstanceOf[FormMouseEvent]
-        receivedEvent = Some(event)
-        null
-      }
-    }
+  private def eventAnswer(): FetchAnswer[Object, FormMouseEvent] =
+    new FetchAnswer
 
   /**
    * Creates an answer object for processing an event and registers it to the
    * last mock invocation.
+   * @return the answer object which can be used for obtaining the event
    */
-  private def registerEventAnswer() {
-    EasyMock.expectLastCall().andAnswer(eventAnswer())
+  private def registerEventAnswer(): FetchAnswer[Object, FormMouseEvent] = {
+    val a = eventAnswer()
+    EasyMock.expectLastCall().andAnswer(a)
+    a
   }
 
   /**
@@ -188,16 +183,18 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
    * the expected standard properties.
    * @param listener the mock for the listener
    * @param event the event to be simulated
+   * @param a the answer for retrieving the event parameter object
    */
-  private def checkMouseListener(listener: FormMouseListener, event: MouseEvent) {
+  private def checkMouseListener(listener: FormMouseListener, event: MouseEvent,
+      a: FetchAnswer[_, FormMouseEvent]) {
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     val listeners = new EventListenerList[FormMouseEvent, FormMouseListener]
     listeners += listener
     val adapter = MouseEventAdapter(listeners, compHandler, ComponentName)
     PowerMock.replayAll()
     adapter handleEvent event
-    assertFalse("No event received", receivedEvent.isEmpty)
-    val ev = receivedEvent.get
+    assertFalse("No event received", a.isEmpty)
+    val ev = a.value
     assertSame("Wrong component handler", compHandler, ev.getHandler)
     assertEquals("Wrong component name", ComponentName, ev.getName)
     assertSame("Wrong event source", event, ev.getSource)
@@ -219,8 +216,8 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   @Test def testMouseEntered() {
     val listener = mockListener()
     listener.mouseEntered(EasyMock.anyObject(classOf[FormMouseEvent]))
-    registerEventAnswer()
-    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_ENTERED))
+    val a = registerEventAnswer()
+    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_ENTERED), a)
   }
 
   /**
@@ -229,8 +226,8 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   @Test def testMouseExisted() {
     val listener = mockListener()
     listener.mouseExited(EasyMock.anyObject(classOf[FormMouseEvent]))
-    registerEventAnswer()
-    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_EXITED))
+    val a = registerEventAnswer()
+    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_EXITED), a)
   }
 
   /**
@@ -239,8 +236,8 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   @Test def testMousePressed() {
     val listener = mockListener()
     listener.mousePressed(EasyMock.anyObject(classOf[FormMouseEvent]))
-    registerEventAnswer()
-    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_PRESSED))
+    val a = registerEventAnswer()
+    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_PRESSED), a)
   }
 
   /**
@@ -249,8 +246,8 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   @Test def testMouseReleased() {
     val listener = mockListener()
     listener.mouseReleased(EasyMock.anyObject(classOf[FormMouseEvent]))
-    registerEventAnswer()
-    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_RELEASED))
+    val a = registerEventAnswer()
+    checkMouseListener(listener, createEvent(MouseEvent.MOUSE_RELEASED), a)
   }
 
   /**
@@ -259,10 +256,10 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   @Test def testMouseClick() {
     val listener = mockListener()
     listener.mouseClicked(EasyMock.anyObject(classOf[FormMouseEvent]))
-    registerEventAnswer()
+    val a = registerEventAnswer()
     val event = createEvent(MouseEvent.MOUSE_CLICKED)
     EasyMock.expect(event.getClickCount()).andReturn(1)
-    checkMouseListener(listener, event)
+    checkMouseListener(listener, event, a)
   }
 
   /**
@@ -271,9 +268,9 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   @Test def testMouseDoubleClick() {
     val listener = mockListener()
     listener.mouseDoubleClicked(EasyMock.anyObject(classOf[FormMouseEvent]))
-    registerEventAnswer()
+    val a = registerEventAnswer()
     val event = createEvent(MouseEvent.MOUSE_CLICKED)
     EasyMock.expect(event.getClickCount()).andReturn(3)
-    checkMouseListener(listener, event)
+    checkMouseListener(listener, event, a)
   }
 }
