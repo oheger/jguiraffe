@@ -61,7 +61,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.scala>2.9.2</version.scala>
+    <version.scala>2.10.0</version.scala>
     <powermock.version>1.5</powermock.version>
   </properties>
 
@@ -150,8 +150,8 @@
 
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.9.0</artifactId>
-        <version>2.0.M5</version>
+        <artifactId>scalatest_2.10</artifactId>
+        <version>1.9.1</version>
         <scope>test</scope>
       </dependency>
 
