@@ -16,9 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.event
 
 import org.easymock.EasyMock
-import org.easymock.IAnswer
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -28,19 +26,24 @@ import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.value.ChangeListener
 import javafx.event.EventHandler
+import javafx.stage.Stage
 import javafx.stage.{Window => FxWindow}
 import javafx.stage.{WindowEvent => FxWindowEvent}
 import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowEvent
 import net.sf.jguiraffe.gui.builder.window.WindowListener
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
 
 /**
  * Test class for ''WindowEventAdapter''.
  */
 @RunWith(classOf[PowerMockRunner])
-@PrepareForTest(Array(classOf[FxWindow]))
+@PrepareForTest(Array(classOf[FxWindow], classOf[Stage],
+  classOf[ReadOnlyBooleanProperty]))
 class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Prepares a test for the adapter's event sender. This method creates a
@@ -85,7 +88,7 @@ class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether the sender can handle a window deactvation event.
+   * Tests whether the sender can handle a window deactivation event.
    */
   @Test def testSenderDeactivateEvent() {
     val listener = mock[WindowListener]
@@ -127,6 +130,34 @@ class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+   * Tests whether the sender can handle an icon event.
+   */
+  @Test def testSenderIconifiedEvent() {
+    val listener = mock[WindowListener]
+    val wnd = mock[Window]
+    val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_ICONIFIED)
+    listener.windowIconified(event)
+    val adapter = prepareSenderTest(listener, wnd)
+    whenExecuting(listener, wnd) {
+      adapter.sender.fire(event)
+    }
+  }
+
+  /**
+   * Tests whether the sender can handle a de-icon event.
+   */
+  @Test def testSenderDeiconifiedEvent() {
+    val listener = mock[WindowListener]
+    val wnd = mock[Window]
+    val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_DEICONIFIED)
+    listener.windowDeiconified(event)
+    val adapter = prepareSenderTest(listener, wnd)
+    whenExecuting(listener, wnd) {
+      adapter.sender.fire(event)
+    }
+  }
+
+  /**
    * Tests whether a window opened event can be generated.
    */
   @Test def testHandleEventOpened() {
@@ -134,35 +165,8 @@ class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
     val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_SHOWN)
-    adapter.handleEvent(event, true)
+    adapter.handleEvent(event)
     sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_OPENED)
-    adapter.handleEvent(event, false)
-  }
-
-  /**
-   * Tests whether a window activated event can be generated.
-   */
-  @Test def testHandleEventActivated() {
-    val wnd = mock[Window]
-    val sender = new MockSender
-    val adapter = new WindowEventAdapter(wnd, sender)
-    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_SHOWN)
-    adapter.handleEvent(event, true)
-    sender.reset()
-    adapter.handleEvent(event, true)
-    sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_ACTIVATED)
-  }
-
-  /**
-   * Tests whether a window deactivated event can be generated.
-   */
-  @Test def testHandleEventDeactivated() {
-    val wnd = mock[Window]
-    val sender = new MockSender
-    val adapter = new WindowEventAdapter(wnd, sender)
-    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_HIDDEN)
-    adapter.handleEvent(event, true)
-    sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_DEACTIVATED)
   }
 
   /**
@@ -172,8 +176,8 @@ class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
-    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_CLOSE_REQUEST)
-    adapter.handleEvent(event, false)
+    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_HIDING)
+    adapter.handleEvent(event)
     sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_CLOSING)
   }
 
@@ -184,44 +188,30 @@ class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
-    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_CLOSE_REQUEST)
-    adapter.handleEvent(event, true)
+    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_HIDDEN)
+    adapter.handleEvent(event)
     sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_CLOSED)
   }
 
   /**
-   * Tests that a window hidden event is suppressed if it is produced by an
-   * event filter.
+   * Tests whether an event which is not transformed can be handled correctly.
    */
-  @Test def testHiddenEventFilter() {
+  @Test def testHandleEventUnsupported() {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
-    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_HIDDEN)
-    adapter.handleEvent(event, false)
-    sender.checkNoEvent()
+    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_CLOSE_REQUEST)
+    adapter.handleEvent(event)
+    sender.checkNoEvent
   }
 
   /**
-   * Tests whether an event filter works as expected.
-   */
-  @Test def testEventFilter() {
-    val adapter = mock[WindowEventAdapter]
-    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_SHOWING)
-    adapter.handleEvent(event, false)
-    whenExecuting(adapter) {
-      val filter = WindowEventAdapter.createEventFilter(adapter)
-      filter.handle(event)
-    }
-  }
-
-  /**
-   * Tests whether an event handler works as expected.
+   * Tests whether the registered event handler works as expected.
    */
   @Test def testEventHandler() {
     val adapter = mock[WindowEventAdapter]
     val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_SHOWING)
-    adapter.handleEvent(event, true)
+    adapter.handleEvent(event)
     whenExecuting(adapter) {
       val handler = WindowEventAdapter.createEventHandler(adapter)
       handler.handle(event)
@@ -229,57 +219,80 @@ class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+   * Tests whether the focus listener works correctly.
+   */
+  @Test def testFocusListener() {
+    val wnd = mock[Window]
+    val sender = new MockSender
+    val adapter = new WindowEventAdapter(wnd, sender)
+    val listener = WindowEventAdapter.createFocusListener(adapter)
+    listener.changed(null, false, true)
+    sender.checkEvent(wnd, adapter, WindowEvent.Type.WINDOW_ACTIVATED)
+    listener.changed(null, true, false)
+    sender.checkEvent(wnd, adapter, WindowEvent.Type.WINDOW_DEACTIVATED)
+  }
+
+  /**
+   * Tests whether the listener on the icon property works correctly.
+   */
+  @Test def testIconListener() {
+    val wnd = mock[Window]
+    val sender = new MockSender
+    val adapter = new WindowEventAdapter(wnd, sender)
+    val listener = WindowEventAdapter.createIconListener(adapter)
+    listener.changed(null, false, true)
+    sender.checkEvent(wnd, adapter, WindowEvent.Type.WINDOW_ICONIFIED)
+    listener.changed(null, true, false)
+    sender.checkEvent(wnd, adapter, WindowEvent.Type.WINDOW_DEICONIFIED)
+  }
+
+  /**
    * Tests the registration and unregistration of an adapter at a Java FX
    * window.
    */
   @Test def testApplyAndUnregister() {
-    val fxWnd = PowerMock.createMock(classOf[FxWindow])
+    val fxWnd = PowerMock.createMock(classOf[Stage])
     val wnd = PowerMock.createMock(classOf[Window])
+    val focusProp = PowerMock.createMock(classOf[ReadOnlyBooleanProperty])
+    val iconProp = PowerMock.createMock(classOf[ReadOnlyBooleanProperty])
     val listeners = new EventListenerList[WindowEvent, WindowListener]
-    var eventFilter: EventHandler[FxWindowEvent] = null
-    var eventHandler: EventHandler[FxWindowEvent] = null
-    fxWnd.addEventFilter(EasyMock.eq(FxWindowEvent.ANY),
-      EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
-    EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
-      def answer(): Object = {
-        eventFilter = EasyMock.getCurrentArguments()(1)
-          .asInstanceOf[EventHandler[FxWindowEvent]]
-        null
-      }
-    })
-    fxWnd.removeEventFilter(EasyMock.eq(FxWindowEvent.ANY),
-      EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
-    EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
-      def answer(): Object = {
-        assertSame("Wrong filter removed", eventFilter,
-          EasyMock.getCurrentArguments()(1))
-        null
-      }
-    })
+
+    val addHandlerAnswer =
+      new FetchAnswer[Object, EventHandler[FxWindowEvent]](argIdx = 1)
     fxWnd.addEventHandler(EasyMock.eq(FxWindowEvent.ANY),
       EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
-    EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
-      def answer(): Object = {
-        eventHandler = EasyMock.getCurrentArguments()(1)
-          .asInstanceOf[EventHandler[FxWindowEvent]]
-        null
-      }
-    })
+    EasyMock.expectLastCall().andAnswer(addHandlerAnswer)
+    val removeHandlerAnswer =
+      new FetchAnswer[Object, EventHandler[FxWindowEvent]](argIdx = 1)
     fxWnd.removeEventHandler(EasyMock.eq(FxWindowEvent.ANY),
       EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
-    EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
-      def answer(): Object = {
-        assertSame("Wrong handler removed", eventHandler,
-          EasyMock.getCurrentArguments()(1))
-        null
-      }
-    })
-    PowerMock.replayAll()
+    EasyMock.expectLastCall().andAnswer(removeHandlerAnswer)
 
+    EasyMock.expect(fxWnd.focusedProperty()).andReturn(focusProp).anyTimes()
+    val addFocusAnswer = new FetchAnswer[Object, ChangeListener[java.lang.Boolean]]
+    focusProp.addListener(EasyMock.anyObject(classOf[ChangeListener[java.lang.Boolean]]))
+    EasyMock.expectLastCall().andAnswer(addFocusAnswer)
+    val removeFocusAnswer = new FetchAnswer[Object, ChangeListener[java.lang.Boolean]]
+    focusProp.removeListener(EasyMock.anyObject(classOf[ChangeListener[java.lang.Boolean]]))
+    EasyMock.expectLastCall().andAnswer(removeFocusAnswer)
+
+    EasyMock.expect(fxWnd.iconifiedProperty()).andReturn(iconProp).anyTimes()
+    val addIconAnswer = new FetchAnswer[Object, ChangeListener[java.lang.Boolean]]
+    iconProp.addListener(EasyMock.anyObject(classOf[ChangeListener[java.lang.Boolean]]))
+    EasyMock.expectLastCall().andAnswer(addIconAnswer)
+    val removeIconAnswer = new FetchAnswer[Object, ChangeListener[java.lang.Boolean]]
+    iconProp.removeListener(EasyMock.anyObject(classOf[ChangeListener[java.lang.Boolean]]))
+    EasyMock.expectLastCall().andAnswer(removeIconAnswer)
+
+    PowerMock.replayAll()
     val adapter = WindowEventAdapter(fxWnd, wnd, listeners)
     adapter.unregister(fxWnd)
-    assertNotNull("No event filter", eventFilter)
-    assertNotNull("No event handler", eventHandler)
+    assertSame("Wrong event handler unregistered", addHandlerAnswer.get,
+      removeHandlerAnswer.get)
+    assertSame("Wrong focus listener unregistered", addFocusAnswer.get,
+      removeFocusAnswer.get)
+    assertSame("Wrong icon listener unregistered", addIconAnswer.get,
+      removeIconAnswer.get)
     PowerMock.verifyAll()
   }
 }
@@ -302,6 +315,7 @@ class MockSender extends EventSender[WindowEvent] {
     assertSame("Wrong window", wnd, ev.getSourceWindow())
     assertSame("Wrong source", src, ev.getSource())
     assertEquals("Wrong event type", evtype, ev.getType())
+    event = None
   }
 
   /**
