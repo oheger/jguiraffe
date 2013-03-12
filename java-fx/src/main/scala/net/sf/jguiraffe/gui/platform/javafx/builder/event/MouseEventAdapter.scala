@@ -16,7 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.event
 
 import java.util.EnumSet
-
+import javafx.event.EventHandler
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import net.sf.jguiraffe.gui.builder.event.FormEventManager
@@ -38,13 +38,13 @@ import net.sf.jguiraffe.gui.forms.ComponentHandler
  */
 class MouseEventAdapter private (val sender: EventSender[FormMouseEvent],
   val componentHandler: ComponentHandler[_],
-  val componentName: String) {
+  val componentName: String) extends EventHandler[MouseEvent] {
   /**
    * Processes the specified Java FX event. This implementation converts the
    * event to a JGUIraffe event and passes it to the current event sender.
    * @param event the event to be processed
    */
-  def handleEvent(event: MouseEvent) {
+  override def handle(event: MouseEvent) {
     event.getEventType match {
       case MouseEvent.MOUSE_ENTERED =>
         fire(event, FormMouseEvent.Type.MOUSE_ENTERED)

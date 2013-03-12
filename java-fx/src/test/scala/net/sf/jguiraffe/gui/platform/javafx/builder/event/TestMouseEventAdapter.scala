@@ -192,7 +192,7 @@ class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
     listeners += listener
     val adapter = MouseEventAdapter(listeners, compHandler, ComponentName)
     PowerMock.replayAll()
-    adapter handleEvent event
+    adapter handle event
     assertFalse("No event received", a.isEmpty)
     val ev = a.value
     assertSame("Wrong component handler", compHandler, ev.getHandler)
