@@ -30,11 +30,12 @@ import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
-
 import javafx.application.Platform
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.scene.Group
+import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
@@ -56,7 +57,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Stage], classOf[ReadOnlyBooleanProperty],
-  classOf[MouseEvent]))
+  classOf[MouseEvent], classOf[Scene]))
 class TestJavaFxWindow extends JUnitSuite {
   /** A mock for the wrapped stage. */
   private var stage: Stage = _
@@ -235,6 +236,11 @@ class TestJavaFxWindow extends JUnitSuite {
    * call on the Java FX thread.
    */
   @Test def testOpen() {
+    val scene = PowerMock.createMock(classOf[Scene])
+    EasyMock.expect(stage.getScene).andReturn(scene)
+    val rootAnswer = new FetchAnswer[Object, Parent]
+    scene.setRoot(EasyMock.anyObject(classOf[Parent]))
+    EasyMock.expectLastCall().andAnswer(rootAnswer)
     stage.show()
     EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
       def answer(): Object = {
@@ -246,6 +252,8 @@ class TestJavaFxWindow extends JUnitSuite {
     PowerMock.replayAll()
     wnd.open()
     PowerMock.verifyAll()
+    assertEquals("Root container not added to scene",
+      wnd.getRootContainer, rootAnswer.get)
   }
 
   /**
@@ -303,12 +311,8 @@ class TestJavaFxWindow extends JUnitSuite {
    * Tests whether the root container can be queried.
    */
   @Test def testGetRootContainer() {
-    val scene = PowerMock.createMock(classOf[Scene])
-    EasyMock.expect(stage.getScene).andReturn(scene)
     val wnd = createWindow()
-    PowerMock.replayAll()
-    assertSame("Wrong result", scene, wnd.getRootContainer)
-    PowerMock.verifyAll()
+    assertTrue("Wrong root container", wnd.getRootContainer.isInstanceOf[Group])
   }
 
   /**

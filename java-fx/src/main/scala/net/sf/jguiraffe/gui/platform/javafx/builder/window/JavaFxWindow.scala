@@ -18,6 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 import scala.beans.BeanProperty
 
 import javafx.event.EventHandler
+import javafx.scene.Group
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import net.sf.jguiraffe.gui.builder.event.FormMouseEvent
@@ -56,6 +57,14 @@ private class JavaFxWindow private[window] (val stage: Stage,
   @BeanProperty var windowController: Object = _
 
   /**
+   * Stores the root container of this window. This is a ''Group'' object
+   * created at construction time of this instance. This ''Group'' can be
+   * populated with the window's content. When the window is displayed it is
+   * added to the wrapped stage's scene.
+   */
+  @BeanProperty val rootContainer = new Group
+
+  /**
    * A flag whether this window can now be closed. This is used
    * internally to ensure that the window closing strategy is taken into
    * account.
@@ -83,6 +92,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
    */
   def open() {
     JavaFxGUISynchronizer.syncJavaFxInvocation { () =>
+      stage.getScene.setRoot(rootContainer)
       stage.show()
     }
   }
@@ -143,11 +153,6 @@ private class JavaFxWindow private[window] (val stage: Stage,
   def setWindowClosingStrategy(wcs: WindowClosingStrategy) = {
     windowClosingStrategy = wcs
   }
-
-  /**
-   * @inheritdoc This implementation returns the scene of the wrapped stage.
-   */
-  def getRootContainer: Object = stage.getScene
 
   def addMouseListener(l: FormMouseListener) {
     mouseListeners += l
