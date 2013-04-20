@@ -39,7 +39,7 @@ import net.sf.jguiraffe.gui.layout.PercentLayoutBase
  * the correct panel implementation. It is used by the component manager
  * in the implementation of its ''addContainerComponent()'' method.
  */
-private class ContainerWrapper {
+class ContainerWrapper {
   /** A buffer for storing the managed components. */
   private val components = ArrayBuffer.empty[ComponentData]
 

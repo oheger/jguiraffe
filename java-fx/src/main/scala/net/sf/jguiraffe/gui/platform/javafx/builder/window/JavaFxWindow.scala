@@ -18,7 +18,6 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 import scala.beans.BeanProperty
 
 import javafx.event.EventHandler
-import javafx.scene.Group
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import net.sf.jguiraffe.gui.builder.event.FormMouseEvent
@@ -28,6 +27,7 @@ import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowClosingStrategy
 import net.sf.jguiraffe.gui.builder.window.WindowEvent
 import net.sf.jguiraffe.gui.builder.window.WindowListener
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.ContainerWrapper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.MouseEventAdapter
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.WindowEventAdapter
@@ -57,12 +57,13 @@ private class JavaFxWindow private[window] (val stage: Stage,
   @BeanProperty var windowController: Object = _
 
   /**
-   * Stores the root container of this window. This is a ''Group'' object
-   * created at construction time of this instance. This ''Group'' can be
-   * populated with the window's content. When the window is displayed it is
-   * added to the wrapped stage's scene.
+   * Stores the root container of this window. This is a ''ContainerWrapper''
+   * object created at construction time of this instance. This wrapper can be
+   * populated with the window's content and initialized with a layout. When the
+   * window is displayed it is asked to create a corresponding ''Pane'' which
+   * is then added to the wrapped stage's scene.
    */
-  @BeanProperty val rootContainer = new Group
+  @BeanProperty val rootContainer = new ContainerWrapper
 
   /**
    * A flag whether this window can now be closed. This is used
@@ -92,7 +93,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
    */
   def open() {
     JavaFxGUISynchronizer.syncJavaFxInvocation { () =>
-      stage.getScene.setRoot(rootContainer)
+      stage.getScene.setRoot(rootContainer.createContainer())
       stage.show()
     }
   }

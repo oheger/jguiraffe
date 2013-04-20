@@ -81,8 +81,10 @@ class TestJavaFxWindowManager extends JUnitSuite {
     val wndNew = manager.createFrame(builderData, windowData, null)
       .asInstanceOf[JavaFxWindow]
     assertTrue("Wrong scene root", wndNew.stage.getScene.getRoot.isInstanceOf[Group])
-    val group = wndNew.getRootContainer.asInstanceOf[Group]
-    group.getChildren().add(new Text("Hello"))
+    val rootContainer = wndNew.getRootContainer
+    rootContainer.addComponent(new Text("Hello"), null)
+    val pane = rootContainer.createContainer()
+    assertEquals("Container not populated", 1, pane.getChildren.size())
   }
 
   /**

@@ -39,8 +39,10 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.FlowPane
+import javafx.scene.text.Text
 import javafx.stage.Stage
-import javafx.stage.{WindowEvent => FxWindowEvent}
+import javafx.stage.{ WindowEvent => FxWindowEvent }
 import net.sf.jguiraffe.gui.builder.event.FormMouseEvent
 import net.sf.jguiraffe.gui.builder.event.FormMouseListener
 import net.sf.jguiraffe.gui.builder.window.Window
@@ -51,6 +53,7 @@ import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.ContainerWrapper
 
 /**
  * Test class for ''JavaFxWindow''.
@@ -248,12 +251,14 @@ class TestJavaFxWindow extends JUnitSuite {
         null
       }
     })
+    val comp = new Text("Test")
     val wnd = createWindow()
+    wnd.rootContainer.addComponent(comp, null)
     PowerMock.replayAll()
     wnd.open()
     PowerMock.verifyAll()
-    assertEquals("Root container not added to scene",
-      wnd.getRootContainer, rootAnswer.get)
+    val rootPane = rootAnswer.get.asInstanceOf[FlowPane]
+    assertTrue("Root pane not initialized", rootPane.getChildren.contains(comp))
   }
 
   /**
@@ -312,7 +317,8 @@ class TestJavaFxWindow extends JUnitSuite {
    */
   @Test def testGetRootContainer() {
     val wnd = createWindow()
-    assertTrue("Wrong root container", wnd.getRootContainer.isInstanceOf[Group])
+    assertTrue("Wrong root container",
+      wnd.getRootContainer.isInstanceOf[ContainerWrapper])
   }
 
   /**
