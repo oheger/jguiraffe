@@ -44,12 +44,31 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.locators.Locator
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
+import javafx.scene.image.Image
+import java.io.InputStream
+import net.sf.jguiraffe.locators.LocatorUtils
+import javafx.scene.image.ImageView
+import net.sf.jguiraffe.locators.LocatorException
 
+/**
+ * The Java FX-based implementation of the ''ComponentManager'' interface.
+ */
 class JavaFxComponentManager extends ComponentManager {
+  /**
+   * @inheritdoc This implementation expects that the container is a
+   * ''ContainerWrapper'' object. In this case, the component is added to the
+   * wrapper. Otherwise, a ''FormBuilderException'' exception is thrown.
+   */
+  @throws(classOf[FormBuilderException])
   def addContainerComponent(container: Object, component: Object,
     constraints: Object) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    container match {
+      case wrapper: ContainerWrapper =>
+        wrapper.addComponent(component, constraints)
+      case _ =>
+        throw new FormBuilderException("Unsupported container object: " + container)
+    }
   }
 
   def setContainerLayout(container: Object, layout: Object) {
@@ -77,9 +96,19 @@ class JavaFxComponentManager extends ComponentManager {
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation returns an ''ImageView'' object initialized
+   * with the image defined by the ''Locator''.
+   */
+  @throws(classOf[FormBuilderException])
   def createIcon(locator: Locator): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    try {
+      val image = new Image(locator.getURL().toExternalForm)
+      new ImageView(image)
+    } catch {
+      case lex: LocatorException =>
+        throw new FormBuilderException(lex)
+    }
   }
 
   def createFont(tag: FontTag): Object = {
