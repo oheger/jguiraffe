@@ -50,6 +50,13 @@ import java.io.InputStream
 import net.sf.jguiraffe.locators.LocatorUtils
 import javafx.scene.image.ImageView
 import net.sf.jguiraffe.locators.LocatorException
+import scala.collection.mutable.StringBuilder
+import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
+import javafx.scene.control.ContentDisplay
+import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
+import javafx.scene.Node
+import org.apache.commons.lang.StringUtils
+import javafx.scene.control.Label
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -86,9 +93,24 @@ class JavaFxComponentManager extends ComponentManager {
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation creates a Java FX Label component.
+   */
   def createLabel(tag: LabelTag, create: Boolean): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val label = new Label
+      val data = tag.getTextIconData
+      label.setText(JavaFxComponentManager.mnemonicText(data.getCaption,
+        data.getMnemonic))
+      if (data.getIcon != null) {
+        label.setGraphic(data.getIcon.asInstanceOf[ImageView])
+      }
+      label.setContentDisplay(JavaFxComponentManager.convertAlignment(data.getAlignment))
+
+      JavaFxComponentManager.initNode(tag, label)
+      label
+    }
   }
 
   def linkLabel(label: Object, component: Object, text: String) {
@@ -226,5 +248,71 @@ class JavaFxComponentManager extends ComponentManager {
   def createTree(tag: TreeTag, create: Boolean): ComponentHandler[Object] = {
     //TODO implementation
     throw new UnsupportedOperationException("Not yet implemented!");
+  }
+}
+
+/**
+ * The companion object for ''JavaFxComponentManager''.
+ */
+object JavaFxComponentManager {
+  /** Constant for the mnemonic marker. */
+  private val MnemonicMarker = '_'
+
+  /**
+   * Initializes standard properties of the given node from the specified tag.
+   * @param tag the component tag
+   * @param node the node to be initialized
+   */
+  private def initNode(tag: ComponentBaseTag, node: Node) {
+    if (StringUtils.isNotEmpty(tag.getName)) {
+      node.setId(tag.getName)
+    }
+    //TODO handle further attributes
+  }
+
+  /**
+   * Adds a mnemonic marker to the specified text if possible. In Java FX, a
+   * mnemonic character is specified by putting an underscore in front of it.
+   * This method tries to find the given mnemonic character in the text. If
+   * it is found (ignoring case), the text is modified to contain the
+   * underscore.
+   * @param txt the text to be modified
+   * @param mnemonic the mnemonic character
+   * @return the manipulated string
+   */
+  private[components] def mnemonicText(txt: String, mnemonic: Char): String = {
+    if (txt == null) null
+    else {
+      var pos = txt.indexOf(mnemonic)
+      if (pos < 0) {
+        var mnemonicCase = if (mnemonic.isUpper) mnemonic.toLower
+        else mnemonic.toUpper
+        pos = txt.indexOf(mnemonicCase)
+      }
+      if (pos < 0) txt
+      else {
+        val buf = new java.lang.StringBuilder(txt.length + 1)
+        if (pos > 0) {
+          buf.append(txt.substring(0, pos))
+        }
+        buf append MnemonicMarker
+        buf.append(txt.substring(pos))
+        buf.toString()
+      }
+    }
+  }
+
+  /**
+   * Converts a ''TextIconAlignment'' enumeration value to the corresponding
+   * Java FX ''ContentDisplay'' value.
+   * @param al the alignment to be converted
+   * @return the corresponding ''ContentDisplay'' value
+   */
+  private def convertAlignment(al: TextIconAlignment): ContentDisplay = {
+    al match {
+      case TextIconAlignment.CENTER => ContentDisplay.CENTER
+      case TextIconAlignment.RIGHT => ContentDisplay.RIGHT
+      case _ => ContentDisplay.LEFT
+    }
   }
 }
