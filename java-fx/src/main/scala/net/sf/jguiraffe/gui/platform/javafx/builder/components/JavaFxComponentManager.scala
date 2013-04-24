@@ -113,9 +113,16 @@ class JavaFxComponentManager extends ComponentManager {
     }
   }
 
+  /**
+   * @inheritdoc This implementation expects that the label argument is of type
+   * ''Label'' and the component is an arbitrary ''Node''.
+   */
   def linkLabel(label: Object, component: Object, text: String) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    val fxlab = label.asInstanceOf[Label]
+    fxlab.setLabelFor(component.asInstanceOf[Node])
+    if (StringUtils.isNotEmpty(text)) {
+      fxlab.setText(text)
+    }
   }
 
   /**

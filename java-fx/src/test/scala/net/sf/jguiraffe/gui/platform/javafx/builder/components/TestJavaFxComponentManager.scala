@@ -29,6 +29,7 @@ import javafx.scene.image.Image
 import javafx.scene.control.Label
 import org.apache.commons.lang.StringUtils
 import javafx.scene.control.ContentDisplay
+import javafx.scene.text.Text
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -159,5 +160,17 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag.setAlignment("CENTER")
     val label = manager.createLabel(tag, false).asInstanceOf[Label]
     assertEquals("Wrong alignment", ContentDisplay.CENTER, label.getContentDisplay)
+  }
+
+  /**
+   * Tests whether a label can be assigned to a control.
+   */
+  @Test def testLinkLabel() {
+    val label = new Label
+    val ctrl = new Text("Test")
+    val labTxt = "Text for label"
+    manager.linkLabel(label, ctrl, labTxt)
+    assertEquals("Not linked", ctrl, label.getLabelFor)
+    assertEquals("Text not set", labTxt, label.getText)
   }
 }
