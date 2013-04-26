@@ -15,14 +15,24 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import org.apache.commons.lang.StringUtils
+
+import javafx.scene.Node
+import javafx.scene.control.ContentDisplay
+import javafx.scene.control.Label
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import net.sf.jguiraffe.gui.builder.components.ComponentManager
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.WidgetHandler
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
+import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
 import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
 import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
 import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag
 import net.sf.jguiraffe.gui.builder.components.tags.CheckboxTag
 import net.sf.jguiraffe.gui.builder.components.tags.ComboBoxTag
+import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
 import net.sf.jguiraffe.gui.builder.components.tags.DesktopPanelTag
 import net.sf.jguiraffe.gui.builder.components.tags.FontTag
 import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
@@ -43,20 +53,9 @@ import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
 import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.locators.Locator
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import javafx.scene.image.Image
-import java.io.InputStream
-import net.sf.jguiraffe.locators.LocatorUtils
-import javafx.scene.image.ImageView
 import net.sf.jguiraffe.locators.LocatorException
-import scala.collection.mutable.StringBuilder
-import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
-import javafx.scene.control.ContentDisplay
-import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
-import javafx.scene.Node
-import org.apache.commons.lang.StringUtils
-import javafx.scene.control.Label
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.

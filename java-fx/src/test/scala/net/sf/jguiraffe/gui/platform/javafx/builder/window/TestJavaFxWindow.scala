@@ -53,7 +53,7 @@ import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.ContainerWrapper
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 
 /**
  * Test class for ''JavaFxWindow''.

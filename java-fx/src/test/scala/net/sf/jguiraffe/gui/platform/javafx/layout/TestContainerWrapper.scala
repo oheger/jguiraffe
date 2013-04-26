@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.layout
 
 import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -27,6 +29,7 @@ import javafx.scene.Node
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Pane
+import javafx.scene.text.Font
 import javafx.scene.text.Text
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 
@@ -83,5 +86,46 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   @Test(expected = classOf[FormBuilderException])
   def testAddComponentUnsupported() {
     wrapper.addComponent(this, null)
+  }
+
+  /**
+   * Tests whether a default font is used if none is set.
+   */
+  @Test def testContainerFontUndefined() {
+    assertFalse("Got an initial font", wrapper.font.isDefined)
+    assertEquals("Wrong container default font", Font.getDefault(),
+      wrapper.getContainerFont)
+  }
+
+  /**
+   * Tests whether the container can be assigned a font.
+   */
+  @Test def testContainerFontDefined() {
+    val font = new Font(24)
+    wrapper.font = Some(font)
+    assertSame("Wrong container font", font, wrapper.getContainerFont)
+  }
+
+  /**
+   * Tests fromObject() if a type cast is possible.
+   */
+  @Test def testFromObjectValid() {
+    assertSame("Wrong result", wrapper, ContainerWrapper.fromObject(wrapper))
+  }
+
+  /**
+   * Tests fromObject() for invalid input.
+   */
+  @Test(expected = classOf[IllegalArgumentException])
+  def testFromObjectInvalid() {
+    ContainerWrapper.fromObject(this)
+  }
+
+  /**
+   * Tests fromObject() for null input.
+   */
+  @Test(expected = classOf[IllegalArgumentException])
+  def testFromObjectNull() {
+    ContainerWrapper.fromObject(null)
   }
 }

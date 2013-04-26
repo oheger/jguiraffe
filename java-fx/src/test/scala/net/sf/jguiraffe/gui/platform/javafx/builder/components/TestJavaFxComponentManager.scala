@@ -15,21 +15,26 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.apache.commons.lang.StringUtils
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert._
+import org.scalatest.junit.JUnitSuite
+import org.scalatest.mock.EasyMockSugar
+
 import javafx.scene.Node
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.locators.ClassPathLocator
-import javafx.scene.image.ImageView
-import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
-import javafx.scene.image.Image
-import javafx.scene.control.Label
-import org.apache.commons.lang.StringUtils
 import javafx.scene.control.ContentDisplay
+import javafx.scene.control.Label
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.text.Text
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
+import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import net.sf.jguiraffe.locators.ClassPathLocator
 
 /**
  * Test class for ''JavaFxComponentManager''.

@@ -16,7 +16,6 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
 import scala.beans.BeanProperty
-
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
@@ -27,11 +26,11 @@ import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowClosingStrategy
 import net.sf.jguiraffe.gui.builder.window.WindowEvent
 import net.sf.jguiraffe.gui.builder.window.WindowListener
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.ContainerWrapper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.MouseEventAdapter
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.WindowEventAdapter
 import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 
 /**
  * The Java FX-based implementation of the ''Window'' interface.
