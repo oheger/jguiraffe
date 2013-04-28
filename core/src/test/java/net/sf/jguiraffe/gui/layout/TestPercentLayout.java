@@ -1145,22 +1145,36 @@ public class TestPercentLayout
                 super.alignComponent(bounds, colIdx, rowIdx, sizes, startPos,
                         idx, testContainer, vert);
             }
+
+            /**
+             * Checks the arrays with sizes.
+             */
+            @Override
+            public void performLayout(Object container, int[] colSizes,
+                    int[] rowSizes, int[] colPos, int[] rowPos)
+            {
+                assertTrue("Wrong cell widths",
+                        Arrays.equals(COL_SIZES, colSizes));
+                assertTrue("Wrong cell heights",
+                        Arrays.equals(ROW_SIZES, rowSizes));
+                super.performLayout(container, colSizes, rowSizes, colPos,
+                        rowPos);
+            }
         };
         initTestLayout(layout, false, false);
         addComponents(layout);
-        PercentLayoutPlatformAdapterImpl adapter = (PercentLayoutPlatformAdapterImpl) layout
-                .getPlatformAdapter();
-        int[] xpos = new int[layout.getColumnCount()];
-        int[] ypos = new int[layout.getRowCount()];
-        Arrays.fill(xpos, AL_X);
-        Arrays.fill(ypos, AL_Y);
-        layout.performLayout(testContainer, COL_SIZES, ROW_SIZES, xpos, ypos);
-        assertEquals("Wrong number of align invocations", 2 * adapter
-                .getComponentCount(), alignCount.intValue());
+        PercentLayoutPlatformAdapterImpl adapter =
+                (PercentLayoutPlatformAdapterImpl) layout.getPlatformAdapter();
+        Rectangle insets = new Rectangle(5, 6, 7, 8);
+        Dimension size =
+                new Dimension(sum(COL_SIZES) + 12, sum(ROW_SIZES) + 14);
+        layout.performLayout(testContainer, insets, size);
+        assertEquals("Wrong number of align invocations",
+                2 * adapter.getComponentCount(), alignCount.intValue());
         for (int i = 0; i < adapter.getComponentCount(); i++)
         {
-            PercentLayoutPlatformAdapterImpl.Component comp = adapter
-                    .getComponent(i);
+            PercentLayoutPlatformAdapterImpl.Component comp =
+                    adapter.getComponent(i);
             assertTrue("Wrong bounds", comp.x >= AL_X && comp.y >= AL_Y
                     && comp.width > 0 && comp.height > 0);
         }

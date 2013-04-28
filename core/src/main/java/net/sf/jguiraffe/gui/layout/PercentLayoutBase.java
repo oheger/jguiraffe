@@ -713,6 +713,32 @@ public abstract class PercentLayoutBase implements Serializable
     }
 
     /**
+     * Layouts all components in the associated container calculating all
+     * necessary intermediate sizes and positions. This method calculates the
+     * cell sizes and positions and then delegates to the overloaded
+     * {@code performLayout()} method.
+     *
+     * @param container the container
+     * @param insets a rectangle with the container's insets
+     * @param size the size of the container
+     * @since 1.3
+     */
+    public void performLayout(Object container, Rectangle insets, Dimension size)
+    {
+        int[] colSizes =
+                calcSizes(getAllColumnConstraints(), getRowCount(),
+                        getColumnGroups(), container, size.width - insets.x
+                                - insets.width, false);
+        int[] rowSizes =
+                calcSizes(getAllRowConstraints(), getColumnCount(),
+                        getRowGroups(), container, size.height - insets.y
+                                - insets.width, true);
+        int[] colPos = calcCellPositions(colSizes, insets.x);
+        int[] rowPos = calcCellPositions(rowSizes, insets.y);
+        performLayout(container, colSizes, rowSizes, colPos, rowPos);
+    }
+
+    /**
      * Returns the preferred size of this layout. This method applies all cell
      * constraints to determine the optimum size of the layout.
      *
