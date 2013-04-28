@@ -134,8 +134,11 @@ class ContainerWrapper {
    */
   private def createPercentLayoutPane(percLayout: PercentLayoutBase,
     compData: Array[ComponentData]): Pane = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    val components = compData map (_.component)
+    val constraints = compData map (_.constraints)
+    percLayout.setPlatformAdapter(
+      new JavaFxPercentLayoutAdapter(components, constraints))
+    new PercentLayoutPane(percLayout, this)
   }
 
   /**

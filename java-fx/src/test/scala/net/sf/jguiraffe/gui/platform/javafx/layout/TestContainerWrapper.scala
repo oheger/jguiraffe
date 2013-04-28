@@ -24,7 +24,6 @@ import org.junit.Before
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
 import javafx.scene.Node
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
@@ -32,6 +31,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
+import net.sf.jguiraffe.gui.layout.PercentLayout
 
 /**
  * Test class for ''ContainerWrapper''.
@@ -127,5 +127,30 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   @Test(expected = classOf[IllegalArgumentException])
   def testFromObjectNull() {
     ContainerWrapper.fromObject(null)
+  }
+
+  /**
+   * Tests whether a correct pane is created when a percent layout object is
+   * set.
+   */
+  @Test def testCreatePercentLayoutContainer() {
+    val comp1 = new Text("Text1")
+    val comp2 = new Text("Text2")
+    val constr1 = "Constraint1"
+    val constr2 = "Constraint2"
+    wrapper.addComponent(comp1, constr1)
+    wrapper.addComponent(comp2, constr2)
+    val layout = new PercentLayout(4, 2)
+    wrapper initLayout layout
+    val pane = wrapper.createContainer().asInstanceOf[PercentLayoutPane]
+    checkChildren(pane, comp1, comp2)
+    val adapter = layout.getPlatformAdapter
+    assertTrue("Wrong adapter", adapter.isInstanceOf[JavaFxPercentLayoutAdapter])
+    assertEquals("Wrong number of components", 2, adapter.getComponentCount)
+    assertEquals("Wrong constraints (1)", constr1, adapter.getConstraints(0))
+    assertEquals("Wrong constraints (2)", constr2, adapter.getConstraints(1))
+    assertEquals("Component not found", comp2, adapter.getComponent(1))
+    assertSame("Wrong layout", layout, pane.percentLayout)
+    assertSame("Wrong container wrapper", wrapper, pane.wrapper)
   }
 }
