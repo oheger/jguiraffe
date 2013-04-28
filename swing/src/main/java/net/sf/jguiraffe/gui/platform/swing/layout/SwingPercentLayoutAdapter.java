@@ -169,7 +169,7 @@ public class SwingPercentLayoutAdapter implements LayoutManager2,
         int index = -1;
         for (int i = 0; i < components.size() && index < 0; i++)
         {
-            ConstraintsData cd = (ConstraintsData) components.get(i);
+            ConstraintsData cd = components.get(i);
             if (cd.getComponent().equals(c))
             {
                 index = i;
@@ -195,22 +195,10 @@ public class SwingPercentLayoutAdapter implements LayoutManager2,
         {
             Insets insets = container.getInsets();
             Dimension size = container.getSize();
-            int[] colSizes = getPercentLayout().calcSizes(
-                    getPercentLayout().getAllColumnConstraints(),
-                    getPercentLayout().getRowCount(),
-                    getPercentLayout().getColumnGroups(), container,
-                    size.width - insets.left - insets.right, false);
-            int[] rowSizes = getPercentLayout().calcSizes(
-                    getPercentLayout().getAllRowConstraints(),
-                    getPercentLayout().getColumnCount(),
-                    getPercentLayout().getRowGroups(), container,
-                    size.height - insets.top - insets.bottom, true);
-            int[] colPos = getPercentLayout().calcCellPositions(colSizes,
-                    insets.left);
-            int[] rowPos = getPercentLayout().calcCellPositions(rowSizes,
-                    insets.top);
-            getPercentLayout().performLayout(container, colSizes, rowSizes,
-                    colPos, rowPos);
+            getPercentLayout().performLayout(
+                    container,
+                    new Rectangle(insets.left, insets.top, insets.right,
+                            insets.bottom), size);
         }
     }
 
@@ -268,7 +256,7 @@ public class SwingPercentLayoutAdapter implements LayoutManager2,
      */
     public Object getComponent(int index)
     {
-        return ((ConstraintsData) components.get(index)).getComponent();
+        return components.get(index).getComponent();
     }
 
     /**
@@ -279,7 +267,7 @@ public class SwingPercentLayoutAdapter implements LayoutManager2,
      */
     public Object getConstraints(int index)
     {
-        return ((ConstraintsData) components.get(index)).getConstraints();
+        return components.get(index).getConstraints();
     }
 
     /**

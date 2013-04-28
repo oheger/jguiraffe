@@ -538,14 +538,16 @@ public class TestSwingPercentLayoutAdapter
          * Checks the parameters and records this invocation.
          */
         @Override
-        public void performLayout(Object container, int[] colSizes,
-                int[] rowSizes, int[] colPos, int[] rowPos)
+        public void performLayout(Object container, Rectangle insets,
+                Dimension size)
         {
-            checkSizes(colSizes, 1, false);
-            checkSizes(rowSizes, 1, true);
-            checkSizes(colPos, 3, false);
-            checkSizes(rowPos, 3, true);
             assertEquals("Wrong container", this.container, container);
+            assertEquals("Wrong left insets", INSETS.left, insets.x);
+            assertEquals("Wrong right insets", INSETS.right, insets.width);
+            assertEquals("Wrong top insets", INSETS.top, insets.y);
+            assertEquals("Wrong bottom insets", INSETS.bottom, insets.height);
+            assertEquals("Wrong width", WIDTH, size.width);
+            assertEquals("Wrong height", HEIGHT, size.height);
             performLayoutCalls++;
         }
 
