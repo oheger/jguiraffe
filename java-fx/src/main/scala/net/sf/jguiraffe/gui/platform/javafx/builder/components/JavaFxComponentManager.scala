@@ -15,8 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import scala.reflect.Manifest
 import org.apache.commons.lang.StringUtils
-
 import javafx.scene.Node
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
@@ -56,6 +56,8 @@ import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.locators.Locator
 import net.sf.jguiraffe.locators.LocatorException
+import JavaFxComponentManager.as
+import net.sf.jguiraffe.gui.layout.PercentLayoutBase
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -69,17 +71,15 @@ class JavaFxComponentManager extends ComponentManager {
   @throws(classOf[FormBuilderException])
   def addContainerComponent(container: Object, component: Object,
     constraints: Object) {
-    container match {
-      case wrapper: ContainerWrapper =>
-        wrapper.addComponent(component, constraints)
-      case _ =>
-        throw new FormBuilderException("Unsupported container object: " + container)
-    }
+    as[ContainerWrapper](container).addComponent(component, constraints)
   }
 
+  /**
+   * @inheritdoc This implementation is able to set a ''PercentLayoutBase''
+   * object into a ''ContainerWrapper''.
+   */
   def setContainerLayout(container: Object, layout: Object) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    as[ContainerWrapper](container).initLayout(as[PercentLayoutBase](layout))
   }
 
   def createEventManager(): PlatformEventManager = {
@@ -144,20 +144,26 @@ class JavaFxComponentManager extends ComponentManager {
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
-  def createPercentLayout(tag: PercentLayoutTag): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc This implementation directly returns the layout stored in the
+   * tag. The corresponding Java FX layout implementation is created when the
+   * owning panel is instantiated.
+   */
+  def createPercentLayout(tag: PercentLayoutTag): Object = tag.getPercentLayout
 
-  def createButtonLayout(tag: ButtonLayoutTag): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc This implementation directly returns the layout stored in the
+   * tag. The corresponding Java FX layout implementation is created when the
+   * owning panel is instantiated.
+   */
+  def createButtonLayout(tag: ButtonLayoutTag): Object = tag.getButtonLayout
 
-  def createBorderLayout(tag: BorderLayoutTag) = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc This implementation directly returns the layout stored in the
+   * tag. The corresponding Java FX layout implementation is created when the
+   * owning panel is instantiated.
+   */
+  def createBorderLayout(tag: BorderLayoutTag): Object = tag.getBorderLayout
 
   def createPanel(tag: PanelTag, create: Boolean): Object = {
     //TODO implementation
@@ -319,6 +325,25 @@ object JavaFxComponentManager {
       case TextIconAlignment.CENTER => ContentDisplay.CENTER
       case TextIconAlignment.RIGHT => ContentDisplay.RIGHT
       case _ => ContentDisplay.LEFT
+    }
+  }
+
+  /**
+   * Helper method for converting an object to the specified type. Because the
+   * JGUIraffe library operates on abstract and generic objects type casts have
+   * to be performed frequently. This helper method tries to cast the specified
+   * object to the desired result type. If this fails, an exception is thrown.
+   * @param [T] the result type
+   * @param obj the object to be converted
+   * @return the converted object
+   * @throws FormBuilderException if conversion fails
+   */
+  private def as[T](obj: Any)(implicit m: Manifest[T]): T = {
+    obj match {
+      case t: T => t
+      case _ =>
+        throw new FormBuilderException("Wrong object! Expected " + m.toString +
+          ", was: " + obj)
     }
   }
 }

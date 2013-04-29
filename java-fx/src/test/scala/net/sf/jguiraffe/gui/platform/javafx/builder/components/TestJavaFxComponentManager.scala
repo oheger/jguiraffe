@@ -19,12 +19,12 @@ import org.apache.commons.lang.StringUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
 import javafx.scene.Node
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
@@ -35,6 +35,15 @@ import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.locators.ClassPathLocator
+import net.sf.jguiraffe.gui.layout.PercentLayout
+import net.sf.jguiraffe.gui.platform.javafx.layout.PercentLayoutPane
+import net.sf.jguiraffe.gui.layout.PercentLayoutBase
+import net.sf.jguiraffe.gui.builder.components.tags.PercentLayoutTag
+import org.easymock.EasyMock
+import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
+import net.sf.jguiraffe.gui.layout.ButtonLayout
+import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
+import net.sf.jguiraffe.gui.layout.BorderLayout
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -177,5 +186,53 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     manager.linkLabel(label, ctrl, labTxt)
     assertEquals("Not linked", ctrl, label.getLabelFor)
     assertEquals("Text not set", labTxt, label.getText)
+  }
+
+  /**
+   * Tests whether a container can be assigned a layout.
+   */
+  @Test def testSetContainerLayout() {
+    val wrapper = mock[ContainerWrapper]
+    val layout = mock[PercentLayoutBase]
+    wrapper.initLayout(layout)
+    whenExecuting(wrapper, layout) {
+      manager.setContainerLayout(wrapper, layout)
+    }
+  }
+
+  /**
+   * Tests whether a percent layout can be created.
+   */
+  @Test def testCreatePercentLayout() {
+    val tag = mock[PercentLayoutTag]
+    val layout = mock[PercentLayoutBase]
+    EasyMock.expect(tag.getPercentLayout()).andReturn(layout)
+    whenExecuting(tag, layout) {
+      assertSame("Wrong layout", layout, manager.createPercentLayout(tag))
+    }
+  }
+
+  /**
+   * Tests whether a button layout can be created.
+   */
+  @Test def testCreateButtonLayout() {
+    val tag = mock[ButtonLayoutTag]
+    val layout = mock[ButtonLayout]
+    EasyMock.expect(tag.getButtonLayout()).andReturn(layout)
+    whenExecuting(tag, layout) {
+      assertSame("Wrong layout", layout, manager.createButtonLayout(tag))
+    }
+  }
+
+  /**
+   * Tests whether a border layout can be created.
+   */
+  @Test def testCreateBorderLayout() {
+    val tag = mock[BorderLayoutTag]
+    val layout = mock[BorderLayout]
+    EasyMock.expect(tag.getBorderLayout()).andReturn(layout)
+    whenExecuting(tag, layout) {
+      assertSame("Wrong layout", layout, manager.createBorderLayout(tag))
+    }
   }
 }
