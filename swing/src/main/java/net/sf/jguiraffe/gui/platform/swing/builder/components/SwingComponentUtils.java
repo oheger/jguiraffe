@@ -28,6 +28,8 @@ import net.sf.jguiraffe.gui.builder.components.Color;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
@@ -57,6 +59,9 @@ final class SwingComponentUtils
     /** Constant for the line break string. */
     private static final String LF = "\n";
 
+    /** The logger. */
+    private static final Log LOG = LogFactory.getLog(SwingComponentUtils.class);
+
     /**
      * Private constructor so that no instances can be created.
      */
@@ -74,22 +79,37 @@ final class SwingComponentUtils
      */
     public static Color swing2LogicColor(java.awt.Color color)
     {
-        return (color != null) ? Color.newInstance(color.getRed(), color
+        return (color != null) ? Color.newRGBInstance(color.getRed(), color
                 .getGreen(), color.getBlue()) : null;
     }
 
     /**
      * Converts the passed in logic color description into a Swing (or AWT)
-     * specific color object. <b>null</b> values are allowed as input values,
-     * the result will then be <b>null</b>, too.
+     * specific color object. If the color is not supported (if it is based on a
+     * logic color definition), this method returns <b>null</b>. <b>null</b>
+     * values are allowed as input values, the result will then be <b>null</b>,
+     * too.
      *
      * @param color the logic color description
      * @return the corresponding Swing color object
      */
     public static java.awt.Color logic2SwingColor(Color color)
     {
-        return (color != null) ? new java.awt.Color(color.getRed(), color
-                .getGreen(), color.getBlue()) : null;
+        if (color != null)
+        {
+            if (!color.isLogicColor())
+            {
+                return new java.awt.Color(color.getRed(), color.getGreen(),
+                        color.getBlue());
+            }
+            else
+            {
+                LOG.warn("Cannot convert color: " + color
+                        + "! Logic colors are not supported by Swing.");
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -117,32 +137,36 @@ final class SwingComponentUtils
     /**
      * Sets the background color of the specified component. The passed in
      * platform independent {@code Color} object will be transformed into an AWT
-     * color object. If the color is <b>null</b>, this method has no effect.
+     * color object (if possible). If the color is <b>null</b>, this method has
+     * no effect.
      *
      * @param component the component
      * @param c the new background color
      */
     public static void setBackgroundColor(JComponent component, Color c)
     {
-        if (c != null)
+        java.awt.Color convertedColor = logic2SwingColor(c);
+        if (convertedColor != null)
         {
-            component.setBackground(logic2SwingColor(c));
+            component.setBackground(convertedColor);
         }
     }
 
     /**
      * Sets the foreground color of the specified component. The passed in
      * platform independent {@code Color} object will be transformed into an AWT
-     * color object. If the color is <b>null</b>, this method has no effect.
+     * color object (if possible). If the color is <b>null</b>, this method has
+     * no effect.
      *
      * @param component the component
      * @param c the new foreground color
      */
     public static void setForegroundColor(JComponent component, Color c)
     {
-        if (c != null)
+        java.awt.Color convertedColor = logic2SwingColor(c);
+        if (convertedColor != null)
         {
-            component.setForeground(logic2SwingColor(c));
+            component.setForeground(convertedColor);
         }
     }
 

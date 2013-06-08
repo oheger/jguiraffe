@@ -25,6 +25,7 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -33,6 +34,7 @@ import net.sf.jguiraffe.gui.builder.components.Color;
 import net.sf.jguiraffe.gui.builder.components.ColorHelper;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 
+import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,7 +49,7 @@ import org.junit.Test;
 public class TestSwingComponentUtils
 {
     /** Constant for a logic test color. */
-    private static final Color LOGIC_COLOR = Color.newInstance(128, 64, 192);
+    private static final Color LOGIC_COLOR = Color.newRGBInstance(128, 64, 192);
 
     /** Constant for a Swing test color. */
     private static final java.awt.Color SWING_COLOR = new java.awt.Color(128,
@@ -135,6 +137,50 @@ public class TestSwingComponentUtils
                     SwingComponentUtils.logic2SwingColor(ColorHelper.NamedColor
                             .values()[i].getColor()));
         }
+    }
+
+    /**
+     * Creates a {@code Color} instance which cannot be processed by Swing.
+     *
+     * @return the unsupported color
+     */
+    private static Color createUnsupportedColor()
+    {
+        return Color.newLogicInstance("my logic color");
+    }
+
+    /**
+     * Tests whether an unsupported color is correctly handled.
+     */
+    @Test
+    public void testLogic2SwingColorUnsupported()
+    {
+        Color col = createUnsupportedColor();
+        assertNull("Wrong result", SwingComponentUtils.logic2SwingColor(col));
+    }
+
+    /**
+     * Tries to set an unsupported foreground color. This call should be
+     * ignored.
+     */
+    @Test
+    public void testSetForegroundColorUnsupported()
+    {
+        JComponent comp = EasyMock.createMock(JComponent.class);
+        EasyMock.replay(comp);
+        SwingComponentUtils.setForegroundColor(comp, createUnsupportedColor());
+    }
+
+    /**
+     * Tries to set an unsupported background color. This call should be
+     * ignored.
+     */
+    @Test
+    public void testSetBackgroundColorUnsupported()
+    {
+        JComponent comp = EasyMock.createMock(JComponent.class);
+        EasyMock.replay(comp);
+        SwingComponentUtils.setBackgroundColor(comp, createUnsupportedColor());
     }
 
     /**
