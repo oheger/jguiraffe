@@ -35,8 +35,9 @@ public class TestRadioButtonTagScript extends AbstractTagTest
 {
     /** Constant for the expected result of the script execution. */
     private static final String EXPECTED = "Container: ROOT {"
-            + " RADIO [ BCOL = (255, 255, 255) NAME = rad1 TEXT = Magherita "
-            + "ICON = ICON [ " + iconLocatorString() + " ] ALIGN = CENTER ],"
+            + " RADIO [ BCOL = " + colorString(255, 255, 255)
+            + " NAME = rad1 TEXT = Magherita " + "ICON = ICON [ "
+            + iconLocatorString() + " ] ALIGN = CENTER ],"
             + " RADIO [ NAME = rad2 TEXT = Calzone ALIGN = LEFT ],"
             + " RADIO [ NAME = rad3 TEXT = Hawaii ALIGN = LEFT MNEMO = H ],"
             + " RADIO [ NAME = rad4 TEXT = Toscana ALIGN = LEFT ] }";

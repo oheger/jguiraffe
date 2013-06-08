@@ -36,9 +36,13 @@ public class TestCheckboxTag extends AbstractTagTest
         checkScript(
                 SCRIPT,
                 "Container: ROOT {"
-                        + " CHECKBOX [ FCOL = (0, 0, 255) NAME = fine "
+                        + " CHECKBOX [ FCOL = "
+                        + colorString(0, 0, 255)
+                        + " NAME = fine "
                         + "TEXT = Everything fine? ALIGN = LEFT MNEMO = f ],"
-                        + " CHECKBOX [ BCOL = (0, 0, 0) NAME = checkIcon ICON = ICON [ "
+                        + " CHECKBOX [ BCOL = "
+                        + colorString(0, 0, 0)
+                        + " NAME = checkIcon ICON = ICON [ "
                         + iconLocatorString()
                         + " ] ALIGN = CENTER ],"
                         + " CHECKBOX [ NAME = cbx1 TEXT = mushrooms ALIGN = LEFT ],"

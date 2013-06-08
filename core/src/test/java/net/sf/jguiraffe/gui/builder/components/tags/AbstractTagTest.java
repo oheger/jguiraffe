@@ -20,6 +20,7 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 import net.sf.jguiraffe.di.impl.DefaultBeanContext;
+import net.sf.jguiraffe.gui.builder.components.Color;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManagerImpl;
 import net.sf.jguiraffe.gui.builder.components.Container;
@@ -181,7 +182,7 @@ public abstract class AbstractTagTest extends TestCase
     }
 
     /**
-     * Executes a jelly script specified by a <code>Locator</code>.
+     * Executes a jelly script specified by a {@code Locator}.
      *
      * @param locator the script locator
      * @throws Exception if an error occurs
@@ -219,8 +220,7 @@ public abstract class AbstractTagTest extends TestCase
     /**
      * Executes a Jelly form builder script and compares the results with the
      * expected values. This is a convenience method that combines calls of
-     * <code>{@link #executeScript(String)}</code> and
-     * <code>{@link #checkResult(String)}</code>.
+     * {@link #executeScript(String)} and {@link #checkResult(String)}.
      *
      * @param scriptName the name of the script to be executed
      * @param expected the expected return value
@@ -239,7 +239,7 @@ public abstract class AbstractTagTest extends TestCase
      *
      * @param scriptName the name of the script to be executed
      * @param builderName the name of the builder to be used
-     * @param msg an error message for the <code>fail()</code> statement
+     * @param msg an error message for the {@code fail()} statement
      * @param callBacks a flag whether the callbacks are to be executed
      * @throws Exception in case of an error
      */
@@ -268,11 +268,11 @@ public abstract class AbstractTagTest extends TestCase
 
     /**
      * Executes a script and expects an error. This is a short form of
-     * <code>errorScript(scriptName, builderName, msg, false);</code>.
+     * {@code errorScript(scriptName, builderName, msg, false);}.
      *
      * @param scriptName the name of the script to be executed
      * @param builderName the builder name to use
-     * @param msg an error message for the <code>fail()</code> statement
+     * @param msg an error message for the {@code fail()} statement
      * @throws Exception if an error occurs
      */
     protected void errorScript(String scriptName, String builderName, String msg)
@@ -285,7 +285,7 @@ public abstract class AbstractTagTest extends TestCase
      * Creates a test script. This method adds a correct header and footer to
      * the passed in script content. Then the script is packaged into an in
      * memory locator. This locator can be passed to the
-     * <code>executeScript()</code> method.
+     * {@code executeScript()} method.
      *
      * @param content the content of the test script
      * @return the locator pointing to the test script
@@ -309,5 +309,20 @@ public abstract class AbstractTagTest extends TestCase
     {
         Locator locator = ClassPathLocator.getInstance(ICON_NAME);
         return ATTR_LOCATOR + LocatorUtils.locatorToDataString(locator);
+    }
+
+    /**
+     * Returns a string representation of the color with the given RGB
+     * components.
+     *
+     * @param r the value for red
+     * @param g the value for green
+     * @param b the value for blue
+     * @return the string representation of this color
+     */
+    protected static String colorString(int r, int g, int b)
+    {
+        Color c = Color.newRGBInstance(r, g, b);
+        return c.toString();
     }
 }

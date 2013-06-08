@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -28,17 +29,20 @@ import java.util.StringTokenizer;
  * </p>
  * <p>
  * This class defines helper methods for converting color values specified in
- * form builder Jelly scripts. In this model colors can be defined in three
- * different ways:
+ * form builder Jelly scripts. In this model colors can be defined in the
+ * following different ways:
  * <ul>
  * <li>Using a symbolic name. For this purpose this class defines constants
  * that roughly correspond to the colors defined by the
- * <code>java.awt.Color</code> class.</li>
+ * {@code java.awt.Color} class.</li>
  * <li>As a hexadecimal numeric value. In this case the color definition must
- * start with a &quot;#&quot; sign, e.g. <code>#80FF80</code>. This is
+ * start with a &quot;#&quot; sign, e.g. {@code #80FF80}. This is
  * analogous to color definitions in HTML.</li>
  * <li>As triple of decimal rgb values. Definitions of this type look like
- * <code>(r, g, b)</code>, with r, g, b in the range from 0 to 255.</li>
+ * {@code (r, g, b)}, with r, g, b in the range from 0 to 255.</li>
+ * <li>Logic color definitions. These are arbitrary strings which are not
+ * further interpreted, e.g. style sheet names. To be recognized, such a string
+ * must start with a &quot;~&quot; character, e.g. {@code ~MyStyle}.</li>
  * </ul>
  * </p>
  *
@@ -62,6 +66,9 @@ public final class ColorHelper
 
     /** Constant for the hexadecimal color definition character. */
     private static final String COLDEF_HEXA = "#";
+
+    /** Constant for the prefix for logic color definitions. */
+    private static final String COLDEF_LOGIC = "~";
 
     /** Constant for the bit mask for removing the high byte. */
     private static final int BYTE_MASK = 0xFF;
@@ -87,7 +94,7 @@ public final class ColorHelper
 
     /**
      * Returns the predefined color with the given name. The passed in name must
-     * be one of the names returned by the <code>getPredefinedNames()</code>
+     * be one of the names returned by the {@code getPredefinedNames()}
      * method (case does not matter).
      *
      * @param name the name of the desired color
@@ -99,7 +106,7 @@ public final class ColorHelper
     {
         try
         {
-            return NamedColor.valueOf(name.toUpperCase()).getColor();
+            return NamedColor.valueOf(name.toUpperCase(Locale.ENGLISH)).getColor();
         }
         catch (IllegalArgumentException iex)
         {
@@ -115,7 +122,7 @@ public final class ColorHelper
 
     /**
      * Returns an iterator with the names (Strings) of all predefined colors.
-     * These names can be passed to the <code>getPredefinedColor()</code>
+     * These names can be passed to the {@code getPredefinedColor()}
      * method.
      *
      * @return the names of the predefined colors
@@ -127,8 +134,8 @@ public final class ColorHelper
 
     /**
      * The main method for resolving a color definition. This method can be
-     * given a color definition in one of the supported flavours. It will try to
-     * resolve this definition and return the corresponding <code>Color</code>
+     * given a color definition in one of the supported flavors. It will try to
+     * resolve this definition and return the corresponding {@code Color}
      * object. If this fails, an exception will be thrown.
      *
      * @param c the color definition
@@ -141,19 +148,44 @@ public final class ColorHelper
         if (c == null)
         {
             return null;
-        } /* if */
+        }
+        else if (c.startsWith(COLDEF_LOGIC))
+        {
+            return resolveLogicColor(c);
+        }
         else if (c.startsWith(COLDEF_HEXA))
         {
             return resolveHexColor(c);
-        } /* if */
+        }
         else if (c.startsWith(COLDEF_RGB_PREFIX)
                 && c.endsWith(COLDEF_RGB_SUFFIX))
         {
             return resolveRGBColor(c);
-        } /* if */
+        }
         else
         {
             return getPredefinedColor(c);
+        }
+    }
+
+    /**
+     * Resolves a logic color definition.
+     *
+     * @param c the color definition
+     * @return the resolved {@code Color} instance
+     * @throws FormBuilderException if the definition is invalid
+     */
+    private static Color resolveLogicColor(String c)
+            throws FormBuilderException
+    {
+        try
+        {
+            return Color.newLogicInstance(c.substring(COLDEF_LOGIC.length()));
+        }
+        catch (IllegalArgumentException iex)
+        {
+            throw new FormBuilderException("Invalid logic color definition: "
+                    + c, iex);
         }
     }
 
@@ -170,7 +202,7 @@ public final class ColorHelper
         {
             int value =
                     Integer.parseInt(s.substring(COLDEF_HEXA.length()), BASE_16);
-            return Color.newInstance(value >> WORD,
+            return Color.newRGBInstance(value >> WORD,
                     (value >> BYTE) & BYTE_MASK, value & BYTE_MASK);
         }
         catch (NumberFormatException nex)
@@ -198,7 +230,7 @@ public final class ColorHelper
         StringTokenizer tok = new StringTokenizer(c, RGB_DELIMITERS);
         try
         {
-            Color col = Color.newInstance(Integer.parseInt(tok.nextToken()),
+            Color col = Color.newRGBInstance(Integer.parseInt(tok.nextToken()),
                     Integer.parseInt(tok.nextToken()), Integer.parseInt(tok
                             .nextToken()));
             if (tok.hasMoreTokens())
@@ -241,54 +273,54 @@ public final class ColorHelper
 
     /**
      * An enumeration with predefined color constants. The names defined here
-     * can be passed to <code>getPredefinedColor()</code>.
+     * can be passed to {@code getPredefinedColor()}.
      */
     public static enum NamedColor
     {
         /** Default color black. */
-        BLACK(new Color(0, 0, 0)),
+        BLACK(Color.newRGBInstance(0, 0, 0)),
 
         /** Default color blue. */
-        BLUE(new Color(0, 0, 255)),
+        BLUE(Color.newRGBInstance(0, 0, 255)),
 
         /** Default color cyan. */
-        CYAN(new Color(0, 255, 255)),
+        CYAN(Color.newRGBInstance(0, 255, 255)),
 
         /** Default color dark gray. */
-        DARK_GRAY(new Color(64, 64, 64)),
+        DARK_GRAY(Color.newRGBInstance(64, 64, 64)),
 
         /** Default color gray. */
-        GRAY(new Color(128, 128, 128)),
+        GRAY(Color.newRGBInstance(128, 128, 128)),
 
         /** Default color green. */
-        GREEN(new Color(0, 255, 0)),
+        GREEN(Color.newRGBInstance(0, 255, 0)),
 
         /** Default color light gray. */
-        LIGHT_GRAY(new Color(192, 192, 192)),
+        LIGHT_GRAY(Color.newRGBInstance(192, 192, 192)),
 
         /** Default color magenta. */
-        MAGENTA(new Color(255, 0, 255)),
+        MAGENTA(Color.newRGBInstance(255, 0, 255)),
 
         /** Default color orange. */
-        ORANGE(new Color(255, 200, 0)),
+        ORANGE(Color.newRGBInstance(255, 200, 0)),
 
         /** Default color pink. */
-        PINK(new Color(255, 175, 175)),
+        PINK(Color.newRGBInstance(255, 175, 175)),
 
         /** Default color red. */
-        RED(new Color(255, 0, 0)),
+        RED(Color.newRGBInstance(255, 0, 0)),
 
         /** Default color white. */
-        WHITE(new Color(255, 255, 255)),
+        WHITE(Color.newRGBInstance(255, 255, 255)),
 
         /** Default color yellow. */
-        YELLOW(new Color(255, 255, 0));
+        YELLOW(Color.newRGBInstance(255, 255, 0));
 
-        /** Stores the referenced <code>Color</code> object. */
-        private Color color;
+        /** Stores the referenced {@code Color} object. */
+        private final Color color;
 
         /**
-         * Creates a new instance of <code>NamedColor</code> and sets the
+         * Creates a new instance of {@code NamedColor} and sets the
          * associated color.
          *
          * @param c the associated color
@@ -299,9 +331,9 @@ public final class ColorHelper
         }
 
         /**
-         * Returns the associated <code>Color</code> object.
+         * Returns the associated {@code Color} object.
          *
-         * @return the <code>Color</code> represented by this object
+         * @return the {@code Color} represented by this object
          */
         public Color getColor()
         {

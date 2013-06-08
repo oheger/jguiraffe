@@ -48,8 +48,8 @@ public class TestDesktopPanelTag extends AbstractTagTest
     public void testCreateDefaultDesktopPanel() throws Exception
     {
         builderData.setBuilderName(BUILDER_DEFAULT);
-        checkScript(SCRIPT, RES_PREFIX
-                + "BCOL = (255, 255, 255) DRAGMODE = LIVE" + RES_SUFFIX);
+        checkScript(SCRIPT, RES_PREFIX + "BCOL = " + colorString(255, 255, 255)
+                + " DRAGMODE = LIVE" + RES_SUFFIX);
     }
 
     /**

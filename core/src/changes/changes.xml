@@ -26,9 +26,18 @@
     <author email="oheger@sourceforge.net">Oliver Heger</author>
   </properties>
   <body>
+    <release version="1.3" date="TBD"
+      description="TBD">
+      <action dev="oheger" type="add">
+        Colors now support a logic representation. This is useful for instance
+        when dealing with style sheets. The serialization format and the
+        string representation of class Color have changed.
+      </action>
+    </release>
+
     <release version="1.2" date="2012-11-15"
       description="Adding OSGi support">
-      <action dev="oheger" issue="3535847" type="add">
+      <action dev="oheger" issue="3535847" type="update">
         Added OSGi support.
       </action>
     </release>

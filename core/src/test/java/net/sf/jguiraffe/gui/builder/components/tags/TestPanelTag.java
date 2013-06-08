@@ -35,8 +35,12 @@ public class TestPanelTag extends AbstractTagTest
                 "panel",
                 "Container: ROOT { "
                         + "LABEL [ TEXT = Hello world! ALIGN = LEFT ], "
-                        + "Container: PANEL [ BCOL = (0, 0, 0) TEXT = TestPanel "
-                        + "TEXTCOL = (255, 255, 0) TEXTFONT = TestFont BORDER = TRUE BORDERREF = TESTBORDER ] { "
+                        + "Container: PANEL [ BCOL = "
+                        + colorString(0, 0, 0)
+                        + " TEXT = TestPanel "
+                        + "TEXTCOL = "
+                        + colorString(255, 255, 0)
+                        + " TEXTFONT = TestFont BORDER = TRUE BORDERREF = TESTBORDER ] { "
                         + "LABEL [ TEXT = My Input: ALIGN = LEFT ], "
                         + "TEXTFIELD [ NAME = input MAXLEN = 20 ] }, "
                         + "LABEL [ TEXT = Label after container ALIGN = LEFT ], "

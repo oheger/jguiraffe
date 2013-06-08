@@ -54,10 +54,10 @@ public class TestLabelTag extends AbstractTagTest
 
     /** Constant for the expected result of the builder operation. */
     private static final String EXPECTED = RESULT_PREFIX + "LABEL [ "
-            + "TEXT = Hello world! ALIGN = LEFT MNEMO = w FCOL = (0, 0, 255) "
-            + "TOOLTIP = Label test tool tip ],"
+            + "TEXT = Hello world! ALIGN = LEFT MNEMO = w FCOL = "
+            + colorString(0, 0, 255) + " TOOLTIP = Label test tool tip ],"
             + " LABEL [ ICON = ICON [ " + iconLocatorString()
-            + " ] ALIGN = CENTER BCOL = (0, 0, 0) ],"
+            + " ] ALIGN = CENTER BCOL = " + colorString(0, 0, 0) + " ],"
             + " LABEL [ TEXT = Label1 ALIGN = LEFT "
             + "TOOLTIP = Tool tip for label 1 ],"
             + " LABEL [ TEXT = Label2 ALIGN = LEFT MNEMO = L "

@@ -28,14 +28,18 @@ public class TestButtonTag extends AbstractTagTest
 
     /** Constant for the expected result of the test script. */
     private static final String EXPECTED = "Container: ROOT { BUTTON [ "
-            + "TEXT = Hello world! ALIGN = LEFT MNEMO = w CMD = Hello "
-            + "FCOL = (0, 0, 255) NAME = Hello ],"
-            + " BUTTON [ ICON = ICON [ "
-            + iconLocatorString()
-            + " ] ALIGN = CENTER CMD = Image BCOL = (0, 0, 0) NAME = image ],"
-            + " BUTTON [ TEXT = OK ALIGN = LEFT CMD = OK NAME = ok DEFAULT ],"
-            + " BUTTON [ TEXT = Cancel ALIGN = LEFT MNEMO = C CMD = CANCEL NAME = cancel ],"
-            + " TOGGLE [ TEXT = Toggle ALIGN = LEFT CMD = tog NAME = toggle ] }";
+                    + "TEXT = Hello world! ALIGN = LEFT MNEMO = w CMD = Hello "
+                    + "FCOL = "
+                    + colorString(0, 0, 255)
+                    + " NAME = Hello ],"
+                    + " BUTTON [ ICON = ICON [ "
+                    + iconLocatorString()
+                    + " ] ALIGN = CENTER CMD = Image BCOL = "
+                    + colorString(0, 0, 0)
+                    + " NAME = image ],"
+                    + " BUTTON [ TEXT = OK ALIGN = LEFT CMD = OK NAME = ok DEFAULT ],"
+                    + " BUTTON [ TEXT = Cancel ALIGN = LEFT MNEMO = C CMD = CANCEL NAME = cancel ],"
+                    + " TOGGLE [ TEXT = Toggle ALIGN = LEFT CMD = tog NAME = toggle ] }";
 
     /**
      * Tests whether the properties of button tags are correctly evaluated.

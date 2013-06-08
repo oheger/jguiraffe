@@ -169,8 +169,8 @@ public class TestTableTag extends AbstractTagTest
 
     /** Constant for the default result prefix. */
     private static final String DEFAULT_RESULT_PREFIX = TABLE_RES_PREFIX
-            + "SELECTIONFG = (255, 255, 255) " + "SELECTIONBG = (0, 0, 255) "
-            + "EDITABLE = false";
+            + "SELECTIONFG = " + colorString(255, 255, 255) + " SELECTIONBG = "
+            + colorString(0, 0, 255) + " EDITABLE = false";
 
     /** Constant for the results of a simple table definition. */
     private static final String TABLE_RESULT = DEFAULT_RESULT_PREFIX

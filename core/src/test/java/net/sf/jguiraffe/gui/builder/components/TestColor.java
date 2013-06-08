@@ -15,7 +15,16 @@
  */
 package net.sf.jguiraffe.gui.builder.components;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
+import net.sf.jguiraffe.JGuiraffeTestHelper;
+
+import org.junit.Test;
 
 /**
  * Test class for Color.
@@ -23,32 +32,69 @@ import junit.framework.TestCase;
  * @author Oliver Heger
  * @version $Id: TestColor.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TestColor extends TestCase
+public class TestColor
 {
+    /** Constant for the R component. */
+    private static final int RED = 128;
+
+    /** Constant for the G component. */
+    private static final int GREEN = 192;
+
+    /** Constant for the B component. */
+    private static final int BLUE = 222;
+
+    /** Constant for a logic color definition. */
+    private static final String COLDEF = "mouse-gray";
+
     /**
-     * Tests creating a new Color instance.
+     * Tests whether an instance can be created with RGB components in the old
+     * way.
      */
+    @Test
     public void testNewInstance()
     {
-        Color c = Color.newInstance(128, 192, 222);
-        assertEquals("Wrong red component", 128, c.getRed());
-        assertEquals("Wrong green component", 192, c.getGreen());
-        assertEquals("Wrong blue component", 222, c.getBlue());
+        @SuppressWarnings("deprecation")
+        Color c = Color.newInstance(RED, GREEN, BLUE);
+        assertEquals("Wrong red component", RED, c.getRed());
+        assertEquals("Wrong green component", GREEN, c.getGreen());
+        assertEquals("Wrong blue component", BLUE, c.getBlue());
     }
 
     /**
-     * Tests creating a new Color instance when one of the components is too
-     * small. This should cause an exception.
+     * Tests whether an instance can be created with RGB components.
      */
+    @Test
+    public void testNewRGBInstance()
+    {
+        Color c = Color.newRGBInstance(RED, GREEN, BLUE);
+        assertEquals("Wrong red component", RED, c.getRed());
+        assertEquals("Wrong green component", GREEN, c.getGreen());
+        assertEquals("Wrong blue component", BLUE, c.getBlue());
+    }
+
+    /**
+     * Tests whether an instance can be created from a logic definition.
+     */
+    @Test
+    public void testNewLogicInstance()
+    {
+        Color c = Color.newLogicInstance(COLDEF);
+        assertEquals("Wrong color definition", COLDEF, c.getColorDefinition());
+    }
+
+    /**
+     * Tests whether an RGB component which is too small causes an exception.
+     */
+    @Test
     public void testNewInstanceTooSmall()
     {
         checkInvalidComponent(-1, "Could create color with component < 0!");
     }
 
     /**
-     * Tests creating a new Color instance when one of the components is too
-     * big. This should cause an exception.
+     * Tests whether an RGB component which is too big causes an exception.
      */
+    @Test
     public void testNewInstanceTooBig()
     {
         checkInvalidComponent(256, "Could create color with component > 255!");
@@ -56,12 +102,13 @@ public class TestColor extends TestCase
 
     /**
      * Tries to create a color instance when one of its components has an
-     * invalid value. This should cause an exception.
+     * invalid value. This should cause an exception. This is tested for all
+     * color components.
      *
      * @param value the invalid component value
      * @param msg the error message
      */
-    private void checkInvalidComponent(int value, String msg)
+    private static void checkInvalidComponent(int value, String msg)
     {
         int[] components = new int[3];
         for (int i = 0; i < components.length; i++)
@@ -72,7 +119,8 @@ public class TestColor extends TestCase
             }
             try
             {
-                Color.newInstance(components[0], components[1], components[2]);
+                Color.newRGBInstance(components[0], components[1],
+                        components[2]);
                 fail(msg);
             }
             catch (IllegalArgumentException iex)
@@ -83,64 +131,128 @@ public class TestColor extends TestCase
     }
 
     /**
-     * Tests color objects for equality.
+     * Tries to create a new logic instance without a color definition.
      */
-    public void testEquals()
+    @Test(expected = IllegalArgumentException.class)
+    public void testNewLogicInstanceNullDefinition()
     {
-        Color c1 = Color.newInstance(1, 2, 3);
-        checkEquals(c1, c1, true);
-        checkEquals(c1, Color.newInstance(1, 2, 0), false);
-        checkEquals(c1, Color.newInstance(1, 0, 3), false);
-        checkEquals(c1, Color.newInstance(0, 2, 3), false);
-        checkEquals(c1, Color.newInstance(1, 2, 3), true);
+        Color.newLogicInstance(null);
     }
 
     /**
-     * Tests the equals() implementation when null is passed in.
+     * Tries to create a new logic instance with an empty color definition.
      */
-    public void testEqualsNull()
+    @Test(expected = IllegalArgumentException.class)
+    public void testNewLogicInstanceEmptyDefinition()
     {
-        checkEquals(Color.newInstance(1, 2, 3), null, false);
+        Color.newLogicInstance("");
     }
 
     /**
-     * Tests the equals() implementation when an object of a different class is
-     * passed in.
+     * Tests isLogicColor() if the expected result is true.
      */
-    public void testEqualsInvalid()
+    @Test
+    public void testIsLogicColorTrue()
     {
-        checkEquals(Color.newInstance(1, 2, 3), this, false);
+        Color col = Color.newLogicInstance(COLDEF);
+        assertTrue("Wrong result (1)", col.isLogicColor());
+        col = new Color(Color.COMPONENT_UNDEFINED, GREEN, BLUE, null);
+        assertTrue("Wrong result (2)", col.isLogicColor());
+        col = new Color(RED, Color.COMPONENT_UNDEFINED, BLUE, null);
+        assertTrue("Wrong result (3)", col.isLogicColor());
+        col = new Color(RED, GREEN, Color.COMPONENT_UNDEFINED, null);
+        assertTrue("Wrong result (4)", col.isLogicColor());
     }
 
     /**
-     * Helper method for checking the equals() and hashCode() implementations.
-     *
-     * @param obj1 object 1 to compare
-     * @param obj2 object 2 to compare
-     * @param expected the expected result
+     * Tests isLogicColor() if the expected result is false.
      */
-    private static void checkEquals(Object obj1, Object obj2, boolean expected)
+    @Test
+    public void testIsLogicColorFalse()
     {
-        assertEquals("Wrong result for equals", expected, obj1.equals(obj2));
-        if (obj2 != null)
-        {
-            assertEquals("Not symmetric", expected, obj2.equals(obj1));
-        }
-        if (expected)
-        {
-            assertEquals("Hash codes are different", obj1.hashCode(), obj2
-                    .hashCode());
-        }
+        Color col = Color.newRGBInstance(RED, GREEN, BLUE);
+        assertFalse("Wrong result", col.isLogicColor());
     }
 
     /**
-     * Tests the toString() implementation. Here we only check whether the
-     * components of the color appear in the resulting string.
+     * Tests the equals() method if the expected result is true.
      */
-    public void testToString()
+    @Test
+    public void testEqualsTrue()
     {
-        Color c = Color.newInstance(64, 128, 192);
-        assertTrue("Components not found", c.toString().indexOf(
-                "(64, 128, 192)") >= 0);
+        Color c = Color.newRGBInstance(RED, GREEN, BLUE);
+        JGuiraffeTestHelper.checkEquals(c, c, true);
+        JGuiraffeTestHelper.checkEquals(c,
+                Color.newRGBInstance(RED, GREEN, BLUE), true);
+        c = Color.newLogicInstance(COLDEF);
+        JGuiraffeTestHelper
+                .checkEquals(c, Color.newLogicInstance(COLDEF), true);
+    }
+
+    /**
+     * Tests equals() if the expected result is false.
+     */
+    @Test
+    public void testEqualsFalse()
+    {
+        Color c1 = Color.newRGBInstance(RED, GREEN, BLUE);
+        JGuiraffeTestHelper.checkEquals(c1,
+                Color.newRGBInstance(RED, GREEN, BLUE + 1), false);
+        JGuiraffeTestHelper.checkEquals(c1,
+                Color.newRGBInstance(RED, GREEN - 1, BLUE), false);
+        JGuiraffeTestHelper.checkEquals(c1,
+                Color.newRGBInstance(RED + 1, GREEN, BLUE), false);
+        Color c2 = Color.newLogicInstance(COLDEF);
+        JGuiraffeTestHelper.checkEquals(c1, c2, false);
+        JGuiraffeTestHelper.checkEquals(c2,
+                Color.newLogicInstance(COLDEF + "_other"), false);
+    }
+
+    /**
+     * Tests equals() with other objects.
+     */
+    @Test
+    public void testEqualsTrivial()
+    {
+        JGuiraffeTestHelper.testTrivialEquals(Color.newRGBInstance(RED, GREEN,
+                BLUE));
+    }
+
+    /**
+     * Tests the toString() implementation for an RGB-based color. Here we only
+     * check whether the components of the color appear in the resulting string.
+     */
+    @Test
+    public void testToStringRGB()
+    {
+        Color c = Color.newRGBInstance(RED, GREEN, BLUE);
+        String s = c.toString();
+        String expected = "rgb = (" + RED + ", " + GREEN + ", " + BLUE + ")";
+        assertTrue("Components not found: " + s, s.indexOf(expected) >= 0);
+        assertTrue("Got a logic definition: " + s, s.indexOf("def = ") < 0);
+    }
+
+    /**
+     * Tests the string representation of a logic color.
+     */
+    @Test
+    public void testToStringLogic()
+    {
+        Color c = Color.newLogicInstance(COLDEF);
+        String s = c.toString();
+        String expected = "def = '" + COLDEF + "'";
+        assertTrue("Definition not found: " + s, s.indexOf(expected) >= 0);
+        assertTrue("Got RGB components: " + s, s.indexOf("rgb = ") < 0);
+    }
+
+    /**
+     * Tests whether an instance can be serialized.
+     */
+    @Test
+    public void testSerialization() throws IOException
+    {
+        Color c = Color.newRGBInstance(RED, GREEN, BLUE);
+        Color c2 = JGuiraffeTestHelper.serialize(c);
+        assertEquals("Serialized object not equal", c, c2);
     }
 }
