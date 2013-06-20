@@ -139,10 +139,15 @@ class JavaFxComponentManager extends ComponentManager {
     }
   }
 
-  def createFont(tag: FontTag): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc This implementation returns a ''JavaFxFont'' object initialized
+   * with the properties set for the given tag.
+   */
+  def createFont(tag: FontTag): Object =
+    JavaFxFont(family = JavaFxComponentManager.convertFontFamily(tag),
+      size = JavaFxComponentManager.convertFontSize(tag),
+      weight = JavaFxComponentManager.convertFontWeight(tag),
+      style = JavaFxComponentManager.convertFontStyle(tag))
 
   /**
    * @inheritdoc This implementation directly returns the layout stored in the
@@ -267,6 +272,15 @@ class JavaFxComponentManager extends ComponentManager {
  * The companion object for ''JavaFxComponentManager''.
  */
 object JavaFxComponentManager {
+  /** Constant for the normal font weight and style. */
+  private val FontStyleNormal = "normal"
+
+  /** Constant for the font style italic. */
+  private val FontStyleItalic = "italic"
+
+  /** Constant for the font weight bold. */
+  private val FontWeightBold = "bold"
+
   /** Constant for the mnemonic marker. */
   private val MnemonicMarker = '_'
 
@@ -327,6 +341,50 @@ object JavaFxComponentManager {
       case _ => ContentDisplay.LEFT
     }
   }
+
+  /**
+   * Converts the font name as specified in the given tag to a corresponding
+   * style definition. If the name is undefined, result is ''None''.
+   * @param tag the font tag
+   * @return an ''Option'' for the font family style definition
+   */
+  private def convertFontFamily(tag: FontTag): Option[String] = {
+    if (tag.getName != null) {
+      Some(s"${'"'}${tag.getName}${'"'}")
+    } else None
+  }
+
+  /**
+   * Converts the font size as specified in the given tag to a corresponding
+   * style definition. Font sizes less or equal 0 are considered as undefined.
+   * @param tag the font tag
+   * @return an ''Option'' for the font size style definition
+   */
+  private def convertFontSize(tag: FontTag): Option[String] = {
+    val size = tag.getSize
+    if (size > 0) Some(s"${size}px")
+    else None
+  }
+
+  /**
+   * Converts the font style as specified in the given tag to a corresponding
+   * style definition. This method never returns ''None''; the style is
+   * derived from the tag's ''italic'' property.
+   * @param tag the font tag
+   * @return an ''Option'' for the font style definition
+   */
+  private def convertFontStyle(tag: FontTag): Option[String] =
+    Some(if (tag.isItalic) FontStyleItalic else FontStyleNormal)
+
+  /**
+   * Converts the font weight as specified in the given tag to a corresponding
+   * style definition. This method never returns ''None''; the weight style is
+   * derived from the tag's ''bold'' property.
+   * @param tag the font tag
+   * @return an ''Option'' for the font weight style definition
+   */
+  private def convertFontWeight(tag: FontTag): Option[String] =
+    Some(if (tag.isBold) FontWeightBold else FontStyleNormal)
 
   /**
    * Helper method for converting an object to the specified type. Because the

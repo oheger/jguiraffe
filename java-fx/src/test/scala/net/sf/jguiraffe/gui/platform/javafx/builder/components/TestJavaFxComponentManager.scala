@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import org.apache.commons.lang.StringUtils
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
@@ -44,6 +45,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
 import net.sf.jguiraffe.gui.layout.ButtonLayout
 import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
 import net.sf.jguiraffe.gui.layout.BorderLayout
+import net.sf.jguiraffe.gui.builder.components.tags.FontTag
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -234,5 +236,35 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     whenExecuting(tag, layout) {
       assertSame("Wrong layout", layout, manager.createBorderLayout(tag))
     }
+  }
+
+  /**
+   * Tests whether a font can be created if all properties are undefined.
+   */
+  @Test def testCreateFontUndefined() {
+    val tag = new FontTag
+    val font = manager.createFont(tag).asInstanceOf[JavaFxFont]
+    assertFalse("Got a family", font.family.isDefined)
+    assertFalse("Got a size", font.size.isDefined)
+    assertEquals("Wrong weight", "normal", font.weight.get)
+    assertEquals("Wrong style", "normal", font.style.get)
+    assertFalse("Got a font def", font.fontDef.isDefined)
+  }
+
+  /**
+   * Tests whether font properties are correctly set.
+   */
+  @Test def testCreateFontWithProperties() {
+    val tag = new FontTag
+    tag.setName("MyFontName")
+    tag.setSize(42)
+    tag.setBold(true)
+    tag.setItalic(true)
+    val font = manager.createFont(tag).asInstanceOf[JavaFxFont]
+    assertEquals("Wrong family", '"' + tag.getName() + '"', font.family.get)
+    assertEquals("Wrong size", "42px", font.size.get)
+    assertEquals("Wrong weight", "bold", font.weight.get)
+    assertEquals("Wrong style", "italic", font.style.get)
+    assertFalse("Got a font def", font.fontDef.isDefined)
   }
 }
