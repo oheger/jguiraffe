@@ -30,9 +30,16 @@ import org.apache.commons.logging.LogFactory
  * The interface methods are implemented in a way that they delegate to this
  * ''Node''.
  *
+ * The creation of tool tips is delegated to a
+ * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.ToolTipFactory]]
+ * object which is also passed to the constructor. This allows applications to
+ * customize tool tips.
+ *
  * @param widget the underlying Java FX widget
+ * @param toolTipFactory the factory object for tool tips
  */
-private class JavaFxWidgetHandler(@BeanProperty val widget: Node) extends WidgetHandler {
+private class JavaFxWidgetHandler(@BeanProperty val widget: Node,
+    val toolTipFactory: ToolTipFactory) extends WidgetHandler {
   /** The styles handler used by this object. */
   lazy val stylesHandler = createStylesHandler()
 
@@ -155,6 +162,6 @@ private class JavaFxWidgetHandler(@BeanProperty val widget: Node) extends Widget
    */
   private def setToolTipText(ctrl: Control, txt: String) {
     ctrl.setTooltip(if (txt == null) null
-    else new Tooltip(txt))
+    else toolTipFactory.createToolTip(txt))
   }
 }
