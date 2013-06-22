@@ -17,11 +17,10 @@ package net.sf.jguiraffe.gui.platform.javafx
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-
 import org.junit.Assert.fail
-
 import javafx.embed.swing.JFXPanel
 import javax.swing.SwingUtilities
+import javafx.application.Platform
 
 /**
  * An object providing some utility methods for unit tests for Java FX
@@ -53,6 +52,24 @@ object JavaFxTestHelper {
         f()
       }
     }
+  }
+
+  /**
+   * Executes the passed in ''Runnable'' in the Java FX thread and waits for
+   * its execution (with a timeout). This method can be used to test Java FX
+   * functionality which requires to be executed in the Java FX thread.
+   * Because the call is blocking no further synchronization is needed.
+   * @param r the runnable to be executed
+   */
+  def runInFxThread(r: Runnable) {
+    val latch = new CountDownLatch(1)
+    Platform.runLater(new Runnable {
+      def run() {
+        r.run()
+        latch.countDown()
+      }
+    })
+    await(latch)
   }
 
   /**
