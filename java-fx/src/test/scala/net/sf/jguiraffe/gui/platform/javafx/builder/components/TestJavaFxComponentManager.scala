@@ -15,7 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import org.apache.commons.jelly.JellyContext
 import org.apache.commons.lang.StringUtils
+import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -26,26 +28,27 @@ import org.junit.Before
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
 import javafx.scene.Node
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.text.Text
+import net.sf.jguiraffe.gui.builder.components.Color
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
+import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
+import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
+import net.sf.jguiraffe.gui.builder.components.tags.FontTag
 import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
+import net.sf.jguiraffe.gui.builder.components.tags.PercentLayoutTag
+import net.sf.jguiraffe.gui.forms.ComponentStoreImpl
+import net.sf.jguiraffe.gui.layout.BorderLayout
+import net.sf.jguiraffe.gui.layout.ButtonLayout
+import net.sf.jguiraffe.gui.layout.PercentLayoutBase
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.locators.ClassPathLocator
-import net.sf.jguiraffe.gui.layout.PercentLayout
-import net.sf.jguiraffe.gui.platform.javafx.layout.PercentLayoutPane
-import net.sf.jguiraffe.gui.layout.PercentLayoutBase
-import net.sf.jguiraffe.gui.builder.components.tags.PercentLayoutTag
-import org.easymock.EasyMock
-import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
-import net.sf.jguiraffe.gui.layout.ButtonLayout
-import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
-import net.sf.jguiraffe.gui.layout.BorderLayout
-import net.sf.jguiraffe.gui.builder.components.tags.FontTag
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -266,5 +269,77 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong weight", "bold", font.weight.get)
     assertEquals("Wrong style", "italic", font.style.get)
     assertFalse("Got a font def", font.fontDef.isDefined)
+  }
+
+  /**
+   * Tests whether the background color property is set correctly when creating
+   * a control.
+   */
+  @Test def testInitControlBackgroundColor() {
+    val tag = new LabelTag {
+      override def getBackgroundColor: Color = Color.newRGBInstance(0x80, 0xff, 0x80)
+    }
+    tag.setText("Test Label")
+    val ctrl = manager.createLabel(tag, false).asInstanceOf[Label]
+    val style = ctrl.getStyle()
+    assertTrue("Background color not set: " + style,
+      style.contains("-fx-background-color: #80ff80"))
+  }
+
+  /**
+   * Tests whether the foreground color property is set correctly when creating
+   * a control.
+   */
+  @Test def testInitControlForegroundColor() {
+    val tag = new LabelTag {
+      override def getForegroundColor: Color = Color.newRGBInstance(0x40, 0xff, 0x80)
+    }
+    tag.setText("Test Label")
+    val ctrl = manager.createLabel(tag, false).asInstanceOf[Label]
+    val style = ctrl.getStyle()
+    assertTrue("Foreground color not set: " + style,
+      style.contains("-fx-text-fill: #40ff80"))
+  }
+
+  /**
+   * Tests whether the font is correctly evaluated when creating a control.
+   */
+  @Test def testInitControlFont() {
+    val tag = new LabelTag
+    val font = JavaFxFont(size = Some("20"))
+    tag setFont font
+    val ctrl = manager.createLabel(tag, false).asInstanceOf[Label]
+    val style = ctrl.getStyle()
+    assertTrue("Font style not set: " + style, style.contains("-fx-font-size"))
+  }
+
+  /**
+   * Tests whether an appropriate default tool tip factory is created.
+   */
+  @Test def testDefaultToolTipFactory() {
+    assertTrue("Wrong default tool tip factory",
+      manager.toolTipFactory.isInstanceOf[DefaultToolTipFactory])
+  }
+
+  /**
+   * Tests whether the tool tip is evaluated when creating a control.
+   */
+  @Test def testInitControlToolTip() {
+    val tag = new LabelTag
+    val tip = "MyToolTip"
+    tag setTooltip tip
+    tag setContext (new JellyContext)
+    val builderData = new ComponentBuilderData
+    builderData.put(tag.getContext())
+    builderData.pushComponentStore(new ComponentStoreImpl)
+    val label = manager.createLabel(tag, false)
+    val callBack = ToolTipCreationCallBack.getInstance(tag, null)
+
+    assertSame("Wrong tool tip factory", manager.toolTipFactory,
+      callBack.toolTipFactory)
+    assertEquals("Wrong number of requests", 1, callBack.requests.size)
+    val req = callBack.requests.head
+    assertEquals("Wrong control", label, req.control)
+    assertEquals("Wrong tip text", tip, req.tip)
   }
 }

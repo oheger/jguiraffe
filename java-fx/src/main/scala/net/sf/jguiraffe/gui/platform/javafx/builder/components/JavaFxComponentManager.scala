@@ -58,11 +58,21 @@ import net.sf.jguiraffe.locators.Locator
 import net.sf.jguiraffe.locators.LocatorException
 import JavaFxComponentManager.as
 import net.sf.jguiraffe.gui.layout.PercentLayoutBase
+import javafx.scene.control.Control
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
+ *
+ * @param toolTipFactory the factory object for creating tool tips
  */
-class JavaFxComponentManager extends ComponentManager {
+class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
+  extends ComponentManager {
+  /**
+   * Creates a new instance of ''JavaFxComponentManager'' and initializes it
+   * with a default tool tip factory.
+   */
+  def this() = this(new DefaultToolTipFactory)
+
   /**
    * @inheritdoc This implementation expects that the container is a
    * ''ContainerWrapper'' object. In this case, the component is added to the
@@ -107,7 +117,7 @@ class JavaFxComponentManager extends ComponentManager {
       }
       label.setContentDisplay(JavaFxComponentManager.convertAlignment(data.getAlignment))
 
-      JavaFxComponentManager.initNode(tag, label)
+      initControl(tag, label)
       label
     }
   }
@@ -266,6 +276,22 @@ class JavaFxComponentManager extends ComponentManager {
     //TODO implementation
     throw new UnsupportedOperationException("Not yet implemented!");
   }
+
+  /**
+   * Initializes standard properties of the given ''Control'' from the
+   * specified tag. This method delegates to ''initNode()'' for handling
+   * base properties and then deals with additional properties for controls.
+   * @param tag the component tag defining fundamental properties
+   * @param control the control to be initialized
+   */
+  private def initControl(tag: ComponentBaseTag, control: Control) {
+    JavaFxComponentManager.initNode(tag, control)
+
+    if (tag.getToolTipData.isDefined) {
+      val callBack = ToolTipCreationCallBack.getInstance(tag, toolTipFactory)
+      callBack.addCreateToolTipRequest(control, tag.getToolTipData.getCaption())
+    }
+  }
 }
 
 /**
@@ -293,7 +319,35 @@ object JavaFxComponentManager {
     if (StringUtils.isNotEmpty(tag.getName)) {
       node.setId(tag.getName)
     }
-    //TODO handle further attributes
+
+    val styleDef = createStylesForTag(tag).toExternalForm()
+    if (!styleDef.isEmpty) {
+      node.setStyle(styleDef)
+    }
+  }
+
+  /**
+   * Creates a ''Styles'' object which is initialized from the attributes of
+   * the given component tag.
+   * @param tag the component tag
+   * @return the initialized ''Styles'' object
+   */
+  private def createStylesForTag(tag: ComponentBaseTag): Styles = {
+    val stylesHandler = new JavaFxStylesHandler
+    if (tag.getBackgroundColor() != null) {
+      stylesHandler setBackgroundColor (tag.getBackgroundColor())
+    }
+    if (tag.getForegroundColor() != null) {
+      stylesHandler setForegroundColor (tag.getForegroundColor())
+    }
+
+    tag.getFont match {
+      case f: JavaFxFont =>
+        stylesHandler setFont f
+      case _ => // ignore
+    }
+
+    stylesHandler.styles
   }
 
   /**
