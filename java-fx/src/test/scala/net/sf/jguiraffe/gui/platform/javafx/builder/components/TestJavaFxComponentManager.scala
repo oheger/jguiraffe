@@ -342,4 +342,16 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong control", label, req.control)
     assertEquals("Wrong tip text", tip, req.tip)
   }
+
+  /**
+   * Tests whether a widget handler can be created.
+   */
+  @Test def testCreateWidgetHandler() {
+    val widget = new Label
+    val handler = manager.getWidgetHandlerFor(widget)
+      .asInstanceOf[JavaFxWidgetHandler]
+    assertSame("Wrong wrapped widget", widget, handler.widget)
+    assertSame("Wrong tool tip factory", manager.toolTipFactory,
+      handler.toolTipFactory)
+  }
 }

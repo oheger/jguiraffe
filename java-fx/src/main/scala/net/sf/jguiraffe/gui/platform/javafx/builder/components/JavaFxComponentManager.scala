@@ -97,9 +97,13 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation expects the passed in object to be of type
+   * ''Node''. It returns a corresponding widget handler implementation.
+   */
   def getWidgetHandlerFor(component: Object): WidgetHandler = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    assert(component != null, "No component provided!")
+    new JavaFxWidgetHandler(component.asInstanceOf[Node], toolTipFactory)
   }
 
   /**
