@@ -71,14 +71,13 @@ class TestFocusEventAdapter extends JUnitSuite {
   }
 
   /**
-   * Tests whether an instance is correctly created and initialized.
+   * Tests whether a correct default sender is created.
    */
-  @Test def testApply() {
+  @Test def testDefaultSender() {
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
-    prepareListenerReg()
     PowerMock.replayAll()
-    val adapter = FocusEventAdapter(evMan, compHandler, ComponentName, node)
+    val adapter = new FocusEventAdapter(evMan, compHandler, ComponentName)
     assertSame("Wrong component handler", compHandler, adapter.componentHandler)
     assertEquals("Wrong name", ComponentName, adapter.componentName)
     val sender = adapter.sender.asInstanceOf[EventManagerSender[FormFocusEvent]]

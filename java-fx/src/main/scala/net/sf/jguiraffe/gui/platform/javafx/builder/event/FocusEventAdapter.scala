@@ -37,7 +37,7 @@ import net.sf.jguiraffe.gui.forms.ComponentHandler
  * @param componentHandler the handler of the associated component
  * @param componentName the name of the associated component
  */
-class FocusEventAdapter private[event] (val sender: EventSender[FormFocusEvent],
+private class FocusEventAdapter(val sender: EventSender[FormFocusEvent],
   val componentHandler: ComponentHandler[_], val componentName: String) {
   /**
    * A change listener which will monitor the value of the focus property.
@@ -49,6 +49,18 @@ class FocusEventAdapter private[event] (val sender: EventSender[FormFocusEvent],
       sender.fire(createEvent(newValue.booleanValue()))
     }
   }
+
+  /**
+   * Creates a new instance of ''FocusEventAdapter'' with a sender which targets
+   * the specified ''FormEventManager''.
+   * @param evMan the event manager
+   * @param compHandler the handler of the associated component
+   * @param compName the component name
+   */
+  def this(evMan: FormEventManager, compHandler: ComponentHandler[_],
+    compName: String) =
+    this(new EventManagerSender[FormFocusEvent](evMan, FormListenerType.FOCUS),
+      compHandler, compName)
 
   /**
    * Removes this adapter from the specified node. No focus events will be
@@ -63,7 +75,7 @@ class FocusEventAdapter private[event] (val sender: EventSender[FormFocusEvent],
    * Registers this instance as focus listener at the specified node.
    * @param node the node
    */
-  private[event] def register(node: Node) {
+  def register(node: Node) {
     node.focusedProperty().addListener(changeListener)
   }
 
@@ -78,34 +90,4 @@ class FocusEventAdapter private[event] (val sender: EventSender[FormFocusEvent],
     new FormFocusEvent(this, componentHandler, componentName,
       if (gainedFocus) FormFocusEvent.Type.FOCUS_GAINED
       else FormFocusEvent.Type.FOCUS_LOST)
-}
-
-/**
- * The companion object of ''FocusEventAdapter''.
- */
-object FocusEventAdapter {
-  /**
-   * Creates a new instance of ''FocusEventAdapter'' which delivers events
-   * to the specified ''FormEventManager'' instance. The adapter is registered
-   * at the specified node.
-   * @param evMan the event manager
-   * @param compHandler the component handler
-   * @param compName the name of the component
-   * @param node the node to register the adapter at
-   */
-  def apply(evMan: FormEventManager, compHandler: ComponentHandler[_],
-    compName: String, node: Node): FocusEventAdapter = {
-    val adapter = new FocusEventAdapter(createSender(evMan),
-      compHandler, compName)
-    adapter.register(node)
-    adapter
-  }
-
-  /**
-   * Creates a sender object for delivering events.
-   * @param evMan the event manager
-   * @return the event sender
-   */
-  private def createSender(evMan: FormEventManager): EventSender[FormFocusEvent] =
-    new EventManagerSender[FormFocusEvent](evMan, FormListenerType.FOCUS)
 }
