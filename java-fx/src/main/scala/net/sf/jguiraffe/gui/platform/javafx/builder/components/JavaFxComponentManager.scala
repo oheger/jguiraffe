@@ -59,6 +59,7 @@ import net.sf.jguiraffe.locators.LocatorException
 import JavaFxComponentManager.as
 import net.sf.jguiraffe.gui.layout.PercentLayoutBase
 import javafx.scene.control.Control
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -92,10 +93,11 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     as[ContainerWrapper](container).initLayout(as[PercentLayoutBase](layout))
   }
 
-  def createEventManager(): PlatformEventManager = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc This implementation creates a Java FX-specific event manager
+   * object.
+   */
+  def createEventManager(): PlatformEventManager = new JavaFxEventManager
 
   /**
    * @inheritdoc This implementation expects the passed in object to be of type

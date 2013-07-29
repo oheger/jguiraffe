@@ -47,6 +47,7 @@ import net.sf.jguiraffe.gui.forms.ComponentStoreImpl
 import net.sf.jguiraffe.gui.layout.BorderLayout
 import net.sf.jguiraffe.gui.layout.ButtonLayout
 import net.sf.jguiraffe.gui.layout.PercentLayoutBase
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.locators.ClassPathLocator
 
@@ -353,5 +354,14 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertSame("Wrong wrapped widget", widget, handler.widget)
     assertSame("Wrong tool tip factory", manager.toolTipFactory,
       handler.toolTipFactory)
+  }
+
+  /**
+   * Tests whether an event manager can be created.
+   */
+  @Test def testCreateEventManager() {
+    val evMan = manager.createEventManager()
+    assertTrue("Wrong event manager: " + evMan,
+      evMan.isInstanceOf[JavaFxEventManager])
   }
 }
