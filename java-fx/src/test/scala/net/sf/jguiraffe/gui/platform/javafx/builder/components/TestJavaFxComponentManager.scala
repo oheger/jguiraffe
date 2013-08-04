@@ -52,6 +52,8 @@ import net.sf.jguiraffe.locators.ClassPathLocator
 import net.sf.jguiraffe.gui.builder.components.tags.TextFieldTag
 import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
+import net.sf.jguiraffe.gui.builder.components.tags.TextAreaTag
+import javafx.scene.control.TextArea
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -413,6 +415,46 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val txtCtrl = handler.getComponent.asInstanceOf[TextField]
     assertEquals("Wrong preferred column count", tag.getColumns,
       txtCtrl.getPrefColumnCount)
+    checkMaxTextLength(txtCtrl, tag.getMaxlength)
+  }
+
+  /**
+   * Tests createTextArea() if the create flag is set.
+   */
+  @Test def testCreateTextAreaCreateFlag() {
+    assertNull("Got a result", manager.createTextArea(new TextAreaTag, true))
+  }
+
+  /**
+   * Tests whether a text area can be created if no text-specific attributes
+   * are provided, but only some basic attributes common to all controls.
+   */
+  @Test def testCreateTextAreaComponentAttributes() {
+    val tag = new TextAreaTag
+    tag setName ComponentName
+    val handler = manager.createTextArea(tag, false).asInstanceOf[JavaFxTextHandler]
+    val txtCtrl = handler.component.asInstanceOf[TextArea]
+    assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
+    assertFalse("Wrap flag is set", txtCtrl.isWrapText)
+    checkMaxTextLength(txtCtrl, 0)
+  }
+
+  /**
+   * Tests whether specific attributes for text areas are correctly evaluated
+   * when creating a text area.
+   */
+  @Test def testCreateTextAreaTextAttributes() {
+    val tag = new TextAreaTag
+    tag setColumns 50
+    tag setRows 25
+    tag setWrap true
+    tag setMaxlength 1000
+    val handler = manager.createTextArea(tag, false)
+    val txtCtrl = handler.getComponent.asInstanceOf[TextArea]
+    assertEquals("Preferred columns not set", tag.getColumns,
+        txtCtrl.getPrefColumnCount)
+    assertEquals("Preferred rows not set", tag.getRows, txtCtrl.getPrefRowCount)
+    assertTrue("Wrap flag not set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, tag.getMaxlength)
   }
 }
