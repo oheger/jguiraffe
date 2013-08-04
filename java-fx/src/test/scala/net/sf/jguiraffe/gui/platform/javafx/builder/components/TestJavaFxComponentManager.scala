@@ -54,6 +54,8 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
 import net.sf.jguiraffe.gui.builder.components.tags.TextAreaTag
 import javafx.scene.control.TextArea
+import net.sf.jguiraffe.gui.builder.components.tags.PasswordFieldTag
+import javafx.scene.control.PasswordField
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -455,6 +457,20 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
         txtCtrl.getPrefColumnCount)
     assertEquals("Preferred rows not set", tag.getRows, txtCtrl.getPrefRowCount)
     assertTrue("Wrap flag not set", txtCtrl.isWrapText)
+    checkMaxTextLength(txtCtrl, tag.getMaxlength)
+  }
+
+  /**
+   * Tests whether a password field can be created.
+   */
+  @Test def testCreatePasswordField() {
+    val tag = new PasswordFieldTag
+    tag setColumns 10
+    tag setMaxlength 20
+    val handler = manager.createPasswordField(tag, false)
+    val txtCtrl = handler.getComponent.asInstanceOf[PasswordField]
+    assertEquals("Preferred columns not set", tag.getColumns,
+        txtCtrl.getPrefColumnCount)
     checkMaxTextLength(txtCtrl, tag.getMaxlength)
   }
 }

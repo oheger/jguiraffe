@@ -62,6 +62,7 @@ import javafx.scene.control.Control
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import javafx.scene.control.TextField
 import javafx.scene.control.TextArea
+import javafx.scene.control.PasswordField
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -224,19 +225,9 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
    * the [[net.sf.jguiraffe.gui.platform.javafx.builder.components.TextLengthRestriction]]
    * trait to limit the maximum text length.
    */
-  def createTextField(tag: TextFieldTag, create: Boolean): ComponentHandler[String] = {
-    if (create) null
-    else {
-      val ctrl = new TextField with TextLengthRestriction
-      initControl(tag, ctrl)
-
-      if (tag.getColumns > 0) {
-        ctrl setPrefColumnCount tag.getColumns
-      }
-      ctrl setMaximumLength tag.getMaxlength
-      new JavaFxTextHandler(ctrl)
-    }
-  }
+  def createTextField(tag: TextFieldTag, create: Boolean): ComponentHandler[String] =
+    createAndInitializeTextField(tag, create,
+      new TextField with TextLengthRestriction)
 
   /**
    * @inheritdoc This implementation creates a Java FX ''TextArea'' control
@@ -263,11 +254,14 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     }
   }
 
+  /**
+   * @inheritdoc This implementation works similar to ''createTextField()'',
+   * except that a Java FX ''PasswordField'' control is created.
+   */
   def createPasswordField(tag: PasswordFieldTag,
-    create: Boolean): ComponentHandler[String] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+    create: Boolean): ComponentHandler[String] =
+    createAndInitializeTextField(tag, create,
+      new PasswordField with TextLengthRestriction)
 
   def createCheckbox(tag: CheckboxTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
     //TODO implementation
@@ -318,6 +312,31 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
   def createTree(tag: TreeTag, create: Boolean): ComponentHandler[Object] = {
     //TODO implementation
     throw new UnsupportedOperationException("Not yet implemented!");
+  }
+
+  /**
+   * Helper method for actually creating text field controls. This method is
+   * used by the methods for creating text fields and password fields (which
+   * are actually pretty similar). The control to be returned is passed as a
+   * by name-parameter. Thus the creation can be controlled by the caller.
+   * @param tag the text field tag
+   * @param create the create flag
+   * @param comp the text field component
+   * @return the component handler with the initialized text field control
+   */
+  private def createAndInitializeTextField(tag: TextFieldTag, create: Boolean,
+    comp: => TextField with TextLengthRestriction): ComponentHandler[String] = {
+    if (create) null
+    else {
+      val ctrl = comp
+      initControl(tag, ctrl)
+
+      if (tag.getColumns > 0) {
+        ctrl setPrefColumnCount tag.getColumns
+      }
+      ctrl setMaximumLength tag.getMaxlength
+      new JavaFxTextHandler(ctrl)
+    }
   }
 
   /**
