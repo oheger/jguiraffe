@@ -28,7 +28,6 @@ import org.junit.Before
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
 import javafx.scene.Node
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
@@ -50,11 +49,17 @@ import net.sf.jguiraffe.gui.layout.PercentLayoutBase
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.locators.ClassPathLocator
+import net.sf.jguiraffe.gui.builder.components.tags.TextFieldTag
+import javafx.scene.control.TextField
+import javafx.scene.control.TextInputControl
 
 /**
  * Test class for ''JavaFxComponentManager''.
  */
 class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
+  /** Constant for a component name. */
+  private val ComponentName = "TestComponent"
+
   /** The manager to be tested. */
   private var manager: JavaFxComponentManager = _
 
@@ -363,5 +368,51 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val evMan = manager.createEventManager()
     assertTrue("Wrong event manager: " + evMan,
       evMan.isInstanceOf[JavaFxEventManager])
+  }
+
+  /**
+   * Tests createTextField() if the create flag is set.
+   */
+  @Test def testCreateTextFieldCreateFlag() {
+    assertNull("Got a result", manager.createTextField(new TextFieldTag, true))
+  }
+
+  /**
+   * Helper method for testing whether the given text control has the expected
+   * maximum length initialized.
+   * @param ctrl the control
+   * @param expMaxLen the expected maximum length property
+   */
+  private def checkMaxTextLength(ctrl: TextInputControl, expMaxLen: Int) {
+    val lenRestr = ctrl.asInstanceOf[TextLengthRestriction]
+    assertEquals("Wrong max length", expMaxLen, lenRestr.getMaximumLength)
+  }
+
+  /**
+   * Tests whether a text field can be created if no text-specific attributes
+   * are provided, but only some basic attributes common to all controls.
+   */
+  @Test def testCreateTextFieldComponentAttributes() {
+    val tag = new TextFieldTag
+    tag setName ComponentName
+    val handler = manager.createTextField(tag, false).asInstanceOf[JavaFxTextHandler]
+    val txtCtrl = handler.component.asInstanceOf[TextField]
+    assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
+    checkMaxTextLength(txtCtrl, 0)
+  }
+
+  /**
+   * Tests whether specific attributes for text components are correctly
+   * evaluated.
+   */
+  @Test def testCreateTextFieldTextAttributes() {
+    val tag = new TextFieldTag
+    tag setColumns 20
+    tag setMaxlength 30
+    val handler = manager.createTextField(tag, false)
+    val txtCtrl = handler.getComponent.asInstanceOf[TextField]
+    assertEquals("Wrong preferred column count", tag.getColumns,
+      txtCtrl.getPrefColumnCount)
+    checkMaxTextLength(txtCtrl, tag.getMaxlength)
   }
 }

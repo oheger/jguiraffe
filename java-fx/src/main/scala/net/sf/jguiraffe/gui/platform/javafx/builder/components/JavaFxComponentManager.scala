@@ -60,6 +60,7 @@ import JavaFxComponentManager.as
 import net.sf.jguiraffe.gui.layout.PercentLayoutBase
 import javafx.scene.control.Control
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
+import javafx.scene.control.TextField
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -216,9 +217,24 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation creates a Java FX ''TextField'' control
+   * wrapped by a ''JavaFxTextComponentHandler''. The text field also mixes in
+   * the [[net.sf.jguiraffe.gui.platform.javafx.builder.components.TextLengthRestriction]]
+   * trait to limit the maximum text length.
+   */
   def createTextField(tag: TextFieldTag, create: Boolean): ComponentHandler[String] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val ctrl = new TextField with TextLengthRestriction
+      initControl(tag, ctrl)
+
+      if (tag.getColumns > 0) {
+        ctrl setPrefColumnCount tag.getColumns
+      }
+      ctrl setMaximumLength tag.getMaxlength
+      new JavaFxTextHandler(ctrl)
+    }
   }
 
   def createTextArea(tag: TextAreaTag, create: Boolean): ComponentHandler[String] = {
