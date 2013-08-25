@@ -181,17 +181,6 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests the remaining values of the alignment property.
-   */
-  @Test def testCreateLabelContentDisplay() {
-    val tag = new LabelTag
-    tag.setText("Hallo")
-    tag.setAlignment("CENTER")
-    val label = manager.createLabel(tag, false).asInstanceOf[Label]
-    assertEquals("Wrong alignment", ContentDisplay.CENTER, label.getContentDisplay)
-  }
-
-  /**
    * Tests whether a label can be assigned to a control.
    */
   @Test def testLinkLabel() {

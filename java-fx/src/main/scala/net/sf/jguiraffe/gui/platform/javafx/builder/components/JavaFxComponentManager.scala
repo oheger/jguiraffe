@@ -124,7 +124,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
       if (data.getIcon != null) {
         label.setGraphic(data.getIcon.asInstanceOf[ImageView])
       }
-      label.setContentDisplay(JavaFxComponentManager.convertAlignment(data.getAlignment))
+      label.setContentDisplay(convertAlignment(data.getAlignment))
 
       initControl(tag, label)
       label
@@ -441,20 +441,6 @@ object JavaFxComponentManager {
         buf.append(txt.substring(pos))
         buf.toString()
       }
-    }
-  }
-
-  /**
-   * Converts a ''TextIconAlignment'' enumeration value to the corresponding
-   * Java FX ''ContentDisplay'' value.
-   * @param al the alignment to be converted
-   * @return the corresponding ''ContentDisplay'' value
-   */
-  private def convertAlignment(al: TextIconAlignment): ContentDisplay = {
-    al match {
-      case TextIconAlignment.CENTER => ContentDisplay.CENTER
-      case TextIconAlignment.RIGHT => ContentDisplay.RIGHT
-      case _ => ContentDisplay.LEFT
     }
   }
 
