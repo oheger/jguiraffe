@@ -63,6 +63,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import javafx.scene.control.TextField
 import javafx.scene.control.TextArea
 import javafx.scene.control.PasswordField
+import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -116,19 +117,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
    */
   def createLabel(tag: LabelTag, create: Boolean): Object = {
     if (create) null
-    else {
-      val label = new Label
-      val data = tag.getTextIconData
-      label.setText(JavaFxComponentManager.mnemonicText(data.getCaption,
-        data.getMnemonic))
-      if (data.getIcon != null) {
-        label.setGraphic(data.getIcon.asInstanceOf[ImageView])
-      }
-      label.setContentDisplay(convertAlignment(data.getAlignment))
-
-      initControl(tag, label)
-      label
-    }
+    else createLabelControl(tag, tag.getTextIconData)
   }
 
   /**
@@ -289,8 +278,8 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
   }
 
   def createStaticText(tag: StaticTextTag, create: Boolean): ComponentHandler[StaticTextData] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else new JavaFxStaticTextHandler(createLabelControl(tag, tag.getTextIconData))
   }
 
   def createProgressBar(tag: ProgressBarTag,
@@ -337,6 +326,26 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
       ctrl setMaximumLength tag.getMaxlength
       new JavaFxTextHandler(ctrl)
     }
+  }
+
+  /**
+   * Creates a JavaFX ''Label'' and initializes it based on the given data
+   * object.
+   * @param tag the component tag
+   * @param data the data object for the label
+   * @return the newly created label
+   */
+  private def createLabelControl(tag: ComponentBaseTag, data: TextIconData): Label = {
+    val label = new Label
+    label.setText(JavaFxComponentManager.mnemonicText(data.getCaption,
+      data.getMnemonic))
+    if (data.getIcon != null) {
+      label.setGraphic(data.getIcon.asInstanceOf[ImageView])
+    }
+    label.setContentDisplay(convertAlignment(data.getAlignment))
+
+    initControl(tag, label)
+    label
   }
 
   /**

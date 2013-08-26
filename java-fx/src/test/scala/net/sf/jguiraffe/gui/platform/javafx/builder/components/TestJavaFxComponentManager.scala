@@ -56,6 +56,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.TextAreaTag
 import javafx.scene.control.TextArea
 import net.sf.jguiraffe.gui.builder.components.tags.PasswordFieldTag
 import javafx.scene.control.PasswordField
+import net.sf.jguiraffe.gui.builder.components.tags.StaticTextTag
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -443,7 +444,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val handler = manager.createTextArea(tag, false)
     val txtCtrl = handler.getComponent.asInstanceOf[TextArea]
     assertEquals("Preferred columns not set", tag.getColumns,
-        txtCtrl.getPrefColumnCount)
+      txtCtrl.getPrefColumnCount)
     assertEquals("Preferred rows not set", tag.getRows, txtCtrl.getPrefRowCount)
     assertTrue("Wrap flag not set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, tag.getMaxlength)
@@ -459,7 +460,27 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val handler = manager.createPasswordField(tag, false)
     val txtCtrl = handler.getComponent.asInstanceOf[PasswordField]
     assertEquals("Preferred columns not set", tag.getColumns,
-        txtCtrl.getPrefColumnCount)
+      txtCtrl.getPrefColumnCount)
     checkMaxTextLength(txtCtrl, tag.getMaxlength)
+  }
+
+  /**
+   * Tests the creation of a static text component if the create flag is true.
+   */
+  @Test def testCreateStaticTextCreate() {
+    assertNull("Got a static text", manager.createStaticText(new StaticTextTag,
+      true))
+  }
+
+  /**
+   * Tests whether a static text component can be correctly created.
+   */
+  @Test def testCreateStaticText() {
+    val Text = "TestStaticText"
+    val tag = new StaticTextTag
+    tag setText Text
+    val handler = manager.createStaticText(tag, false)
+      .asInstanceOf[JavaFxStaticTextHandler]
+    assertEquals("Label not initialized", Text, handler.getText)
   }
 }
