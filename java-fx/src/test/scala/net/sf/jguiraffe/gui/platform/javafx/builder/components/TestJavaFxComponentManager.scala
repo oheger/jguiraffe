@@ -57,6 +57,8 @@ import javafx.scene.control.TextArea
 import net.sf.jguiraffe.gui.builder.components.tags.PasswordFieldTag
 import javafx.scene.control.PasswordField
 import net.sf.jguiraffe.gui.builder.components.tags.StaticTextTag
+import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag
+import javafx.scene.control.Button
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -482,5 +484,38 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val handler = manager.createStaticText(tag, false)
       .asInstanceOf[JavaFxStaticTextHandler]
     assertEquals("Label not initialized", Text, handler.getText)
+  }
+
+  /**
+   * Tests the creation of a button component if the create flag is set.
+   */
+  @Test def testCreateButtonCreate() {
+    assertNull("Got a button", manager.createButton(new ButtonTag, true))
+  }
+
+  /**
+   * Tests whether a button can be created if no properties are provided.
+   */
+  @Test def testCreateButtonNoProperties() {
+    val btnHandler = manager.createButton(new ButtonTag, false)
+      .asInstanceOf[JavaFxButtonHandler]
+    val button = btnHandler.component.asInstanceOf[Button]
+    assertTrue("Got text", StringUtils.isEmpty(button.getText))
+    assertFalse("A default button", button.isDefaultButton)
+    assertFalse("A cancel button", button.isCancelButton)
+  }
+
+  /**
+   * Tests whether properties are evaluated when creating a button component.
+   */
+  @Test def testCreateButtonWithProperties() {
+    val Text = "TestButton"
+    val tag = new ButtonTag
+    tag setText Text
+    tag setDefault true
+    val button = manager.createButton(tag, false).getComponent.asInstanceOf[Button]
+    assertEquals("Wrong text", Text, button.getText)
+    assertTrue("Not the default button", button.isDefaultButton)
+    assertFalse("A cancel button", button.isCancelButton)
   }
 }

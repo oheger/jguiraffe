@@ -64,6 +64,8 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TextArea
 import javafx.scene.control.PasswordField
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
+import javafx.scene.control.Labeled
+import javafx.scene.control.Button
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -198,9 +200,18 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''Button'' control wrapped
+   * by a ''JavaFxButtonHandler''.
+   */
   def createButton(tag: ButtonTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val button = new Button
+      initLabeled(button, tag, tag.getTextIconData)
+      button setDefaultButton (tag.isDefault)
+      new JavaFxButtonHandler(button)
+    }
   }
 
   def createToggleButton(tag: ToggleButtonTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
@@ -337,6 +348,19 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
    */
   private def createLabelControl(tag: ComponentBaseTag, data: TextIconData): Label = {
     val label = new Label
+    initLabeled(label, tag, data)
+    label
+  }
+
+  /**
+   * Helper method for initializing the properties of the specified ''Labeled''
+   * object from the given ''TextIconData''.
+   * @param label the label to be initialized
+   * @param tag the component tag
+   * @param data the ''TextIconData'' object with special properties for the label
+   */
+  private def initLabeled(label: Labeled, tag: ComponentBaseTag,
+    data: TextIconData) {
     label.setText(JavaFxComponentManager.mnemonicText(data.getCaption,
       data.getMnemonic))
     if (data.getIcon != null) {
@@ -345,7 +369,6 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     label.setContentDisplay(convertAlignment(data.getAlignment))
 
     initControl(tag, label)
-    label
   }
 
   /**
