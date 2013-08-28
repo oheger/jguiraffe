@@ -59,6 +59,8 @@ import javafx.scene.control.PasswordField
 import net.sf.jguiraffe.gui.builder.components.tags.StaticTextTag
 import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag
 import javafx.scene.control.Button
+import net.sf.jguiraffe.gui.builder.components.tags.CheckboxTag
+import javafx.scene.control.CheckBox
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -517,5 +519,25 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong text", Text, button.getText)
     assertTrue("Not the default button", button.isDefaultButton)
     assertFalse("A cancel button", button.isCancelButton)
+  }
+
+  /**
+   * Tests the creation of a check box if the create flag is set.
+   */
+  @Test def testCreateCheckboxCreate() {
+    assertNull("Got a check box", manager.createCheckbox(new CheckboxTag, true))
+  }
+
+  /**
+   * Tests whether a check box can be created and initialized.
+   */
+  @Test def testCreateCheckbox() {
+    val Text = "TestCheckBox"
+    val tag = new CheckboxTag
+    tag setText Text
+    val handler = manager.createCheckbox(tag, false).asInstanceOf[JavaFxCheckBoxHandler]
+    val checkBox = handler.component.asInstanceOf[CheckBox]
+    assertEquals("Text not set", Text, checkBox.getText)
+    assertFalse("Already selected", handler.getData)
   }
 }

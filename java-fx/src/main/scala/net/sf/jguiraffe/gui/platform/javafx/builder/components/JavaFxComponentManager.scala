@@ -66,6 +66,7 @@ import javafx.scene.control.PasswordField
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import javafx.scene.control.Labeled
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -263,9 +264,17 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     createAndInitializeTextField(tag, create,
       new PasswordField with TextLengthRestriction)
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''CheckBox'' control
+   * wrapped within a ''JavaFxCheckBoxHandler''.
+   */
   def createCheckbox(tag: CheckboxTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val checkBox = new CheckBox
+      initLabeled(checkBox, tag, tag.getTextIconData)
+      new JavaFxCheckBoxHandler(checkBox)
+    }
   }
 
   def createRadioButton(tag: RadioButtonTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
