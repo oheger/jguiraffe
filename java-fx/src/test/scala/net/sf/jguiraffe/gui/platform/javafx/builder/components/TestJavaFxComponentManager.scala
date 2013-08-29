@@ -61,6 +61,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag
 import javafx.scene.control.Button
 import net.sf.jguiraffe.gui.builder.components.tags.CheckboxTag
 import javafx.scene.control.CheckBox
+import net.sf.jguiraffe.gui.builder.components.tags.ToggleButtonTag
+import javafx.scene.control.ToggleButton
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -539,5 +541,28 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val checkBox = handler.component.asInstanceOf[CheckBox]
     assertEquals("Text not set", Text, checkBox.getText)
     assertFalse("Already selected", handler.getData)
+  }
+
+  /**
+   * Tests the creation of a toggle button if the create flag is set.
+   */
+  @Test def testCreateToggleButtonCreate() {
+    assertNull("Got a toggle button",
+      manager.createToggleButton(new ToggleButtonTag, true))
+  }
+
+  /**
+   * Tests whether a toggle button can be created and initialized.
+   */
+  @Test def testCreateToggleButton() {
+    val Text = "TestToggleButton"
+    val tag = new ToggleButtonTag
+    tag setText Text
+    val handler = manager.createToggleButton(tag, false)
+      .asInstanceOf[JavaFxToggleButtonHandler]
+    val button = handler.component.asInstanceOf[ToggleButton]
+    assertEquals("Text not set", Text, button.getText)
+    assertNull("Got a toggle button group", button.getToggleGroup)
+    assertFalse("Button already selected", button.isSelected)
   }
 }

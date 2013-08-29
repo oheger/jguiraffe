@@ -67,6 +67,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import javafx.scene.control.Labeled
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
+import javafx.scene.control.ToggleButton
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -215,9 +216,17 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     }
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''ToggleButton''
+   * control wrapped by a ''JavaFxToggleButtonHandler''.
+   */
   def createToggleButton(tag: ToggleButtonTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val button = new ToggleButton
+      initLabeled(button, tag, tag.getTextIconData)
+      new JavaFxToggleButtonHandler(button)
+    }
   }
 
   /**
