@@ -69,6 +69,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.RadioButton
+import javafx.scene.control.ToggleGroup
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -198,9 +199,20 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''ToggleGroup'' object.
+   * Then it iterates over all values in the given map, casts them to
+   * ''RadioButton'' objects, and sets the newly created group as the buttons'
+   * toggle group.
+   */
   def createRadioGroup(radioButtons: java.util.Map[String, Object]): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    val group = new ToggleGroup
+    val it = radioButtons.values().iterator()
+    while (it.hasNext) {
+      val radio = as[RadioButton](it.next())
+      radio setToggleGroup group
+    }
+    group
   }
 
   /**

@@ -65,6 +65,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.ToggleButtonTag
 import javafx.scene.control.ToggleButton
 import net.sf.jguiraffe.gui.builder.components.tags.RadioButtonTag
 import javafx.scene.control.RadioButton
+import javafx.scene.control.ToggleGroup
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -589,5 +590,18 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Text not set", Text, radio.getText)
     assertNull("Got a toggle group", radio.getToggleGroup)
     assertFalse("Already selected", radio.isSelected)
+  }
+
+  /**
+   * Tests whether a radio group can be created.
+   */
+  @Test def testCreateRadioGroup() {
+    import collection.JavaConversions._
+    val radio1 = new RadioButton
+    val radio2 = new RadioButton
+    val map = Map("radio1" -> radio1.asInstanceOf[Object], "radio2" -> radio2)
+    val group = manager.createRadioGroup(map).asInstanceOf[ToggleGroup]
+    assertEquals("Group not set for R1", group, radio1.getToggleGroup)
+    assertEquals("Group not set for R2", group, radio2.getToggleGroup)
   }
 }
