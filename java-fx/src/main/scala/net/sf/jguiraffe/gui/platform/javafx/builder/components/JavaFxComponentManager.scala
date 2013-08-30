@@ -68,6 +68,7 @@ import javafx.scene.control.Labeled
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ToggleButton
+import javafx.scene.control.RadioButton
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -286,9 +287,17 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     }
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''RadioButton'' control
+   * wrapped by a ''JavaFxToggleButtonHandler''.
+   */
   def createRadioButton(tag: RadioButtonTag, create: Boolean): ComponentHandler[java.lang.Boolean] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val radio = new RadioButton
+      initLabeled(radio, tag, tag.getTextIconData)
+      new JavaFxToggleButtonHandler(radio)
+    }
   }
 
   def createComboBox(tag: ComboBoxTag, create: Boolean): ComponentHandler[Object] = {

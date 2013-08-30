@@ -63,6 +63,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.CheckboxTag
 import javafx.scene.control.CheckBox
 import net.sf.jguiraffe.gui.builder.components.tags.ToggleButtonTag
 import javafx.scene.control.ToggleButton
+import net.sf.jguiraffe.gui.builder.components.tags.RadioButtonTag
+import javafx.scene.control.RadioButton
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -564,5 +566,28 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Text not set", Text, button.getText)
     assertNull("Got a toggle button group", button.getToggleGroup)
     assertFalse("Button already selected", button.isSelected)
+  }
+
+  /**
+   * Tests the creation of a radio button if the create flag is set.
+   */
+  @Test def testCreateReadioButtonCreate() {
+    assertNull("Got a radio button",
+      manager.createRadioButton(new RadioButtonTag, true))
+  }
+
+  /**
+   * Tests whether a radio button can be created and initialized.
+   */
+  @Test def testCreateRadioButton() {
+    val Text = "TestRadioButton"
+    val tag = new RadioButtonTag
+    tag setText Text
+    val handler = manager.createRadioButton(tag, false)
+      .asInstanceOf[JavaFxToggleButtonHandler]
+    val radio = handler.component.asInstanceOf[RadioButton]
+    assertEquals("Text not set", Text, radio.getText)
+    assertNull("Got a toggle group", radio.getToggleGroup)
+    assertFalse("Already selected", radio.isSelected)
   }
 }
