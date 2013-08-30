@@ -165,6 +165,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      * @throws FormBuilderRuntimeException if the passed in component is not a
      *         {@code TabData} object
      */
+    @Override
     public void addComponent(Object comp, Object constraints)
     {
         if (!(comp instanceof TabData))
@@ -181,6 +182,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      *
      * @return the container object
      */
+    @Override
     public Object getContainer()
     {
         // just a dummy implementation
@@ -193,6 +195,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      *
      * @param layout the layout object
      */
+    @Override
     public void setLayout(Object layout)
     {
         throw new UnsupportedOperationException(
@@ -310,17 +313,11 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      */
     public static class TabData
     {
-        /** Stores the title of this register. */
-        private String title;
-
-        /** Stores the icon of this register. */
-        private Object icon;
+        /** The object for storing graphic meta data. */
+        private final TextIconData textIconData = new TextIconData(null);
 
         /** Stores a tooltip for this register. */
         private String toolTip;
-
-        /** Stores a mnemonic for this register. */
-        private int mnemonic;
 
         /** Stores the component that represents the content of this register. */
         private Object component;
@@ -354,7 +351,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
          */
         public Object getIcon()
         {
-            return icon;
+            return getTextIconData().getIcon();
         }
 
         /**
@@ -364,7 +361,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
          */
         public void setIcon(Object icon)
         {
-            this.icon = icon;
+            getTextIconData().setIcon(icon);
         }
 
         /**
@@ -374,7 +371,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
          */
         public int getMnemonic()
         {
-            return mnemonic;
+            return getTextIconData().getMnemonic();
         }
 
         /**
@@ -385,7 +382,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
          */
         public void setMnemonic(int mnemonic)
         {
-            this.mnemonic = mnemonic;
+            getTextIconData().setMnemonicKey(String.valueOf((char) mnemonic));
         }
 
         /**
@@ -395,7 +392,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
          */
         public String getTitle()
         {
-            return title;
+            return getTextIconData().getText();
         }
 
         /**
@@ -405,7 +402,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
          */
         public void setTitle(String title)
         {
-            this.title = title;
+            getTextIconData().setText(title);
         }
 
         /**
@@ -426,6 +423,17 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
         public void setToolTip(String toolTip)
         {
             this.toolTip = toolTip;
+        }
+
+        /**
+         * Returns the data object with text and icon information.
+         *
+         * @return the data object with text and icon information
+         * @since 1.3
+         */
+        public TextIconData getTextIconData()
+        {
+            return textIconData;
         }
     }
 }
