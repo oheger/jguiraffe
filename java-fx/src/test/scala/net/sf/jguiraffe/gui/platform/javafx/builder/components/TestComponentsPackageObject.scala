@@ -15,11 +15,14 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 
+import javafx.geometry.Side
 import javafx.scene.control.ContentDisplay
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
+import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
 
 /**
  * Test class for the package object of the ''components'' package.
@@ -43,5 +46,23 @@ class TestComponentsPackageObject extends JUnitSuite {
     assert(TextIconAlignment.LEFT === convertContentDisplay(ContentDisplay.LEFT))
     assert(TextIconAlignment.RIGHT === convertContentDisplay(ContentDisplay.RIGHT))
     assert(TextIconAlignment.CENTER === convertContentDisplay(ContentDisplay.CENTER))
+  }
+
+  /**
+   * Tests whether Placement values can be converted to Side literals.
+   */
+  @Test def testConvertPlacementToSide() {
+    assert(Side.RIGHT === convertPlacementToSide(TabbedPaneTag.Placement.RIGHT))
+    assert(Side.LEFT === convertPlacementToSide(TabbedPaneTag.Placement.LEFT))
+    assert(Side.BOTTOM === convertPlacementToSide(TabbedPaneTag.Placement.BOTTOM))
+    assert(Side.TOP === convertPlacementToSide(TabbedPaneTag.Placement.TOP))
+  }
+
+  /**
+   * Tests whether a reasonable default value is used when converting Placement
+   * values to Side literals.
+   */
+  @Test def testConvertSideToPlacementDefault() {
+    assertEquals("Wrong default", Side.TOP, convertPlacementToSide(null))
   }
 }

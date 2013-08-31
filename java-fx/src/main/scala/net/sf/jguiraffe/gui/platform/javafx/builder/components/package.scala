@@ -15,10 +15,21 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder
 
+import javafx.geometry.Side
 import javafx.scene.control.ContentDisplay
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
+import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
 
 package object components {
+  /**
+   * A mapping between JavaFX ''Side'' literals and ''JGUIraffe Placement''
+   * constants.
+   */
+  val PlacementMapping = Map(TabbedPaneTag.Placement.BOTTOM -> Side.BOTTOM,
+    TabbedPaneTag.Placement.LEFT -> Side.LEFT,
+    TabbedPaneTag.Placement.RIGHT -> Side.RIGHT,
+    TabbedPaneTag.Placement.TOP -> Side.TOP)
+
   /**
    * Converts a ''TextIconAlignment'' enumeration value to the corresponding
    * Java FX ''ContentDisplay'' value.
@@ -46,4 +57,13 @@ package object components {
       case _ => TextIconAlignment.LEFT
     }
   }
+
+  /**
+   * Converts a ''JGUIraffe Placement'' enumeration literal to the corresponding
+   * ''Side'' value.
+   * @param pl the ''Placement'' literal to be converted
+   * @return the corresponding ''Side'' value
+   */
+  def convertPlacementToSide(pl: TabbedPaneTag.Placement): Side =
+    PlacementMapping.getOrElse(pl, Side.TOP)
 }

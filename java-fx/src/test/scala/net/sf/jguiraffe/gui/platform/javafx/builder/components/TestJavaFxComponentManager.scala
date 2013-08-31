@@ -66,6 +66,11 @@ import javafx.scene.control.ToggleButton
 import net.sf.jguiraffe.gui.builder.components.tags.RadioButtonTag
 import javafx.scene.control.RadioButton
 import javafx.scene.control.ToggleGroup
+import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
+import javafx.scene.control.TabPane
+import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
+import javafx.geometry.Side
+import javafx.scene.layout.FlowPane
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -331,16 +336,26 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether the tool tip is evaluated when creating a control.
+   * Prepares the given tag so that a tool tip creation request can be issued.
+   * This method can be called by test cases which include the creation of a
+   * tool tip.
+   * @param tag the tag used by the test case
    */
-  @Test def testInitControlToolTip() {
-    val tag = new LabelTag
-    val tip = "MyToolTip"
-    tag setTooltip tip
+  private def initToolTipCreation(tag: ComponentBaseTag) {
     tag setContext (new JellyContext)
     val builderData = new ComponentBuilderData
     builderData.put(tag.getContext())
     builderData.pushComponentStore(new ComponentStoreImpl)
+  }
+
+  /**
+   * Tests whether the tool tip is evaluated when creating a control.
+   */
+  @Test def testInitControlToolTip() {
+    val tag = new LabelTag
+    initToolTipCreation(tag)
+    val tip = "MyToolTip"
+    tag setTooltip tip
     val label = manager.createLabel(tag, false).asInstanceOf[Label]
     val callBack = ToolTipCreationCallBack.getInstance(tag, null)
 
@@ -603,5 +618,64 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val group = manager.createRadioGroup(map).asInstanceOf[ToggleGroup]
     assertEquals("Group not set for R1", group, radio1.getToggleGroup)
     assertEquals("Group not set for R2", group, radio2.getToggleGroup)
+  }
+
+  /**
+   * Tests the creation of a tab pane if the create flag is set.
+   */
+  @Test def testCreateTabbedPaneCreate() {
+    assertNull("Got a tab pane", manager.createTabbedPane(new TabbedPaneTag, true))
+  }
+
+  /**
+   * Tests whether a tab pane can be created and initialized.
+   */
+  @Test def testCreateTabbedPane() {
+    val tag = new TabbedPaneTag
+    initToolTipCreation(tag)
+    tag setPlacementValue TabbedPaneTag.Placement.RIGHT
+    val tabData1 = new TabbedPaneTag.TabData
+    val icon = manager.createIcon(ClassPathLocator.getInstance("icon.jpg"))
+    tabData1 setIcon icon
+    tabData1 setComponent (new Label("Test"))
+    val tabData2 = new TabbedPaneTag.TabData
+    tabData2 setTitle "TestTitle"
+    tabData2 setToolTip "TestToolTip"
+    tabData2 setComponent (new ContainerWrapper)
+    tag.getTabs add tabData1
+    tag.getTabs add tabData2
+    val handler = manager.createTabbedPane(tag, false).asInstanceOf[JavaFxTabPaneHandler]
+    assertEquals("Wrong selected index", 0, handler.getData.intValue)
+    val tabPane = handler.component.asInstanceOf[TabPane]
+    assertEquals("Wrong side of tabs", Side.RIGHT, tabPane.getSide)
+    assertEquals("Wrong number of tabs", 2, tabPane.getTabs.size)
+    val tab1 = tabPane.getTabs.get(0)
+    assertEquals("Wrong icon", icon, tab1.getGraphic)
+    assertFalse("Closeable", tab1.isClosable)
+    assertTrue("Got a title", StringUtils.isEmpty(tab1.getText))
+    assertNull("Got a tool tip", tab1.getTooltip)
+    assertEquals("Wrong content", tabData1.getComponent, tab1.getContent)
+    val tab2 = tabPane.getTabs.get(1)
+    assertNull("Got an icon", tab2.getGraphic)
+    assertEquals("Wrong text", tabData2.getTitle, tab2.getText)
+    val cb = ToolTipCreationCallBack.getInstance(tag, null)
+    assertEquals("Wrong number of tool tip requests", 1, cb.requests.size)
+    val req = cb.requests.head
+    assertEquals("Wrong property", tab2.tooltipProperty, req.prop)
+    assertEquals("Wrong tool tip", tabData2.getToolTip, req.tip)
+    assertTrue("ContainerWrapper not resolved",
+      tab2.getContent.isInstanceOf[FlowPane])
+  }
+
+  /**
+   * Tests whether invalid content is detected when creating a tab pane.
+   */
+  @Test(expected = classOf[FormBuilderException])
+  def testCreateTabbedPaneInvalidContent() {
+    val tag = new TabbedPaneTag
+    val tabData = new TabbedPaneTag.TabData
+    tabData setComponent this
+    tag.getTabs add tabData
+    manager.createTabbedPane(tag, false)
   }
 }

@@ -70,6 +70,10 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.RadioButton
 import javafx.scene.control.ToggleGroup
+import javafx.beans.property.ObjectProperty
+import javafx.scene.control.Tooltip
+import javafx.scene.control.TabPane
+import javafx.scene.control.Tab
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -322,11 +326,50 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''TabPane'' control
+   * wrapped by a ''JavaFxTabPaneHandler''.
+   */
   def createTabbedPane(tag: TabbedPaneTag, create: Boolean): ComponentHandler[Integer] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    def createTab(tabData: TabbedPaneTag.TabData): Tab = {
+      val tab = new Tab
+      tab setClosable false
+      tab setText tabData.getTitle
+      if (tabData.getIcon != null) {
+        tab setGraphic as[Node](tabData.getIcon)
+      }
+      if (StringUtils.isNotEmpty(tabData.getToolTip)) {
+        initToolTip(tag, tab.tooltipProperty, tabData.getToolTip)
+      }
+
+      tab setContent (tabData.getComponent match {
+        case cw: ContainerWrapper =>
+          cw.createContainer()
+        case nd: Node =>
+          nd
+        case other =>
+          throw new FormBuilderException("Invalid content of a tab pane: " + other)
+      })
+      tab
+    }
+
+    if (create) null
+    else {
+      val tabPane = new TabPane
+      initControl(tag, tabPane)
+      tabPane setSide convertPlacementToSide(tag.getPlacementValue)
+      val itTabs = tag.getTabs.iterator
+      while (itTabs.hasNext) {
+        tabPane.getTabs.add(createTab(itTabs.next()))
+      }
+      new JavaFxTabPaneHandler(tabPane)
+    }
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''Label'' control
+   * wrapped by a ''JavaFxStaticTextHandler''.
+   */
   def createStaticText(tag: StaticTextTag, create: Boolean): ComponentHandler[StaticTextData] = {
     if (create) null
     else new JavaFxStaticTextHandler(createLabelControl(tag, tag.getTextIconData))
@@ -421,9 +464,22 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     JavaFxComponentManager.initNode(tag, control)
 
     if (tag.getToolTipData.isDefined) {
-      val callBack = ToolTipCreationCallBack.getInstance(tag, toolTipFactory)
-      callBack.addCreateToolTipRequest(control, tag.getToolTipData.getCaption())
+      initToolTip(tag, control.tooltipProperty, tag.getToolTipData.getCaption())
     }
+  }
+
+  /**
+   * Creates a tool tip with the specified text and initializes the given
+   * property with it. The tool tip creation itself is done by the specialized
+   * callback object.
+   * @param tag the current component tag to be processed
+   * @param property the property for the tool tip
+   * @param tip the text of the tool tip
+   */
+  private def initToolTip(tag: ComponentBaseTag,
+    property: ObjectProperty[Tooltip], tip: String) {
+    val callBack = ToolTipCreationCallBack.getInstance(tag, toolTipFactory)
+    callBack.addCreateToolTipRequest(property, tip)
   }
 }
 
