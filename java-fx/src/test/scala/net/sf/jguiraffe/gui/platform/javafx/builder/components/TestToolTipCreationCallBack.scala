@@ -25,8 +25,10 @@ import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
+import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Control
 import javafx.scene.control.TextField
+import javafx.scene.control.Tooltip
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
 import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
@@ -90,13 +92,16 @@ class TestToolTipCreationCallBack extends JUnitSuite with EasyMockSugar {
 
     val comp1 = new TextField
     val comp2 = new TextField
+    val prop = new SimpleObjectProperty[Tooltip]
     callBack.addCreateToolTipRequest(comp1, "tip1")
     callBack.addCreateToolTipRequest(comp2, "tip2")
+    callBack.addCreateToolTipRequest(prop, "tip3")
     callBack.callBack(new ComponentBuilderData, this)
 
     JavaFxTestHelper.await(latch)
     testTip(comp1, 1)
     testTip(comp2, 2)
+    assertEquals("Wrong tip in property", "tip3", prop.get.getText)
   }
 }
 

@@ -19,7 +19,9 @@ import org.apache.commons.jelly.TagSupport
 import org.apache.commons.logging.LogFactory
 
 import javafx.application.Platform
+import javafx.beans.property.ObjectProperty
 import javafx.scene.control.Control
+import javafx.scene.control.Tooltip
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
 
@@ -60,7 +62,17 @@ private class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * @param text the text of the tool tip
    */
   def addCreateToolTipRequest(ctrl: Control, text: String) {
-    toolTipRequests = ToolTipCreationRequest(ctrl, text) :: toolTipRequests
+    addCreateToolTipRequest(ctrl.tooltipProperty, text)
+  }
+
+  /**
+   * Adds a request for creating a tool tip for the specified tool tip
+   * property.
+   * @param prop the property in which to store the tool tip
+   * @param text the text of the tool tip
+   */
+  def addCreateToolTipRequest(prop: ObjectProperty[Tooltip], text: String) {
+    toolTipRequests = ToolTipCreationRequest(prop, text) :: toolTipRequests
   }
 
   /**
@@ -97,7 +109,7 @@ private class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * @param request the request to be handled
    */
   private def handleCreateToolTipRequest(request: ToolTipCreationRequest) {
-    request.control.setTooltip(toolTipFactory.createToolTip(request.tip))
+    request.prop.set(toolTipFactory.createToolTip(request.tip))
   }
 }
 
@@ -136,7 +148,7 @@ private object ToolTipCreationCallBack {
 
 /**
  * A simple data class for storing the data of a tool tip request.
- * @param control the control to be assigned the tool tip
+ * @param prop the property in which to store the newly created tool tip
  * @param tip the text of the tool tip
  */
-private case class ToolTipCreationRequest(control: Control, tip: String)
+private case class ToolTipCreationRequest(prop: ObjectProperty[Tooltip], tip: String)

@@ -341,14 +341,14 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val builderData = new ComponentBuilderData
     builderData.put(tag.getContext())
     builderData.pushComponentStore(new ComponentStoreImpl)
-    val label = manager.createLabel(tag, false)
+    val label = manager.createLabel(tag, false).asInstanceOf[Label]
     val callBack = ToolTipCreationCallBack.getInstance(tag, null)
 
     assertSame("Wrong tool tip factory", manager.toolTipFactory,
       callBack.toolTipFactory)
     assertEquals("Wrong number of requests", 1, callBack.requests.size)
     val req = callBack.requests.head
-    assertEquals("Wrong control", label, req.control)
+    assertEquals("Wrong tip property", label.tooltipProperty, req.prop)
     assertEquals("Wrong tip text", tip, req.tip)
   }
 
