@@ -188,9 +188,17 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
    */
   def createBorderLayout(tag: BorderLayoutTag): Object = tag.getBorderLayout
 
+  /**
+   * @inheritdoc This implementation creates a ''ContainerWrapper'' object.
+   * The actual panel is created by the wrapper when it is added to its
+   * parent.
+   */
   def createPanel(tag: PanelTag, create: Boolean): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      //TODO deal with the tag's attributes
+      new ContainerWrapper
+    }
   }
 
   def createDesktopPanel(tag: DesktopPanelTag, create: Boolean): Object = {

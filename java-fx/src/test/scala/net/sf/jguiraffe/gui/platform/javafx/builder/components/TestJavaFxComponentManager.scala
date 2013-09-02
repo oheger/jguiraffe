@@ -71,6 +71,7 @@ import javafx.scene.control.TabPane
 import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
 import javafx.geometry.Side
 import javafx.scene.layout.FlowPane
+import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -677,5 +678,21 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tabData setComponent this
     tag.getTabs add tabData
     manager.createTabbedPane(tag, false)
+  }
+
+  /**
+   * Tests the creation of a panel if the create flag is true.
+   */
+  @Test def testCreatePanelCreate() {
+    assertNull("Got a panel", manager.createPanel(new PanelTag, true))
+  }
+
+  /**
+   * Tests whether a panel can be created.
+   */
+  @Test def testCreatePanelCreateFalse() {
+    val tag = new PanelTag
+    assertTrue("Wrong result",
+      manager.createPanel(tag, false).isInstanceOf[ContainerWrapper])
   }
 }
