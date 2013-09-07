@@ -40,4 +40,13 @@ trait ActionEventSource {
    * @param handler the event handler to be removed from this object
    */
   def removeActionListener(handler: EventHandler[ActionEvent]): Unit
+
+  /**
+   * Returns a command string for the action events to be generated for this
+   * source. JavaFX does not support commands in action events. So the
+   * command to be stored in JGUIraffe action events has to be provided by the
+   * source itself.
+   * @return the action command string for generated action events
+   */
+  def actionCommand: String = null
 }
