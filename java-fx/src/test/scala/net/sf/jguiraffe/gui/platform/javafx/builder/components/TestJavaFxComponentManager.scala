@@ -526,6 +526,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertTrue("Got text", StringUtils.isEmpty(button.getText))
     assertFalse("A default button", button.isDefaultButton)
     assertFalse("A cancel button", button.isCancelButton)
+    assertNull("Got an action command", btnHandler.actionCommand)
   }
 
   /**
@@ -533,13 +534,18 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateButtonWithProperties() {
     val Text = "TestButton"
+    val Command = "TestButtonActionCommand"
     val tag = new ButtonTag
     tag setText Text
     tag setDefault true
-    val button = manager.createButton(tag, false).getComponent.asInstanceOf[Button]
+    tag setCommand Command
+    val btnHandler = manager.createButton(tag, false)
+      .asInstanceOf[JavaFxButtonHandler]
+    val button = btnHandler.component.asInstanceOf[Button]
     assertEquals("Wrong text", Text, button.getText)
     assertTrue("Not the default button", button.isDefaultButton)
     assertFalse("A cancel button", button.isCancelButton)
+    assertEquals("Wrong action command", Command, btnHandler.actionCommand)
   }
 
   /**
@@ -575,20 +581,23 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateToggleButton() {
     val Text = "TestToggleButton"
+    val Command = "MyToggleButtonActionCommand"
     val tag = new ToggleButtonTag
     tag setText Text
+    tag setCommand Command
     val handler = manager.createToggleButton(tag, false)
       .asInstanceOf[JavaFxToggleButtonHandler]
     val button = handler.component.asInstanceOf[ToggleButton]
     assertEquals("Text not set", Text, button.getText)
     assertNull("Got a toggle button group", button.getToggleGroup)
     assertFalse("Button already selected", button.isSelected)
+    assertEquals("Wrong action command", Command, handler.actionCommand)
   }
 
   /**
    * Tests the creation of a radio button if the create flag is set.
    */
-  @Test def testCreateReadioButtonCreate() {
+  @Test def testCreateRadioButtonCreate() {
     assertNull("Got a radio button",
       manager.createRadioButton(new RadioButtonTag, true))
   }

@@ -237,7 +237,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
       val button = new Button
       initLabeled(button, tag, tag.getTextIconData)
       button setDefaultButton (tag.isDefault)
-      new JavaFxButtonHandler(button)
+      new JavaFxButtonHandler(button, tag.getCommand)
     }
   }
 
@@ -250,7 +250,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     else {
       val button = new ToggleButton
       initLabeled(button, tag, tag.getTextIconData)
-      new JavaFxToggleButtonHandler(button)
+      new JavaFxToggleButtonHandler(button, tag.getCommand)
     }
   }
 
