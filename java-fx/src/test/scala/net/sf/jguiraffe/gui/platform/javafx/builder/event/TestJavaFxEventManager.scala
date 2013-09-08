@@ -93,12 +93,14 @@ class TestJavaFxEventManager extends JUnitSuite {
     val compHandler = PowerMock.createMock(classOf[CompHandlerWithActionSource])
     val aRegister = new FetchAnswer[AnyRef, EventHandler[ActionEvent]]
     val aUnRegister = new FetchAnswer[AnyRef, EventHandler[ActionEvent]]
+    val Command = "TestActionCommand"
     compHandler.addActionListener(
       EasyMock.anyObject(classOf[EventHandler[ActionEvent]]))
     EasyMock.expectLastCall().andAnswer(aRegister)
     compHandler.removeActionListener(
       EasyMock.anyObject(classOf[EventHandler[ActionEvent]]))
     EasyMock.expectLastCall().andAnswer(aUnRegister)
+    EasyMock.expect(compHandler.actionCommand).andReturn(Command)
     PowerMock.replayAll()
 
     doRegistration(compHandler, FormListenerType.ACTION)
@@ -106,6 +108,7 @@ class TestJavaFxEventManager extends JUnitSuite {
     checkSender(listener.sender, FormListenerType.ACTION)
     assertSame("Wrong component handler", compHandler, listener.componentHandler)
     assertEquals("Wrong component name", CompName, listener.componentName)
+    assertEquals("Wrong action command", Command, listener.command)
     assertSame("Wrong object unregistered", listener, aUnRegister.get)
     PowerMock.verifyAll()
   }

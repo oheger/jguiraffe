@@ -167,7 +167,8 @@ class JavaFxEventManager extends PlatformEventManager {
       name: String, eventManager: FormEventManager): Option[EventHandler[ActionEvent]] = {
       val source = eventSource[ActionEventSource](handler)
       source map { s =>
-        val adapter = new ActionEventAdapter(eventManager, handler, name, null)
+        val adapter = new ActionEventAdapter(eventManager, handler, name,
+            s.actionCommand)
         s.addActionListener(adapter)
         adapter
       }

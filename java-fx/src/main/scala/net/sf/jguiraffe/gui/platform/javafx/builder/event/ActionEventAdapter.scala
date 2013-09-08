@@ -41,7 +41,7 @@ import net.sf.jguiraffe.gui.forms.ComponentHandler
  */
 private class ActionEventAdapter(val sender: EventSender[FormActionEvent],
   val componentHandler: ComponentHandler[_], val componentName: String,
-  command: String) extends EventHandler[ActionEvent] {
+  val command: String) extends EventHandler[ActionEvent] {
   /**
    * Creates a new instance of ''ActionEventAdapter'' using a sender which
    * passes events directly to the specified ''FormEventManager''.
