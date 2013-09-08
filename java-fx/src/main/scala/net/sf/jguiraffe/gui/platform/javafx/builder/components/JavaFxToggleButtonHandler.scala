@@ -36,9 +36,10 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
  * for both.
  *
  * @param button the managed toggle button
+ * @param actionCmd the optional action command
  */
-private class JavaFxToggleButtonHandler(button: ToggleButton)
-  extends JavaFxButtonHandler(button) with ChangeEventSource {
+private class JavaFxToggleButtonHandler(button: ToggleButton, actionCmd: String = null)
+  extends JavaFxButtonHandler(button, actionCmd) with ChangeEventSource {
   override def getData = button.isSelected
 
   /**

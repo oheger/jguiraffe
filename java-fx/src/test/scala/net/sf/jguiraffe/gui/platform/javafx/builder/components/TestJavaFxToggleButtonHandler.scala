@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -80,5 +81,21 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
   @Test def testObservableValue() {
     assertEquals("Wrong property", button.selectedProperty,
       handler.observableValue)
+  }
+
+  /**
+   * Tests the default action command managed by the handler.
+   */
+  @Test def testActionCommandNotSet() {
+    assertNull("Got an action command", handler.actionCommand)
+  }
+
+  /**
+   * Tests whether an action command can be passed to the constructor.
+   */
+  @Test def testActionCommandInitialized() {
+    val Command = "TestToggleButtonActionCommand"
+    handler = new JavaFxToggleButtonHandler(button, Command)
+    assertEquals("Wrong action command", Command, handler.actionCommand)
   }
 }
