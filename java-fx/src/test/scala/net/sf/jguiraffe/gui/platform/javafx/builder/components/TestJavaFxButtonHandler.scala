@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -72,5 +73,22 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
     whenExecuting(button) {
       handler setData java.lang.Boolean.TRUE
     }
+  }
+
+  /**
+   * Tests the action command of the action event source if it has not been
+   * initialized.
+   */
+  @Test def testDefaultActionCommand() {
+    assertNull("Got an action command", handler.actionCommand)
+  }
+
+  /**
+   * Tests whether an action command can be passed to the constructor.
+   */
+  @Test def testConfiguredActionCommand() {
+    val Command = "TestButtonActionCommand"
+    handler = new JavaFxButtonHandler(button, Command)
+    assertEquals("Wrong action command", Command, handler.actionCommand)
   }
 }
