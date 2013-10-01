@@ -17,10 +17,12 @@ package net.sf.jguiraffe.gui.builder.components.tags;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.builder.components.model.EditableComboBoxModel;
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 
 import org.apache.commons.jelly.JellyContext;
@@ -36,6 +38,12 @@ import org.junit.Test;
  */
 public class TestListModelUtils
 {
+    /** Constant for the prefix used for value objects. */
+    private static final String VALUE = "value";
+
+    /** Constant for the prefix used for display objects. */
+    private static final String DISPLAY = "display";
+
     /** Constant for the name of the model bean. */
     private static final String MODEL_NAME = "myListModel";
 
@@ -48,7 +56,7 @@ public class TestListModelUtils
         SimpleListModel model1 = new SimpleListModel(10);
         for (int i = 0; i < 10; i++)
         {
-            assertEquals("Wrong value in model 1 for index " + i, "value" + i,
+            assertEquals("Wrong value in model 1 for index " + i, VALUE + i,
                     ListModelUtils.getValue(model1, i));
         }
 
@@ -79,16 +87,23 @@ public class TestListModelUtils
     @Test
     public void testGetIndex()
     {
-        SimpleListModel model1 = new SimpleListModel(10);
+        SimpleListModel model = new SimpleListModel(10);
         for (int i = 0; i < 10; i++)
         {
-            assertEquals(i, ListModelUtils.getIndex(model1, "value" + i));
+            assertEquals(i, ListModelUtils.getIndex(model, VALUE + i));
         }
+    }
 
-        IntListModel model2 = new IntListModel(10);
+    /**
+     * Tests getIndex() if the model uses indices as values.
+     */
+    @Test
+    public void testGetIndexIntegerModel()
+    {
+        IntListModel model = new IntListModel(10);
         for (int i = 0; i < 10; i++)
         {
-            assertEquals(i, ListModelUtils.getIndex(model2, Integer.valueOf(i)));
+            assertEquals(i, ListModelUtils.getIndex(model, Integer.valueOf(i)));
         }
     }
 
@@ -101,18 +116,54 @@ public class TestListModelUtils
         IntListModel model = new IntListModel(10);
         assertEquals("Wrong index for unknown value", -1, ListModelUtils
                 .getIndex(model, "unknown value"));
-        assertEquals(-1, ListModelUtils.getIndex(model, null));
     }
 
     /**
-     * Tests getIndex() if a null value is specified.
+     * Tests getIndex() if a null value is specified for an integer model.
      */
     @Test
-    public void testGetIndexNullValue()
+    public void testGetIndexNullValueIntegerModel()
     {
         IntListModel model = new IntListModel(10);
         assertEquals("Wrong index for null value", -1, ListModelUtils.getIndex(
                 model, null));
+    }
+
+    /**
+     * Tests the corner case that a model is empty when determining the index of
+     * a value object.
+     */
+    @Test
+    public void testGetIndexEmptyModel()
+    {
+        SimpleListModel model = new SimpleListModel(0);
+        assertEquals("Wrong result", ListModelUtils.IDX_UNDEFINED,
+                ListModelUtils.getIndex(model, VALUE));
+    }
+
+    /**
+     * Tests whether the index of a display object can be determined.
+     */
+    @Test
+    public void testGetDisplayIndexSuccess()
+    {
+        SimpleListModel model = new SimpleListModel(8);
+        for (int i = 0; i < model.size(); i++)
+        {
+            assertEquals("Wrong index for " + i, i,
+                    ListModelUtils.getDisplayIndex(model, DISPLAY + i));
+        }
+    }
+
+    /**
+     * Tests getDisplayIndex() if the display object cannot be resolved.
+     */
+    @Test
+    public void testGetDisplayIndexUnknown()
+    {
+        SimpleListModel model = new SimpleListModel(4);
+        assertEquals("Wrong result", ListModelUtils.IDX_UNDEFINED,
+                ListModelUtils.getDisplayIndex(model, "unknown display object"));
     }
 
     /**
@@ -342,6 +393,43 @@ public class TestListModelUtils
     }
 
     /**
+     * Tests whether a list model implementing the EditableComboBoxModel
+     * interface is detected.
+     */
+    @Test
+    public void testFetchEditableComboBoxModelImplemented()
+    {
+        ListModel model = EasyMock.createMock(EditableComboListModel.class);
+        EasyMock.replay(model);
+        assertSame("Wrong result", model,
+                ListModelUtils.fetchEditableComboBoxModel(model));
+    }
+
+    /**
+     * Tests the transformation to a display object for the dummy
+     * EditableComboBoxModel.
+     */
+    @Test
+    public void testFetchEditableComboBoxDummyToDisplay()
+    {
+        EditableComboBoxModel comboModel =
+                ListModelUtils.fetchEditableComboBoxModel(null);
+        assertSame("Object was transformed", this, comboModel.toDisplay(this));
+    }
+
+    /**
+     * Tests the transformation to a value object for the dummy
+     * EditableComboBoxModel.
+     */
+    @Test
+    public void testFetchEditableComboBoxDummyToValue()
+    {
+        EditableComboBoxModel comboModel =
+                ListModelUtils.fetchEditableComboBoxModel(null);
+        assertSame("Object was transformed", this, comboModel.toValue(this));
+    }
+
+    /**
      * Test implementation of the ListModel interface. Returns different display
      * and value objects.
      */
@@ -354,21 +442,25 @@ public class TestListModelUtils
             size = sz;
         }
 
+        @Override
         public int size()
         {
             return size;
         }
 
+        @Override
         public Object getDisplayObject(int index)
         {
-            return "display" + index;
+            return DISPLAY + index;
         }
 
+        @Override
         public Object getValueObject(int index)
         {
-            return "value" + index;
+            return VALUE + index;
         }
 
+        @Override
         public Class<?> getType()
         {
             return String.class;
@@ -397,5 +489,14 @@ public class TestListModelUtils
         {
             return null;
         }
+    }
+
+    /**
+     * A combined interface used for testing whether implementations of
+     * {@code EditableComboBoxModel} are detected.
+     */
+    private static interface EditableComboListModel extends ListModel,
+            EditableComboBoxModel
+    {
     }
 }

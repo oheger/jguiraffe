@@ -20,9 +20,11 @@ import java.lang.reflect.Array;
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.builder.components.model.EditableComboBoxModel;
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 
 import org.apache.commons.jelly.MissingAttributeException;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -42,6 +44,37 @@ import org.apache.commons.lang.StringUtils;
  */
 public final class ListModelUtils
 {
+    /**
+     * Constant for an undefined index. This value is returned by some methods
+     * which calculate an index in a {@code ListModel} if the index cannot be
+     * determined.
+     *
+     * @since 1.2
+     */
+    public static final int IDX_UNDEFINED = -1;
+
+    /**
+     * Constant for a dummy {@code EditableComboBoxModel}. This object is
+     * returned by {@code fetchEditableComboBoxModel()} if the passed in list
+     * model does not implement the desired interface. It is just a dummy
+     * implementation which does not do any transformations.
+     */
+    private static final EditableComboBoxModel DUMMY_COMBO_MODEL =
+            new EditableComboBoxModel()
+            {
+                @Override
+                public Object toValue(Object displ)
+                {
+                    return displ;
+                }
+
+                @Override
+                public Object toDisplay(Object value)
+                {
+                    return value;
+                }
+            };
+
     /**
      * Private constructor, so that no instances of this static utility class
      * can be created.
@@ -91,7 +124,7 @@ public final class ListModelUtils
         int size = listModel.size();
         if (size <= 0 || value == null)
         {
-            return -1;
+            return IDX_UNDEFINED;
         }
 
         Object v0 = listModel.getValueObject(0);
@@ -110,14 +143,40 @@ public final class ListModelUtils
                         return index;
                     }
                 }
-                return -1;
+                return IDX_UNDEFINED;
             }
         }
 
         else
         {
-            return (value instanceof Number) ? ((Number) value).intValue() : -1;
+            return (value instanceof Number) ? ((Number) value).intValue()
+                    : IDX_UNDEFINED;
         }
+    }
+
+    /**
+     * Returns the index of the specified display object in the specified list
+     * model. This is useful for mapping between display objects and value
+     * objects. The {@code ListModel} is searched for the given display object
+     * and its index is returned. If the display object cannot be found, result
+     * is {@value #IDX_UNDEFINED}.
+     *
+     * @param listModel the {@code ListModel} to be searched
+     * @param display the display object in question
+     * @return the index of this display object or {@value #IDX_UNDEFINED}
+     * @since 1.2
+     */
+    public static int getDisplayIndex(ListModel listModel, Object display)
+    {
+        for (int i = 0; i < listModel.size(); i++)
+        {
+            if (ObjectUtils.equals(display, listModel.getDisplayObject(i)))
+            {
+                return i;
+            }
+        }
+
+        return IDX_UNDEFINED;
     }
 
     /**
@@ -245,5 +304,23 @@ public final class ListModelUtils
 
             modelSupport.setListModel((ListModel) model);
         }
+    }
+
+    /**
+     * Obtains a {@code EditableComboBoxModel} object from the passed in
+     * {@code ListModel}. If the {@code ListModel} already implements the
+     * {@code EditableComboBoxModel} interface, it is directly returned.
+     * Otherwise, a dummy {@code EditableComboBoxModel} implementation is
+     * returned which does not perform any transformations.
+     *
+     * @param model the {@code ListModel} in question
+     * @return a {@code EditableComboBoxModel} object from this model
+     * @since 1.2
+     */
+    public static EditableComboBoxModel fetchEditableComboBoxModel(
+            ListModel model)
+    {
+        return (model instanceof EditableComboBoxModel) ? (EditableComboBoxModel) model
+                : DUMMY_COMBO_MODEL;
     }
 }
