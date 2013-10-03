@@ -15,6 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.DefaultComboBoxModel;
 
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
@@ -36,19 +39,23 @@ class SwingListModel extends DefaultComboBoxModel implements ListModel
     /**
      * A default serial version UID.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 20131003L;
 
     /** Stores the data type of this model. */
-    private Class<?> type;
+    private final Class<?> type;
+
+    /** The collection with value objects. */
+    private final List<Object> valueObjects;
 
     /**
-     * Creates a new instance of <code>SwingListModel</code>.
+     * Creates a new instance of {@code SwingListModel}.
      *
      * @param model the underlying model
      */
     public SwingListModel(ListModel model)
     {
         type = model.getType();
+        valueObjects = new ArrayList<Object>(model.size());
         initFromModel(model);
     }
 
@@ -60,7 +67,7 @@ class SwingListModel extends DefaultComboBoxModel implements ListModel
      */
     public Object getDisplayObject(int index)
     {
-        return itemAt(index).getDisplay();
+        return getElementAt(index);
     }
 
     /**
@@ -81,7 +88,7 @@ class SwingListModel extends DefaultComboBoxModel implements ListModel
      */
     public Object getValueObject(int index)
     {
-        return itemAt(index).getValue();
+        return valueObjects.get(index);
     }
 
     /**
@@ -103,7 +110,19 @@ class SwingListModel extends DefaultComboBoxModel implements ListModel
      */
     public void insertItem(int index, Object display, Object value)
     {
-        insertElementAt(createModelObject(display, value), index);
+        insertElementAt(display, index);
+        valueObjects.add(index, value);
+    }
+
+    /**
+     * {@inheritDoc} This implementation also updates the specific state of
+     * this model.
+     */
+    @Override
+    public void removeElementAt(int index)
+    {
+        super.removeElementAt(index);
+        valueObjects.remove(index);
     }
 
     /**
@@ -111,93 +130,12 @@ class SwingListModel extends DefaultComboBoxModel implements ListModel
      *
      * @param model the original model
      */
-    protected void initFromModel(ListModel model)
+    private void initFromModel(ListModel model)
     {
         for (int idx = 0; idx < model.size(); idx++)
         {
-            addElement(createModelObject(model.getDisplayObject(idx), model
-                    .getValueObject(idx)));
-        }
-    }
-
-    /**
-     * Creates an item object from the passed in arguments.
-     *
-     * @param display the display object
-     * @param value the value object
-     * @return the new item object
-     */
-    protected Item createModelObject(Object display, Object value)
-    {
-        return new Item(display, value);
-    }
-
-    /**
-     * Returns the item object at the specified index.
-     *
-     * @param index the index
-     * @return the item object at this index
-     */
-    protected Item itemAt(int index)
-    {
-        return (Item) getElementAt(index);
-    }
-
-    /**
-     * This class represents a model item. It contains both a display and a
-     * value object.
-     */
-    private static class Item
-    {
-        /** The display object. */
-        private Object display;
-
-        /** The value object. */
-        private Object value;
-
-        /**
-         * Creates a new instance of <code>Item</code>.
-         *
-         * @param displ the display object
-         * @param val the value object
-         */
-        public Item(Object displ, Object val)
-        {
-            display = displ;
-            value = val;
-        }
-
-        /**
-         * Returns the display object.
-         *
-         * @return the display object
-         */
-        public Object getDisplay()
-        {
-            return display;
-        }
-
-        /**
-         * Returns the value object.
-         *
-         * @return the value object
-         */
-        public Object getValue()
-        {
-            return value;
-        }
-
-        /**
-         * Returns a string representation of this object. This is simply the
-         * display object's string value because this will be displayed in the
-         * Swing list component.
-         *
-         * @return a string representation of this object
-         */
-        @Override
-        public String toString()
-        {
-            return getDisplay().toString(); // display object must not be null
+            addElement(model.getDisplayObject(idx));
+            valueObjects.add(model.getValueObject(idx));
         }
     }
 }

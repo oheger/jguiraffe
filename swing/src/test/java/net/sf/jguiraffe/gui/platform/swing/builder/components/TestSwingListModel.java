@@ -15,7 +15,10 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test class for SwingListModel.
@@ -23,51 +26,110 @@ import junit.framework.TestCase;
  * @author Oliver Heger
  * @version $Id: TestSwingListModel.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TestSwingListModel extends TestCase
+public class TestSwingListModel
 {
-    SwingListModel model;
+    /** Constant for the number of items in the list model. */
+    private static final int COUNT = 8;
 
-    protected void setUp() throws Exception
+    /** The model to be tested. */
+    private SwingListModel model;
+
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
-        model = new SwingListModel(new ListModelImpl(10));
+        model = new SwingListModel(new ListModelImpl(COUNT));
     }
 
     /**
-     * Tests if the list model was correctly initialized.
+     * Tests the getSize() implementation.
      */
-    public void testInitialize()
+    @Test
+    public void testGetSize()
     {
-        assertEquals(10, model.getSize());
-        assertEquals(10, model.size());
-        for(int i = 0; i < model.size(); i++)
+        assertEquals("Wrong size", COUNT, model.getSize());
+    }
+
+    /**
+     * Tests whether the model returns the correct size.
+     */
+    @Test
+    public void testSize()
+    {
+        assertEquals("Wrong model size", COUNT, model.size());
+    }
+
+    /**
+     * Tests whether the model returns the correct type.
+     */
+    @Test
+    public void testGetType()
+    {
+        assertEquals("Wrong type", String.class, model.getType());
+    }
+
+    /**
+     * Tests whether the correct elements (to be displayed) are returned.
+     */
+    @Test
+    public void testGetElementAt()
+    {
+        for (int i = 0; i < COUNT; i++)
         {
-            assertEquals("Display" + i, model.getDisplayObject(i));
-            assertEquals("Display" + i, model.getElementAt(i).toString());
-            assertEquals("Value" + i, model.getValueObject(i));
+            assertEquals("Wrong element", ListModelImpl.DISPLAY_PREFIX + i,
+                    model.getElementAt(i).toString());
         }
-        assertEquals(String.class, model.getType());
+    }
+
+    /**
+     * Tests whether the correct display objects are returned.
+     */
+    @Test
+    public void testGetDisplayObject()
+    {
+        for (int i = 0; i < COUNT; i++)
+        {
+            assertEquals("Wrong display object", ListModelImpl.DISPLAY_PREFIX
+                    + i, model.getDisplayObject(i).toString());
+        }
+    }
+
+    /**
+     * Tests whether the correct value objects are returned.
+     */
+    @Test
+    public void testGetValueObject()
+    {
+        for (int i = 0; i < COUNT; i++)
+        {
+            assertEquals("Wrong value object", ListModelImpl.VALUE_PREFIX + i,
+                    model.getValueObject(i));
+        }
     }
 
     /**
      * Tests to add a new item.
      */
+    @Test
     public void testInsertItem()
     {
         model.insertItem(1, "Display0.5", "Value0.5");
-        assertEquals(11, model.size());
-        assertEquals("Display0.5", model.getDisplayObject(1));
-        assertEquals("Value0.5", model.getValueObject(1));
+        assertEquals("Wrong new model size", COUNT + 1, model.size());
+        assertEquals("Wrong display object", "Display0.5", model
+                .getDisplayObject(1));
+        assertEquals("Wrong value", "Value0.5", model.getValueObject(1));
     }
 
     /**
      * Tests to remove elements from the list model.
      */
+    @Test
     public void testRemoveItem()
     {
         model.removeElementAt(1);
-        assertEquals(9, model.size());
-        assertEquals("Display2", model.getDisplayObject(1));
-        assertEquals("Value2", model.getValueObject(1));
+        assertEquals("Wrong new model size", COUNT - 1, model.size());
+        assertEquals("Wrong display object",
+                ListModelImpl.DISPLAY_PREFIX + "2", model.getDisplayObject(1));
+        assertEquals("Wrong value object", ListModelImpl.VALUE_PREFIX + "2",
+                model.getValueObject(1));
     }
 }
