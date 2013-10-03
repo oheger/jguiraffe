@@ -689,26 +689,51 @@ public class TestSwingComponentManager
     }
 
     /**
-     * Tests creating combo boxes.
+     * Helper method for testing the creation of a combo box.
+     *
+     * @param editable a flag whether the combo should be editable
+     * @throws FormBuilderException if an error occurs
      */
-    @Test
-    public void testCreateComboBox() throws FormBuilderException
+    private void checkCreateComboBox(boolean editable)
+            throws FormBuilderException
     {
         ComboBoxTag tag = new ComboBoxTag();
         tag.setListModel(new ListModelImpl(10));
-        assertNull("Non-null result for create == true", manager
-                .createComboBox(tag, true));
+        tag.setEditable(editable);
         ComponentHandler<?> ch = manager.createComboBox(tag, false);
         assertTrue("Wrong handler class", ch instanceof SwingComboBoxHandler);
-        assertFalse("Combo box is editable", ((JComboBox) ch.getComponent())
-                .isEditable());
+        assertEquals("Wrong editable flag", editable,
+                ((JComboBox) ch.getComponent()).isEditable());
+    }
 
-        tag.setEditable(true);
-        ch = manager.createComboBox(tag, false);
-        assertTrue("Non editable handler",
-                ch instanceof SwingEditableComboBoxHandler);
-        assertTrue("Combo box not editable", ((JComboBox) ch.getComponent())
-                .isEditable());
+    /**
+     * Tests the creation of a combo box if the create flag is set.
+     */
+    @Test
+    public void testCreateComboBoxCreate() throws FormBuilderException
+    {
+        ComboBoxTag tag = new ComboBoxTag();
+        tag.setListModel(new ListModelImpl(10));
+        assertNull("Non-null result for create == true",
+                manager.createComboBox(tag, true));
+    }
+
+    /**
+     * Tests creating a non editable combo boxes.
+     */
+    @Test
+    public void testCreateComboBoxNotEditable() throws FormBuilderException
+    {
+        checkCreateComboBox(false);
+    }
+
+    /**
+     * Tests whether an editable combo box can be created.
+     */
+    @Test
+    public void testCreateComboBoxEditable() throws FormBuilderException
+    {
+        checkCreateComboBox(true);
     }
 
     /**

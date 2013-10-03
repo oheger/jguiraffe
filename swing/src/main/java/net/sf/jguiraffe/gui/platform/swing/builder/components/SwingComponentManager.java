@@ -747,12 +747,8 @@ public class SwingComponentManager implements ComponentManager
         if (tag.isEditable())
         {
             combo.setEditable(true);
-            return new SwingEditableComboBoxHandler(combo, tag.getListModel());
         }
-        else
-        {
-            return new SwingComboBoxHandler(combo, tag.getListModel());
-        }
+        return new SwingComboBoxHandler(combo, tag.getListModel());
     }
 
     /**
