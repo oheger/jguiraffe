@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
+import net.sf.jguiraffe.gui.builder.components.model.EditableComboBoxModel;
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils;
 
@@ -41,6 +42,12 @@ class SwingComboBoxHandler extends SwingListModelHandler implements
         ActionListener
 {
     /**
+     * A reference to an editable combo box model for dealing with values not
+     * found in the data model.
+     */
+    private final EditableComboBoxModel editModel;
+
+    /**
      * Creates a new instance of <code>SwingComboBoxHandler</code> and
      * initializes it.
      *
@@ -50,6 +57,7 @@ class SwingComboBoxHandler extends SwingListModelHandler implements
     public SwingComboBoxHandler(JComboBox combo, ListModel m)
     {
         super(combo, m);
+        editModel = ListModelUtils.fetchEditableComboBoxModel(m);
     }
 
     /**
@@ -89,8 +97,19 @@ class SwingComboBoxHandler extends SwingListModelHandler implements
      */
     public Object getData()
     {
-        return ListModelUtils.getValue(getListModel(), getComboBox()
-                .getSelectedIndex());
+        Object selectedItem = getComboBox().getSelectedItem();
+        if(selectedItem == null)
+        {
+            return null;
+        }
+
+        int index = ListModelUtils.getDisplayIndex(getListModel(), selectedItem);
+        if(index != ListModelUtils.IDX_UNDEFINED)
+        {
+            return ListModelUtils.getValue(getListModel(), index);
+        }
+
+        return editModel.toValue(selectedItem);
     }
 
     /**
@@ -100,8 +119,25 @@ class SwingComboBoxHandler extends SwingListModelHandler implements
      */
     public void setData(Object data)
     {
-        getComboBox().setSelectedIndex(
-                ListModelUtils.getIndex(getListModel(), data));
+        Object display;
+        if (data == null)
+        {
+            display = null;
+        }
+        else
+        {
+            int index = ListModelUtils.getIndex(getListModel(), data);
+            if (index != ListModelUtils.IDX_UNDEFINED)
+            {
+                display = getListModel().getDisplayObject(index);
+            }
+            else
+            {
+                display = editModel.toDisplay(data);
+                getComboBox().setSelectedIndex(-1);
+            }
+        }
+        getComboBox().setSelectedItem(display);
     }
 
     /**
@@ -120,6 +156,7 @@ class SwingComboBoxHandler extends SwingListModelHandler implements
      *
      * @param model the list model
      */
+    @Override
     protected void initComponentModel(SwingListModel model)
     {
         getComboBox().setModel(model);
