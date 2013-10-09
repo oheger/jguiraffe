@@ -72,6 +72,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
 import javafx.geometry.Side
 import javafx.scene.layout.FlowPane
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
+import net.sf.jguiraffe.gui.builder.components.tags.ComboBoxTag
+import javafx.scene.control.ComboBox
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -703,5 +705,43 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new PanelTag
     assertTrue("Wrong result",
       manager.createPanel(tag, false).isInstanceOf[ContainerWrapper])
+  }
+
+  /**
+   * Tests the creation of a combo box if the create flag is true.
+   */
+  @Test def testCreateComboBoxCreate() {
+    assertNull("Got a control", manager.createComboBox(new ComboBoxTag, true))
+  }
+
+  /**
+   * Helper method for testing whether a combo box can be created.
+   * @param editable flag whether the combo box should be editable
+   */
+  private def checkCreateComboBox(editable: Boolean) {
+    val model = new ListModelTestImpl
+    val tag = new ComboBoxTag
+    tag setEditable editable
+    tag setListModel model
+    val handler = manager.createComboBox(tag, false).asInstanceOf[JavaFxComboBoxHandler]
+    val combo = handler.component.asInstanceOf[ComboBox[Object]]
+    assertEquals("Wrong editable flag", editable, combo.isEditable)
+    val listModel = handler.getListModel
+    assertTrue("Wrong model: " + listModel, listModel.isInstanceOf[JavaFxListModel])
+    assertEquals("List model not initialized", model.size, listModel.size)
+  }
+
+  /**
+   * Tests whether a non editable combo box can be created.
+   */
+  @Test def testCreateComboBoxNonEditable() {
+    checkCreateComboBox(false)
+  }
+
+  /**
+   * Tests whether an editable combo box can be created.
+   */
+  @Test def testCreateComboBoxEditable() {
+    checkCreateComboBox(true)
   }
 }
