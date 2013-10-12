@@ -75,6 +75,7 @@ import javafx.scene.control.Tooltip
 import javafx.scene.control.TabPane
 import javafx.scene.control.Tab
 import javafx.scene.control.ComboBox
+import javafx.scene.control.ListView
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -341,9 +342,21 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     }
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''ListView'' control
+   * wrapped by either a ''JavaFxListViewHandler'' or a
+   * ''JavaFxMultiSelectionListHandler''.
+   */
   def createListBox(tag: ListBoxTag, create: Boolean): ComponentHandler[Object] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val list = new ListView[Object]
+      initControl(tag, list)
+      val handler = if (tag.isMulti) new JavaFxMultiSelectionListHandler(list)
+      else new JavaFxListViewHandler(list)
+      handler.initListModel(tag.getListModel)
+      handler
+    }
   }
 
   /**

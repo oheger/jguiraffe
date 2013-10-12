@@ -74,6 +74,9 @@ import javafx.scene.layout.FlowPane
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
 import net.sf.jguiraffe.gui.builder.components.tags.ComboBoxTag
 import javafx.scene.control.ComboBox
+import net.sf.jguiraffe.gui.builder.components.tags.ListBoxTag
+import javafx.scene.control.ListView
+import javafx.scene.control.SelectionMode
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -743,5 +746,52 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateComboBoxEditable() {
     checkCreateComboBox(true)
+  }
+
+  /**
+   * Tests the creation of a list box if the create flag is true.
+   */
+  @Test def testCreateListBoxCreate() {
+    assertNull("Got a control", manager.createListBox(new ListBoxTag, true))
+  }
+
+  /**
+   * Helper method for testing the creation of a list box.
+   * @param multi flag for multiple selection
+   * @param expHandlerClass the expected handler class
+   * @param expSelMode the expected selection mode
+   */
+  private def checkCreateListBox(multi: Boolean, expHandlerClass: Class[_],
+    expSelMode: SelectionMode) {
+    val model = new ListModelTestImpl
+    val tag = new ListBoxTag
+    tag setListModel model
+    tag setMulti multi
+    val handler = manager.createListBox(tag, false)
+    val modelSupport = handler.asInstanceOf[ListModelSupport]
+    assertEquals("Wrong handler", expHandlerClass, handler.getClass)
+    assertTrue("Wrong model: " + modelSupport.getListModel,
+      modelSupport.getListModel.isInstanceOf[JavaFxListModel])
+    assertEquals("List model not initialized", model.size,
+      modelSupport.getListModel.size)
+    val list = handler.getComponent.asInstanceOf[ListView[Object]]
+    assertEquals("Wrong selection mode", expSelMode,
+      list.getSelectionModel.getSelectionMode)
+  }
+
+  /**
+   * Tests whether a list box with single selection can be created.
+   */
+  @Test def testCreateListBoxSingleSelection() {
+    checkCreateListBox(false, classOf[JavaFxListViewHandler],
+      SelectionMode.SINGLE)
+  }
+
+  /**
+   * Tests whether a list box with multiple selection can be created.
+   */
+  @Test def testCreateListBoxMultiSelection() {
+    checkCreateListBox(true, classOf[JavaFxMultiSelectionListHandler],
+      SelectionMode.MULTIPLE)
   }
 }
