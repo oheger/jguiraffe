@@ -165,7 +165,6 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      * @throws FormBuilderRuntimeException if the passed in component is not a
      *         {@code TabData} object
      */
-    @Override
     public void addComponent(Object comp, Object constraints)
     {
         if (!(comp instanceof TabData))
@@ -182,7 +181,6 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      *
      * @return the container object
      */
-    @Override
     public Object getContainer()
     {
         // just a dummy implementation
@@ -195,7 +193,6 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      *
      * @param layout the layout object
      */
-    @Override
     public void setLayout(Object layout)
     {
         throw new UnsupportedOperationException(

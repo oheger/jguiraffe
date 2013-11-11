@@ -442,25 +442,21 @@ public class TestListModelUtils
             size = sz;
         }
 
-        @Override
         public int size()
         {
             return size;
         }
 
-        @Override
         public Object getDisplayObject(int index)
         {
             return DISPLAY + index;
         }
 
-        @Override
         public Object getValueObject(int index)
         {
             return VALUE + index;
         }
 
-        @Override
         public Class<?> getType()
         {
             return String.class;

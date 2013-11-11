@@ -62,13 +62,11 @@ public final class ListModelUtils
     private static final EditableComboBoxModel DUMMY_COMBO_MODEL =
             new EditableComboBoxModel()
             {
-                @Override
                 public Object toValue(Object displ)
                 {
                     return displ;
                 }
 
-                @Override
                 public Object toDisplay(Object value)
                 {
                     return value;
