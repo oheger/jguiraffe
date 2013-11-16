@@ -86,7 +86,7 @@ import org.apache.commons.jelly.JellyTagException;
  * @author Oliver Heger
  * @version $Id: TextAreaTag.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TextAreaTag extends InputComponentTag
+public class TextAreaTag extends InputComponentTag implements ScrollSizeSupport
 {
     /** The default preferred scroll size if the attributes are undefined. */
     private static final NumberWithUnit DEF_SCROLL_SIZE = NumberWithUnit.ZERO;
@@ -217,12 +217,9 @@ public class TextAreaTag extends InputComponentTag
     }
 
     /**
-     * Returns the preferred scroll width as a {@code NumberWithUnit}. This
-     * value is derived from the {@code scrollWidth} attribute during processing
-     * of this tag. If no scroll width has been specified, a value of 0 is
-     * returned.
-     *
-     * @return the preferred scroll width
+     * {@inheritDoc} This implementation obtains the preferred scroll width from
+     * the value of the {@code scrollWidth} property during the processing of
+     * this tag.
      */
     public NumberWithUnit getPreferredScrollWidth()
     {
@@ -230,12 +227,9 @@ public class TextAreaTag extends InputComponentTag
     }
 
     /**
-     * Returns the preferred scroll height as a {@code NumberWithUnit}. This
-     * value is derived from the {@code scrollHeight} attribute during
-     * processing of this tag. If no scroll height has been specified, a value
-     * of 0 is returned.
-     *
-     * @return the preferred scroll height
+     * {@inheritDoc} This implementation obtains the preferred scroll width from
+     * the value of the {@code scrollHeight} property during the processing of
+     * this tag.
      */
     public NumberWithUnit getPreferredScrollHeight()
     {

@@ -90,7 +90,8 @@ import org.apache.commons.jelly.MissingAttributeException;
  * @author Oliver Heger
  * @version $Id: ListBoxTag.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class ListBoxTag extends InputComponentTag implements ListModelSupport
+public class ListBoxTag extends InputComponentTag implements ListModelSupport,
+        ScrollSizeSupport
 {
     /** Stores a reference to the list model. */
     private ListModel listModel;

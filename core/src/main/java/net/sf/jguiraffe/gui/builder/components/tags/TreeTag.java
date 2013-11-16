@@ -131,7 +131,7 @@ import org.apache.commons.jelly.MissingAttributeException;
  * @author Oliver Heger
  * @version $Id: TreeTag.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TreeTag extends InputComponentTag
+public class TreeTag extends InputComponentTag implements ScrollSizeSupport
 {
     /**
      * Constant for the name of the default icon used for expanded branch nodes.

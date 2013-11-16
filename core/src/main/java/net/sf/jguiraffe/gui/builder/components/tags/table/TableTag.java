@@ -25,6 +25,7 @@ import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.Composite;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.tags.InputComponentTag;
+import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 import net.sf.jguiraffe.gui.forms.Form;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
@@ -161,7 +162,8 @@ import org.apache.commons.jelly.MissingAttributeException;
  * @author Oliver Heger
  * @version $Id: TableTag.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TableTag extends InputComponentTag implements Composite
+public class TableTag extends InputComponentTag implements Composite,
+        ScrollSizeSupport
 {
     /** Stores the form for rendering a row. */
     private Form renderForm;
