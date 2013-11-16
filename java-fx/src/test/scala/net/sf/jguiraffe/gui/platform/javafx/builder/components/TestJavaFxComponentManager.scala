@@ -77,6 +77,8 @@ import javafx.scene.control.ComboBox
 import net.sf.jguiraffe.gui.builder.components.tags.ListBoxTag
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
+import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -793,5 +795,30 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateListBoxMultiSelection() {
     checkCreateListBox(true, classOf[JavaFxMultiSelectionListHandler],
       SelectionMode.MULTIPLE)
+  }
+
+  /**
+   * Tests whether the size handler can be queried if a new instance has to
+   * be created.
+   */
+  @Test def testCurrentSizeHandlerNewInstance() {
+    val context = new JellyContext
+    val tag = new LabelTag
+    tag setContext context
+    assertTrue("Wrong size handler",
+      JavaFxComponentManager.fetchSizeHandler(tag).isInstanceOf[JavaFxUnitSizeHandler])
+  }
+
+  /**
+   * Tests whether the size handler is cached in the current Jelly context.
+   */
+  @Test def testCurrentSizeHandlerCached() {
+    val handler = mock[UnitSizeHandler]
+    val context = new JellyContext
+    val tag = new LabelTag
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, handler)
+    assertSame("Wrong handler", handler,
+      JavaFxComponentManager.fetchSizeHandler(tag))
   }
 }

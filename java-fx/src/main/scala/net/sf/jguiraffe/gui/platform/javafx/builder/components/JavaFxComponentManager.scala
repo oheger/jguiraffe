@@ -76,6 +76,9 @@ import javafx.scene.control.TabPane
 import javafx.scene.control.Tab
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ListView
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import org.apache.commons.jelly.TagSupport
+import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -529,6 +532,9 @@ object JavaFxComponentManager {
   /** Constant for the font weight bold. */
   private val FontWeightBold = "bold"
 
+  /** Constant for the name of the size handler instance in the Jelly context. */
+  private val SizeHandlerVariable = "jguiraffe.SizeHandler"
+
   /** Constant for the mnemonic marker. */
   private val MnemonicMarker = '_'
 
@@ -602,6 +608,35 @@ object JavaFxComponentManager {
         buf.toString()
       }
     }
+  }
+
+  /**
+   * Returns the ''UnitSizeHandler'' for the current builder operation. A
+   * size handler instance is created on demand and stored in the current
+   * Jelly context. This implementation checks whether there is already an
+   * instance in the current context. If not, it is created now.
+   * @param tag the current tag
+   * @return the ''UnitSizeHandler'' for the current builder operation
+   */
+  private[components] def fetchSizeHandler(tag: TagSupport): UnitSizeHandler = {
+    val handler = tag.getContext().getVariable(SizeHandlerVariable)
+    if (handler == null)
+      installSizeHandler(tag, new JavaFxUnitSizeHandler)
+    else as[UnitSizeHandler](handler)
+  }
+
+  /**
+   * Installs the specified ''UnitSizeHandler'' for the current builder
+   * operation. The handler is stored in the tag's Jelly context. From there
+   * it can be obtained if needed by another operation.
+   * @param tag the current tag
+   * @param handler the ''UnitSizeHandler'' to be installed
+   * @return the newly installed size handler
+   */
+  private[components] def installSizeHandler(tag: TagSupport,
+    handler: UnitSizeHandler): UnitSizeHandler = {
+    tag.getContext().setVariable(SizeHandlerVariable, handler)
+    handler
   }
 
   /**
