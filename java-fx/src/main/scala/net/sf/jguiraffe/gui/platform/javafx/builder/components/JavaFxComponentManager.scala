@@ -79,6 +79,8 @@ import javafx.scene.control.ListView
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 import org.apache.commons.jelly.TagSupport
 import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
+import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport
+import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -289,6 +291,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
       }
       ctrl setWrapText tag.isWrap
       ctrl setMaximumLength tag.getMaxlength
+      JavaFxComponentManager.initScrollSize(tag, ctrl)
 
       new JavaFxTextHandler(ctrl)
     }
@@ -682,6 +685,29 @@ object JavaFxComponentManager {
    */
   private def convertFontWeight(tag: FontTag): Option[String] =
     Some(if (tag.isBold) FontWeightBold else FontStyleNormal)
+
+  /**
+   * Initializes the given control's preferred size based on the scroll size
+   * defined by the passed in ''ScrollSizeSupport'' tag. This method determines
+   * the preferred scroll size using the current ''UnitSizeHandler''. If it is
+   * defined, the control's preferred width or height are set.
+   * @param tag the current tag
+   * @param ctrl the control to be initialized
+   */
+  private def initScrollSize(tag: FormBaseTag with ScrollSizeSupport, ctrl: Control) {
+    val sizeHandler = fetchSizeHandler(tag)
+    val container = tag.findContainer.getContainer
+    val scrollWidth = tag.getPreferredScrollWidth
+    val xSize = scrollWidth.toPixel(sizeHandler, container, false)
+    val ySize = tag.getPreferredScrollHeight.toPixel(sizeHandler, container, true)
+
+    if(xSize > 0) {
+      ctrl setPrefWidth xSize
+    }
+    if(ySize > 0) {
+      ctrl setPrefHeight ySize
+    }
+  }
 
   /**
    * Helper method for converting an object to the specified type. Because the

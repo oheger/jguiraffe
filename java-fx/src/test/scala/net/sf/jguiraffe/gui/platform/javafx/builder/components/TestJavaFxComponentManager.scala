@@ -79,6 +79,7 @@ import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
 import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import javafx.scene.control.Control
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -454,13 +455,22 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * are provided, but only some basic attributes common to all controls.
    */
   @Test def testCreateTextAreaComponentAttributes() {
-    val tag = new TextAreaTag
+    val sizeHandler = mock[UnitSizeHandler]
+    val tag = new TextAreaTag with ScrollSizeSupportUndefined
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     tag setName ComponentName
     val handler = manager.createTextArea(tag, false).asInstanceOf[JavaFxTextHandler]
     val txtCtrl = handler.component.asInstanceOf[TextArea]
     assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
     assertFalse("Wrap flag is set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, 0)
+    assertEquals("Wrong preferred width", Control.USE_COMPUTED_SIZE,
+        txtCtrl.getPrefWidth, .0001)
+    assertEquals("Wrong preferred height", Control.USE_COMPUTED_SIZE,
+        txtCtrl.getPrefHeight, .0001)
+    tag.verify(sizeHandler)
   }
 
   /**
@@ -468,7 +478,11 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * when creating a text area.
    */
   @Test def testCreateTextAreaTextAttributes() {
-    val tag = new TextAreaTag
+    val sizeHandler = mock[UnitSizeHandler]
+    val tag = new TextAreaTag with ScrollSizeSupportSpecific
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     tag setColumns 50
     tag setRows 25
     tag setWrap true
@@ -480,6 +494,9 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Preferred rows not set", tag.getRows, txtCtrl.getPrefRowCount)
     assertTrue("Wrap flag not set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, tag.getMaxlength)
+    assertEquals("Wrong preferred width", tag.xScrollSize, txtCtrl.getPrefWidth.toInt)
+    assertEquals("Wrong preferred height", tag.yScrollSize, txtCtrl.getPrefHeight.toInt)
+    tag.verify(sizeHandler)
   }
 
   /**
