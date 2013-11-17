@@ -467,9 +467,9 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertFalse("Wrap flag is set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, 0)
     assertEquals("Wrong preferred width", Control.USE_COMPUTED_SIZE,
-        txtCtrl.getPrefWidth, .0001)
+      txtCtrl.getPrefWidth, .0001)
     assertEquals("Wrong preferred height", Control.USE_COMPUTED_SIZE,
-        txtCtrl.getPrefHeight, .0001)
+      txtCtrl.getPrefHeight, .0001)
     tag.verify(sizeHandler)
   }
 
@@ -782,10 +782,14 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   private def checkCreateListBox(multi: Boolean, expHandlerClass: Class[_],
     expSelMode: SelectionMode) {
+    val sizeHandler = mock[UnitSizeHandler]
     val model = new ListModelTestImpl
-    val tag = new ListBoxTag
+    val tag = new ListBoxTag with ScrollSizeSupportUndefined
+    val context = new JellyContext
+    tag setContext context
     tag setListModel model
     tag setMulti multi
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     val handler = manager.createListBox(tag, false)
     val modelSupport = handler.asInstanceOf[ListModelSupport]
     assertEquals("Wrong handler", expHandlerClass, handler.getClass)
@@ -796,6 +800,11 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val list = handler.getComponent.asInstanceOf[ListView[Object]]
     assertEquals("Wrong selection mode", expSelMode,
       list.getSelectionModel.getSelectionMode)
+    assertEquals("Got a preferred width", Control.USE_COMPUTED_SIZE,
+      list.getPrefWidth, .001)
+    assertEquals("Got a preferred height", Control.USE_COMPUTED_SIZE,
+      list.getPrefHeight, .001)
+    tag.verify(sizeHandler)
   }
 
   /**
@@ -812,6 +821,25 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateListBoxMultiSelection() {
     checkCreateListBox(true, classOf[JavaFxMultiSelectionListHandler],
       SelectionMode.MULTIPLE)
+  }
+
+  /**
+   * Tests whether the preferred scroll size of a list box is taken into
+   * account.
+   */
+  @Test def testCreateListBoxScrollSize() {
+    val sizeHandler = mock[UnitSizeHandler]
+    val model = new ListModelTestImpl
+    val tag = new ListBoxTag with ScrollSizeSupportSpecific
+    val context = new JellyContext
+    tag setContext context
+    tag setListModel model
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+    val handler = manager.createListBox(tag, false)
+    val list = handler.getComponent.asInstanceOf[ListView[Object]]
+    assertEquals("Wrong scroll width", tag.xScrollSize, list.getPrefWidth.toInt)
+    assertEquals("Wrong scroll height", tag.yScrollSize, list.getPrefHeight.toInt)
+    tag.verify(sizeHandler)
   }
 
   /**

@@ -358,6 +358,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     else {
       val list = new ListView[Object]
       initControl(tag, list)
+      JavaFxComponentManager.initScrollSize(tag, list)
       val handler = if (tag.isMulti) new JavaFxMultiSelectionListHandler(list)
       else new JavaFxListViewHandler(list)
       handler.initListModel(tag.getListModel)
