@@ -16,12 +16,12 @@
 package net.sf.jguiraffe.gui.platform.javafx.layout
 
 import java.util.concurrent.atomic.AtomicReference
-
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.stage.Screen
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
+import org.apache.commons.jelly.JellyContext
 
 /**
  * The Java FX-based implementation of the ''UnitSizeHandler'' interface.
@@ -84,9 +84,37 @@ object JavaFxUnitSizeHandler {
   /** Constant for the length of the width string. */
   private val WidthStringLength = WidthString.length
 
+  /** Constant for the name of the size handler instance in the Jelly context. */
+  private val SizeHandlerVariable = "jguiraffe.SizeHandler"
+
   /** The shared cache with font sizes already queried. */
   private final val fontSizeCache =
     new AtomicReference(Map.empty[Font, Tuple2[Double, Double]])
+
+  /**
+   * Obtains a size handler instance from the passed in Jelly context. If
+   * the context does not contain an instance yet, a new one is created.
+   * @param context the current Jelly context
+   * @return the instance of this class from this context
+   */
+  def fromContext(context: JellyContext): UnitSizeHandler = {
+    context.getVariable(SizeHandlerVariable) match {
+      case handler: UnitSizeHandler => handler
+      case _ => storeSizeHandler(context, new JavaFxUnitSizeHandler)
+    }
+  }
+
+  /**
+   * Stores the specified size handler instance under a well-known name in the
+   * current Jelly context.
+   * @param context the current Jelly context
+   * @param handler the instance to be stored in the context
+   * @return the stored size handler instance
+   */
+  def storeSizeHandler(context: JellyContext, handler: UnitSizeHandler): UnitSizeHandler = {
+    context.setVariable(SizeHandlerVariable, handler)
+    handler
+  }
 
   /**
    * Determines the width and height of the passed in font.

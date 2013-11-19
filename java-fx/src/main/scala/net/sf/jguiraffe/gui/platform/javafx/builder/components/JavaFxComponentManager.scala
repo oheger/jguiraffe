@@ -536,9 +536,6 @@ object JavaFxComponentManager {
   /** Constant for the font weight bold. */
   private val FontWeightBold = "bold"
 
-  /** Constant for the name of the size handler instance in the Jelly context. */
-  private val SizeHandlerVariable = "jguiraffe.SizeHandler"
-
   /** Constant for the mnemonic marker. */
   private val MnemonicMarker = '_'
 
@@ -622,12 +619,8 @@ object JavaFxComponentManager {
    * @param tag the current tag
    * @return the ''UnitSizeHandler'' for the current builder operation
    */
-  private[components] def fetchSizeHandler(tag: TagSupport): UnitSizeHandler = {
-    val handler = tag.getContext().getVariable(SizeHandlerVariable)
-    if (handler == null)
-      installSizeHandler(tag, new JavaFxUnitSizeHandler)
-    else as[UnitSizeHandler](handler)
-  }
+  private[components] def fetchSizeHandler(tag: TagSupport): UnitSizeHandler =
+    JavaFxUnitSizeHandler.fromContext(tag.getContext)
 
   /**
    * Installs the specified ''UnitSizeHandler'' for the current builder
@@ -638,10 +631,8 @@ object JavaFxComponentManager {
    * @return the newly installed size handler
    */
   private[components] def installSizeHandler(tag: TagSupport,
-    handler: UnitSizeHandler): UnitSizeHandler = {
-    tag.getContext().setVariable(SizeHandlerVariable, handler)
-    handler
-  }
+    handler: UnitSizeHandler): UnitSizeHandler =
+    JavaFxUnitSizeHandler.storeSizeHandler(tag.getContext, handler)
 
   /**
    * Converts the font name as specified in the given tag to a corresponding
@@ -702,10 +693,10 @@ object JavaFxComponentManager {
     val xSize = scrollWidth.toPixel(sizeHandler, container, false)
     val ySize = tag.getPreferredScrollHeight.toPixel(sizeHandler, container, true)
 
-    if(xSize > 0) {
+    if (xSize > 0) {
       ctrl setPrefWidth xSize
     }
-    if(ySize > 0) {
+    if (ySize > 0) {
       ctrl setPrefHeight ySize
     }
   }
