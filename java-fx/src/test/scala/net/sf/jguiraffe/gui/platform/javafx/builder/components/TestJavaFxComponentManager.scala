@@ -724,9 +724,15 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests whether a panel can be created.
    */
   @Test def testCreatePanelCreateFalse() {
+    val sizeHandler = mock[UnitSizeHandler]
     val tag = new PanelTag
-    assertTrue("Wrong result",
-      manager.createPanel(tag, false).isInstanceOf[ContainerWrapper])
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+
+    val wrapper = manager.createPanel(tag, false).asInstanceOf[ContainerWrapper]
+    assertSame("Size handler not initialized", sizeHandler,
+      wrapper.sizeHandler.get)
   }
 
   /**

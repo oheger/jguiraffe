@@ -204,7 +204,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     if (create) null
     else {
       //TODO deal with the tag's attributes
-      new ContainerWrapper
+      new ContainerWrapper(Some(JavaFxComponentManager.fetchSizeHandler(tag)))
     }
   }
 
