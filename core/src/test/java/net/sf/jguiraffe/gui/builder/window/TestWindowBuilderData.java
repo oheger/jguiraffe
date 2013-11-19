@@ -333,4 +333,24 @@ public class TestWindowBuilderData
                     WindowBuilderData.WINDOW_PREFIX + WND_NAME + i));
         }
     }
+
+    /**
+     * Tries to access the context before it becomes available.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testGetContextNotAvailable()
+    {
+        data.getContext();
+    }
+
+    /**
+     * Tests whether an existing Jelly context can be queried.
+     */
+    @Test
+    public void testGetContextAvailable()
+    {
+        JellyContext context = new JellyContext();
+        data.put(context);
+        assertSame("Wrong context", context, data.getContext());
+    }
 }

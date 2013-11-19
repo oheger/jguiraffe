@@ -123,6 +123,9 @@ public class WindowBuilderData implements SimpleBeanStoreImpl.BeanContributor
     /** Stores the form bean instance. */
     private Object formBean;
 
+    /** Stores the current Jelly context. */
+    private JellyContext context;
+
     /**
      * Creates a new instance of {@code WindowBuilderData}.
      */
@@ -206,6 +209,29 @@ public class WindowBuilderData implements SimpleBeanStoreImpl.BeanContributor
     public Window getWindow(String name)
     {
         return windows.get(WINDOW_PREFIX + name);
+    }
+
+    /**
+     * Returns the current {@code JellyContext}. This information can be useful
+     * when access to objects local to the current build operation is needed.
+     * Note that this property is only initialized after this object was stored
+     * in the context. (This is the case while a build operation is executing.)
+     * If this method is called before a context is available, an
+     * {@code IllegalStateException} exception is thrown.
+     *
+     * @return the current {@code JellyContext}
+     * @throws IllegalStateException if the current context is not yet available
+     * @since 1.3
+     */
+    public JellyContext getContext()
+    {
+        if (context == null)
+        {
+            throw new IllegalStateException("Context not available! "
+                    + "This method can only be called after this instance "
+                    + "has been stored in the Jelly context using put().");
+        }
+        return context;
     }
 
     /**
@@ -329,6 +355,7 @@ public class WindowBuilderData implements SimpleBeanStoreImpl.BeanContributor
             throw new IllegalArgumentException("Context must not be null!");
         }
         ctx.setVariable(CTX_KEY, this);
+        context = ctx;
     }
 
     /**
