@@ -31,14 +31,16 @@ import net.sf.jguiraffe.gui.layout.UnitSizeHandler
  *
  * @param components a list with the nodes managed by the associated container
  * @param constraints an array with constraints for the managed components
+ * @param sizeHandler an Option defining the ''UnitSizeHandler'' to be used
  */
 class JavaFxPercentLayoutAdapter(components: Array[Node],
-  constraints: Array[Object]) extends PercentLayoutPlatformAdapter {
+  constraints: Array[Object], sizeHandler: Option[UnitSizeHandler] = None)
+  extends PercentLayoutPlatformAdapter {
   /** The number of components managed by the associated container. */
   val getComponentCount = constraints.size
 
   /** The size handler used for Java FX percent layouts. */
-  val getSizeHandler = new JavaFxUnitSizeHandler
+  val getSizeHandler = sizeHandler.getOrElse(new JavaFxUnitSizeHandler)
 
   def getComponent(index: Int): Object = components(index)
 

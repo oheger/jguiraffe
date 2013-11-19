@@ -16,13 +16,13 @@
 package net.sf.jguiraffe.gui.platform.javafx.layout
 
 import scala.collection.mutable.ArrayBuffer
-
 import javafx.scene.Node
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.layout.PercentLayoutBase
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * A helper class which manages panels as containers for other components.
@@ -45,12 +45,19 @@ import net.sf.jguiraffe.gui.layout.PercentLayoutBase
  * ''addContainerComponent()'' method and for creating panels and layout
  * objects.
  *
+ * When creating panels with percent layout a ''UnitSizeHandler'' is required.
+ * Such an object can be passed to the constructor. (This is useful if the
+ * caller has access to a shared ''UnitSizeHandler'' instance.) If no size
+ * handler is provided, a new default instance is created if necessary.
+ *
  * Note: This class is not thread-safe. However, for the default usage
  * scenario - creating and initializing an instance by a builder in a
  * background thread and then using it in the Java FX thread - this should
  * not be a problem.
+ *
+ * @param sizeHandler an optional ''UnitSizeHandler''
  */
-class ContainerWrapper {
+class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
   /**
    * The font to be used for the components of this container. If here a
    * value is set during the building process, all child components created
@@ -137,7 +144,7 @@ class ContainerWrapper {
     val components = compData map (_.component)
     val constraints = compData map (_.constraints)
     percLayout.setPlatformAdapter(
-      new JavaFxPercentLayoutAdapter(components, constraints))
+      new JavaFxPercentLayoutAdapter(components, constraints, sizeHandler))
     new PercentLayoutPane(percLayout, this)
   }
 

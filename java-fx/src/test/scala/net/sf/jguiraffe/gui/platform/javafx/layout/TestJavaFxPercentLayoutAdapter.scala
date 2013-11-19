@@ -25,14 +25,15 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
-import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.core.classloader.annotations.PrepareForTest
+import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.text.Text
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * Test class for ''JavaFxPercentLayoutAdapter''.
@@ -276,5 +277,15 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val sizeHandler = adapter.getSizeHandler
     assertTrue("Wrong size handler", sizeHandler.isInstanceOf[JavaFxUnitSizeHandler])
     assertSame("Multiple instances", sizeHandler, adapter.getSizeHandler)
+  }
+
+  /**
+   * Tests whether a size handler can be passed to the constructor.
+   */
+  @Test def testGetSizeHandlerDefined() {
+    val sizeHandler = PowerMock.createMock(classOf[UnitSizeHandler])
+    adapter = new JavaFxPercentLayoutAdapter(components, constraints,
+      Some(sizeHandler))
+    assertSame("Wrong size handler", sizeHandler, adapter.getSizeHandler)
   }
 }
