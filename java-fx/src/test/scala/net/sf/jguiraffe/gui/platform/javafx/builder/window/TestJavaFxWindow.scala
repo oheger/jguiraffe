@@ -54,6 +54,7 @@ import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * Test class for ''JavaFxWindow''.
@@ -84,7 +85,7 @@ class TestJavaFxWindow extends JUnitSuite {
       classOf[EventListenerList[WindowEvent, WindowListener]])
     mouseListeners = PowerMock.createMock(
       classOf[EventListenerList[FormMouseEvent, FormMouseListener]])
-    new JavaFxWindow(stage, windowListeners, mouseListeners)
+    new JavaFxWindow(stage, windowListeners, mouseListeners, new ContainerWrapper)
   }
 
   /**
@@ -313,23 +314,22 @@ class TestJavaFxWindow extends JUnitSuite {
   }
 
   /**
-   * Tests whether the root container can be queried.
-   */
-  @Test def testGetRootContainer() {
-    val wnd = createWindow()
-    assertTrue("Wrong root container",
-      wnd.getRootContainer.isInstanceOf[ContainerWrapper])
-  }
-
-  /**
    * Prepares a test of the apply() method. Adds some expectations to the window
    * mock for event listener registrations.
+   * @param withListeners if '''true''' mocks are prepared for default event
+   * listener registrations
    */
-  private def prepareApplyTest() {
+  private def prepareApplyTest(withListeners: Boolean = false) {
     val propFocus = PowerMock.createNiceMock(classOf[ReadOnlyBooleanProperty])
     val propIcon = PowerMock.createNiceMock(classOf[ReadOnlyBooleanProperty])
     EasyMock.expect(stage.focusedProperty()).andReturn(propFocus).anyTimes()
     EasyMock.expect(stage.iconifiedProperty()).andReturn(propIcon).anyTimes()
+
+    if (withListeners) {
+      expectWindowListener()
+      expectMouseListener()
+      expectClosingListener()
+    }
   }
 
   /**
@@ -454,6 +454,30 @@ class TestJavaFxWindow extends JUnitSuite {
     assertTrue("Wrong result", wnd.close(false))
     listenerAnswer.get.handle(event)
     PowerMock.verifyAll()
+  }
+
+  /**
+   * Tests whether the root container can be queried.
+   */
+  @Test def testGetRootContainerDefault() {
+    prepareApplyTest(true)
+    PowerMock.replayAll()
+    val wnd = JavaFxWindow(stage)
+    assertTrue("Wrong root container",
+      wnd.getRootContainer.isInstanceOf[ContainerWrapper])
+  }
+
+  /**
+   * Tests whether a size handler can be passed to the window which is then
+   * propagated to the root container.
+   */
+  @Test def testGetRootContainerWithSizeHandler() {
+    val sizeHandler = PowerMock.createMock(classOf[UnitSizeHandler])
+    prepareApplyTest(true)
+    PowerMock.replayAll()
+    val wnd = JavaFxWindow(stage, Some(sizeHandler))
+    val root = wnd.getRootContainer
+    assertSame("Wrong size handler", sizeHandler, root.sizeHandler.get)
   }
 }
 

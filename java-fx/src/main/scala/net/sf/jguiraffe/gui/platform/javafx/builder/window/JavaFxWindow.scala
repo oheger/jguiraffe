@@ -31,6 +31,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.MouseEventAdapter
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.WindowEventAdapter
 import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * The Java FX-based implementation of the ''Window'' interface.
@@ -41,28 +42,27 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
  * Note that most methods must be called in the Java FX thread if not stated
  * otherwise. No additional thread-safety layer is created by this class.
  *
+ * The window's root container is a ''ContainerWrapper'' object passed to
+ * the constructor. This wrapper can be populated with the window's content
+ * and initialized with a layout. When the window is displayed it is asked to
+ * create a corresponding ''Pane'' which* is then added to the wrapped stage's
+ * scene.
+ *
  * @param stage the wrapped ''Stage'' object
  * @param windowListeners the object for registering window listeners
  * @param mouseListeners the object for registering mouse listeners
+ * @param rootContainer the root container for this window
  */
 private class JavaFxWindow private[window] (val stage: Stage,
   windowListeners: EventListenerList[WindowEvent, WindowListener],
-  mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener])
+  mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener],
+  @BeanProperty val rootContainer: ContainerWrapper)
   extends Window {
   /** The parent window of this window. */
   @BeanProperty var parentWindow: Window = _
 
   /** The controller object for this window. */
   @BeanProperty var windowController: Object = _
-
-  /**
-   * Stores the root container of this window. This is a ''ContainerWrapper''
-   * object created at construction time of this instance. This wrapper can be
-   * populated with the window's content and initialized with a layout. When the
-   * window is displayed it is asked to create a corresponding ''Pane'' which
-   * is then added to the wrapped stage's scene.
-   */
-  @BeanProperty val rootContainer = new ContainerWrapper
 
   /**
    * A flag whether this window can now be closed. This is used
@@ -169,14 +169,16 @@ private class JavaFxWindow private[window] (val stage: Stage,
 private object JavaFxWindow {
   /**
    * Creates a new instance of ''JavaFxWindow'' which wraps the specified
-   * ''Stage'' object.
+   * ''Stage'' object. Optionally, a size handler can be provided which is then
+   * passed to the window's root container.
    * @param stage the ''Stage'' to be wrapped
    * @return the fully initialized ''JavaFxWindow'' object
    */
-  def apply(stage: Stage): JavaFxWindow = {
+  def apply(stage: Stage, sizeHandler: Option[UnitSizeHandler] = None): JavaFxWindow = {
     val wndListeners = new EventListenerList[WindowEvent, WindowListener]
     val mouseListeners = new EventListenerList[FormMouseEvent, FormMouseListener]
-    val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners)
+    val root = new ContainerWrapper(sizeHandler)
+    val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners, root)
 
     WindowEventAdapter(stage, wnd, wndListeners)
     val mouseAdapter = MouseEventAdapter(mouseListeners)
