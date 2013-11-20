@@ -21,6 +21,7 @@ import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData
 import net.sf.jguiraffe.gui.builder.window.WindowData
 import net.sf.jguiraffe.gui.builder.window.WindowManager
+import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 
 /**
  * The Java FX-based implementation of the ''WindowManager'' interface.
@@ -82,7 +83,8 @@ class JavaFxWindowManager extends WindowManager {
    */
   private def createWindow(builderData: WindowBuilderData): Window = {
     val stage = stageFactory.createStage()
-    val wnd = JavaFxWindow(stage)
+    val sizeHandler = JavaFxUnitSizeHandler.fromContext(builderData.getContext)
+    val wnd = JavaFxWindow(stage, Some(sizeHandler))
     if (builderData.getParentWindow != null) {
       stage.initOwner(extractStage(builderData.getParentWindow))
       wnd.parentWindow = builderData.getParentWindow

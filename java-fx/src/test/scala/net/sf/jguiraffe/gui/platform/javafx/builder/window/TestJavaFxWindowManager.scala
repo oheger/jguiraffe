@@ -18,6 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 import scala.beans.BeanProperty
 import scala.beans.BooleanBeanProperty
 
+import org.apache.commons.jelly.JellyContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame
@@ -31,9 +32,12 @@ import javafx.scene.Group
 import javafx.scene.text.Text
 import javafx.stage.Modality
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData
 import net.sf.jguiraffe.gui.builder.window.WindowData
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 
 /**
  * Test class for ''JavaFxWindowManager''.
@@ -58,11 +62,10 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * Tests whether an initial and another stage can be created.
    */
   @Test def testCreateStages() {
-    val primaryStage = manager.createFrame(new WindowBuilderData,
-      new WindowDataImpl, null)
+    val builderData = createWindowBuilderData()
+    val primaryStage = manager.createFrame(builderData, new WindowDataImpl, null)
     assertSame("Different window", primaryStage,
       manager.createFrame(new WindowBuilderData, new WindowDataImpl, primaryStage))
-    val builderData = new WindowBuilderData
     builderData.setParentWindow(primaryStage)
     val frame = manager.createFrame(builderData, new WindowDataImpl, null)
     manager.createFrame(builderData, new WindowDataImpl, frame)
@@ -72,11 +75,23 @@ class TestJavaFxWindowManager extends JUnitSuite {
   }
 
   /**
+   * Creates a window builder data object with default settings.
+   * @return the builder data object
+   */
+  private def createWindowBuilderData(): WindowBuilderData = {
+    val data = new WindowBuilderData
+    val context = new JellyContext
+    data put context
+    JavaFxUnitSizeHandler.fromContext(context) // creates the handler
+    data
+  }
+
+  /**
    * Tests whether the stage's scene is initialized and whether controls can
    * be added.
    */
   @Test def testInitScene() {
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl
     val wndNew = manager.createFrame(builderData, windowData, null)
       .asInstanceOf[JavaFxWindow]
@@ -92,7 +107,7 @@ class TestJavaFxWindowManager extends JUnitSuite {
    */
   @Test def testInitTitle() {
     val title = "A window title"
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl(title = title)
     val wndNew = manager.createFrame(builderData, windowData, null)
     val wnd = manager.createFrame(builderData, windowData, wndNew)
@@ -103,7 +118,7 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * Tests whether the window controller is set.
    */
   @Test def testInitController() {
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl(controller = this)
     val wndNew = manager.createFrame(builderData, windowData, null)
     val wnd = manager.createFrame(builderData, windowData, wndNew)
@@ -114,7 +129,7 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * Tests whether the window's bounds are correctly initialized.
    */
   @Test def testInitBounds() {
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl(xPos = 10, yPos = 20, width = 300,
       height = 200)
     val wndNew = manager.createFrame(builderData, windowData, null)
@@ -129,11 +144,25 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * Tests the modality of a new frame window.
    */
   @Test def testCreateFrameModality() {
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl
     val wndNew = manager.createFrame(builderData, windowData, null)
     val wnd = manager.createFrame(builderData, windowData, wndNew).asInstanceOf[JavaFxWindow]
     assertEquals("Wrong modality", Modality.NONE, wnd.stage.getModality)
+  }
+
+  /**
+   * Tests whether the size handler is extracted from the Jelly context and
+   * passed to the window's root container.
+   */
+  @Test def testSizeHandlerInRootContainer() {
+    val builderData = createWindowBuilderData()
+    val windowData = new WindowDataImpl
+    val wndNew = manager.createFrame(builderData, windowData, null)
+    val root = wndNew.getRootContainer.asInstanceOf[ContainerWrapper]
+    assertSame("Wrong size handler",
+      JavaFxUnitSizeHandler.fromContext(builderData.getContext),
+      root.sizeHandler.get)
   }
 
   /**
@@ -142,7 +171,7 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * @param expModality the expected modality value
    */
   private def checkCreateDialog(modal: Boolean, expModality: Modality) {
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl(title = "some title")
     val wndNew = manager.createDialog(builderData, windowData, modal, null)
     val wnd = manager.createDialog(builderData, windowData, modal,
@@ -169,7 +198,7 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * Tests the creation of an internal frame.
    */
   @Test def testCreateInternalFrame() {
-    val builderData = new WindowBuilderData
+    val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl(title = "some title")
     val wndNew = manager.createInternalFrame(builderData, windowData, null)
     val wnd = manager.createInternalFrame(builderData, windowData,
