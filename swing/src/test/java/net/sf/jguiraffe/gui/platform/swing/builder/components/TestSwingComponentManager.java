@@ -1704,6 +1704,7 @@ public class TestSwingComponentManager
         assertEquals("Icon handler not set", tag.getResolvedIconHandler(), r
                 .getIconHandler());
         assertNotNull("Icons not initialized", r.getTreeIcon(ICON_RES));
+        assertNotNull("No tree node formatter", r.getNodeFormatter());
 
         return tree;
     }

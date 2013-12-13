@@ -34,7 +34,6 @@ import javax.swing.tree.TreeCellRenderer;
 import net.sf.jguiraffe.gui.builder.components.tags.TreeIconHandler;
 
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.apache.commons.configuration.tree.DefaultConfigurationNode;
 import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,20 +58,15 @@ public class TestSwingTreeCellRenderer
     /** Stores the test icon. */
     private static Icon icon;
 
+    /** A mock for the node to be rendered. */
+    private static ConfigurationNode node;
+
     @BeforeClass
     public static void beforeClass()
     {
         icon = loadIcon();
-    }
-
-    /**
-     * Creates a test configuration node.
-     *
-     * @return the node
-     */
-    private ConfigurationNode setUpNode()
-    {
-        return new DefaultConfigurationNode(NODE_NAME);
+        node = EasyMock.createMock(ConfigurationNode.class);
+        EasyMock.replay(node);
     }
 
     /**
@@ -117,13 +111,28 @@ public class TestSwingTreeCellRenderer
     }
 
     /**
+     * Creates an initialized mock node formatter.
+     *
+     * @return the formatter
+     */
+    private static SwingTreeNodeFormatter setUpFormatter()
+    {
+        SwingTreeNodeFormatter formatter =
+                EasyMock.createMock(SwingTreeNodeFormatter.class);
+        EasyMock.expect(formatter.textForNode(node)).andReturn(NODE_NAME)
+                .anyTimes();
+        EasyMock.replay(formatter);
+        return formatter;
+    }
+
+    /**
      * Helper method for invoking the renderer.
      *
      * @param renderer the renderer
      * @param node the current node
      * @return the renderer component
      */
-    private JLabel fetchComponent(TreeCellRenderer renderer,
+    private static JLabel fetchComponent(TreeCellRenderer renderer,
             ConfigurationNode node)
     {
         Component c = renderer.getTreeCellRendererComponent(new JTree(), node,
@@ -133,41 +142,20 @@ public class TestSwingTreeCellRenderer
     }
 
     /**
-     * Tests creating an instance without an icon handler. This should cause an
-     * exception.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testInitNoHandler()
-    {
-        new SwingTreeCellRenderer(null, new HashMap<String, Object>());
-    }
-
-    /**
-     * Tests creating an instance without an icon map. This should cause an
-     * exception.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testInitNoIconMap()
-    {
-        new SwingTreeCellRenderer(EasyMock
-                .createNiceMock(TreeIconHandler.class), null);
-    }
-
-    /**
      * Tests querying the renderer when the icon handler returns the name of a
      * known icon.
      */
     @Test
     public void testGetTreeCellRendererComponentCustomIcon()
     {
-        ConfigurationNode node = setUpNode();
         TreeIconHandler handler = setUpIconHandler(node);
+        SwingTreeNodeFormatter formatter = setUpFormatter();
         SwingTreeCellRenderer renderer = new SwingTreeCellRenderer(handler,
-                setUpIconMap());
+                setUpIconMap(), formatter);
         JLabel comp = fetchComponent(renderer, node);
         assertEquals("Wrong text", NODE_NAME, comp.getText());
         assertEquals("Wrong icon", icon, comp.getIcon());
-        EasyMock.verify(handler);
+        EasyMock.verify(handler, formatter);
     }
 
     /**
@@ -176,10 +164,9 @@ public class TestSwingTreeCellRenderer
     @Test
     public void testGetTreeCellRendererComponentDefaultIcon()
     {
-        ConfigurationNode node = setUpNode();
         TreeIconHandler handler = setUpIconHandler(node);
         SwingTreeCellRenderer renderer = new SwingTreeCellRenderer(handler,
-                new HashMap<String, Object>());
+                new HashMap<String, Object>(), setUpFormatter());
         JLabel comp = fetchComponent(renderer, node);
         assertEquals("Wrong text", NODE_NAME, comp.getText());
         DefaultTreeCellRenderer r2 = new DefaultTreeCellRenderer();

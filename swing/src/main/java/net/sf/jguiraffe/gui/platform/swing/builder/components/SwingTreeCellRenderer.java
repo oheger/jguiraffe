@@ -40,14 +40,18 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
  * <code>ConfigurationNode</code> objects. The name of such a node is used as
  * text for a tree node.</li>
  * <li>Determining the icon to be displayed for a tree node. This is done in
- * collaboration with a {@link TreeIconHandler} object and the
- * actual icons defined for a tree. For each node to display the renderer asks
- * the {@link TreeIconHandler} for the name of the icon to use for
- * this node. Then in looks up the corresponding icon in the map of icons
- * associated with the current tree. If an icon is found, it is displayed.
- * Otherwise the default icon for the current node type (leaf or branch node,
- * expanded or not) is used.</li>
+ * collaboration with a {@link TreeIconHandler} object and the actual icons
+ * defined for a tree. For each node to display the renderer asks the
+ * {@link TreeIconHandler} for the name of the icon to use for this node. Then
+ * in looks up the corresponding icon in the map of icons associated with the
+ * current tree. If an icon is found, it is displayed. Otherwise the default
+ * icon for the current node type (leaf or branch node, expanded or not) is
+ * used.</li>
  * </ul>
+ * </p>
+ * <p>
+ * Implementation node: This class is used internally only. Therefore, it does
+ * not do any sophisticated checks for parameters or other things.
  * </p>
  *
  * @author Oliver Heger
@@ -66,29 +70,33 @@ class SwingTreeCellRenderer extends DefaultTreeCellRenderer
     /** Stores the map with the known icons. */
     private final Map<String, Icon> iconMap;
 
+    /** The tree node formatter. */
+    private final SwingTreeNodeFormatter nodeFormatter;
+
     /**
-     * Creates a new instance of <code>SwingTreeCellRenderer</code> and
+     * Creates a new instance of {@code SwingTreeCellRenderer} and
      * initializes it.
      *
      * @param handler the icon handler (must not be <b>null</b>)
      * @param icons a map with icons (must not be <b>null</b>)
-     * @throws IllegalArgumentException if a required parameter is undefined
+     * @param fmt the formatter for nodes (must not be <b>null</b>)
      */
     public SwingTreeCellRenderer(TreeIconHandler handler,
-            Map<String, Object> icons)
+            Map<String, Object> icons, SwingTreeNodeFormatter fmt)
     {
-        if (handler == null)
-        {
-            throw new IllegalArgumentException(
-                    "TreeIconHandler must not be null!");
-        }
-        if (icons == null)
-        {
-            throw new IllegalArgumentException("Icon map must not be null!");
-        }
-
         iconHandler = handler;
         iconMap = initIconMap(icons);
+        nodeFormatter = fmt;
+    }
+
+    /**
+     * Returns the {@code SwingTreeNodeFormatter} used by this renderer.
+     *
+     * @return the {@code SwingTreeNodeFormatter}
+     */
+    public SwingTreeNodeFormatter getNodeFormatter()
+    {
+        return nodeFormatter;
     }
 
     /**
@@ -137,7 +145,7 @@ class SwingTreeCellRenderer extends DefaultTreeCellRenderer
     {
         JLabel c = (JLabel) super.getTreeCellRendererComponent(tree, value,
                 selected, expanded, leaf, row, hasFocus);
-        c.setText(textForNode(value));
+        c.setText(getNodeFormatter().textForNode(value));
 
         String iconName = getIconHandler().getIconName(
                 (ConfigurationNode) value, expanded, leaf);
@@ -148,20 +156,6 @@ class SwingTreeCellRenderer extends DefaultTreeCellRenderer
         }
 
         return c;
-    }
-
-    /**
-     * Returns the text for the specified node object. This implementation
-     * expects that the passed in object is of type
-     * <code>ConfigurationNode</code>. It performs a cast and then returns the
-     * name of the configuration node.
-     *
-     * @param value the node value
-     * @return the text of this node
-     */
-    protected String textForNode(Object value)
-    {
-        return ((ConfigurationNode) value).getName();
     }
 
     /**

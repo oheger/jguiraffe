@@ -1037,8 +1037,9 @@ public class SwingComponentManager implements ComponentManager
                             tag.isMultiSelection() ? TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION
                                     : TreeSelectionModel.SINGLE_TREE_SELECTION);
 
+            SwingTreeNodeFormatter formatter = new SwingTreeNodeFormatter();
             SwingTreeCellRenderer renderer = new SwingTreeCellRenderer(tag
-                    .getResolvedIconHandler(), tag.getIcons());
+                    .getResolvedIconHandler(), tag.getIcons(), formatter);
             tree.setCellRenderer(renderer);
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
