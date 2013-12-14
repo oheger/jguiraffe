@@ -1041,6 +1041,7 @@ public class SwingComponentManager implements ComponentManager
             SwingTreeCellRenderer renderer = new SwingTreeCellRenderer(tag
                     .getResolvedIconHandler(), tag.getIcons(), formatter);
             tree.setCellRenderer(renderer);
+            tree.setCellEditor(new SwingTreeCellEditor(tree, renderer));
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
             Object container = tag.findContainer().getContainer();

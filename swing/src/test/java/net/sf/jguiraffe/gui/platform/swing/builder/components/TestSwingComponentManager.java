@@ -1705,6 +1705,8 @@ public class TestSwingComponentManager
                 .getIconHandler());
         assertNotNull("Icons not initialized", r.getTreeIcon(ICON_RES));
         assertNotNull("No tree node formatter", r.getNodeFormatter());
+        assertTrue("Wrong cell editor",
+                tree.getCellEditor() instanceof SwingTreeCellEditor);
 
         return tree;
     }
