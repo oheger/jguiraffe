@@ -24,6 +24,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.event.ConfigurationEvent;
 import org.apache.commons.configuration.event.ConfigurationListener;
 import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>
@@ -114,6 +115,33 @@ public class TreeConfigurationChangeHandler implements ConfigurationListener
     public TreeModelChangeListener getModelChangeListener()
     {
         return modelChangeListener;
+    }
+
+    /**
+     * Changes the name of a {@code ConfigurationNode}. This is a utility method
+     * which is probably needed by each concrete tree model implementation.
+     * Normally, the name of a configuration node cannot be changed if it is
+     * part of a node hierarchy. Therefore, this method uses some tricks to
+     * achieve this goal. The return value indicates if a change was done. If
+     * the passed in new name equals the current name, nothing is changed, and
+     * result is <b>false</b>.
+     *
+     * @param node the {@code ConfigurationNode} to be changed
+     * @param newName the new name of this node
+     * @return <b>true</b> if a name change was necessary, <b>false</b>
+     *         otherwise
+     */
+    public boolean changeNodeName(ConfigurationNode node, String newName)
+    {
+        if (!StringUtils.equals(node.getName(), newName))
+        {
+            ConfigurationNode parent = node.getParentNode();
+            node.setParentNode(null);
+            node.setName(newName);
+            node.setParentNode(parent);
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -16,9 +16,13 @@
 package net.sf.jguiraffe.gui.builder.components.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
@@ -203,6 +207,56 @@ public class TestTreeConfigurationChangeHandler
                 handler.findCommonParent(nd1, nd2));
         assertEquals("Wrong common parent (2)", config.getRootNode(),
                 handler.findCommonParent(nd2, nd1));
+    }
+
+    /**
+     * Obtains the single configuration node referenced by the passed in key. If
+     * the key does not reference a single node, this method fails.
+     *
+     * @param key the key
+     * @return the node referenced by this key
+     */
+    private ConfigurationNode fetchNode(String key)
+    {
+        List<ConfigurationNode> nodes =
+                config.getExpressionEngine().query(config.getRootNode(), key);
+        assertEquals("Unexpected number of nodes", 1, nodes.size());
+        return nodes.get(0);
+    }
+
+    /**
+     * Returns a node which can be used for testing the changeNodeName() method.
+     *
+     * @return the test node
+     */
+    private ConfigurationNode nodeNameTestNode()
+    {
+        return fetchNode("tables.table(0)");
+    }
+
+    /**
+     * Tests whether the name of a node can be changed.
+     */
+    @Test
+    public void testChangeNodeNameOtherName()
+    {
+        ConfigurationNode node = nodeNameTestNode();
+        String newName = "db-table";
+        assertTrue("Wrong result", handler.changeNodeName(node, newName));
+        assertEquals("Name was not changed", newName, node.getName());
+        assertNotNull("No parent node", node.getParentNode());
+    }
+
+    /**
+     * Tests changeNodeName() if the same name is passed in.
+     */
+    @Test
+    public void testChangedNodeNameSameName()
+    {
+        ConfigurationNode node = nodeNameTestNode();
+        String oldName = node.getName();
+        assertFalse("Wrong result", handler.changeNodeName(node, oldName));
+        assertEquals("Name was changed", oldName, node.getName());
     }
 
     /**
