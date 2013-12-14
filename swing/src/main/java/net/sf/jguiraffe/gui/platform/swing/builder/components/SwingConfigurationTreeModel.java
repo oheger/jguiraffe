@@ -85,6 +85,9 @@ public class SwingConfigurationTreeModel implements TreeModel,
     /** A collection with the event listeners registered for this model. */
     private final Collection<TreeModelListener> listeners;
 
+    /** The change handler. */
+    private final TreeConfigurationChangeHandler ccHandler;
+
     /**
      * Creates a new instance of {@code SwingConfigurationTreeModel} and
      * initializes it with the given {@code HierarchicalConfiguration}
@@ -105,8 +108,7 @@ public class SwingConfigurationTreeModel implements TreeModel,
 
         configuration = config;
         listeners = new CopyOnWriteArrayList<TreeModelListener>();
-        TreeConfigurationChangeHandler ccHandler =
-                new TreeConfigurationChangeHandler(config, this);
+        ccHandler = new TreeConfigurationChangeHandler(config, this);
         configuration.addConfigurationListener(ccHandler);
     }
 
@@ -382,11 +384,8 @@ public class SwingConfigurationTreeModel implements TreeModel,
      * @param node the node
      * @param newName the new name
      */
-    private static void changeNodeName(ConfigurationNode node, String newName)
+    private void changeNodeName(ConfigurationNode node, String newName)
     {
-        ConfigurationNode parent = node.getParentNode();
-        node.setParentNode(null);
-        node.setName(newName);
-        node.setParentNode(parent);
+        ccHandler.changeNodeName(node, newName);
     }
 }
