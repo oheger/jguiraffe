@@ -27,6 +27,9 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler;
+import net.sf.jguiraffe.gui.builder.components.model.TreeModelChangeListener;
+
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.event.ConfigurationEvent;
 import org.apache.commons.configuration.event.ConfigurationListener;
@@ -74,7 +77,7 @@ import org.apache.commons.lang.ObjectUtils;
  * @version $Id: SwingConfigurationTreeModel.java 205 2012-01-29 18:29:57Z oheger $
  */
 public class SwingConfigurationTreeModel implements TreeModel,
-        ConfigurationListener
+        ConfigurationListener, TreeModelChangeListener
 {
     /** Stores the underlying configuration object. */
     private final HierarchicalConfiguration configuration;
@@ -82,16 +85,15 @@ public class SwingConfigurationTreeModel implements TreeModel,
     /** A collection with the event listeners registered for this model. */
     private final Collection<TreeModelListener> listeners;
 
-    /** Stores the configuration node affected by the current modification. */
-    private volatile ConfigurationNode changedNode;
-
     /**
-     * Creates a new instance of <code>SwingConfigurationTreeModel</code> and
-     * initializes it with the given <code>HierarchicalConfiguration</code>
-     * object.
+     * Creates a new instance of {@code SwingConfigurationTreeModel} and
+     * initializes it with the given {@code HierarchicalConfiguration}
+     * object. Behind the scenes, a {@link TreeConfigurationChangeHandler} is
+     * created and registered at the configuration so that change events can
+     * be correctly processed.
      *
      * @param config the configuration (must not be <b>null</b>)
-     * @throws IllegalArgumentException if an error occurs
+     * @throws IllegalArgumentException if a required parameter is missing
      */
     public SwingConfigurationTreeModel(HierarchicalConfiguration config)
     {
@@ -103,7 +105,9 @@ public class SwingConfigurationTreeModel implements TreeModel,
 
         configuration = config;
         listeners = new CopyOnWriteArrayList<TreeModelListener>();
-        configuration.addConfigurationListener(this);
+        TreeConfigurationChangeHandler ccHandler =
+                new TreeConfigurationChangeHandler(config, this);
+        configuration.addConfigurationListener(ccHandler);
     }
 
     /**
@@ -199,7 +203,7 @@ public class SwingConfigurationTreeModel implements TreeModel,
      */
     public Object getRoot()
     {
-        return getConfiguration().getRootNode();
+        return getRootNode();
     }
 
     /**
@@ -240,16 +244,16 @@ public class SwingConfigurationTreeModel implements TreeModel,
         if (!ObjectUtils.equals(node.getValue(), newValue))
         {
             changeNodeName(node, String.valueOf(newValue));
-
             if (path.getPathCount() > 1)
             {
                 // It is not the root node
-                TreeModelEvent event = new TreeModelEvent(this, path
-                        .getParentPath(), new int[] {
-                    getIndexOfChild(node.getParentNode(), node)
-                }, new Object[] {
-                    node
-                });
+                TreeModelEvent event =
+                        new TreeModelEvent(this, path.getParentPath(),
+                                new int[] {
+                                    getIndexOfChild(node.getParentNode(), node)
+                                }, new Object[] {
+                                    node
+                                });
 
                 for (TreeModelListener l : listeners)
                 {
@@ -260,7 +264,7 @@ public class SwingConfigurationTreeModel implements TreeModel,
             else
             {
                 // fire a generic structure changed event for the root node
-                fireStructureChangedEvent();
+                fireStructureChangedEvent(getRootNode());
             }
         }
     }
@@ -274,47 +278,38 @@ public class SwingConfigurationTreeModel implements TreeModel,
      * changed event for the root node is fired.
      *
      * @param event the event
+     * @deprecated This method is no longer used or called. Configuration change
+     * events are now processed by a {@link TreeConfigurationChangeHandler}
+     * and propagated to the {@link #treeModelChanged(ConfigurationNode)}
+     * method.
      */
+    @Deprecated
     public void configurationChanged(ConfigurationEvent event)
     {
-        if (event.isBeforeUpdate())
-        {
-            // try to determine the node affected by this event
-            switch (event.getType())
-            {
-            case HierarchicalConfiguration.EVENT_CLEAR_PROPERTY:
-            case HierarchicalConfiguration.EVENT_CLEAR_TREE:
-            case HierarchicalConfiguration.EVENT_SET_PROPERTY:
-                changedNode = findChangedNode(event);
-                break;
-
-            case HierarchicalConfiguration.EVENT_ADD_NODES:
-                List<ConfigurationNode> nodes = nodesForKey(event
-                        .getPropertyName());
-                if (nodes.size() == 1)
-                {
-                    changedNode = nodes.get(0);
-                }
-                break;
-
-            default:
-                changedNode = null;
-            }
-        }
-
-        else
-        {
-            // fire the event after the update
-            fireStructureChangedEvent();
-        }
     }
 
     /**
-     * Fires a structure changed event.
+     * The configuration serving as tree model was changed in the sub tree
+     * referenced by the passed in node. This implementation fires a tree
+     * structure change event to all registered listeners.
+     *
+     * @param node the node in the configuration which has changed
+     * @since 1.3
      */
-    private void fireStructureChangedEvent()
+    public void treeModelChanged(ConfigurationNode node)
     {
-        final TreeModelEvent event = createEvent();
+        fireStructureChangedEvent(node);
+    }
+
+    /**
+     * Fires a structure changed event. All registered listeners are notified in
+     * the event dispatch thread.
+     *
+     * @param changedNode the configuration node affected by the change
+     */
+    private void fireStructureChangedEvent(ConfigurationNode changedNode)
+    {
+        final TreeModelEvent event = createEvent(changedNode);
         SwingUtilities.invokeLater(new Runnable()
         {
             public void run()
@@ -325,6 +320,16 @@ public class SwingConfigurationTreeModel implements TreeModel,
                 }
             }
         });
+    }
+
+    /**
+     * Returns the root node of the associated configuration.
+     *
+     * @return the configuration's root node
+     */
+    private ConfigurationNode getRootNode()
+    {
+        return getConfiguration().getRootNode();
     }
 
     /**
@@ -357,65 +362,16 @@ public class SwingConfigurationTreeModel implements TreeModel,
     }
 
     /**
-     * Creates an event reporting a change of this tree model. If a node
-     * affected by the event is known, the event will refer to this node.
-     * Otherwise the configuration's root node is used for the event.
+     * Creates an event reporting a change of this tree model. The passed in
+     * node determines the part of the tree structure affected by this change.
      *
+     * @param changedNode the node affected by the change
      * @return the event
      */
-    private TreeModelEvent createEvent()
+    private TreeModelEvent createEvent(ConfigurationNode changedNode)
     {
-        Object[] path = (changedNode != null) ? createPath(changedNode)
-                : new Object[] {
-                    getRoot()
-                };
+        Object[] path = createPath(changedNode);
         return new TreeModelEvent(this, path);
-    }
-
-    /**
-     * Obtains a list with the nodes referred to by the specified key. This
-     * method queries the expression engine of the wrapped configuration to
-     * resolve the key.
-     *
-     * @param key the configuration key
-     * @return a list with the configuration nodes this key points to
-     */
-    @SuppressWarnings("unchecked")
-    private List<ConfigurationNode> nodesForKey(String key)
-    {
-        return (List<ConfigurationNode>) getConfiguration()
-                .getExpressionEngine().query(getConfiguration().getRoot(), key);
-    }
-
-    /**
-     * Tries to determine the configuration node that is affected by a change
-     * event. This method will obtain the configuration nodes the key points to.
-     * If all these nodes have the same parent, this parent node will become the
-     * changed node. Otherwise <b>null</b> is returned.
-     *
-     * @param event the configuration change event
-     * @return the affected node or <b>null</b> if it cannot be determined
-     */
-    private ConfigurationNode findChangedNode(ConfigurationEvent event)
-    {
-        ConfigurationNode node = null;
-
-        for (ConfigurationNode nd : nodesForKey(event.getPropertyName()))
-        {
-            if (node == null)
-            {
-                node = nd.getParentNode();
-            }
-            else
-            {
-                if (node != nd.getParentNode())
-                {
-                    return null;
-                }
-            }
-        }
-
-        return node;
     }
 
     /**

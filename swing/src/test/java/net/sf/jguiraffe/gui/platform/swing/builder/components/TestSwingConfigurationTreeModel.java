@@ -30,8 +30,6 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreePath;
 
-import net.sf.jguiraffe.gui.platform.swing.builder.components.SwingConfigurationTreeModel;
-
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.configuration.tree.DefaultConfigurationNode;
@@ -351,7 +349,7 @@ public class TestSwingConfigurationTreeModel
     }
 
     /**
-     * Tests the event fired for a clear property operation when the affected
+     * Tests the event fired for a clear property operation if the affected
      * node cannot be determined.
      */
     @Test
@@ -360,7 +358,7 @@ public class TestSwingConfigurationTreeModel
         TreeModelListenerTestImpl l = new TreeModelListenerTestImpl();
         model.addTreeModelListener(l);
         config.clearProperty("tables.table.field(0)");
-        checkListenerUnspecific(l);
+        checkListener(l, root);
     }
 
     /**
@@ -386,7 +384,7 @@ public class TestSwingConfigurationTreeModel
         TreeModelListenerTestImpl l = new TreeModelListenerTestImpl();
         model.addTreeModelListener(l);
         config.clearTree("tables.table.field(0)");
-        checkListenerUnspecific(l);
+        checkListener(l, root);
     }
 
     /**
@@ -461,7 +459,7 @@ public class TestSwingConfigurationTreeModel
         assertEquals("Wrong number of events", 2, events.size());
         assertEquals("Wrong event type 1", EventType.STRUCTURE_CHANGED, events
                 .get(0).type);
-        checkUnspecifcEvent(events.get(1));
+        checkEvent(events.get(1), root);
     }
 
     /**
