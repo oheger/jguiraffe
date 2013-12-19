@@ -61,7 +61,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.scala>2.10.0</version.scala>
+    <version.scala>2.10.3</version.scala>
     <powermock.version>1.5</powermock.version>
   </properties>
 
