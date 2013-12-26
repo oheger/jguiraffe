@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.sf.jguiraffe.JGuiraffeTestHelper;
 import net.sf.jguiraffe.gui.forms.ComponentHandlerImpl;
 
 import org.junit.Test;
@@ -152,5 +153,118 @@ public class TestFormMouseEvent
                 + ", TYPE = MOUSE_CLICKED, X = " + XPOS + ", Y = " + YPOS
                 + ", BUTTON = " + FormMouseEvent.BUTTON3 + ", MODIFIERS = "
                 + mods + " ]", s);
+    }
+
+    /**
+     * Tests equals() if the expected result is true.
+     */
+    @Test
+    public void testEqualsTrue()
+    {
+        FormMouseEvent event =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, event, true);
+        FormMouseEvent e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, true);
+    }
+
+    /**
+     * Tests equals() if the expected result is false.
+     */
+    @Test
+    public void testEqualsFalse()
+    {
+        FormMouseEvent event =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        FormMouseEvent e2 =
+                new FormMouseEvent(new Object(), HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, null, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, new ComponentHandlerImpl(), NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, null,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME + "_other",
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_DOUBLE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS + 1, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS - 1,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON1, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, null);
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        e2 =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS + 1, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT));
+        JGuiraffeTestHelper.checkEquals(event, e2, false);
+        JGuiraffeTestHelper.checkEquals(event, new FormEvent(this, HANDLER,
+                NAME), false);
+    }
+
+    /**
+     * Tests equals() if other objects are involved.
+     */
+    @Test
+    public void testEqualsOtherObjects()
+    {
+        FormMouseEvent event =
+                new FormMouseEvent(this, HANDLER, NAME,
+                        FormMouseEvent.Type.MOUSE_CLICKED, XPOS, YPOS,
+                        FormMouseEvent.BUTTON2, EnumSet.of(Modifiers.ALT,
+                                Modifiers.SHIFT));
+        JGuiraffeTestHelper.testTrivialEquals(event);
     }
 }

@@ -17,6 +17,8 @@ package net.sf.jguiraffe.gui.builder.event;
 
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 
+import org.apache.commons.lang.ObjectUtils;
+
 /**
  * <p>
  * An event class used in the form and form builder framework to deliver event
@@ -85,5 +87,46 @@ public class FormEvent extends BuilderEvent
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * Returns a hash code for this object.
+     *
+     * @return a hash code
+     * @since 1.3
+     */
+    @Override
+    public int hashCode()
+    {
+        final int factor = 37;
+        int result = ObjectUtils.hashCode(getName());
+        result = factor * result + ObjectUtils.hashCode(getHandler());
+        result = factor * result + ObjectUtils.hashCode(getSource());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc} This base implementation tests the handler and name
+     * properties. It is implemented in a way that subclasses can override it to
+     * add checks for additional properties.
+     *
+     * @since 1.3
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null || !getClass().equals(obj.getClass()))
+        {
+            return false;
+        }
+
+        FormEvent c = (FormEvent) obj;
+        return ObjectUtils.equals(getName(), c.getName())
+                && ObjectUtils.equals(getHandler(), c.getHandler())
+                && ObjectUtils.equals(getSource(), c.getSource());
     }
 }

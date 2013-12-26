@@ -22,6 +22,9 @@ import java.util.Set;
 
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * <p>
  * A specialized event class for reporting events related to mouse actions.
@@ -214,6 +217,40 @@ public class FormMouseEvent extends FormEvent
     {
         return String.format(TO_STRING_PATTERN, getName(), getType().name(),
                 getX(), getY(), getButton(), getModifiers().toString());
+    }
+
+    /**
+     * {@inheritDoc} This implementation takes the additional fields into
+     * account declared by this class.
+     *
+     * @since 1.3
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder().appendSuper(super.hashCode())
+                .append(getType()).append(getX()).append(getY())
+                .append(getButton()).append(getModifiers()).toHashCode();
+    }
+
+    /**
+     * {@inheritDoc} This implementation checks the additional fields declared
+     * by this class.
+     *
+     * @since 1.3
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (super.equals(obj))
+        {
+            FormMouseEvent c = (FormMouseEvent) obj;
+            return new EqualsBuilder().append(getType(), c.getType())
+                    .append(getX(), c.getX()).append(getY(), c.getY())
+                    .append(getButton(), c.getButton())
+                    .append(getModifiers(), c.getModifiers()).isEquals();
+        }
+        return false;
     }
 
     /**
