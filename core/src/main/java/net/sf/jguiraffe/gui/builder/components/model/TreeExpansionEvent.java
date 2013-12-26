@@ -17,6 +17,9 @@ package net.sf.jguiraffe.gui.builder.components.model;
 
 import net.sf.jguiraffe.gui.builder.event.FormEvent;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * <p>
  * An event class reporting a change in the expanded state of a tree's node.
@@ -92,6 +95,37 @@ public class TreeExpansionEvent extends FormEvent
     public Type getType()
     {
         return type;
+    }
+
+    /**
+     * {@inheritDoc} This implementation takes the additional fields into
+     * account declared by this class.
+     *
+     * @since 1.3
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder().appendSuper(super.hashCode())
+                .append(getType()).append(getPath()).toHashCode();
+    }
+
+    /**
+     * {@inheritDoc} This implementation also checks the additional fields
+     * declared by this class.
+     *
+     * @since 1.3
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+        TreeExpansionEvent c = (TreeExpansionEvent) obj;
+        return new EqualsBuilder().append(getType(), c.getType())
+                .append(getPath(), c.getPath()).isEquals();
     }
 
     /**
