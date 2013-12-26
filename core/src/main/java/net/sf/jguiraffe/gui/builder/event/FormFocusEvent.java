@@ -17,6 +17,9 @@ package net.sf.jguiraffe.gui.builder.event;
 
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * <p>
  * A specific event class dealing with focus events.
@@ -61,6 +64,33 @@ public class FormFocusEvent extends FormEvent
     public Type getType()
     {
         return type;
+    }
+
+    /**
+     * {@inheritDoc} This implementation takes the additional fields into
+     * account declared by this class.
+     *
+     * @since 1.3
+     */
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder().appendSuper(super.hashCode())
+                .append(getType()).toHashCode();
+    }
+
+    /**
+     * {@inheritDoc} This implementation also checks the additional fields
+     * declared by this class.
+     *
+     * @since 1.3
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj)
+                && ObjectUtils.equals(getType(),
+                        ((FormFocusEvent) obj).getType());
     }
 
     /**
