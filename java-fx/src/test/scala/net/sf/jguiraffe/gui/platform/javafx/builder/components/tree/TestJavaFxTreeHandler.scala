@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
 import scala.collection.mutable.Map
+
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.ConfigurationNode
 import org.apache.commons.configuration.tree.DefaultConfigurationNode
@@ -30,16 +31,24 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
 import javafx.scene.control.SelectionMode
+import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
+import net.sf.jguiraffe.gui.builder.components.model.TreeExpandVetoException
+import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionEvent
+import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionListener
 import net.sf.jguiraffe.gui.builder.components.model.TreeHandler
 import net.sf.jguiraffe.gui.builder.components.model.TreeNodePath
-import javafx.scene.control.TreeItem
+import net.sf.jguiraffe.gui.builder.components.model.TreePreExpansionListener
 
 /**
  * The companion object for ''JavaFxTreeHandler''.
  */
 object TestJavaFxTreeHandler {
+  /** The name of the tree component. */
+  val Name = "TestTreeComponent"
+
   /** An array with classes to be used as keys for configuration nodes. */
   private val Keys = Array(classOf[TreeView[_]], classOf[TreeItem[_]],
     classOf[JavaFxTreeHandler], classOf[ConfigNodeData],
@@ -86,7 +95,7 @@ object TestJavaFxTreeHandler {
    * @return the test handler instance
    */
   private def createHandler(multiSelect: Boolean = false): JavaFxTreeHandler =
-    new JavaFxTreeHandler(createTree(multiSelect), createConfiguration(),
+    new JavaFxTreeHandler(createTree(multiSelect), Name, createConfiguration(),
       GraphicsHandler, Map.empty)
 
   /**
@@ -475,5 +484,187 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   @Test def testCollapseInvalid() {
     val handler = createInitializedHandler()
     handler collapse createInvalidPath()
+  }
+
+  /**
+   * Tests whether an event is received when a node is collapsed.
+   */
+  @Test def testExpansionListenerCollapseEvent() {
+    val handler = createInitializedHandler()
+    val path = getPath(handler, Keys(1))
+    handler expand path
+    val listener = new TestExpansionListener
+    handler addExpansionListener listener
+    val item = handler.itemMap(path.getTargetNode)
+    item setExpanded false
+    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_COLLAPSE, item)
+  }
+
+  /**
+   * Tests whether an event is received when a node is expanded.
+   */
+  @Test def testExpansionListenerExpandEvent() {
+    val handler = createInitializedHandler()
+    val path = getPath(handler, Keys(1))
+    handler expand path
+    val item = handler.itemMap(path.getTargetNode)
+    item setExpanded false
+    val listener = new TestExpansionListener
+    handler addExpansionListener listener
+    item setExpanded true
+    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_EXPAND, item)
+  }
+
+  /**
+   * Tests whether an expansion listener can be removed.
+   */
+  @Test def testRemoveExpansionListener() {
+    val listener = mock[TreeExpansionListener]
+    whenExecuting(listener) {
+      val handler = createInitializedHandler()
+      handler addExpansionListener listener
+      handler removeExpansionListener listener
+      handler expand getPath(handler, Keys(0))
+    }
+  }
+
+  /**
+   * Tests whether a pre-collapse event is received.
+   */
+  @Test def testPreExpansionListenerCollapse() {
+    val handler = createInitializedHandler()
+    val path = getPath(handler, Keys(3))
+    handler expand path
+    val item = handler.itemMap(path.getTargetNode)
+    val listener = new TestPreExpansionListener
+    handler addPreExpansionListener listener
+    item setExpanded false
+    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_COLLAPSE, item)
+  }
+
+  /**
+   * Tests whether a pre-expand event is received.
+   */
+  @Test def testPreExpansionListenerExpand() {
+    val handler = createInitializedHandler()
+    val path = getPath(handler, Keys(3))
+    handler expand path
+    val item = handler.itemMap(path.getTargetNode)
+    item setExpanded false
+    val listener = new TestPreExpansionListener
+    handler addPreExpansionListener listener
+    item setExpanded true
+    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_EXPAND, item)
+  }
+
+  /**
+   * Tests whether a ''TreePreExpansionListener'' can be removed.
+   */
+  @Test def testRemovePreExpansionListener() {
+    val listener = mock[TreePreExpansionListener]
+    whenExecuting(listener) {
+      val handler = createInitializedHandler()
+      handler addPreExpansionListener listener
+      handler removePreExpansionListener listener
+      handler expand getPath(handler, Keys(2))
+    }
+  }
+
+  /**
+   * Tests whether a listener can veto the expansion of a node.
+   */
+  @Test def testVetoExpansion() {
+    val pl1 = mock[TreePreExpansionListener]
+    val pl2 = mock[TreePreExpansionListener]
+    val pl3 = mock[TreePreExpansionListener]
+    val l = mock[TreeExpansionListener]
+    pl1.beforeExpansionStateChange(EasyMock.anyObject(classOf[TreeExpansionEvent]))
+    pl2.beforeExpansionStateChange(EasyMock.anyObject(classOf[TreeExpansionEvent]))
+    EasyMock.expectLastCall().andThrow(new TreeExpandVetoException(null, "Test"))
+
+    whenExecuting(pl1, pl2, pl3, l) {
+      val handler = createInitializedHandler()
+      val path = getPath(handler, Keys(Keys.length - 1))
+      handler expand path
+      val item = handler.itemMap(path.getTargetNode)
+      // Listeners are registered in reverse order!
+      handler addPreExpansionListener pl3
+      handler addPreExpansionListener pl2
+      handler addPreExpansionListener pl1
+      handler addExpansionListener l
+      item setExpanded false
+      assertTrue("Veto not applied", item.isExpanded)
+    }
+  }
+
+  /**
+   * Tests whether the event handling code ignores other events than expansion
+   * or collapse events.
+   */
+  @Test def testOtherTreeItemEvents() {
+    val listener = mock[TreeExpansionListener]
+    whenExecuting(listener) {
+      val handler = createInitializedHandler()
+      val path = getPath(handler, Keys(2))
+      handler expand path
+      val item = handler.itemMap(path.getTargetNode)
+      handler addExpansionListener listener
+      val child = new TreeItem[ConfigNodeData]
+      item.getChildren add child
+    }
+  }
+}
+
+/**
+ * A trait with basic functionality for handling tree events.
+ */
+class TreeEventListener {
+  /** Stores the received event. */
+  var event: Option[TreeExpansionEvent] = None
+
+  /**
+   * Notifies this object that an event was received.
+   */
+  def received(e: TreeExpansionEvent) {
+    assertFalse("Too many events received", event.isDefined)
+    event = Some(e)
+  }
+
+  /**
+   * Checks whether the expected event was received.
+   * @param handler the expected tree handler
+   * @param path the expected node path
+   * @param evType the expected event type
+   * @param srcItem the expected source item
+   */
+  def verify(handler: TreeHandler, path: TreeNodePath,
+    evType: TreeExpansionEvent.Type, srcItem: TreeItem[ConfigNodeData]) {
+    val ev = event.get
+    assertSame("Wrong handler", handler, ev.getTreeHandler)
+    assertEquals("Wrong name", TestJavaFxTreeHandler.Name, ev.getName)
+    assertEquals("Wrong path", path, ev.getPath)
+    assertEquals("Wrong type", evType, ev.getType)
+    val srcEvent = ev.getSource.asInstanceOf[TreeItem.TreeModificationEvent[ConfigNodeData]]
+    assertEquals("Wrong source item", srcItem, srcEvent.getTreeItem)
+  }
+}
+
+/**
+ * A test ''TreeExpansionListener'' implementation used for testing whether
+ * correct expansion and collapse events are received.
+ */
+class TestExpansionListener extends TreeEventListener with TreeExpansionListener {
+  override def expansionStateChanged(ev: TreeExpansionEvent) {
+    received(ev)
+  }
+}
+
+/**
+ * A test ''TreePreExpansionListener'' implementation used for testing whether
+ * correct events are received before nodes are manipulated.
+ */
+class TestPreExpansionListener extends TreeEventListener with TreePreExpansionListener {
+  override def beforeExpansionStateChange(ev: TreeExpansionEvent) {
+    received(ev)
   }
 }

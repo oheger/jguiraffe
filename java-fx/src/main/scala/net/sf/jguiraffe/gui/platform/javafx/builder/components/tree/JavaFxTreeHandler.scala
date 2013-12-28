@@ -22,15 +22,19 @@ import scala.collection.mutable.Map
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.ConfigurationNode
 
+import javafx.event.EventHandler
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
+import net.sf.jguiraffe.gui.builder.components.model.TreeExpandVetoException
+import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionEvent
 import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionListener
 import net.sf.jguiraffe.gui.builder.components.model.TreeHandler
 import net.sf.jguiraffe.gui.builder.components.model.TreeModelChangeListener
 import net.sf.jguiraffe.gui.builder.components.model.TreeNodePath
 import net.sf.jguiraffe.gui.builder.components.model.TreePreExpansionListener
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 
 /**
  * A specialized ''ComponentHandler'' implementation for JavaFX tree view
@@ -41,12 +45,13 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHa
  * the ''TreeHandler'' interface.
  *
  * @param tree the managed tree view
+ * @param name the name of the associated tree view component
  * @param model the configuration object serving as the tree's data model
  * @param graphicHandler the object providing access to graphics for tree items
  * @param itemMap a map for accessing all tree items
  */
 private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
-  @BeanProperty val model: HierarchicalConfiguration,
+  val name: String, @BeanProperty val model: HierarchicalConfiguration,
   val graphicHandler: NodeGraphicsHandler,
   val itemMap: Map[ConfigurationNode, ConfigTreeItem])
   extends JavaFxComponentHandler[Object](tree)
@@ -59,8 +64,19 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   @BeanProperty val `type` = if (multiSelection) classOf[Array[TreeNodePath]]
   else classOf[TreeNodePath]
 
+  /** Stores the expansion listeners. */
+  private val expansionListeners =
+    new EventListenerList[TreeExpansionEvent, TreeExpansionListener]
+
+  /** Stores the pre-expansion listeners. */
+  private val preExpansionListeners =
+    new EventListenerList[TreeExpansionEvent, TreePreExpansionListener]
+
   /** The current root node of the model configuration. */
   private var currentRootNode: ConfigurationNode = _
+
+  /** A flag whether an expansion event is currently processed. */
+  private var expansionEventProcessing = false
 
   /**
    * @inheritdoc This implementation, depending on the selection mode, either
@@ -159,23 +175,19 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   }
 
   def addExpansionListener(l: TreeExpansionListener) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    expansionListeners += l
   }
 
   def removeExpansionListener(l: TreeExpansionListener) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    expansionListeners -= l
   }
 
   def addPreExpansionListener(l: TreePreExpansionListener) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    preExpansionListeners += l
   }
 
   def removePreExpansionListener(l: TreePreExpansionListener) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    preExpansionListeners -= l
   }
 
   /**
@@ -209,8 +221,73 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    */
   private def createRootItem(): ConfigTreeItem = {
     currentRootNode = model.getRootNode
-    new ConfigTreeItem(currentRootNode, graphicHandler, itemMap)
+    val root = new ConfigTreeItem(currentRootNode, graphicHandler, itemMap)
+    val eventHandler = createExpansionEventHandler()
+    root addEventHandler (TreeItem.branchExpandedEvent[ConfigNodeData], eventHandler)
+    root addEventHandler (TreeItem.branchCollapsedEvent[ConfigNodeData], eventHandler)
+    root
   }
+
+  /**
+   * Creates an event handler to be registered at the root tree item for
+   * handling node expansion events. This handler propagates incoming events
+   * to generic ''TreeExpansionEvent'' objects.
+   */
+  private def createExpansionEventHandler(): EventHandler[TreeItem.TreeModificationEvent[ConfigNodeData]] =
+    new EventHandler[TreeItem.TreeModificationEvent[ConfigNodeData]] {
+      def handle(event: TreeItem.TreeModificationEvent[ConfigNodeData]) {
+        fireExpansionEvent(event)
+      }
+    }
+
+  /**
+   * Propagates the passed in original tree item expansion event to all
+   * registered listeners. If listeners are registered, the event is
+   * transformed into a ''TreeExpansionEvent'' object. Then first all
+   * registered ''TreePreExpansionListener''s are invoked. If one of them
+   * throws a veto exception, event processing is aborted, and the operation
+   * causing this event is reverted. Otherwise, the registered
+   * ''TreeExpansionListener''s are called. Note that reverting an expansion
+   * operation triggers another event; therefore means must be taken to
+   * prevent an endless recursion.
+   * @param event the original expansion event
+   */
+  private def fireExpansionEvent(event: TreeItem.TreeModificationEvent[ConfigNodeData]) {
+    if (!expansionEventProcessing) {
+      try {
+        preExpansionListeners.fire(transformEvent(event),
+          (l, e) => l.beforeExpansionStateChange(e))
+        expansionListeners.fire(transformEvent(event),
+          (l, e) => l.expansionStateChanged(e))
+      } catch {
+        case e: TreeExpandVetoException =>
+          expansionEventProcessing = true
+          event.getTreeItem setExpanded !event.getTreeItem.isExpanded
+      } finally {
+        expansionEventProcessing = false
+      }
+    }
+  }
+
+  /**
+   * Converts the specified original tree item expansion event to a
+   * JGUIraffe ''TreeExpansionEvent''.
+   * @param event the original event
+   * @return the converted event
+   */
+  private def transformEvent(event: TreeItem.TreeModificationEvent[ConfigNodeData]): TreeExpansionEvent =
+    new TreeExpansionEvent(event, this, name, convertEventType(event),
+      new TreeNodePath(event.getTreeItem.getValue.node))
+
+  /**
+   * Determines the event type for a ''TreeExpansionEvent'' based on the
+   * original event.
+   * @param event the original event
+   * @return the event type
+   */
+  private def convertEventType(event: TreeItem.TreeModificationEvent[ConfigNodeData]) =
+    if (event.wasCollapsed) TreeExpansionEvent.Type.NODE_COLLAPSE
+    else TreeExpansionEvent.Type.NODE_EXPAND
 
   /**
    * Ensures that the full path to a configuration node has been initialized.
