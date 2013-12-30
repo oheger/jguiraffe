@@ -80,6 +80,10 @@ import javafx.scene.control.SelectionMode
 import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 import javafx.scene.control.Control
+import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
+import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
+import javafx.scene.control.TreeView
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -93,6 +97,18 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
 
   @Before def setUp() {
     manager = new JavaFxComponentManager
+  }
+
+  /**
+   * Checks whether the specified control has been initialized with its
+   * default size.
+   * @param ctrl the control to be checked
+   */
+  private def checkDefaultSize(ctrl: Control) {
+    assertEquals("Got a preferred width", Control.USE_COMPUTED_SIZE,
+      ctrl.getPrefWidth, .001)
+    assertEquals("Got a preferred height", Control.USE_COMPUTED_SIZE,
+      ctrl.getPrefHeight, .001)
   }
 
   /**
@@ -466,10 +482,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
     assertFalse("Wrap flag is set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, 0)
-    assertEquals("Wrong preferred width", Control.USE_COMPUTED_SIZE,
-      txtCtrl.getPrefWidth, .0001)
-    assertEquals("Wrong preferred height", Control.USE_COMPUTED_SIZE,
-      txtCtrl.getPrefHeight, .0001)
+    checkDefaultSize(txtCtrl)
     tag.verify(sizeHandler)
   }
 
@@ -806,10 +819,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val list = handler.getComponent.asInstanceOf[ListView[Object]]
     assertEquals("Wrong selection mode", expSelMode,
       list.getSelectionModel.getSelectionMode)
-    assertEquals("Got a preferred width", Control.USE_COMPUTED_SIZE,
-      list.getPrefWidth, .001)
-    assertEquals("Got a preferred height", Control.USE_COMPUTED_SIZE,
-      list.getPrefHeight, .001)
+    checkDefaultSize(list)
     tag.verify(sizeHandler)
   }
 
@@ -871,5 +881,66 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, handler)
     assertSame("Wrong handler", handler,
       JavaFxComponentManager.fetchSizeHandler(tag))
+  }
+
+  /**
+   * Tests whether a correct default factory for tree handlers is used.
+   */
+  @Test def testDefaultTreeHandlerFactory() {
+    assertNotNull("No tree handler factory", manager.treeHandlerFactory)
+  }
+
+  /**
+   * Tests the creation of a tree view if the create flag is set.
+   */
+  @Test def testCreateTreeCreate() {
+    assertNull("Got a component", manager.createTree(new TreeTag, true))
+  }
+
+  /**
+   * Tests whether a tree view component can be created.
+   */
+  @Test def testCreateTree() {
+    val sizeHandler = mock[UnitSizeHandler]
+    val handler = mock[ComponentHandler[Object]]
+    val factory = mock[TreeHandlerFactory]
+    val tag = new TreeTag with ScrollSizeSupportUndefined
+    val treeView = new TreeView[String]
+    val context = new JellyContext
+    tag setContext context
+    EasyMock.expect(factory.createTreeHandler(tag)).andReturn(handler)
+    EasyMock.expect(handler.getComponent).andReturn(treeView).anyTimes()
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+
+    whenExecuting(handler, factory) {
+      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory)
+      assertSame("Wrong handler", handler, manager.createTree(tag, false))
+    }
+    checkDefaultSize(treeView)
+  }
+
+  /**
+   * Tests whether the scroll size is taken into account when creating a tree
+   * view component.
+   */
+  @Test def testCreateTreeScrollSize() {
+    val sizeHandler = mock[UnitSizeHandler]
+    val handler = mock[ComponentHandler[Object]]
+    val factory = mock[TreeHandlerFactory]
+    val tag = new TreeTag with ScrollSizeSupportSpecific
+    val treeView = new TreeView[String]
+    val context = new JellyContext
+    tag setContext context
+    EasyMock.expect(factory.createTreeHandler(tag)).andReturn(handler)
+    EasyMock.expect(handler.getComponent).andReturn(treeView).anyTimes()
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+
+    whenExecuting(handler, factory) {
+      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory)
+      assertSame("Wrong handler", handler, manager.createTree(tag, false))
+    }
+    assertEquals("Wrong scroll width", tag.xScrollSize, treeView.getPrefWidth.toInt)
+    assertEquals("Wrong scroll height", tag.yScrollSize, treeView.getPrefHeight.toInt)
+    tag.verify(sizeHandler)
   }
 }

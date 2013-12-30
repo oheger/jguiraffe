@@ -81,19 +81,22 @@ import org.apache.commons.jelly.TagSupport
 import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport
 import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
  *
  * @param toolTipFactory the factory object for creating tool tips
+ * @param treeHandlerFactory the factory for creating ''TreeHandler''s
  */
-class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
+class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
+  val treeHandlerFactory: TreeHandlerFactory)
   extends ComponentManager {
   /**
    * Creates a new instance of ''JavaFxComponentManager'' and initializes it
    * with a default tool tip factory.
    */
-  def this() = this(new DefaultToolTipFactory)
+  def this() = this(new DefaultToolTipFactory, new TreeHandlerFactory)
 
   /**
    * @inheritdoc This implementation expects that the container is a
@@ -431,9 +434,20 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory)
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation delegates to the associated
+   * ''TreeHandlerFactory'' to create a component handler for a JavaFX
+   * ''TreeView'' component.
+   */
   def createTree(tag: TreeTag, create: Boolean): ComponentHandler[Object] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val handler = treeHandlerFactory.createTreeHandler(tag)
+      val ctrl = JavaFxComponentManager.as[Control](handler.getComponent)
+      initControl(tag, ctrl)
+      JavaFxComponentManager.initScrollSize(tag, ctrl)
+      handler
+    }
   }
 
   /**
