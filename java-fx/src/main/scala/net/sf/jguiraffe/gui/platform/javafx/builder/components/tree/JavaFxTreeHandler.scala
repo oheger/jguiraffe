@@ -34,6 +34,7 @@ import net.sf.jguiraffe.gui.builder.components.model.TreeModelChangeListener
 import net.sf.jguiraffe.gui.builder.components.model.TreeNodePath
 import net.sf.jguiraffe.gui.builder.components.model.TreePreExpansionListener
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 
 /**
@@ -55,7 +56,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   val graphicHandler: NodeGraphicsHandler,
   val itemMap: Map[ConfigurationNode, ConfigTreeItem])
   extends JavaFxComponentHandler[Object](tree)
-  with TreeModelChangeListener with TreeHandler {
+  with TreeModelChangeListener with TreeHandler with ChangeEventSource {
   /** Flag whether multiple selection is supported. */
   private val multiSelection =
     tree.getSelectionModel.getSelectionMode == SelectionMode.MULTIPLE
@@ -63,6 +64,8 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   /** The data type of this handler. It depends on the selection mode. */
   @BeanProperty val `type` = if (multiSelection) classOf[Array[TreeNodePath]]
   else classOf[TreeNodePath]
+
+  override val observableValue = tree.getSelectionModel.selectedItemProperty
 
   /** Stores the expansion listeners. */
   private val expansionListeners =

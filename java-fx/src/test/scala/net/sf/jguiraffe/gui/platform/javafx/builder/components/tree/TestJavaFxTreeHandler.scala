@@ -613,6 +613,16 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
       item.getChildren add child
     }
   }
+
+  /**
+   * Tests whether the correct property for supporting change events is exposed.
+   */
+  @Test def testChangeEventSource() {
+    val handler = createHandler()
+    val tree = getTree(handler)
+    assertSame("Wrong change event property",
+        tree.getSelectionModel.selectedItemProperty, handler.observableValue)
+  }
 }
 
 /**
