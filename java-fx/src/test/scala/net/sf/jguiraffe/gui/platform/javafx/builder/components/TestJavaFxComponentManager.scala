@@ -84,6 +84,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import javafx.scene.control.TreeView
+import net.sf.jguiraffe.gui.builder.components.tags.ProgressBarTag
+import javafx.scene.control.ProgressBar
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -942,5 +944,35 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong scroll width", tag.xScrollSize, treeView.getPrefWidth.toInt)
     assertEquals("Wrong scroll height", tag.yScrollSize, treeView.getPrefHeight.toInt)
     tag.verify(sizeHandler)
+  }
+
+  /**
+   * Tests the creation of a progress bar if the create flag is set.
+   */
+  @Test def testCreateProgressBarCreate() {
+    assertNull("Got a handler", manager.createProgressBar(new ProgressBarTag, true))
+  }
+
+  /**
+   * Tests whether a progress bar component can be created.
+   */
+  @Test def testCreateProgressBar() {
+    val tag = new ProgressBarTag
+    tag setMin 5
+    tag setMax 80
+    tag setValue 20
+    val handler = manager.createProgressBar(tag, false).asInstanceOf[JavaFxProgressBarHandler]
+    assertEquals("Wrong minimum", tag.getMin, handler.min)
+    assertEquals("Wrong maximum", tag.getMax, handler.max)
+    assertEquals("Wrong value", tag.getValue, handler.getValue)
+  }
+
+  /**
+   * Tests the creation of a progress bar if no initial value was specified.
+   */
+  @Test def testCreateProgressBarNoValue() {
+    val handler = manager.createProgressBar(new ProgressBarTag, false)
+    val bar = handler.getComponent.asInstanceOf[ProgressBar]
+    assertEquals("Got a progress value", 0, bar.getProgress, .001)
   }
 }

@@ -82,6 +82,7 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport
 import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
+import javafx.scene.control.ProgressBar
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -418,10 +419,21 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
     else new JavaFxStaticTextHandler(createLabelControl(tag, tag.getTextIconData))
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''ProgressBar'' control
+   * wrapped by a ''JavaFxProgressBarHandler''.
+   */
   def createProgressBar(tag: ProgressBarTag,
     create: Boolean): ComponentHandler[Integer] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val bar = new ProgressBar
+      initControl(tag, bar)
+      val handler = new JavaFxProgressBarHandler(bar, tag.getMin, tag.getMax)
+      val curVal = if (tag.getValue != null) tag.getValue.intValue else 0
+      handler setValue curVal
+      handler
+    }
   }
 
   def createSlider(tag: SliderTag, create: Boolean): ComponentHandler[Integer] = {
