@@ -86,6 +86,9 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerF
 import javafx.scene.control.TreeView
 import net.sf.jguiraffe.gui.builder.components.tags.ProgressBarTag
 import javafx.scene.control.ProgressBar
+import net.sf.jguiraffe.gui.builder.components.tags.SliderTag
+import net.sf.jguiraffe.gui.builder.components.Orientation
+import javafx.scene.control.Slider
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -974,5 +977,89 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val handler = manager.createProgressBar(new ProgressBarTag, false)
     val bar = handler.getComponent.asInstanceOf[ProgressBar]
     assertEquals("Got a progress value", 0, bar.getProgress, .001)
+  }
+
+  /**
+   * Tests the creation of a slider component if the create flag is set.
+   */
+  @Test def testCreateSliderCreate() {
+    assertNull("Got a handler", manager.createSlider(new SliderTag, true))
+  }
+
+  /**
+   * Creates a ''SliderTag'' with the given orientation.
+   * @param or the orientation
+   * @return the slider tag
+   */
+  private def sliderTag(or: Orientation): SliderTag = {
+    new SliderTag {
+      override def getSliderOrientation = or
+    }
+  }
+
+  /**
+   * Helper method for checking the orientation of a slider component.
+   * @param or the orientation of the tag
+   * @return the expected slider orientation
+   */
+  private def checkCreateSliderOrientation(or: Orientation,
+    expSliderOr: javafx.geometry.Orientation) {
+    val tag = sliderTag(or)
+    tag setMax 100
+    val handler = manager.createSlider(tag, false)
+    val slider = handler.getComponent.asInstanceOf[Slider]
+    assertEquals("Wrong orientation", expSliderOr, slider.getOrientation)
+  }
+
+  /**
+   * Tests whether a slider with vertical orientation can be created.
+   */
+  @Test def testCreateSliderOrientationVertical() {
+    checkCreateSliderOrientation(Orientation.VERTICAL,
+      javafx.geometry.Orientation.VERTICAL)
+  }
+
+  /**
+   * Tests whether a slider with horizontal orientation can be created.
+   */
+  @Test def testCreateSliderOrientationHorizontal() {
+    checkCreateSliderOrientation(Orientation.HORIZONTAL,
+      javafx.geometry.Orientation.HORIZONTAL)
+  }
+
+  /**
+   * Tests whether settings about a slider's ticks are correctly evaluated.
+   */
+  @Test def testCreateSliderWithTickSettings() {
+    val tag = sliderTag(Orientation.HORIZONTAL)
+    tag setMin 10
+    tag setMax 50
+    tag setMinorTicks 5
+    tag setMajorTicks 10
+    tag setShowLabels true
+    tag setShowTicks true
+    val handler = manager.createSlider(tag, false)
+    val slider = handler.getComponent.asInstanceOf[Slider]
+    assertEquals("Wrong minimum", tag.getMin, slider.getMin.toInt)
+    assertEquals("Wrong maximum", tag.getMax, slider.getMax.toInt)
+    assertEquals("Wrong major ticks", tag.getMajorTicks, slider.getMajorTickUnit.toInt)
+    assertEquals("Wrong minor ticks", 2, slider.getMinorTickCount)
+    assertTrue("Labels not shown", slider.isShowTickLabels)
+    assertTrue("Marks not shown", slider.isShowTickMarks)
+  }
+
+  /**
+   * Tests whether a slider can be created if there are no settings for ticks.
+   */
+  @Test def testCreateSliderNoTickSettings() {
+    val tag = sliderTag(Orientation.HORIZONTAL)
+    tag setMin 10
+    tag setMax 50
+    val handler = manager.createSlider(tag, false)
+    val slider = handler.getComponent.asInstanceOf[Slider]
+    assertFalse("Labels shown", slider.isShowTickLabels)
+    assertFalse("Marks shown", slider.isShowTickMarks)
+    assertEquals("Wrong major ticks", tag.getMax, slider.getMajorTickUnit.toInt)
+    assertEquals("Wrong minor ticks", 0, slider.getMinorTickCount)
   }
 }

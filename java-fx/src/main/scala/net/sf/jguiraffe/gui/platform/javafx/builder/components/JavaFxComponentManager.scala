@@ -83,6 +83,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport
 import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import javafx.scene.control.ProgressBar
+import javafx.scene.control.Slider
+import net.sf.jguiraffe.gui.builder.components.Orientation
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -436,9 +438,29 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
     }
   }
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX ''Slider'' control
+   * wrapped by a ''JavaFxSliderHandler''.
+   */
   def createSlider(tag: SliderTag, create: Boolean): ComponentHandler[Integer] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val slider = new Slider
+      initControl(tag, slider)
+      slider setMin tag.getMin
+      slider setMax tag.getMax
+      slider setMajorTickUnit (if (tag.getMajorTicks > 0) tag.getMajorTicks else tag.getMax)
+      if (tag.getMinorTicks > 0) {
+        slider setMinorTickCount (tag.getMajorTicks / tag.getMinorTicks)
+      } else {
+        slider setMinorTickCount 0
+      }
+      slider setShowTickLabels tag.isShowLabels
+      slider setShowTickMarks tag.isShowTicks
+      slider setOrientation (JavaFxComponentManager.convertOrientation(tag.getSliderOrientation))
+
+      new JavaFxSliderHandler(slider)
+    }
   }
 
   def createTable(tag: TableTag, create: Boolean): ComponentHandler[Object] = {
@@ -703,6 +725,16 @@ object JavaFxComponentManager {
    */
   private def convertFontWeight(tag: FontTag): Option[String] =
     Some(if (tag.isBold) FontWeightBold else FontStyleNormal)
+
+  /**
+   * Converts the given JGUIraffe ''Orientation'' value to a JavaFX
+   * ''Orientation'' value.
+   * @param or the input orientation
+   * @return the converted orientation
+   */
+  private def convertOrientation(or: Orientation): javafx.geometry.Orientation =
+    if (Orientation.VERTICAL == or) javafx.geometry.Orientation.VERTICAL
+    else javafx.geometry.Orientation.HORIZONTAL
 
   /**
    * Initializes the given control's preferred size based on the scroll size
