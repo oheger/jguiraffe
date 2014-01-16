@@ -457,7 +457,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
       }
       slider setShowTickLabels tag.isShowLabels
       slider setShowTickMarks tag.isShowTicks
-      slider setOrientation (JavaFxComponentManager.convertOrientation(tag.getSliderOrientation))
+      slider setOrientation (convertOrientation(tag.getSliderOrientation))
 
       new JavaFxSliderHandler(slider)
     }
@@ -725,16 +725,6 @@ object JavaFxComponentManager {
    */
   private def convertFontWeight(tag: FontTag): Option[String] =
     Some(if (tag.isBold) FontWeightBold else FontStyleNormal)
-
-  /**
-   * Converts the given JGUIraffe ''Orientation'' value to a JavaFX
-   * ''Orientation'' value.
-   * @param or the input orientation
-   * @return the converted orientation
-   */
-  private def convertOrientation(or: Orientation): javafx.geometry.Orientation =
-    if (Orientation.VERTICAL == or) javafx.geometry.Orientation.VERTICAL
-    else javafx.geometry.Orientation.HORIZONTAL
 
   /**
    * Initializes the given control's preferred size based on the scroll size

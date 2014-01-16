@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder
 
 import javafx.geometry.Side
 import javafx.scene.control.ContentDisplay
+import net.sf.jguiraffe.gui.builder.components.Orientation
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
 import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
 
@@ -66,4 +67,14 @@ package object components {
    */
   def convertPlacementToSide(pl: TabbedPaneTag.Placement): Side =
     PlacementMapping.getOrElse(pl, Side.TOP)
+
+  /**
+   * Converts the given JGUIraffe ''Orientation'' value to a JavaFX
+   * ''Orientation'' value.
+   * @param or the input orientation
+   * @return the converted orientation
+   */
+  def convertOrientation(or: Orientation): javafx.geometry.Orientation =
+    if (Orientation.VERTICAL == or) javafx.geometry.Orientation.VERTICAL
+    else javafx.geometry.Orientation.HORIZONTAL
 }

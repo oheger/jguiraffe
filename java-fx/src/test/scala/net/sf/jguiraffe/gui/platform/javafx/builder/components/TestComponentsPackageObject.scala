@@ -65,4 +65,14 @@ class TestComponentsPackageObject extends JUnitSuite {
   @Test def testConvertSideToPlacementDefault() {
     assertEquals("Wrong default", Side.TOP, convertPlacementToSide(null))
   }
+
+  /**
+   * Tests whether orientation values are correctly converted.
+   */
+  @Test def testConvertOrientation() {
+    assert(javafx.geometry.Orientation.VERTICAL ==
+      convertOrientation(net.sf.jguiraffe.gui.builder.components.Orientation.VERTICAL))
+    assert(javafx.geometry.Orientation.HORIZONTAL ==
+      convertOrientation(net.sf.jguiraffe.gui.builder.components.Orientation.HORIZONTAL))
+  }
 }
