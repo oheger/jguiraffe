@@ -17,8 +17,15 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import javafx.application.Platform
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.geometry.Orientation
+import javafx.scene.Node
+import javafx.scene.control.SplitPane
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
+import net.sf.jguiraffe.gui.builder.components.tags.SplitterTag
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 
 /**
  * A special ''ChangeListener'' implementation which ensures that the position
@@ -108,4 +115,126 @@ private class SplitPaneResizeListener(val initialPosition: Int,
       }
     })
   }
+}
+
+/**
+ * A trait for creating ''SplitPane'' components.
+ *
+ * An object implementing this trait is associated with the
+ * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentManager]];
+ * it is invoked whenever a ''SplitPane'' is requested. All properties of the
+ * new ''SplitPane'' are defined by the passed in tag.
+ *
+ * An implementation of this trait also has to ensure that a ''SplitPane'' behaves
+ * correctly when it is resized, i.e. additional size is correctly distributed
+ * on the managed components.
+ */
+trait SplitPaneFactory {
+  /**
+   * Creates and initializes a ''SplitPane'' component based on the properties
+   * defined by the passed in tag.
+   * @param tag the tag defining the ''SplitPane'' component
+   * @return the newly created ''SplitPane''
+   */
+  def createSplitPane(tag: SplitterTag): SplitPane
+}
+
+private object SplitPaneFactoryImpl {
+  /**
+   * Extracts the correct size property from the given split pane taking the
+   * orientation into account.
+   * @param split the split pane
+   * @return the size property of this split pane
+   */
+  private def fetchSizeProperty(split: SplitPane): ReadOnlyDoubleProperty =
+    if (Orientation.HORIZONTAL == split.getOrientation) split.widthProperty
+    else split.heightProperty
+
+  /**
+   * Extracts the property for the split pane's divider position.
+   * @param split the split pane
+   * @return the position property
+   */
+  private def fetchPosProperty(split: SplitPane): DoubleProperty =
+    split.getDividers.get(0).positionProperty
+}
+
+/**
+ * A default implementation of the ''SplitPaneFactory'' trait.
+ *
+ * This implementation creates a ''SplitPane'' based on the passed in tag.
+ * Note: The functions that can be passed to the constructor are mainly used
+ * to improve testability. If a ''SplitPane'' would be easy to mock, they
+ * would not be necessary.
+ *
+ * @param funcSizeProp a function for obtaining the size property from a pane
+ * @param funcPosProp a function for obtaining the position property form a pane
+ */
+private class SplitPaneFactoryImpl(
+  val funcSizeProp: SplitPane => ReadOnlyDoubleProperty = SplitPaneFactoryImpl.fetchSizeProperty _,
+  val funcPosProp: SplitPane => DoubleProperty = SplitPaneFactoryImpl.fetchPosProperty _)
+  extends SplitPaneFactory {
+  def createSplitPane(tag: SplitterTag): SplitPane = {
+    val split = createAndInitSplitPane(tag)
+    val listener = createResizeListener(tag, split)
+    funcSizeProp(split) addListener listener
+    split
+  }
+
+  /**
+   * Creates and initializes a split pane from the passed in tag.
+   * @param tag the tag
+   * @return the split pane
+   */
+  private def createAndInitSplitPane(tag: SplitterTag): SplitPane = {
+    val split = new SplitPane
+    split setOrientation determineOrientation(tag)
+    split.getItems.addAll(toNode(tag.getFirstComponent),
+      toNode(tag.getSecondComponent))
+    split
+  }
+
+  /**
+   * Determines the orientation for the split pane. Note that the opposite
+   * orientation as returned by ''convertOrientation()'' has to be used!
+   * This is because JavaFX expects the orientation of the panel while
+   * JGUIraffe thinks in terms of the divider.
+   * @param tag the splitter tag
+   * @return the orientation of the split pane
+   */
+  private def determineOrientation(tag: SplitterTag): Orientation = {
+    val orDiv = convertOrientation(tag.getSplitterOrientation)
+    if(Orientation.HORIZONTAL == orDiv) Orientation.VERTICAL
+    else Orientation.HORIZONTAL
+  }
+
+  /**
+   * Converts a child component for the split pane to a Node. This requires a
+   * special treatment for ''ContainerWrapper'' objects.
+   * @param comp the component to be converted
+   * @return the converted component
+   * @throws FormBuilderException if the component is not supported
+   */
+  private def toNode(comp: Any): Node =
+    comp match {
+      case nd: Node =>
+        nd
+
+      case wrap: ContainerWrapper =>
+        wrap.createContainer()
+
+      case c =>
+        throw new FormBuilderException("Unsupported child component: " + c)
+    }
+
+  /**
+   * Creates a resize listener for controlling the given split pane's size
+   * changes.
+   * @param tag the tag defining the split pane
+   * @param split the split pane
+   * @return the resize listener
+   */
+  private def createResizeListener(tag: SplitterTag, split: SplitPane): SplitPaneResizeListener =
+    new SplitPaneResizeListener(tag.getPos, tag.getResizeWeight,
+      funcPosProp(split))
 }
