@@ -17,10 +17,13 @@ package net.sf.jguiraffe.gui.platform.javafx
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+
 import org.junit.Assert.fail
+
+import javafx.application.Platform
+import javafx.beans.property.ReadOnlyProperty
 import javafx.embed.swing.JFXPanel
 import javax.swing.SwingUtilities
-import javafx.application.Platform
 
 /**
  * An object providing some utility methods for unit tests for Java FX
@@ -83,5 +86,21 @@ object JavaFxTestHelper {
       latch.countDown()
     }
     await(latch)
+  }
+
+  /**
+   * Reads the current value of a property in the JavaFX thread.
+   * @tparam T the type of the property
+   * @param prop the property to be read
+   */
+  def readProperty[T](prop: ReadOnlyProperty[T]): T = {
+    val latch = new CountDownLatch(1)
+    var value: T = null.asInstanceOf[T]
+    runInFxThread { () =>
+      value = prop.getValue
+      latch.countDown()
+    }
+    await(latch)
+    value
   }
 }

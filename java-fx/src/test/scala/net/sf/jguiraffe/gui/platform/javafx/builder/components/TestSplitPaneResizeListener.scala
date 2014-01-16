@@ -41,22 +41,6 @@ object TestSplitPaneResizeListener {
   }
 
   /**
-   * Reads the current value of a property in the JavaFX thread.
-   * @tparam T the type of the property
-   * @param prop the property to be read
-   */
-  private def readProperty[T](prop: ReadOnlyProperty[T]): T = {
-    val latch = new CountDownLatch(1)
-    var value: T = null.asInstanceOf[T]
-    JavaFxTestHelper.runInFxThread { () =>
-      value = prop.getValue
-      latch.countDown()
-    }
-    await(latch)
-    value
-  }
-
-  /**
    * Creates a property for storing double values.
    * @return the property
    */
@@ -92,7 +76,8 @@ class TestSplitPaneResizeListener extends JUnitSuite {
    * @param exp the expected value
    */
   private def assertPosition(exp: Double) {
-    assertEquals("Wrong value", exp, readProperty(position).doubleValue, .001)
+    assertEquals("Wrong value", exp,
+        JavaFxTestHelper.readProperty(position).doubleValue, .001)
   }
 
   /**
