@@ -91,15 +91,18 @@ import net.sf.jguiraffe.gui.builder.components.Orientation
  *
  * @param toolTipFactory the factory object for creating tool tips
  * @param treeHandlerFactory the factory for creating ''TreeHandler''s
+ * @param splitPaneFactory the factory for creating split panes
  */
 class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
-  val treeHandlerFactory: TreeHandlerFactory)
+  val treeHandlerFactory: TreeHandlerFactory,
+  val splitPaneFactory: SplitPaneFactory)
   extends ComponentManager {
   /**
    * Creates a new instance of ''JavaFxComponentManager'' and initializes it
    * with a default tool tip factory.
    */
-  def this() = this(new DefaultToolTipFactory, new TreeHandlerFactory)
+  def this() = this(new DefaultToolTipFactory, new TreeHandlerFactory,
+    new SplitPaneFactoryImpl)
 
   /**
    * @inheritdoc This implementation expects that the container is a
@@ -219,9 +222,18 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation delegates to the associated
+   * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.SplitPaneFactory]]
+   * in order to create a JavaFX ''SplitPane''.
+   */
   def createSplitter(tag: SplitterTag, create: Boolean): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val split = splitPaneFactory.createSplitPane(tag)
+      initControl(tag, split)
+      split
+    }
   }
 
   /**

@@ -89,6 +89,8 @@ import javafx.scene.control.ProgressBar
 import net.sf.jguiraffe.gui.builder.components.tags.SliderTag
 import net.sf.jguiraffe.gui.builder.components.Orientation
 import javafx.scene.control.Slider
+import net.sf.jguiraffe.gui.builder.components.tags.SplitterTag
+import javafx.scene.control.SplitPane
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -918,7 +920,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
     whenExecuting(handler, factory) {
-      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory)
+      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory, null)
       assertSame("Wrong handler", handler, manager.createTree(tag, false))
     }
     checkDefaultSize(treeView)
@@ -941,7 +943,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
     whenExecuting(handler, factory) {
-      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory)
+      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory, null)
       assertSame("Wrong handler", handler, manager.createTree(tag, false))
     }
     assertEquals("Wrong scroll width", tag.xScrollSize, treeView.getPrefWidth.toInt)
@@ -1061,5 +1063,37 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertFalse("Marks shown", slider.isShowTickMarks)
     assertEquals("Wrong major ticks", tag.getMax, slider.getMajorTickUnit.toInt)
     assertEquals("Wrong minor ticks", 0, slider.getMinorTickCount)
+  }
+
+  /**
+   * Tests whether the correct default split pane factory is created.
+   */
+  @Test def testDefaultSplitPaneFactory() {
+    assertEquals("Wrong split pane factory", classOf[SplitPaneFactoryImpl],
+        manager.splitPaneFactory.getClass)
+  }
+
+  /**
+   * Tests the creation of a splitter component if the create flag is true.
+   */
+  @Test def testCreateSplitterNull() {
+    assertNull("Got a component", manager.createSplitter(new SplitterTag, true))
+  }
+
+  /**
+   * Tests whether a splitter component can be created.
+   */
+  @Test def testCreateSplitter() {
+    val factory = mock[SplitPaneFactory]
+    val manager = new JavaFxComponentManager(null, null, factory)
+    val tag = new SplitterTag
+    tag setName "MySplitter"
+    val split = new SplitPane
+    EasyMock.expect(factory.createSplitPane(tag)).andReturn(split)
+
+    whenExecuting(factory) {
+      assertSame("Wrong split pane", split, manager.createSplitter(tag, false))
+      assertEquals("Not initialized", tag.getName, split.getId)
+    }
   }
 }
