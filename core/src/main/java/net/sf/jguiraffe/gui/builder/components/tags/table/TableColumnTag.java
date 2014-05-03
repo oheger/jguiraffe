@@ -293,7 +293,7 @@ public class TableColumnTag extends FieldTag
     /**
      * Returns a set with the names of the fields of the render form that are
      * used for rendering this column. It is possible to define a renderer for a
-     * column (by using a nested <code>{@link ColumnRenderer}</code> tag,
+     * column (by using a nested {@link ColumnRendererTag} tag,
      * which can consist of an arbitrary number of components. If this is done
      * for this column, this method returns the names of the components used in
      * this renderer. This information could be used for instance by a platform
@@ -390,7 +390,7 @@ public class TableColumnTag extends FieldTag
     /**
      * Returns the component to be used for rendering this column. If a specific
      * column renderer has been set using a nested
-     * <code>{@link ColumnRenderer}</code> tag, this component is returned
+     * {@link ColumnRendererTag} tag, this component is returned
      * here. Otherwise the return value is <b>null</b>.
      *
      * @return the renderer component for this column
@@ -403,7 +403,7 @@ public class TableColumnTag extends FieldTag
     /**
      * Returns the component to be used for editing this column. If a specific
      * column editor has been set using a nested
-     * <code>{@link ColumnEditor}</code> tag, this component is returned here.
+     * {@link ColumnEditorTag} tag, this component is returned here.
      * Otherwise the return value is <b>null</b>.
      *
      * @return the editor component for this column

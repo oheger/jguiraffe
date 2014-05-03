@@ -57,7 +57,7 @@ import org.apache.commons.jelly.MissingAttributeException;
  * </p>
  * <p>
  * For each column to be displayed in the table a <code>&lt;column&gt;</code>
- * tag (implemented by the {@link ColumnTag} class) must be placed in the body
+ * tag (implemented by the {@link TableColumnTag} class) must be placed in the body
  * of the table tag. This tag determines the column's header and the name of the
  * property of the model objects that is to be displayed in this column.
  * Further, a {@link net.sf.jguiraffe.transform.Transformer Transformer} can be
@@ -659,7 +659,7 @@ public class TableTag extends InputComponentTag implements Composite,
      * {@link Composite} interface so that the components created by the columns
      * defined in its body get automatically added and do not mess up the
      * hosting container tag. This makes it also possible to verify that only
-     * {@link ColumnTag} tags are placed in the body - these tags create
+     * {@link TableColumnTag} tags are placed in the body - these tags create
      * component handlers that do not have a component.
      *
      * @param comp the component to be added
