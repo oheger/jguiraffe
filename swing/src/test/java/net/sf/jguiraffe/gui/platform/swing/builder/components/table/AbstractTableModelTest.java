@@ -15,12 +15,12 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
+import javax.swing.JTable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JTable;
-
+import net.sf.jguiraffe.PersonBean;
 import net.sf.jguiraffe.di.impl.DefaultBeanContext;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
@@ -32,7 +32,6 @@ import net.sf.jguiraffe.gui.forms.DefaultFieldHandler;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
 import net.sf.jguiraffe.gui.layout.Unit;
 import net.sf.jguiraffe.transform.TransformerContext;
-
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.Tag;
@@ -305,60 +304,6 @@ public abstract class AbstractTableModelTest
                 FormBuilderException
         {
             super.processBeforeBody();
-        }
-    }
-
-    /**
-     * A test bean class that is used as the table model.
-     */
-    public static class PersonBean
-    {
-        private String firstName;
-
-        private String lastName;
-
-        private int idNo;
-
-        private double salary;
-
-        public String getFirstName()
-        {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName)
-        {
-            this.firstName = firstName;
-        }
-
-        public int getIdNo()
-        {
-            return idNo;
-        }
-
-        public void setIdNo(int idNo)
-        {
-            this.idNo = idNo;
-        }
-
-        public String getLastName()
-        {
-            return lastName;
-        }
-
-        public void setLastName(String lastName)
-        {
-            this.lastName = lastName;
-        }
-
-        public double getSalary()
-        {
-            return salary;
-        }
-
-        public void setSalary(double salary)
-        {
-            this.salary = salary;
         }
     }
 }

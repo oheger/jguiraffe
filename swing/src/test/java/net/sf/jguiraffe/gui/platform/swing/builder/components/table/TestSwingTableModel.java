@@ -21,6 +21,11 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import javax.swing.Icon;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,12 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 
-import javax.swing.Icon;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-
+import net.sf.jguiraffe.PersonBean;
 import net.sf.jguiraffe.gui.builder.components.tags.table.ColumnClass;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnTag;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableEditorValidationHandler;
@@ -48,7 +48,6 @@ import net.sf.jguiraffe.transform.DefaultValidationResult;
 import net.sf.jguiraffe.transform.ValidationMessage;
 import net.sf.jguiraffe.transform.ValidationMessageLevel;
 import net.sf.jguiraffe.transform.ValidationResult;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 
@@ -573,7 +572,7 @@ public class TestSwingTableModel extends AbstractTableModelTest
         List<Object> data = model.getModelData();
         assertEquals("Wrong model value",
                 AbstractTableModelTest.TEST_DATA[0][1], model.getValueAt(0, 1));
-        AbstractTableModelTest.PersonBean bean = (AbstractTableModelTest.PersonBean) data
+        PersonBean bean = (PersonBean) data
                 .get(0);
         bean.setLastName(NEW_NAME);
     }
