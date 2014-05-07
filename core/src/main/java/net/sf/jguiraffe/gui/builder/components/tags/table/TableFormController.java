@@ -1,0 +1,446 @@
+/*
+ * Copyright 2006-2014 The JGUIraffe Team.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package net.sf.jguiraffe.gui.builder.components.tags.table;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.RandomAccess;
+import java.util.Set;
+
+import net.sf.jguiraffe.gui.forms.ComponentHandler;
+import net.sf.jguiraffe.gui.forms.FormValidatorResults;
+
+/**
+ * <p>
+ * A helper class for dealing with {@code Form} objects related to table
+ * components.
+ * </p>
+ * <p>
+ * The implementation of tables for different UI platforms in <em>JGUIraffe</em>
+ * requires some common functionality for dealing with the single properties of
+ * model beans. When defining a table {@code Form} instances are created
+ * allowing the manipulation of properties via the API provided by this class.
+ * This also includes support for data type transformation and validation.
+ * Nevertheless, there is still some boiler-plate code necessary to interact
+ * with these forms, e.g. to retrieve the values to be displayed in a table
+ * column or to write back data the user has changed.
+ * </p>
+ * <p>
+ * This class aims at providing this functionality in a central place so that
+ * platform-specific implementations of table components can be simplified.
+ * Before version 1.3 of this library this code was mainly contained in the
+ * Swing-specific table implementation. It is now refactored so that it can be
+ * reused by other implementations, too.
+ * </p>
+ * <p>
+ * This class uses a form-based approach for accessing the table model data of a
+ * specific row. This means that if a new row is selected for being rendered or
+ * edited, the data of the model is loaded into the row render and editor forms.
+ * From there it can be read (and even updated) using the typical API offered by
+ * the {@code Form} class.
+ * </p>
+ *
+ * @author Oliver Heger
+ * @version $Id$
+ * @since 1.3
+ */
+public class TableFormController
+{
+    /**
+     * Constant for an index of a non-existing row. This constant is used to
+     * indicate that no row is selected.
+     */
+    private static final int INVALID_ROW = -1;
+
+    /** The table tag with the definition of the whole table. */
+    private final TableTag tableTag;
+
+    /** The data model of the table as a list of beans. */
+    private final List<Object> dataModel;
+
+    /** The index of the current row. */
+    private int currentRow = INVALID_ROW;
+
+    /**
+     * Creates a new instance of {@code TableFormController} and initializes it
+     * from the passed in {@code TableTag}.
+     *
+     * @param tabTag the {@code TableTag} (must not be <b>null</b>)
+     * @throws IllegalArgumentException if the passed in tag is <b>null</b>
+     */
+    public TableFormController(TableTag tabTag)
+    {
+        if (tabTag == null)
+        {
+            throw new IllegalArgumentException("Tag must not be null!");
+        }
+
+        tableTag = tabTag;
+        dataModel = createModel(tabTag);
+    }
+
+    /**
+     * Returns the list serving as data model for the managed table. Note that
+     * the list is directly returned, no defensive copy is created. Callers are
+     * responsible for performing only valid modifications if any!
+     *
+     * @return the data model list
+     */
+    public List<Object> getDataModel()
+    {
+        return dataModel;
+    }
+
+    /**
+     * Returns the number of rows in the data model of the managed table.
+     *
+     * @return the number of rows in the table
+     */
+    public int getRowCount()
+    {
+        return getDataModel().size();
+    }
+
+    /**
+     * Returns the number of columns of the managed table.
+     *
+     * @return the number of columns
+     */
+    public int getColumnCount()
+    {
+        return getTableTag().getColumnCount();
+    }
+
+    /**
+     * Returns the title of the column with the given index. This string can be
+     * placed in the column header.
+     *
+     * @param col the index of the column in question
+     * @return the title of this column
+     */
+    public String getColumnName(int col)
+    {
+        return getColumn(col).getHeaderText().getCaption();
+    }
+
+    /**
+     * Returns the field name of the specified column in the render or edit
+     * form. In the forms created for a table for each column per default a
+     * field is created. This method can be used to determine the field name of
+     * a column.
+     *
+     * @param col the index of the column in question
+     * @return the name of the field associated with this column in the table
+     *         forms
+     */
+    public String getColumnFieldName(int col)
+    {
+        return getColumn(col).getName();
+    }
+
+    /**
+     * A convenience method which returns the bean from the data model with the
+     * specified row index. Indices are 0-based.
+     *
+     * @param row the row index
+     * @return the data object at this row index in the table model
+     */
+    public Object getModelBean(int row)
+    {
+        return getDataModel().get(row);
+    }
+
+    /**
+     * Tells this controller that the specified row becomes the current row.
+     * This method causes some initializations to be made. Namely, the forms
+     * representing the content of the row are initialized.
+     *
+     * @param row the index of the new current row
+     */
+    public void selectCurrentRow(int row)
+    {
+        if (row != currentRow)
+        {
+            currentRow = row;
+            Object bean = getModelBean(row);
+            getTableTag().getRowRenderForm().initFields(bean);
+            getTableTag().getRowEditForm().initFields(bean);
+        }
+    }
+
+    /**
+     * Resets the current row index. This is the opposite of the
+     * {@code selectCurrentRow()} method. It invalidates the index of the
+     * current row. Calling this method makes sense for instance if there have
+     * been changes on the underlying data model.
+     */
+    public void resetCurrentRow()
+    {
+        currentRow = INVALID_ROW;
+    }
+
+    /**
+     * Notifies this controller that a range of rows has changed in the
+     * underlying table model. If the current row is affected, it is reset.
+     *
+     * @param fromIdx the start row index of the affected range
+     * @param toIdx the end row index of the affected change (including)
+     */
+    public void invalidateRange(int fromIdx, int toIdx)
+    {
+        if (fromIdx <= currentRow && toIdx >= currentRow)
+        {
+            resetCurrentRow();
+        }
+    }
+
+    /**
+     * Returns the value from the given column in the current row. The value is
+     * obtained from the field associated with this column from the row
+     * rendering form. Note: Before this method can be used,
+     * {@code selectCurrentRow()} must have been called first.
+     *
+     * @param col the index of the column in question
+     * @return the value of this column for the current row
+     */
+    public Object getColumnValue(int col)
+    {
+        return getTableTag().getRowRenderForm()
+                .getField(getColumnFieldName(col)).getComponentHandler()
+                .getData();
+    }
+
+    /**
+     * Sets the value for the given column in the current row. This method can
+     * be used for modifying the value of a cell if no special edit form is
+     * specified for this column. (If there is an edit form, this method
+     * performs no action.) The value is written into the edit form, and
+     * validation is performed. The table's validation handler is invoked with
+     * the results of the validation. Depending on this, the table is updated or
+     * the changes are discarded. Note: Before this method can be used,
+     * {@code selectCurrentRow()} must have been called first.
+     *
+     * @param table the current table component
+     * @param col the index of the column in question
+     * @param value the value to be set for this cell
+     */
+    public void setColumnValue(Object table, int col, Object value)
+    {
+        if (!hasEditor(col))
+        {
+            ComponentHandler ch =
+                    getTableTag().getRowEditForm()
+                            .getField(getColumn(col).getName())
+                            .getComponentHandler();
+            /* This causes an unchecked warning, but we cannot do much
+             * about it. If the data type is wrong, a CCE is thrown.
+             */
+            ch.setData(value);
+            validateColumn(table, col);
+        }
+    }
+
+    /**
+     * Validates a column in the current row. This method can be called after
+     * the user has edited a cell in the table. It performs a validation on all
+     * fields displayed in this table. With the results of this validation the
+     * {@code TableEditorValidationHandler} is invoked. This object also
+     * determines how to handle validation errors. If everything goes well, the
+     * data from the edit form is copied into the model bean for the current
+     * row.
+     *
+     * @param table the current table component
+     * @param col the index of the column in question
+     * @return a flag whether validation was successful
+     */
+    public boolean validateColumn(Object table, int col)
+    {
+        Set<String> fields = getEditFields(col);
+        FormValidatorResults vres =
+                getTableTag().getRowEditForm().validateFields(fields);
+
+        boolean forceValues;
+        if (getTableTag().getEditorValidationHandler().validationPerformed(
+                table, getTableTag().getRowEditForm(), getTableTag(), vres,
+                currentRow, col))
+        {
+            // The validation handler has manipulated the field values;
+            // fetch them again
+            getTableTag().getRowEditForm().validateFields(fields);
+            forceValues = true;
+        }
+        else
+        {
+            forceValues = false;
+        }
+
+        if (forceValues || vres.isValid())
+        {
+            getTableTag().getRowEditForm().readFields(getModelBean(currentRow),
+                    fields);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the renderer component installed for the specified column. Result
+     * is <b>null</b> if no renderer was set for this column.
+     *
+     * @param col the column index
+     * @return the renderer component for this column or <b>null</b>
+     */
+    public Object getColumnRenderer(int col)
+    {
+        return getColumn(col).getRendererComponent();
+    }
+
+    /**
+     * Returns the editor component installed for the specified column. Result
+     * is <b>null</b> if no editor was set for this column.
+     *
+     * @param col the column index
+     * @return the editor component for this column or <b>null</b>
+     */
+    public Object getColumnEditor(int col)
+    {
+        return getColumn(col).getEditorComponent();
+    }
+
+    /**
+     * Checks whether for the specified column a custom editor is specified.
+     *
+     * @param col the column index
+     * @return a flag if this column has its own editor
+     */
+    public boolean hasEditor(int col)
+    {
+        return getColumnEditor(col) != null;
+    }
+
+    /**
+     * Checks whether for the specified column a custom renderer is specified.
+     *
+     * @param col the column index
+     * @return a flag if this column has its own renderer component
+     */
+    public boolean hasRenderer(int col)
+    {
+        return getColumnRenderer(col) != null;
+    }
+
+    /**
+     * Returns a flag whether the specified column is declared to be editable.
+     *
+     * @param col the column index
+     * @return <b>true</b> if this column should be editable, <b>false</b>
+     *         otherwise
+     */
+    public boolean isColumnEditable(int col)
+    {
+        return getTableTag().isColumnEditable(getColumn(col));
+    }
+
+    /**
+     * Returns the logic data class of the specified column. Result may be
+     * <b>null</b> if no logic column class was assigned. In this case, the
+     * {@code Class} object returned by {@code getDataClass()} may be used to
+     * determine the column type.
+     *
+     * @param col the column index
+     * @return the logic column class (may be <b>null</b>)
+     */
+    public ColumnClass getLogicDataClass(int col)
+    {
+        return getColumn(col).getLogicDataClass();
+    }
+
+    /**
+     * Returns the data class for the specified column. Normally, it is
+     * preferred to use a logic column class. Applications can also specify a
+     * &quot;real&quot; class, but the platform in use must then support this
+     * class. This method never returns <b>null</b>; if no explicit data class
+     * was set, the generic {@code Object} class is returned.
+     *
+     * @param col the column index
+     * @return the data class of this column
+     */
+    public Class<?> getDataClass(int col)
+    {
+        return getColumn(col).getDataClass();
+    }
+
+    /**
+     * Returns the {@code TableTag} wrapped by this controller.
+     *
+     * @return the underlying {@code TableTag}
+     */
+    TableTag getTableTag()
+    {
+        return tableTag;
+    }
+
+    /**
+     * Returns a set with the names of all fields that are part of the edit form
+     * for the specified column. If there is no special edit form for this
+     * column, it only contains the single field it is associated with.
+     *
+     * @param col the index of the column in question
+     * @return a set with the names of the fields in this column
+     */
+    private Set<String> getEditFields(int col)
+    {
+        Set<String> editFields = getColumn(col).getEditFields();
+        return editFields.isEmpty() ? Collections
+                .singleton(getColumnFieldName(col)) : editFields;
+    }
+
+    /**
+     * Returns the {@code TableColumnTag} for the column with the given index.
+     *
+     * @param col the index of the column in question
+     * @return the tag representing this column
+     */
+    private TableColumnTag getColumn(int col)
+    {
+        return getTableTag().getColumn(col);
+    }
+
+    /**
+     * Creates the data model for the managed table. This implementation tries
+     * to directly reuse the passed in model collection, so that it can be
+     * updated conveniently by the application. However, we have to ensure that
+     * the collection serving as data model can be directly accessed by index.
+     * So if this is not the case, a copy from the data collection is created.
+     *
+     * @param tabTag the {@code TableTag}
+     * @return the data model for the table
+     */
+    private static List<Object> createModel(TableTag tabTag)
+    {
+        if (tabTag.getTableModel() instanceof List
+                && tabTag.getTableModel() instanceof RandomAccess)
+        {
+            // This is not a safe cast, however, as we do not add new objects,
+            // no class cast exceptions are produced.
+            @SuppressWarnings("unchecked")
+            List<Object> model = (List<Object>) tabTag.getTableModel();
+            return model;
+        }
+        return new ArrayList<Object>(tabTag.getTableModel());
+    }
+}
