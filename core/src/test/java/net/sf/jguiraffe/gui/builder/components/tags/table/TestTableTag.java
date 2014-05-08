@@ -361,6 +361,8 @@ public class TestTableTag extends AbstractTagTest
             assertTrue("Edit fields are not empty for column " + tct.getName(),
                     tct.getEditFields().isEmpty());
         }
+        TableFormController controller = tt.getTableFormController();
+        assertSame("Wrong table tag in controller", tt, controller.getTableTag());
     }
 
     /**

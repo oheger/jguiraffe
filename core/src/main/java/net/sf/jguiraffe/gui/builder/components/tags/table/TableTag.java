@@ -189,6 +189,9 @@ public class TableTag extends InputComponentTag implements Composite,
     /** The controller for the table's columns. */
     private TableColumnWidthController columnWidthController;
 
+    /** The table form controller. */
+    private TableFormController tableFormController;
+
     /** Stores the selection foreground color.*/
     private Color selectionForegroundColor;
 
@@ -624,6 +627,18 @@ public class TableTag extends InputComponentTag implements Composite,
     }
 
     /**
+     * Returns an initialized {@code TableFormController} object associated with
+     * this tag.
+     *
+     * @return a {@code TableFormController}
+     * @since 1.3
+     */
+    public TableFormController getTableFormController()
+    {
+        return tableFormController;
+    }
+
+    /**
      * Adds a tag representing a column to this table tag. This method will be
      * called by nested tags.
      *
@@ -743,6 +758,7 @@ public class TableTag extends InputComponentTag implements Composite,
         preferredScrollHeight = convertToNumberWithUnit(getScrollHeight(),
                 NumberWithUnit.ZERO);
 
+        tableFormController = new TableFormController(this);
         super.processBeforeBody();
     }
 
