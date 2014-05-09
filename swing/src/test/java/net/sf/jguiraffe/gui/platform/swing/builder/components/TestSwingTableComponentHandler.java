@@ -20,25 +20,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableModel;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.List;
 
 import net.sf.jguiraffe.gui.builder.components.ColorHelper;
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableModel;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.ChangeListener;
-
 import org.apache.commons.lang.mutable.MutableObject;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -94,12 +92,16 @@ public class TestSwingTableComponentHandler
     public void setUp() throws Exception
     {
         table = new JTable();
+        final TableFormController ctrl =
+                EasyMock.createNiceMock(TableFormController.class);
+        EasyMock.expect(ctrl.getDataModel()).andReturn(MODEL_LIST).anyTimes();
+        EasyMock.replay(ctrl);
         table.setModel(new TableModelImpl(new TableTag()
         {
             @Override
-            public Collection<?> getTableModel()
+            public TableFormController getTableFormController()
             {
-                return MODEL_LIST;
+                return ctrl;
             }
         }, table));
         handler = new SwingTableComponentHandlerTestImpl(table, 0, 0);

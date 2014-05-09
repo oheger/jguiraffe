@@ -17,38 +17,24 @@ package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import javax.swing.Icon;
 import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.RandomAccess;
 
-import net.sf.jguiraffe.PersonBean;
 import net.sf.jguiraffe.gui.builder.components.tags.table.ColumnClass;
-import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnTag;
-import net.sf.jguiraffe.gui.builder.components.tags.table.TableEditorValidationHandler;
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
-import net.sf.jguiraffe.gui.forms.ComponentHandler;
-import net.sf.jguiraffe.gui.forms.DefaultFormValidatorResults;
-import net.sf.jguiraffe.gui.forms.FieldHandler;
-import net.sf.jguiraffe.gui.forms.ValidationPhase;
-import net.sf.jguiraffe.transform.DefaultValidationResult;
-import net.sf.jguiraffe.transform.ValidationMessage;
-import net.sf.jguiraffe.transform.ValidationMessageLevel;
-import net.sf.jguiraffe.transform.ValidationResult;
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -57,20 +43,58 @@ import org.junit.Test;
  * @author Oliver Heger
  * @version $Id: TestSwingTableModel.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TestSwingTableModel extends AbstractTableModelTest
+public class TestSwingTableModel
 {
-    /** Constant for a new name. */
-    private static final String NEW_NAME = "Hirsch";
+    /** Constant for a test column index. */
+    private static final int COL_IDX = 3;
+
+    /** A mock for the table form controller. */
+    private TableFormController controller;
+
+    /** The table associated with the tag. */
+    private JTable table;
 
     /** Stores the model to be tested. */
     private SwingTableModel model;
 
-    /**
-     * Sets up the test model.
-     */
-    protected void setUpModel()
+    @Before
+    public void setUp() throws Exception
     {
-        model = createTableModel();
+        controller = EasyMock.createMock(TableFormController.class);
+        TableTag tableTag = EasyMock.createMock(TableTag.class);
+        EasyMock.expect(tableTag.getTableFormController())
+                .andReturn(controller).anyTimes();
+        EasyMock.replay(tableTag);
+        table = new JTable();
+        model = new SwingTableModel(tableTag, table);
+    }
+
+    /**
+     * Convenience method for replaying the mock objects used by the tests.
+     */
+    private void replay()
+    {
+        EasyMock.replay(controller);
+    }
+
+    /**
+     * Convenience method for verifying the mock objects used by the tests.
+     */
+    private void verify()
+    {
+        EasyMock.verify(controller);
+    }
+
+    /**
+     * Tests whether the data model can be queried.
+     */
+    @Test
+    public void testGetModelData()
+    {
+        List<Object> data = Collections.<Object>singletonList("TestData");
+        EasyMock.expect(controller.getDataModel()).andReturn(data).anyTimes();
+        replay();
+        assertEquals("Wrong data", data, model.getModelData());
     }
 
     /**
@@ -79,9 +103,9 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetColumnCount()
     {
-        setUpModel();
-        assertEquals("Wrong number of columns", COLUMN_NAMES.length, model
-                .getColumnCount());
+        EasyMock.expect(controller.getColumnCount()).andReturn(8);
+        replay();
+        assertEquals("Wrong number of columns", 8, model.getColumnCount());
     }
 
     /**
@@ -90,9 +114,9 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetRowCount()
     {
-        setUpModel();
-        assertEquals("Wrong number of rows", TEST_DATA.length, model
-                .getRowCount());
+        EasyMock.expect(controller.getRowCount()).andReturn(24);
+        replay();
+        assertEquals("Wrong number of rows", 24, model.getRowCount());
     }
 
     /**
@@ -102,12 +126,13 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetColumnClassJava()
     {
-        setUpModel();
-        for (int i = 0; i < COLUMN_TYPES.length; i++)
-        {
-            assertEquals("Wrong class for column " + i, COLUMN_TYPES[i], model
-                    .getColumnClass(i));
-        }
+        controller.getDataClass(COL_IDX);
+        EasyMock.expectLastCall().andReturn(String.class).anyTimes();
+        EasyMock.expect(controller.getLogicDataClass(COL_IDX)).andReturn(null)
+                .anyTimes();
+        replay();
+        assertEquals("Wrong column class", String.class,
+                model.getColumnClass(COL_IDX));
     }
 
     /**
@@ -120,20 +145,11 @@ public class TestSwingTableModel extends AbstractTableModelTest
     private void checkGetColumnClassLogic(final ColumnClass logicClass,
             Class<?> expected)
     {
-        setUpModel();
-        TableTag parent = model.getTableTag();
-        TableColumnTag colTag = new TableColumnTag()
-        {
-            @Override
-            public ColumnClass getLogicDataClass()
-            {
-                return logicClass;
-            }
-        };
-        parent.addColumn(colTag);
-        model = new SwingTableModel(parent, new JTable());
-        assertEquals("Wrong column class", expected, model.getColumnClass(model
-                .getColumnCount() - 1));
+        EasyMock.expect(controller.getLogicDataClass(COL_IDX))
+                .andReturn(logicClass).anyTimes();
+        replay();
+        assertEquals("Wrong column class", expected,
+                model.getColumnClass(COL_IDX));
     }
 
     /**
@@ -196,12 +212,11 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetColumnName()
     {
-        setUpModel();
-        for (int col = 0; col < COLUMN_NAMES.length; col++)
-        {
-            assertEquals("Wrong name for column " + col, COLUMN_NAMES[col],
-                    model.getColumnName(col));
-        }
+        final String colName = "TestColumnName";
+        EasyMock.expect(controller.getColumnName(COL_IDX)).andReturn(colName)
+                .anyTimes();
+        replay();
+        assertEquals("Wrong column name", colName, model.getColumnName(COL_IDX));
     }
 
     /**
@@ -210,41 +225,11 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testIsCellEditable()
     {
-        setUpModel();
-        for (int i = 0; i < EDIT_FLAGS.length; i++)
-        {
-            assertEquals("Wrong editable flag for column " + i, EDIT_FLAGS[i],
-                    model.isCellEditable(0, i));
-        }
-    }
-
-    /**
-     * Tests accessing the model data if a conversion to a random access list is
-     * needed.
-     */
-    @Test
-    public void testGetModelDataConvert() throws Exception
-    {
-        Collection<PersonBean> dataList = setUpTestData();
-        tableTag = setUpTableTag(dataList);
-        setUpModel();
-        assertNotSame("Data list was not changed", dataList, model
-                .getModelData());
-        assertTrue("List not converted to array list",
-                model.getModelData() instanceof RandomAccess);
-    }
-
-    /**
-     * Tests accessing the model data if the model collection is already a
-     * random access list.
-     */
-    @Test
-    public void testGetModelDataNoConvert() throws Exception
-    {
-        List<PersonBean> dataList = new ArrayList<PersonBean>(setUpTestData());
-        tableTag = setUpTableTag(dataList);
-        setUpModel();
-        assertSame("Wrong data list", dataList, model.getModelData());
+        EasyMock.expect(controller.isColumnEditable(COL_IDX)).andReturn(
+                Boolean.FALSE);
+        replay();
+        assertFalse("Wrong editable flag", model.isCellEditable(0, COL_IDX));
+        verify();
     }
 
     /**
@@ -253,67 +238,36 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetValueAt()
     {
-        setUpModel();
-        for (int row = 0; row < TEST_DATA.length; row++)
-        {
-            for (int col = 0; col < TEST_DATA[row].length; col++)
-            {
-                assertEquals("Wrong value at cell (" + row + "," + col + ")",
-                        TEST_DATA[row][col], model.getValueAt(row, col));
-            }
-        }
+        final Object value = "CellValue";
+        final int row = 8;
+        controller.selectCurrentRow(row);
+        EasyMock.expect(controller.getColumnValue(COL_IDX)).andReturn(value);
+        replay();
+        assertEquals("Wrong value", value, model.getValueAt(row, COL_IDX));
+        verify();
     }
 
     /**
-     * Tests the hasEditor() method if no custom editor is set.
+     * Tests the hasEditor() method.
      */
     @Test
-    public void testHasEditorFalse()
+    public void testHasEditor()
     {
-        setUpModel();
-        for (int i = 0; i < COLUMN_NAMES.length; i++)
-        {
-            assertFalse("Editor set for column " + i, model.hasEditor(i));
-        }
+        EasyMock.expect(controller.hasEditor(COL_IDX)).andReturn(Boolean.TRUE);
+        replay();
+        assertTrue("Wrong result", model.hasEditor(COL_IDX));
     }
 
     /**
-     * Checks for a custom editor if one is set.
+     * Tests the hasRenderer() method.
      */
     @Test
-    public void testHasEditorTrue()
+    public void testHasRenderer()
     {
-        setUpModel();
-        TableColumnTagTestImpl colTag = (TableColumnTagTestImpl) model
-                .getTableTag().getColumn(0);
-        colTag.installEditor("testEditor");
-        assertTrue("Custom editor not detected", model.hasEditor(0));
-    }
-
-    /**
-     * Tests the hasRenderer() method if no custom renderer is set.
-     */
-    @Test
-    public void testHasRendererFalse()
-    {
-        setUpModel();
-        for (int i = 0; i < COLUMN_NAMES.length; i++)
-        {
-            assertFalse("Renderer set for column " + i, model.hasRenderer(i));
-        }
-    }
-
-    /**
-     * Tests whether a custom renderer is correctly detected.
-     */
-    @Test
-    public void testHasRendererTrue()
-    {
-        setUpModel();
-        TableColumnTagTestImpl colTag = (TableColumnTagTestImpl) model
-                .getTableTag().getColumn(0);
-        colTag.installRenderer("testRenderer");
-        assertTrue("Custom renderer not detected", model.hasRenderer(0));
+        EasyMock.expect(controller.hasRenderer(COL_IDX)).andReturn(Boolean.FALSE);
+        replay();
+        assertFalse("Wrong result", model.hasRenderer(COL_IDX));
+        verify();
     }
 
     /**
@@ -322,7 +276,7 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetEditor()
     {
-        setUpModel();
+        replay();
         TableCellEditor editor = model.getEditor();
         assertTrue("Wrong editor returned",
                 editor instanceof SwingTableCellEditor);
@@ -336,7 +290,7 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetEditorCached()
     {
-        setUpModel();
+        replay();
         TableCellEditor editor = model.getEditor();
         assertSame("Multiple editor instances created", editor, model
                 .getEditor());
@@ -348,7 +302,7 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetRenderer()
     {
-        setUpModel();
+        replay();
         TableCellRenderer renderer = model.getRenderer();
         assertTrue("Wrong renderer returned",
                 renderer instanceof SwingTableCellRenderer);
@@ -362,305 +316,44 @@ public class TestSwingTableModel extends AbstractTableModelTest
     @Test
     public void testGetRendererCached()
     {
-        setUpModel();
+        replay();
         TableCellRenderer renderer = model.getRenderer();
         assertSame("Multiple renderer instances created", renderer, model
                 .getRenderer());
     }
 
     /**
-     * Creates a component handler mock object and initializes it to expect some
-     * default calls.
-     *
-     * @return the initialized mock object
-     */
-    private ComponentHandler<Object> createComponentHandlerMock()
-    {
-        @SuppressWarnings("unchecked")
-        ComponentHandler<Object> cmpHandler = EasyMock
-                .createMock(ComponentHandler.class);
-        EasyMock.expect(cmpHandler.getComponent()).andStubReturn(
-                new JTextField());
-        return cmpHandler;
-    }
-
-    /**
-     * Creates and initializes a field handler mock. Some default method calls
-     * performed by the form will already be expected.
-     *
-     * @param index the index of the test field
-     * @param cmpHandler the component handler to be used
-     * @return the field handler mock
-     */
-    private FieldHandler createFieldHandlerMock(int index,
-            ComponentHandler<?> cmpHandler)
-    {
-        FieldHandler fldHandler = EasyMock.createMock(FieldHandler.class);
-        fldHandler.getComponentHandler();
-        EasyMock.expectLastCall().andStubReturn(cmpHandler);
-        EasyMock.expect(fldHandler.getPropertyName()).andStubReturn(null);
-        fldHandler.getType();
-        EasyMock.expectLastCall().andStubReturn(COLUMN_TYPES[index]);
-        return fldHandler;
-    }
-
-    /**
-     * Tests validation of a column that has no custom editor.
+     * Tests whether a cell value can be set.
      */
     @Test
-    public void testSetValueNoEditor()
+    public void testSetValueAt()
     {
-        final String newValue = "Harry";
-        setUpModel();
-        TableEditorValidationHandler valHandler = EasyMock
-                .createMock(TableEditorValidationHandler.class);
-        ComponentHandler<Object> cmpHandler = createComponentHandlerMock();
-        FieldHandler fldHandler = createFieldHandlerMock(0, cmpHandler);
-        cmpHandler.setData(newValue);
-        EasyMock.expect(fldHandler.validate(ValidationPhase.SYNTAX)).andReturn(
-                DefaultValidationResult.VALID);
-        EasyMock.expect(fldHandler.validate(ValidationPhase.LOGIC)).andReturn(
-                DefaultValidationResult.VALID);
-        EasyMock.expect(fldHandler.getData()).andReturn(newValue);
-        Map<String, ValidationResult> map = new HashMap<String, ValidationResult>();
-        map.put(COLUMN_NAMES[0], DefaultValidationResult.VALID);
-        DefaultFormValidatorResults formResults = new DefaultFormValidatorResults(
-                map);
-        EasyMock.expect(
-                valHandler.validationPerformed(model.getTable(), tableTag
-                        .getRowEditForm(), tableTag, formResults, 0, 0))
-                .andReturn(Boolean.FALSE);
-        EasyMock.replay(cmpHandler, fldHandler, valHandler);
-        tableTag.getRowEditForm().addField(COLUMN_NAMES[0], fldHandler);
-        tableTag.setEditorValidationHandler(valHandler);
-        model.setValueAt(newValue, 0, 0);
-        List<?> dataList = model.getModelData();
-        PersonBean bean = (PersonBean) dataList.get(0);
-        assertEquals("New value not set in list", newValue, bean.getFirstName());
-        EasyMock.verify(cmpHandler, fldHandler, valHandler);
+        final Object newValue = "Harry";
+        final int row = 16;
+        controller.selectCurrentRow(row);
+        controller.setColumnValue(table, COL_IDX, newValue);
+        replay();
+        model.setValueAt(newValue, row, COL_IDX);
+        verify();
     }
 
     /**
-     * Tests the setValueAt() method when the corresponding column uses its own
-     * editor. In this case the editor is responsible for validation and setting
-     * the value in the model.
+     * Tests whether model changed events are correctly propagated.
      */
     @Test
-    public void testSetValueEditor()
+    public void testFireTableChanged()
     {
-        ComponentHandler<?> cmpHandler = createComponentHandlerMock();
-        FieldHandler fldHandler = createFieldHandlerMock(0, cmpHandler);
-        EasyMock.replay(fldHandler, cmpHandler);
-        setUpModel();
-        tableTag.getRowEditForm().addField(COLUMN_NAMES[0], fldHandler);
-        ((TableColumnTagTestImpl) tableTag.getColumn(0))
-                .installEditor(new JTextField());
-        model.setValueAt("NewValue", 0, 0);
-        EasyMock.verify(fldHandler, cmpHandler);
-    }
+        TableModelListener listener =
+                EasyMock.createMock(TableModelListener.class);
+        TableModelEvent event = new TableModelEvent(model, 4, 8);
+        listener.tableChanged(event);
+        controller.invalidateRange(event.getFirstRow(), event.getLastRow());
+        EasyMock.replay(listener);
+        replay();
 
-    /**
-     * Tests setting a value when validation fails. In this case the value
-     * should not be applied.
-     */
-    @Test
-    public void testSetValueNonValid()
-    {
-        final String newValue = "Harry";
-        setUpModel();
-        TableEditorValidationHandler valHandler = EasyMock
-                .createMock(TableEditorValidationHandler.class);
-        ComponentHandler<Object> cmpHandler = createComponentHandlerMock();
-        FieldHandler fldHandler = createFieldHandlerMock(0, cmpHandler);
-        cmpHandler.setData(newValue);
-        ValidationMessage vmsg = EasyMock.createMock(ValidationMessage.class);
-        EasyMock.expect(vmsg.getLevel()).andReturn(ValidationMessageLevel.ERROR);
-        EasyMock.replay(vmsg);
-        DefaultValidationResult vr = new DefaultValidationResult.Builder()
-                .addValidationMessage(vmsg).build();
-        EasyMock.expect(fldHandler.validate(ValidationPhase.SYNTAX)).andReturn(
-                vr);
-        DefaultFormValidatorResults formResults = new DefaultFormValidatorResults(
-                Collections.singletonMap(COLUMN_NAMES[0], vr));
-        EasyMock.expect(
-                valHandler.validationPerformed(model.getTable(), tableTag
-                        .getRowEditForm(), tableTag, formResults, 0, 0))
-                .andReturn(Boolean.FALSE);
-        EasyMock.replay(cmpHandler, fldHandler, valHandler);
-        tableTag.getRowEditForm().addField(COLUMN_NAMES[0], fldHandler);
-        tableTag.setEditorValidationHandler(valHandler);
-        model.setValueAt(newValue, 0, 0);
-        PersonBean bean = (PersonBean) model.getModelData().get(0);
-        assertEquals("Bean data was changed", TEST_DATA[0][0], bean
-                .getFirstName());
-        EasyMock.verify(cmpHandler, fldHandler, valHandler, vmsg);
-    }
-
-    /**
-     * Tests setting a value when the validation handler intercepts.
-     */
-    @Test
-    public void testSetValueHandler()
-    {
-        final String newValue = "Harry";
-        final String newValue2 = "Harry2";
-        setUpModel();
-        TableEditorValidationHandler valHandler = EasyMock
-                .createMock(TableEditorValidationHandler.class);
-        ComponentHandler<Object> cmpHandler = createComponentHandlerMock();
-        FieldHandler fldHandler = createFieldHandlerMock(0, cmpHandler);
-        cmpHandler.setData(newValue);
-        EasyMock.expect(fldHandler.validate(ValidationPhase.SYNTAX)).andReturn(
-                DefaultValidationResult.VALID);
-        EasyMock.expect(fldHandler.validate(ValidationPhase.LOGIC)).andReturn(
-                DefaultValidationResult.VALID);
-        DefaultFormValidatorResults formResults = new DefaultFormValidatorResults(
-                Collections.singletonMap(COLUMN_NAMES[0],
-                        DefaultValidationResult.VALID));
-        EasyMock.expect(
-                valHandler.validationPerformed(model.getTable(), tableTag
-                        .getRowEditForm(), tableTag, formResults, 0, 0))
-                .andReturn(Boolean.TRUE);
-        EasyMock.expect(fldHandler.validate(ValidationPhase.SYNTAX)).andReturn(
-                DefaultValidationResult.VALID);
-        EasyMock.expect(fldHandler.validate(ValidationPhase.LOGIC)).andReturn(
-                DefaultValidationResult.VALID);
-        EasyMock.expect(fldHandler.getData()).andReturn(newValue2);
-        EasyMock.replay(cmpHandler, fldHandler, valHandler);
-        tableTag.getRowEditForm().addField(COLUMN_NAMES[0], fldHandler);
-        tableTag.setEditorValidationHandler(valHandler);
-        model.setValueAt(newValue, 0, 0);
-        List<?> dataList = model.getModelData();
-        PersonBean bean = (PersonBean) dataList.get(0);
-        assertEquals("New value not set in list", newValue2, bean
-                .getFirstName());
-        EasyMock.verify(cmpHandler, fldHandler, valHandler);
-    }
-
-    /**
-     * Tests whether a newly set value can immediately be retrieved from the
-     * model.
-     */
-    @Test
-    public void testSetAndGetValue()
-    {
-        setUpModel();
-        TableEditorValidationHandler valHandler = EasyMock
-                .createMock(TableEditorValidationHandler.class);
-        DefaultFormValidatorResults vres = new DefaultFormValidatorResults(
-                Collections.singletonMap(COLUMN_NAMES[0],
-                        DefaultValidationResult.VALID));
-        EasyMock.expect(
-                valHandler.validationPerformed(model.getTable(), tableTag
-                        .getRowEditForm(), tableTag, vres, 1, 0)).andReturn(
-                Boolean.TRUE);
-        EasyMock.replay(valHandler);
-        tableTag.setEditorValidationHandler(valHandler);
-        final String newValue = "Harry";
-        model.setValueAt(newValue, 1, 0);
-        assertEquals("Value was not set", newValue, model.getValueAt(1, 0));
-        EasyMock.verify(valHandler);
-    }
-
-    /**
-     * Prepares a test of the fire() methods indicating an update of the table
-     * model.
-     */
-    private void prepareFireUpdateTest()
-    {
-        setUpModel();
-        List<Object> data = model.getModelData();
-        assertEquals("Wrong model value",
-                AbstractTableModelTest.TEST_DATA[0][1], model.getValueAt(0, 1));
-        PersonBean bean = (PersonBean) data
-                .get(0);
-        bean.setLastName(NEW_NAME);
-    }
-
-    /**
-     * Tests whether the new value from the model is returned after rows have
-     * been inserted.
-     */
-    @Test
-    public void testGetValueAtAfterRowsInserted()
-    {
-        prepareFireUpdateTest();
-        model.fireTableRowsInserted(0, 1);
-        assertEquals("Value not changed", NEW_NAME, model.getValueAt(0, 1));
-    }
-
-    /**
-     * Tests whether the range of rows is taken into account by
-     * fireTableRowsInserted().
-     */
-    @Test
-    public void testGetValueAtAfterRowsInsertedOutOfRange()
-    {
-        prepareFireUpdateTest();
-        model.fireTableRowsInserted(2, 3);
-        assertEquals("Value not cached",
-                AbstractTableModelTest.TEST_DATA[0][1], model.getValueAt(0, 1));
-    }
-
-    /**
-     * Tests whether the new value from the model is returned after rows have
-     * been updated.
-     */
-    @Test
-    public void testGetValueAtAfterRowsUpdated()
-    {
-        prepareFireUpdateTest();
-        model.fireTableRowsUpdated(0, 1);
-        assertEquals("Value not changed", NEW_NAME, model.getValueAt(0, 1));
-    }
-
-    /**
-     * Tests whether the range of rows is taken into account by
-     * fireTableRowsUpdated().
-     */
-    @Test
-    public void testGetValueAtAfterRowsUpdatedOutOfRange()
-    {
-        prepareFireUpdateTest();
-        model.fireTableRowsUpdated(2, 3);
-        assertEquals("Value not cached",
-                AbstractTableModelTest.TEST_DATA[0][1], model.getValueAt(0, 1));
-    }
-
-    /**
-     * Tests whether the new value from the model is returned after rows have
-     * been deleted.
-     */
-    @Test
-    public void testGetValueAtAfterRowsDeleted()
-    {
-        prepareFireUpdateTest();
-        model.fireTableRowsDeleted(0, 1);
-        assertEquals("Value not changed", NEW_NAME, model.getValueAt(0, 1));
-    }
-
-    /**
-     * Tests whether the range of rows is taken into account by
-     * fireTableRowsDeleted().
-     */
-    @Test
-    public void testGetValueAtAfterRowsDeletedOutOfRange()
-    {
-        prepareFireUpdateTest();
-        model.fireTableRowsDeleted(2, 3);
-        assertEquals("Value not cached",
-                AbstractTableModelTest.TEST_DATA[0][1], model.getValueAt(0, 1));
-    }
-
-    /**
-     * Tests whether the new value from the model is returned after a table data
-     * change event is received.
-     */
-    @Test
-    public void testGetValueAtAfterDataChanged()
-    {
-        prepareFireUpdateTest();
-        model.fireTableDataChanged();
-        assertEquals("Value not changed", NEW_NAME, model.getValueAt(0, 1));
+        model.addTableModelListener(listener);
+        model.fireTableChanged(event);
+        EasyMock.verify(listener);
+        verify();
     }
 }

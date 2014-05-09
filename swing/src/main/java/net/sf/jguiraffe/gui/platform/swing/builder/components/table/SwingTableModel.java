@@ -15,28 +15,20 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.RandomAccess;
-import java.util.Set;
-
 import javax.swing.Icon;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.ColumnClass;
-import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnTag;
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
-import net.sf.jguiraffe.gui.forms.ComponentHandler;
-import net.sf.jguiraffe.gui.forms.Form;
-import net.sf.jguiraffe.gui.forms.FormValidatorResults;
 
 /**
  * <p>
@@ -44,21 +36,10 @@ import net.sf.jguiraffe.gui.forms.FormValidatorResults;
  * handler class.
  * </p>
  * <p>
- * This class implements the typical table model functionality based on the data
- * provided by a <code>TableTag</code> object. Especially the model collection
- * and the constructed renderer and editor forms are used for extracting the
- * required data. The basic idea is as follows: the index of the last accessed
- * row is cached. If a different row is to be accessed, the model will fetch the
- * data bean with this index from the model collection specified for the table
- * tag. Then the forms will be initialized with this bean.
- * </p>
- * <p>
- * For editable columns special handling is required: If the column defines a
- * special editor component, default form operations can be performed for
- * validating user input and transfering it into the corresponding model bean.
- * Otherwise the data passed to the <code>setValueAt()</code> method must be
- * manually passed to the corresponding <code>ComponentHandler</code> objects;
- * after that typical form operations can be used, too.
+ * This class implements the typical table model functionality based on an
+ * {@link TableFormController} object
+ * provided by a {@code TableTag} instance. Many methods can directly delegate
+ * to the controller object.
  * </p>
  *
  * @author Oliver Heger
@@ -77,8 +58,8 @@ public class SwingTableModel extends AbstractTableModel
     /** Stores a reference to the tag defining the table. */
     private final TableTag tableTag;
 
-    /** A list with the model data. */
-    private List<Object> modelData;
+    /** The table form controller. */
+    private final TableFormController controller;
 
     /** Holds a reference to the associated table. */
     private final JTable table;
@@ -89,15 +70,8 @@ public class SwingTableModel extends AbstractTableModel
     /** Holds a reference to the associated custom editor implementation. */
     private transient TableCellEditor customEditor;
 
-    /** Stores the index of the currently rendered row. */
-    private int renderedRowIndex;
-
-    /** Stores the index of the currently edited row. */
-    private int editedRowIndex;
-
     /**
-     * Creates a new instance of <code>SwingTableModel</code> and initializes
-     * it.
+     * Creates a new instance of {@code SwingTableModel} and initializes it.
      *
      * @param tt the tag defining the underlying table
      * @param tab the associated table
@@ -106,8 +80,7 @@ public class SwingTableModel extends AbstractTableModel
     {
         tableTag = tt;
         table = tab;
-        renderedRowIndex = -1;
-        editedRowIndex = -1;
+        controller = tt.getTableFormController();
     }
 
     /**
@@ -118,11 +91,7 @@ public class SwingTableModel extends AbstractTableModel
      */
     public List<Object> getModelData()
     {
-        if (modelData == null)
-        {
-            modelData = fetchModelData(getTableTag());
-        }
-        return modelData;
+        return getController().getDataModel();
     }
 
     /**
@@ -152,7 +121,7 @@ public class SwingTableModel extends AbstractTableModel
      */
     public int getColumnCount()
     {
-        return getTableTag().getColumnCount();
+        return getController().getColumnCount();
     }
 
     /**
@@ -162,7 +131,7 @@ public class SwingTableModel extends AbstractTableModel
      */
     public int getRowCount()
     {
-        return getModelData().size();
+        return getController().getRowCount();
     }
 
     /**
@@ -174,16 +143,8 @@ public class SwingTableModel extends AbstractTableModel
      */
     public Object getValueAt(int row, int col)
     {
-        if (row != renderedRowIndex)
-        {
-            Object bean = getModelBean(row);
-            initFormFields(getTableTag().getRowRenderForm(), bean);
-            initFormFields(getTableTag().getRowEditForm(), bean);
-            renderedRowIndex = row;
-        }
-
-        return getTableTag().getRowRenderForm().getField(
-                getColumn(col).getName()).getComponentHandler().getData();
+        getController().selectCurrentRow(row);
+        return getController().getColumnValue(col);
     }
 
     /**
@@ -198,8 +159,8 @@ public class SwingTableModel extends AbstractTableModel
     @Override
     public Class<?> getColumnClass(int col)
     {
-        Class<?> result = LOGIC_CLASSES.get(getColumn(col).getLogicDataClass());
-        return (result != null) ? result : getColumn(col).getDataClass();
+        Class<?> result = LOGIC_CLASSES.get(getController().getLogicDataClass(col));
+        return (result != null) ? result : getController().getDataClass(col);
     }
 
     /**
@@ -211,7 +172,7 @@ public class SwingTableModel extends AbstractTableModel
     @Override
     public String getColumnName(int col)
     {
-        return getColumn(col).getHeaderText().getCaption();
+        return getController().getColumnName(col);
     }
 
     /**
@@ -224,7 +185,7 @@ public class SwingTableModel extends AbstractTableModel
     @Override
     public boolean isCellEditable(int row, int col)
     {
-        return getTableTag().isColumnEditable(getColumn(col));
+        return getController().isColumnEditable(col);
     }
 
     /**
@@ -237,20 +198,14 @@ public class SwingTableModel extends AbstractTableModel
     @Override
     public void setValueAt(Object value, int row, int col)
     {
-        editedRowIndex = row;
-        if (!hasEditor(col))
-        {
-            ComponentHandler ch = getTableTag().getRowEditForm().getField(
-                    getColumn(col).getName()).getComponentHandler();
-            ch.setData(value);
-            validateColumn(col);
-        }
+        getController().selectCurrentRow(row);
+        getController().setColumnValue(getTable(), col, value);
     }
 
     /**
      * Notifies listeners about a change in the data of this model. This
-     * implementation checks whether the change affects the cached data about
-     * the last read or edited rows.
+     * implementation also notifies the {@code TableFormController} about this
+     * change.
      *
      * @param event the event
      */
@@ -258,17 +213,8 @@ public class SwingTableModel extends AbstractTableModel
     public void fireTableChanged(TableModelEvent event)
     {
         super.fireTableChanged(event);
-
-        if (event.getFirstRow() <= renderedRowIndex
-                && event.getLastRow() >= renderedRowIndex)
-        {
-            renderedRowIndex = -1;
-        }
-        if (event.getFirstRow() <= editedRowIndex
-                && event.getLastRow() >= editedRowIndex)
-        {
-            editedRowIndex = -1;
-        }
+        getController()
+                .invalidateRange(event.getFirstRow(), event.getLastRow());
     }
 
     /**
@@ -279,7 +225,7 @@ public class SwingTableModel extends AbstractTableModel
      */
     public boolean hasEditor(int col)
     {
-        return getColumn(col).getEditorComponent() != null;
+        return getController().hasEditor(col);
     }
 
     /**
@@ -306,7 +252,7 @@ public class SwingTableModel extends AbstractTableModel
      */
     public boolean hasRenderer(int col)
     {
-        return getColumn(col).getRendererComponent() != null;
+        return getController().hasRenderer(col);
     }
 
     /**
@@ -326,29 +272,6 @@ public class SwingTableModel extends AbstractTableModel
     }
 
     /**
-     * Prepares the list with the model data. This method is called once for
-     * initializing the data collection. It tries to extract the data the passed
-     * in table tag refers to as a list which can be fast accessed.
-     *
-     * @param tt the table tag defining the underlying table
-     * @return the data collection as a list
-     */
-    protected List<Object> fetchModelData(TableTag tt)
-    {
-        if (tt.getTableModel() instanceof List<?>
-                && tt.getTableModel() instanceof RandomAccess)
-        {
-            @SuppressWarnings("unchecked")
-            List<Object> result = (List<Object>) tt.getTableModel();
-            return result;
-        }
-        else
-        {
-            return new ArrayList<Object>(tt.getTableModel());
-        }
-    }
-
-    /**
      * Validates the column with the specified index. This method is always
      * called when the user has entered data into a cell of the table. It
      * delegates to the editor form to validate the input fields used in this
@@ -361,102 +284,18 @@ public class SwingTableModel extends AbstractTableModel
      */
     protected boolean validateColumn(int col)
     {
-        Set<String> fields = getEditFields(col);
-        FormValidatorResults vres = getTableTag().getRowEditForm()
-                .validateFields(fields);
-        assert getTableTag().getEditorValidationHandler() != null : "No validation handler set";
-        boolean forceValues;
-        if (getTableTag().getEditorValidationHandler().validationPerformed(
-                getTable(), getTableTag().getRowEditForm(), getTableTag(),
-                vres, editedRowIndex, col))
-        {
-            // The validation handler has manipulated the field values;
-            // fetch them again
-            getTableTag().getRowEditForm().validateFields(fields);
-            forceValues = true;
-        }
-        else
-        {
-            forceValues = false;
-        }
-
-        if (!vres.isValid() && !forceValues)
-        {
-            return false;
-        }
-        readFormFields(getTableTag().getRowEditForm(), getModelBean(editedRowIndex),
-                fields);
-        renderedRowIndex = -1;
+        //TODO to be removed when dependend objects have been adapted
         return true;
     }
 
     /**
-     * Returns the column tag for the specified column.
+     * Returns the {@code TableFormController} used by this model.
      *
-     * @param col the column index
-     * @return the column tag for this column
+     * @return the {@code TableFormController}
      */
-    private TableColumnTag getColumn(int col)
+    TableFormController getController()
     {
-        return getTableTag().getColumn(col);
-    }
-
-    /**
-     * Returns the data object that corresponds to the specified row index.
-     *
-     * @param row the row index
-     * @return the data bean for this row
-     */
-    private Object getModelBean(int row)
-    {
-        return (Object) getModelData().get(row);
-    }
-
-    /**
-     * Returns a set with the names of the fields that are affected by the
-     * specified column. If the column defines a custom editor, the edit fields
-     * are directly stored in the column tag. Otherwise a "faked" set is created
-     * with the name of the property represented by this column.
-     *
-     * @param col the index of the column
-     * @return a set with the names of the affected fields
-     */
-    private Set<String> getEditFields(int col)
-    {
-        TableColumnTag colTag = getColumn(col);
-        Set<String> fields = colTag.getEditFields();
-        if (fields.isEmpty())
-        {
-            fields = Collections.singleton(colTag.getName());
-        }
-        return fields;
-    }
-
-    /**
-     * Helper method for initializing the fields of a form. Note that this is
-     * not really type-safe - we cannot ensure that the bean is of the correct
-     * type.
-     *
-     * @param form the form
-     * @param bean the form bean
-     */
-    private void initFormFields(Form form, Object bean)
-    {
-        form.initFields(bean);
-    }
-
-    /**
-     * Helper method for reading the user input from a form. Note that this is
-     * not really type-safe - we cannot ensure that the bean is of the correct
-     * type.
-     *
-     * @param form the form
-     * @param bean the form bean
-     * @param fields a set of fields which should be read
-     */
-    private void readFormFields(Form form, Object bean, Set<String> fields)
-    {
-        form.readFields(bean, fields);
+        return controller;
     }
 
     static
