@@ -36,6 +36,7 @@
 
   <properties>
     <javafx.version>2.2</javafx.version>
+    <testfx.version>3.1.2</testfx.version>
   </properties>
 
   <dependencies>
@@ -81,6 +82,13 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-easymock</artifactId>
     </dependency>  
+
+    <dependency>
+      <groupId>org.loadui</groupId>
+      <artifactId>testFx</artifactId>
+      <version>${testfx.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
