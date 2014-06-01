@@ -167,4 +167,35 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <!--
+      A special profile to enable UI tests.
+      These tests are pretty slow and require interaction with the UI;
+      therefore, they are not enabled by default.
+    -->
+    <profile>
+      <id>UITests</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkCount>1</forkCount>
+              <reuseForks>false</reuseForks>
+              <includes>
+                <include>**/Test*.class</include>
+                <include>**/UITest*.class</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
