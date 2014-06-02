@@ -17,7 +17,6 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import org.loadui.testfx.GuiTest
 import scala.beans.BeanProperty
-import javafx.util.Callback
 import javafx.scene.control.{TableColumn, TableView}
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import org.easymock.{IAnswer, EasyMock}
@@ -28,27 +27,7 @@ import javafx.scene.{Node, Parent}
 import org.junit.Test
 import org.junit.Assert._
 import javafx.scene.input.KeyCode
-
-/**
- * Companion object.
- */
-object UITestEditableTableCell {
-  /**
-   * Helper method for converting a function to a callback object.
-   * Note that we do not use an implicit conversion here. This is due to the
-   * fact that the compiler cannot infer the correct type arguments. Therefore,
-   * it is easier to use a function call.
-   * @param f the function to which the generated callback has to delegate
-   * @tparam P the parameter type
-   * @tparam R the return type
-   * @return a ''Callback'' object executing the passed in function
-   */
-  def functionToCallback[P, R](f: P => R): Callback[P, R] = {
-    new Callback[P, R] {
-      override def call(param: P): R = f(param)
-    }
-  }
-}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 
 /**
  * TestFX test class for ''EditableTableCell''.
@@ -57,8 +36,7 @@ object UITestEditableTableCell {
  * @version $Id$
  */
 class UITestEditableTableCell extends GuiTest {
-
-  import UITestEditableTableCell._
+  import JavaFxTestHelper.functionToCallback
   import GuiTest._
 
   /** A mock for the form controller. */

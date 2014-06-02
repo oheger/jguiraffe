@@ -24,6 +24,7 @@ import javafx.application.Platform
 import javafx.beans.property.ReadOnlyProperty
 import javafx.embed.swing.JFXPanel
 import javax.swing.SwingUtilities
+import javafx.util.Callback
 
 /**
  * An object providing some utility methods for unit tests for Java FX
@@ -102,5 +103,21 @@ object JavaFxTestHelper {
     }
     await(latch)
     value
+  }
+
+  /**
+   * Helper method for converting a function to a callback object.
+   * Note that we do not use an implicit conversion here. This is due to the
+   * fact that the compiler cannot infer the correct type arguments. Therefore,
+   * it is easier to use a function call.
+   * @param f the function to which the generated callback has to delegate
+   * @tparam P the parameter type
+   * @tparam R the return type
+   * @return a ''Callback'' object executing the passed in function
+   */
+  def functionToCallback[P, R](f: P => R): Callback[P, R] = {
+    new Callback[P, R] {
+      override def call(param: P): R = f(param)
+    }
   }
 }
