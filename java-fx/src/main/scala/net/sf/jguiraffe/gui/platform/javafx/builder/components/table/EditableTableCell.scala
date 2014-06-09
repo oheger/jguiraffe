@@ -15,14 +15,12 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
-import javafx.scene.control.{TableColumn, TextField, ContentDisplay, TableCell}
+import javafx.scene.control.{TableColumn, TableCell}
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import org.apache.commons.lang.StringUtils
-import javafx.application.Platform
-import javafx.event.EventHandler
 import javafx.scene.input.{KeyCode, KeyEvent}
-import javafx.beans.value.{ObservableValue, ChangeListener}
 import scala.collection.mutable.ListBuffer
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.cell.EditableCell
 
 /**
  * A specialized table cell implementation with extended edit capabilities.
@@ -40,137 +38,39 @@ import scala.collection.mutable.ListBuffer
  * @param columnIndex the column index
  */
 private class EditableTableCell(val formController: TableFormController,
-                                val columnIndex: Int) extends TableCell[AnyRef, AnyRef] {
-  /** The text field acting as editor. */
-  private var textField: Option[TextField] = None
+                                val columnIndex: Int)
+  extends TableCell[AnyRef, AnyRef]
+  with EditableCell[AnyRef] {
+  /**
+   * @inheritdoc
+   * This implementation combines the default edit key handler with another
+   * partial function which also takes the TAB key into account. A tab or
+   * shift+tab navigates to the next or previous editable cell in the current
+   * row.
+   */
+  override protected def editKeyHandler: KeyHandler =
+    tableCellEditKeyHandler orElse super.editKeyHandler
 
   /**
-   * Notifies this object that the user wants to edit this cell.
-   * The cell is updated correspondingly, the text field serving as cell editor
-   * is created if necessary and initialized.
+   * @inheritdoc
+   * This implementation returns the value of the cell obtained from
+   * the ''TableFormController''.
    */
-  override def startEdit() {
-    super.startEdit()
-    if (!textField.isDefined) {
-      textField = Some(createTextField())
-    }
-    setGraphic(textField.get)
-    setContentDisplay(ContentDisplay.GRAPHIC_ONLY)
-    Platform.runLater(new Runnable() {
-      @Override
-      def run() {
-        textField.get.selectAll()
-        textField.get.requestFocus()
-      }
-    })
-  }
-
-  /**
-   * Cancels the current edit operation. The cell is restored with the original
-   * content.
-   */
-  override def cancelEdit() {
-    super.cancelEdit()
-    setText(stringRepresentation())
-    setContentDisplay(ContentDisplay.TEXT_ONLY)
-    textField = None
-  }
-
-  /**
-   * Sets the content to be displayed in this cell.
-   * @param item the current data item
-   * @param empty a flag whether this cell is empty
-   */
-  override def updateItem(item: AnyRef, empty: Boolean) {
-    super.updateItem(item, empty)
-    if (empty) {
-      setText(null)
-      setGraphic(null)
-    } else {
-      if (isEditing && textField.isDefined) {
-        textField.get setText stringRepresentation()
-        setGraphic(textField.get)
-        setContentDisplay(ContentDisplay.GRAPHIC_ONLY)
-      } else {
-        setText(stringRepresentation())
-        setContentDisplay(ContentDisplay.TEXT_ONLY)
-      }
-    }
-  }
-
-  /**
-   * Returns the current value of this cell as a string.
-   * @return a string for the current value of this cell
-   */
-  protected def stringRepresentation(): String = {
+  override protected def stringRepresentation(): String = {
     selectCurrentRow()
     val propValue = formController.getColumnValue(columnIndex)
     if (propValue == null) StringUtils.EMPTY else propValue.toString
   }
 
   /**
-   * Requests a commit of an edit operation. The modified content of the cell is
-   * passed as string. This implementation ensures that it is written back into
-   * the form representing the current row.
-   * @param text the new text content of this cell
-   * @param focusLost a flag whether the focus was lost
+   * @inheritdoc
+   * This implementation passes the new text content of the cell to the
+   * ''TableFormController''.
    */
-  protected def commitData(text: String, focusLost: Boolean) {
+  override protected def commitData(text: String, focusLost: Boolean) {
     commitEdit(getItem)
     selectCurrentRow()
-    formController.setColumnValue(null, columnIndex, text)
-  }
-
-  /**
-   * Creates the text field to be used as cell editor. Several listeners have
-   * to be registered at the field to ensure that it behaves correctly.
-   */
-  private def createTextField(): TextField = {
-    val field = new TextField(stringRepresentation())
-    field.setMinWidth(getWidth - getGraphicTextGap * 2)
-    field.setOnKeyPressed(new EventHandler[KeyEvent]() {
-      @Override
-      def handle(t: KeyEvent) {
-        t.getCode match {
-          case KeyCode.ENTER =>
-            performCommit(focusLost = false)
-          case KeyCode.ESCAPE =>
-            cancelEdit()
-          case KeyCode.TAB =>
-            performCommit(focusLost = false)
-            nextEditableColumn(!t.isShiftDown) foreach (getTableView.edit(getTableRow.getIndex, _))
-          case _ =>
-        }
-      }
-    })
-    field.focusedProperty().addListener(new ChangeListener[java.lang.Boolean] {
-      @Override
-      def changed(observable: ObservableValue[_ <: java.lang.Boolean],
-                  oldValue: java.lang.Boolean, newValue: java.lang.Boolean) {
-        //This focus listener fires at the end of cell editing when focus is lost
-        //and when enter is pressed (because that causes the text field to lose focus).
-        //The problem is that if enter is pressed then cancelEdit is called before this
-        //listener runs and therefore the text field has been cleaned up. If the
-        //text field is null we don't commit the edit. This has the useful side effect
-        //of stopping the double commit.
-        if (!newValue && textField.isDefined) {
-          performCommit(focusLost = true)
-        }
-      }
-    })
-
-    field
-  }
-
-  /**
-   * Triggers a commit operation. This method is called when the user wants to
-   * complete an edit operation. It ensures that the updated cell data is
-   * written back into the underlying table model.
-   * @param focusLost a flag whether the commit is caused by a lost focus
-   */
-  private def performCommit(focusLost: Boolean) {
-    textField foreach (t => commitData(t.getText, focusLost))
-    setText(stringRepresentation())
+    formController.setColumnValue(getTableView, columnIndex, text)
   }
 
   /**
@@ -179,6 +79,12 @@ private class EditableTableCell(val formController: TableFormController,
    */
   private def selectCurrentRow() {
     formController selectCurrentRow getIndex
+  }
+
+  private def tableCellEditKeyHandler: KeyHandler = {
+    case ev: KeyEvent if ev.getCode == KeyCode.TAB =>
+      performCommit(focusLost = false)
+      nextEditableColumn(!ev.isShiftDown) foreach (getTableView.edit(getTableRow.getIndex, _))
   }
 
   /**
