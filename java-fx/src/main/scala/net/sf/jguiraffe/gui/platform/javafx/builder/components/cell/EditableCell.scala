@@ -76,10 +76,10 @@ trait EditableCell[T] extends IndexedCell[T] {
    * content.
    */
   override abstract def cancelEdit() {
+    textField = None
     super.cancelEdit()
     setText(stringRepresentation())
     setContentDisplay(ContentDisplay.TEXT_ONLY)
-    textField = None
   }
 
   /**
