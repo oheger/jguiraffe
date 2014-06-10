@@ -15,11 +15,10 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import javafx.event.EventHandler
-import javafx.scene.control.TextField
 import javafx.scene.control.TreeCell
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
+
+import net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.cell.EditableCell
 
 /**
  * An internally used helper class serving as visual representation of tree
@@ -27,86 +26,33 @@ import javafx.scene.input.KeyEvent
  *
  * This is a specialized implementation of a JavaFX ''TreeCell''. It
  * collaborates with a
- * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.ConfigCellController]]
+ * [[net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler]]
  * in order to handle update operations - if a user edits a tree node, the
- * underlying ''ConfigurationNode'' is updated.
+ * underlying ''ConfigurationNode'' is updated. By mixing in ''EditableCell''
+ * the major part of the functionality for making the cell editable is already in
+ * place.
  *
- * @param controller the ''ConfigCellController'
+ * @param changeHandler the ''TreeConfigurationChangeHandler''
  */
-private class ConfigNodeTreeCell(controller: ConfigCellController)
-  extends TreeCell[ConfigNodeData] {
-  /** The edit field associated with this cell. */
-  private lazy val editField = createEditField()
+private class ConfigNodeTreeCell(val changeHandler: TreeConfigurationChangeHandler)
+  extends TreeCell[ConfigNodeData] with EditableCell[ConfigNodeData] {
+  /**
+   * @inheritdoc
+   * This implementation returns a string representation of the underlying
+   * ''ConfigNodeData'' object. This is the name of the configuration node
+   * represented by this cell.
+   */
+  override protected def stringRepresentation(): String = getItem.toString
 
   /**
-   * The user is going to edit this tree node. This implementation delegates to
-   * the associated ''ConfigCellController''.
+   * Requests a commit of an edit operation. This method is called when an edit
+   * operation is complete, and the text entered by the user has to be written
+   * into the underlying data model. The modified content of the cell is
+   * passed as string.
+   * @param text the new text content of this cell
+   * @param focusLost a flag whether the focus was lost
    */
-  override def startEdit() {
-    super.startEdit()
-    controller handleStartEdit cellData
-  }
-
-  /**
-   * The user cancels the current edit operation. This implementation delegates
-   * to the associated ''ConfigCellController''.
-   */
-  override def cancelEdit() {
-    super.cancelEdit()
-    controller handleCancelEdit cellData
-  }
-
-  /**
-   * Updates the item of this cell. This method is called when the associated
-   * tree node is changed. This implementation delegates to the associated
-   * ''ConfigCellController''.
-   * @param nd the new data item
-   * @param empty flag whether the item is empty
-   */
-  override def updateItem(nd: ConfigNodeData, empty: Boolean) {
-    super.updateItem(nd, empty)
-    controller.handleUpdateItem(cellData, empty, isEditing)
-  }
-
-  /**
-   * Returns a ''CellData'' object describing the current state of this cell.
-   * @return a current ''CellData'' object
-   */
-  def cellData = CellData(view = this, editField = this.editField,
-    data = getItem, treeItem = getTreeItem)
-
-  /**
-   * Handles special key codes in the edit text field that affect the current
-   * edit operation. This method checks for the Escape or the Enter keys which
-   * cancel or commit the edit operation respectively.
-   * @param code the key code to be processed
-   */
-  def handleEditFieldKeyCode(code: KeyCode) {
-    code match {
-      case KeyCode.ESCAPE =>
-        cancelEdit()
-
-      case KeyCode.ENTER =>
-        commitEdit(controller.handleCommitEdit(cellData))
-
-      case _ =>
-        // ignore all other keys
-    }
-  }
-
-  /**
-   * Creates a text field that is used when the user wants to edit this cell.
-   * The text field handles some special key codes for committing or aborting
-   * the edit operation.
-   * @return the newly created text field
-   */
-  private def createEditField(): TextField = {
-    val field = new TextField
-    field setOnKeyReleased (new EventHandler[KeyEvent] {
-      def handle(event: KeyEvent) {
-        handleEditFieldKeyCode(event.getCode)
-      }
-    })
-    field
+  override protected def commitData(text: String, focusLost: Boolean) {
+    changeHandler.changeNodeName(getItem.node, text)
   }
 }

@@ -184,8 +184,15 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
   @Test def testCellFactory() {
     val treeview = tree(factory.createTreeHandler(tag))
     val cellFactory = treeview.getCellFactory
-    val cell = cellFactory.call(treeview)
-    assertTrue("Wrong cell", cell.isInstanceOf[ConfigNodeTreeCell])
+    cellFactory.call(treeview) match {
+      case cell : ConfigNodeTreeCell =>
+        val handler = cell.changeHandler
+        assertEquals("Wrong configuration", tag.getTreeModel, handler.getConfiguration)
+        assertTrue("Wrong change listener",
+          handler.getModelChangeListener.isInstanceOf[FxThreadModelChangeListener])
+      case other =>
+        fail("Unexpected cell: " + other)
+    }
   }
 
   /**

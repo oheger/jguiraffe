@@ -69,10 +69,9 @@ class TreeHandlerFactory {
    */
   private def initCellFactory(tree: TreeView[ConfigNodeData],
     changeHandler: TreeConfigurationChangeHandler) {
-    val cellCtrl = new ConfigCellController(changeHandler)
-    tree setCellFactory (new Callback[TreeView[ConfigNodeData], TreeCell[ConfigNodeData]] {
-      def call(tree: TreeView[ConfigNodeData]) = new ConfigNodeTreeCell(cellCtrl)
-    })
+    tree setCellFactory new Callback[TreeView[ConfigNodeData], TreeCell[ConfigNodeData]] {
+      def call(tree: TreeView[ConfigNodeData]) = new ConfigNodeTreeCell(changeHandler)
+    }
   }
 
   /**

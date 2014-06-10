@@ -79,8 +79,7 @@ class UITestTreeCell extends GuiTest {
     val changeHandler = new TreeConfigurationChangeHandler(config, new TreeModelChangeListener {
       override def treeModelChanged(node: ConfigurationNode) {}
     })
-    val cellCtrl = new ConfigCellController(changeHandler)
-    tree setCellFactory JavaFxTestHelper.functionToCallback(f => new ConfigNodeTreeCell(cellCtrl))
+    tree setCellFactory JavaFxTestHelper.functionToCallback(f => new ConfigNodeTreeCell(changeHandler))
     tree
   }
 
@@ -174,7 +173,6 @@ class UITestTreeCell extends GuiTest {
   /**
    * Tests whether a focus lost event is handled during an edit operation.
    */
-  @Ignore
   @Test def testEditWithFocusLost() {
     expandTree()
     startEdit(Setting)
