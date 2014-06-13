@@ -15,13 +15,12 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TreeCell
-import javafx.scene.control.TreeView
-import javafx.util.Callback
+import javafx.scene.control.{SelectionMode, TreeView}
+
 import net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler
 import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
 import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.common.FunctionCallback
 
 /**
  * A factory class for creating component handlers for JavaFX tree view
@@ -69,9 +68,7 @@ class TreeHandlerFactory {
    */
   private def initCellFactory(tree: TreeView[ConfigNodeData],
     changeHandler: TreeConfigurationChangeHandler) {
-    tree setCellFactory new Callback[TreeView[ConfigNodeData], TreeCell[ConfigNodeData]] {
-      def call(tree: TreeView[ConfigNodeData]) = new ConfigNodeTreeCell(changeHandler)
-    }
+    tree setCellFactory FunctionCallback(tv => new ConfigNodeTreeCell(changeHandler))
   }
 
   /**

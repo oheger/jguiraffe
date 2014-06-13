@@ -15,27 +15,19 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import scala.collection.JavaConversions.collectionAsScalaIterable
+import javafx.scene.Node
+import javafx.scene.control.{SelectionMode, TreeView}
 
+import net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler
+import net.sf.jguiraffe.gui.builder.components.tags.{TreeIconHandler, TreeTag}
+import net.sf.jguiraffe.gui.forms.ComponentHandler
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.ConfigurationNode
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
+import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
-import javafx.scene.Node
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TreeView
-import net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler
-import net.sf.jguiraffe.gui.builder.components.tags.TreeIconHandler
-import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
-import net.sf.jguiraffe.gui.forms.ComponentHandler
 
 /**
  * The companion object for ''TestTreeHandlerFactory''.
@@ -70,7 +62,7 @@ object TestTreeHandlerFactory {
  * Test class for ''TreeHandlerFactory''.
  */
 class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
-  import TestTreeHandlerFactory._
+  import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TestTreeHandlerFactory._
 
   /** The tag defining the tree to be created. */
   private var tag: TreeTag = _
@@ -97,7 +89,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
     val tag = new TreeTag {
       override val getResolvedIconHandler = iconHandler
     }
-    tag setTreeModel (new HierarchicalConfiguration)
+    tag setTreeModel new HierarchicalConfiguration
     tag setName Name
     tag
   }
@@ -120,7 +112,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * single selection mode is set.
    */
   @Test def testSingleSelectionMode() {
-    checkSelectionMode(false, SelectionMode.SINGLE)
+    checkSelectionMode(multiFlag = false, SelectionMode.SINGLE)
   }
 
   /**
@@ -128,7 +120,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * multiple selection is enabled.
    */
   @Test def testMultipleSelectionMode() {
-    checkSelectionMode(true, SelectionMode.MULTIPLE)
+    checkSelectionMode(multiFlag = true, SelectionMode.MULTIPLE)
   }
 
   /**
@@ -144,14 +136,14 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Tests the tree's edit flag if the tree cannot be edited.
    */
   @Test def testEditableFalse() {
-    checkEditable(false)
+    checkEditable(editFlag = false)
   }
 
   /**
    * Tests the tree's edit flag if the tree can be edited.
    */
   @Test def testEditableTrue() {
-    checkEditable(true)
+    checkEditable(editFlag = true)
   }
 
   /**
@@ -168,14 +160,14 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether the root node can be hidden.
    */
   @Test def testShowRootFalse() {
-    checkShowRoot(false)
+    checkShowRoot(rootVisible = false)
   }
 
   /**
    * Tests whether the root node can be displayed.
    */
   @Test def testShowRootTrue() {
-    checkShowRoot(true)
+    checkShowRoot(rootVisible = true)
   }
 
   /**
@@ -227,7 +219,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
     val handler = treeHandler(factory.createTreeHandler(tag))
     val gh = handler.graphicHandler.asInstanceOf[NodeGraphicsHandlerImpl]
     assertSame("Wrong icon handler", tag.getResolvedIconHandler, gh.iconHandler)
-    assertSame("Wrong icon", icon1, gh.graphicsFor(node, false, false))
+    assertSame("Wrong icon", icon1, gh.graphicsFor(node, expanded = false, leaf = false))
   }
 
   /**
@@ -235,9 +227,9 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * serving as data model.
    */
   @Test def testConfigurationListener() {
-    import collection.JavaConversions._
+    import scala.collection.JavaConversions._
     val handler = factory.createTreeHandler(tag)
-    val listener = tag.getTreeModel.getConfigurationListeners()
+    val listener = tag.getTreeModel.getConfigurationListeners
       .find(_.isInstanceOf[TreeConfigurationChangeHandler])
     val changeHandler = listener.get.asInstanceOf[TreeConfigurationChangeHandler]
     assertSame("Wrong configuration", tag.getTreeModel,
