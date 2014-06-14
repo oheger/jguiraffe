@@ -37,10 +37,10 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.cell.EditableCell
  * @param formController the form controller
  * @param columnIndex the column index
  */
-private class EditableTableCell(val formController: TableFormController,
-                                val columnIndex: Int)
+private class EditableTableCell(override val formController: TableFormController,
+                                override val columnIndex: Int)
   extends TableCell[AnyRef, AnyRef]
-  with EditableCell[AnyRef] {
+  with EditableCell[AnyRef] with FormControllerCell[AnyRef, AnyRef] {
   /**
    * @inheritdoc
    * This implementation combines the default edit key handler with another
@@ -57,8 +57,7 @@ private class EditableTableCell(val formController: TableFormController,
    * the ''TableFormController''.
    */
   override protected def stringRepresentation(): String = {
-    selectCurrentRow()
-    val propValue = formController.getColumnValue(columnIndex)
+    val propValue = readCellValue
     if (propValue == null) StringUtils.EMPTY else propValue.toString
   }
 
@@ -69,16 +68,7 @@ private class EditableTableCell(val formController: TableFormController,
    */
   override protected def commitData(text: String, focusLost: Boolean) {
     commitEdit(getItem)
-    selectCurrentRow()
-    formController.setColumnValue(getTableView, columnIndex, text)
-  }
-
-  /**
-   * Selects the current row for the form controller. This method is always called
-   * before data of this cell can be accessed.
-   */
-  private def selectCurrentRow() {
-    formController selectCurrentRow getIndex
+    writeCellValue(text)
   }
 
   private def tableCellEditKeyHandler: KeyHandler = {
