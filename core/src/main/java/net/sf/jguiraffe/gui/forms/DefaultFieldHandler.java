@@ -15,7 +15,6 @@
  */
 package net.sf.jguiraffe.gui.forms;
 
-import net.sf.jguiraffe.transform.DefaultValidationResult;
 import net.sf.jguiraffe.transform.ValidationResult;
 
 /**
@@ -46,9 +45,6 @@ import net.sf.jguiraffe.transform.ValidationResult;
  */
 public class DefaultFieldHandler implements FieldHandler
 {
-    /** Constant for the default transformer and validator wrapper. */
-    private static final DummyWrapper DEFAULT_WRAPPER = new DummyWrapper();
-
     /** Stores the validator for validation on the syntax level. */
     private ValidatorWrapper syntaxValidator;
 
@@ -87,10 +83,10 @@ public class DefaultFieldHandler implements FieldHandler
      */
     public DefaultFieldHandler()
     {
-        setSyntaxValidator(null);
-        setLogicValidator(null);
-        setReadTransformer(null);
-        setWriteTransformer(null);
+        syntaxValidator = DummyWrapper.INSTANCE;
+        logicValidator = DummyWrapper.INSTANCE;
+        readTransformer = DummyWrapper.INSTANCE;
+        writeTransformer = DummyWrapper.INSTANCE;
     }
 
     /**
@@ -112,7 +108,7 @@ public class DefaultFieldHandler implements FieldHandler
     public void setSyntaxValidator(ValidatorWrapper fieldValidator)
     {
         this.syntaxValidator = (fieldValidator != null) ? fieldValidator
-                : DEFAULT_WRAPPER;
+                : DummyWrapper.INSTANCE;
     }
 
     /**
@@ -134,7 +130,7 @@ public class DefaultFieldHandler implements FieldHandler
     public void setLogicValidator(ValidatorWrapper formValidator)
     {
         this.logicValidator = (formValidator != null) ? formValidator
-                : DEFAULT_WRAPPER;
+                : DummyWrapper.INSTANCE;
     }
 
     /**
@@ -159,7 +155,7 @@ public class DefaultFieldHandler implements FieldHandler
     public void setReadTransformer(TransformerWrapper readTransformer)
     {
         this.readTransformer = (readTransformer != null) ? readTransformer
-                : DEFAULT_WRAPPER;
+                : DummyWrapper.INSTANCE;
     }
 
     /**
@@ -183,7 +179,7 @@ public class DefaultFieldHandler implements FieldHandler
     public void setWriteTransformer(TransformerWrapper writeTransformer)
     {
         this.writeTransformer = (writeTransformer != null) ? writeTransformer
-                : DEFAULT_WRAPPER;
+                : DummyWrapper.INSTANCE;
     }
 
     /**
@@ -399,37 +395,5 @@ public class DefaultFieldHandler implements FieldHandler
                     "ComponentHandler has not been set!");
         }
         return result;
-    }
-
-    /**
-     * A dummy implementation of the <code>TransformerWrapper</code> and
-     * <code>ValidatorWrapper</code> interfaces. An instance of this class is
-     * used if no specific transformer or validator is set.
-     */
-    static class DummyWrapper implements TransformerWrapper, ValidatorWrapper
-    {
-        /**
-         * Transforms the specified object. This implementation returns the
-         * object unchanged.
-         *
-         * @param o the object to transform
-         * @return the transformed object
-         */
-        public Object transform(Object o)
-        {
-            return o;
-        }
-
-        /**
-         * Validates the specified object. This implementation always returns a
-         * valid result.
-         *
-         * @param o the object to validate
-         * @return the validation result
-         */
-        public ValidationResult isValid(Object o)
-        {
-            return DefaultValidationResult.VALID;
-        }
     }
 }

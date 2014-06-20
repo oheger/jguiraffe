@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import net.sf.jguiraffe.transform.DefaultValidationResult;
 import net.sf.jguiraffe.transform.ValidationMessage;
 import net.sf.jguiraffe.transform.ValidationMessageLevel;
@@ -93,41 +94,17 @@ public class TestDefaultFieldHandler
     @Test
     public void testNewHandler()
     {
-        assertTrue(
-                "Wrong field validator",
-                handler.getSyntaxValidator() instanceof DefaultFieldHandler.DummyWrapper);
-        assertTrue(
-                "Wrong form validator",
-                handler.getLogicValidator() instanceof DefaultFieldHandler.DummyWrapper);
-        assertTrue(
-                "Wrong read transformer",
-                handler.getReadTransformer() instanceof DefaultFieldHandler.DummyWrapper);
-        assertTrue(
-                "Wrong write transformer",
-                handler.getWriteTransformer() instanceof DefaultFieldHandler.DummyWrapper);
+        assertEquals("Wrong field validator", DummyWrapper.INSTANCE,
+                handler.getSyntaxValidator());
+        assertEquals("Wrong form validator", DummyWrapper.INSTANCE,
+                handler.getLogicValidator());
+        assertEquals("Wrong read transformer", DummyWrapper.INSTANCE,
+                handler.getReadTransformer());
+        assertEquals("Wrong write transformer", DummyWrapper.INSTANCE,
+                handler.getWriteTransformer());
         assertNull("Component handler is set", handler.getComponentHandler());
         assertNull("A type is set", handler.getType());
         assertNull("A property name is set", handler.getPropertyName());
-    }
-
-    /**
-     * Tests the transform() method of a dummy wrapper.
-     */
-    @Test
-    public void testDummyWrapperTransform()
-    {
-        assertSame("Object was modified", TEST_DATA, handler
-                .getReadTransformer().transform(TEST_DATA));
-    }
-
-    /**
-     * Tests the isValid() method of a dummy wrapper.
-     */
-    @Test
-    public void testDummyWrapperIsValid()
-    {
-        assertTrue("Wrong result of isValid", handler.getSyntaxValidator()
-                .isValid(TEST_DATA).isValid());
     }
 
     /**
