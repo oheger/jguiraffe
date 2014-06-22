@@ -436,9 +436,8 @@ public class TableColumnTag extends FieldTag
     @Override
     protected void insertField(FieldHandler fieldHandler)
     {
-        FieldHandler fh = new ColumnFieldHandler(fieldHandler);
-        doInsertFieldHandler(getTableTag().getRowRenderForm(), fh);
-        doInsertFieldHandler(getTableTag().getRowEditForm(), fh);
+        doInsertFieldHandler(getTableTag().getRowRenderForm(), fieldHandler);
+        doInsertFieldHandler(getTableTag().getRowEditForm(), fieldHandler);
         getTableTag().addColumn(this);
     }
 

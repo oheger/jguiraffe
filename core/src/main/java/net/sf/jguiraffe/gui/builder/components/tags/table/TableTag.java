@@ -192,6 +192,9 @@ public class TableTag extends InputComponentTag implements Composite,
     /** The table form controller. */
     private TableFormController tableFormController;
 
+    /** The specialized field handler factory used by this tag. */
+    private TableFieldHandlerFactory fieldHandlerFactory;
+
     /** Stores the selection foreground color.*/
     private Color selectionForegroundColor;
 
@@ -759,6 +762,7 @@ public class TableTag extends InputComponentTag implements Composite,
                 NumberWithUnit.ZERO);
 
         tableFormController = new TableFormController(this);
+        installTableFieldHandlerFactory();
         super.processBeforeBody();
     }
 
@@ -773,6 +777,8 @@ public class TableTag extends InputComponentTag implements Composite,
     protected void process() throws FormBuilderException, JellyTagException
     {
         super.process();
+
+        revertFieldHandlerFactory();
         // test width definitions of the columns
         getColumnWidthController();
     }
@@ -821,6 +827,19 @@ public class TableTag extends InputComponentTag implements Composite,
     }
 
     /**
+     * Returns the {@code TableFieldHandlerFactory} used by this tag. This
+     * factory is temporarily installed while this tag is processed. It collects
+     * the transformers and validators associated with field handlers and allows
+     * changing them later.
+     *
+     * @return the {@code TableFieldHandlerFactory}
+     */
+    TableFieldHandlerFactory getFieldHandlerFactory()
+    {
+        return fieldHandlerFactory;
+    }
+
+    /**
      * Creates a form object.
      *
      * @return the new form
@@ -829,5 +848,26 @@ public class TableTag extends InputComponentTag implements Composite,
     {
         return new Form(getBuilderData().getTransformerContext(),
                 getBuilderData().getForm().getBindingStrategy());
+    }
+
+    /**
+     * Installs the special {@code FieldHandlerFactory} used by this tag.
+     */
+    private void installTableFieldHandlerFactory()
+    {
+        fieldHandlerFactory =
+                new TableFieldHandlerFactory(getBuilderData()
+                        .getFieldHandlerFactory());
+        getBuilderData().setFieldHandlerFactory(fieldHandlerFactory);
+    }
+
+    /**
+     * Ensures that the original {@code FieldHandlerFactory} is installed again
+     * after this tag has been processed.
+     */
+    private void revertFieldHandlerFactory()
+    {
+        getBuilderData().setFieldHandlerFactory(
+                getFieldHandlerFactory().getWrappedFactory());
     }
 }

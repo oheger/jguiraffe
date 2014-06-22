@@ -21,9 +21,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import net.sf.jguiraffe.di.BeanContext;
+import net.sf.jguiraffe.gui.builder.components.DefaultFieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.tags.AbstractTagTest;
 import net.sf.jguiraffe.gui.forms.ComponentHandlerImpl;
+import net.sf.jguiraffe.gui.forms.FieldHandler;
 import net.sf.jguiraffe.gui.forms.Form;
 
 import org.apache.commons.jelly.JellyTagException;
@@ -136,32 +138,36 @@ public class TestTableTag extends AbstractTagTest
     { "Harry H. Hirsch 45", "Arthur E. Dent 39", "R. Daneel Oliva 50",
             "Susan S. Calvin 40" };
 
+    /** Format string for generating a representation for a column. */
+    private static final String FMT_COLUMN = " COLUMN [ NAME = %s FLDVAL = "
+            + ValidatorReference.class.getName() + " READTR = "
+            + TransformerReference.class.getName() + " WRITETR = "
+            + TransformerReference.class.getName() + " %s ]";
+
     /** Constant for the column definitions of the test table script. */
-    private static final String TABLE_COLUMNS = " COLUMNS { COLUMN [ NAME = "
-            + "firstName HEADER = First name CLASS = java.lang.String "
-            + "WIDTH = NumberWithUnit [ 25px ] "
-            + "EDITABLE = false ] COLUMN [ NAME = lastName "
-            + "HEADER = Last name LOGICCLASS = STRING "
-            + "WIDTH = NumberWithUnit [ 5.0cm ] "
-            + "EDITABLE = false ] COLUMN [ NAME = age HEADER = Age "
-            + "CLASS = java.lang.Integer "
-            + "WIDTH = NumberWithUnit [ 1.0in ] "
-            + "EDITABLE = true ] } ] }";
+    private static final String TABLE_COLUMNS = " COLUMNS {"
+            + column("firstName",
+                    "HEADER = First name CLASS = java.lang.String "
+                            + "WIDTH = NumberWithUnit [ 25px ] "
+                            + "EDITABLE = false")
+            + column("lastName", "HEADER = Last name LOGICCLASS = STRING "
+                    + "WIDTH = NumberWithUnit [ 5.0cm ] " + "EDITABLE = false")
+            + column("age", "HEADER = Age " + "CLASS = java.lang.Integer "
+                    + "WIDTH = NumberWithUnit [ 1.0in ] " + "EDITABLE = true")
+            + " } ] }";
 
     /**
      * Constant for the column definitions of the test table that uses percent
      * values for its columns widths.
      */
-    private static final String TABLE_COLUMNS_PERCENT = " COLUMNS { COLUMN [ NAME = "
-            + "firstName HEADER = First name CLASS = java.lang.String "
-            + "PERCENTWIDTH = 25 "
-            + "EDITABLE = false ] COLUMN [ NAME = lastName "
-            + "HEADER = Last name LOGICCLASS = STRING "
-            + "PERCENTWIDTH = 35 "
-            + "EDITABLE = false ] COLUMN [ NAME = age HEADER = Age "
-            + "CLASS = java.lang.Integer "
-            + "PERCENTWIDTH = 30 "
-            + "EDITABLE = true ] } ] }";
+    private static final String TABLE_COLUMNS_PERCENT = " COLUMNS {"
+            + column("firstName",
+                    "HEADER = First name CLASS = java.lang.String "
+                            + "PERCENTWIDTH = 25 " + "EDITABLE = false")
+            + column("lastName", "HEADER = Last name LOGICCLASS = STRING "
+                    + "PERCENTWIDTH = 35 " + "EDITABLE = false")
+            + column("age", "HEADER = Age " + "CLASS = java.lang.Integer "
+                    + "PERCENTWIDTH = 30 " + "EDITABLE = true") + " } ] }";
 
     /** Constant for the table result prefix. */
     private static final String TABLE_RES_PREFIX = "Container: ROOT { TABLE [ "
@@ -189,6 +195,18 @@ public class TestTableTag extends AbstractTagTest
     private static final String TABLE_SCROLL_RESULT = TABLE_RES_PREFIX
             + "EDITABLE = false SCROLLWIDTH = NumberWithUnit [ 10.0cm ] "
             + "SCROLLHEIGHT = NumberWithUnit [ 3.0in ]" + TABLE_COLUMNS;
+
+    /**
+     * Generates a string representation for a column.
+     *
+     * @param name the name of the column
+     * @param content the string representation of the other attributes
+     * @return a string representation for this column
+     */
+    private static String column(String name, String content)
+    {
+        return String.format(FMT_COLUMN, name, content);
+    }
 
     /**
      * Sets up the Jelly context. Creates the model for the table and stores it
@@ -242,7 +260,7 @@ public class TestTableTag extends AbstractTagTest
     {
         builderData.setBuilderName(BUILDER_TESTTABLE);
         executeScript(SCRIPT);
-        TableTag tt = (TableTag) context.getVariable(VAR_TABLE);
+        TableTag tt = getTableTag();
         assertEquals("Wrong number of columns", COLUMNS.length, tt
                 .getColumnCount());
         for (int i = 0; i < COLUMNS.length; i++)
@@ -259,7 +277,7 @@ public class TestTableTag extends AbstractTagTest
     {
         builderData.setBuilderName(BUILDER_TESTTABLE);
         executeScript(SCRIPT);
-        TableTag tt = (TableTag) context.getVariable(VAR_TABLE);
+        TableTag tt = getTableTag();
         TableColumnWidthController ctrl = tt.getColumnWidthController();
         assertEquals("Wrong number of columns", COLUMNS.length, ctrl
                 .getColumnCount());
@@ -275,7 +293,7 @@ public class TestTableTag extends AbstractTagTest
     {
         builderData.setBuilderName(BUILDER_TESTTABLE);
         executeScript(SCRIPT);
-        TableTag tt = (TableTag) context.getVariable(VAR_TABLE);
+        TableTag tt = getTableTag();
         TableColumnWidthController ctrl = tt.getColumnWidthController();
         assertSame("Multiple controller instances", ctrl, tt
                 .getColumnWidthController());
@@ -337,7 +355,7 @@ public class TestTableTag extends AbstractTagTest
      */
     private void checkSimpleTableTag()
     {
-        TableTag tt = (TableTag) context.getVariable(VAR_TABLE);
+        TableTag tt = getTableTag();
         assertNotNull("Table tag was not stored in context", tt);
         assertNotNull("Table has no model", tt.getTableModel());
         assertEquals("Wrong size of table model", MODEL_DATA.length, tt
@@ -363,6 +381,16 @@ public class TestTableTag extends AbstractTagTest
         }
         TableFormController controller = tt.getTableFormController();
         assertSame("Wrong table tag in controller", tt, controller.getTableTag());
+    }
+
+    /**
+     * Returns the table tag from the Jelly context.
+     *
+     * @return the table tag
+     */
+    private TableTag getTableTag()
+    {
+        return (TableTag) context.getVariable(VAR_TABLE);
     }
 
     /**
@@ -403,22 +431,26 @@ public class TestTableTag extends AbstractTagTest
         builderData.setBuilderName(BUILDER_TESTTABLEEDIT);
         checkScript(
                 SCRIPT,
-                TABLE_RES_PREFIX + "EDITABLE = true COLUMNS { "
-                        + "COLUMN [ NAME = firstName HEADER = First name "
-                        + "CLASS = java.lang.Object WIDTH = "
-                        + "NumberWithUnit [ 25px ] EDITABLE = true "
-                        + "RENDERER { STATICTEXT [ NAME = firstName ALIGN = LEFT ] } "
-                        + "EDITOR { TEXTFIELD [ NAME = firstName MAXLEN = 25 ] } ] "
-                        + "COLUMN [ NAME = lastName HEADER = Last name "
-                        + "CLASS = java.lang.String WIDTH = "
-                        + "NumberWithUnit [ 5.0cm ] EDITABLE = true "
-                        + "EDITOR { Container: PANEL { TEXTFIELD [ NAME = middleName "
-                        + "MAXLEN = 25 ], TEXTFIELD [ NAME = lastName MAXLEN = 25 ] } }"
-                        + " ] COLUMN [ NAME = age WRITETR = net.sf.jguiraffe.gui."
-                        + "builder.components.tags.TransformerTag$TransformerWrapperImpl "
-                        + "HEADER = Age CLASS = java.lang.Object "
-                        + "WIDTH = NumberWithUnit [ 1.0in ] "
-                        + "EDITABLE = false ] } ] }");
+                TABLE_RES_PREFIX
+                        + "EDITABLE = true COLUMNS {"
+                        + column(
+                                "firstName",
+                                "HEADER = First name "
+                                        + "CLASS = java.lang.Object WIDTH = "
+                                        + "NumberWithUnit [ 25px ] EDITABLE = true "
+                                        + "RENDERER { STATICTEXT [ NAME = firstName ALIGN = LEFT ] } "
+                                        + "EDITOR { TEXTFIELD [ NAME = firstName MAXLEN = 25 ] }")
+                        + column(
+                                "lastName",
+                                "HEADER = Last name "
+                                        + "CLASS = java.lang.String WIDTH = "
+                                        + "NumberWithUnit [ 5.0cm ] EDITABLE = true "
+                                        + "EDITOR { Container: PANEL { TEXTFIELD [ NAME = middleName "
+                                        + "MAXLEN = 25 ], TEXTFIELD [ NAME = lastName MAXLEN = 25 ] } }")
+                        + column("age",
+                                "HEADER = Age CLASS = java.lang.Object "
+                                        + "WIDTH = NumberWithUnit [ 1.0in ] "
+                                        + "EDITABLE = false") + " } ] }");
     }
 
     /**
@@ -431,7 +463,7 @@ public class TestTableTag extends AbstractTagTest
         executeScript(SCRIPT);
         final String[] fields =
         { "firstName", "lastName", "middleName", "age" };
-        TableTag tt = (TableTag) context.getVariable(VAR_TABLE);
+        TableTag tt = getTableTag();
         List<TableColumnTag> lstColumns = new ArrayList<TableColumnTag>(tt
                 .getColumns());
         TableColumnTag col = lstColumns.get(0);
@@ -588,14 +620,16 @@ public class TestTableTag extends AbstractTagTest
     public void testCreateTableCallbacks() throws Exception
     {
         builderData.setBuilderName(BUILDER_TESTCALLBACK);
-        checkScript(SCRIPT, TABLE_RES_PREFIX + "EDITABLE = true COLUMNS { "
-                        + "COLUMN [ NAME = firstName HEADER = First name "
+        checkScript(SCRIPT, TABLE_RES_PREFIX
+                + "EDITABLE = true COLUMNS {"
+                + column("firstName", "HEADER = First name "
                         + "CLASS = java.lang.Object WIDTH = "
                         + "NumberWithUnit [ 25px ] EDITABLE = true "
                         + "EDITOR { Container: PANEL { "
                         + "LABEL [ TEXT = First name: ALIGN = LEFT "
                         + "COMP = firstName ]<linked>, "
-                        + "TEXTFIELD [ NAME = firstName MAXLEN = 25 ] } } ] } ] }");
+                        + "TEXTFIELD [ NAME = firstName MAXLEN = 25 ] } }")
+                + " } ] }");
     }
 
     /**
@@ -615,7 +649,7 @@ public class TestTableTag extends AbstractTagTest
         context.setVariable("editorSelectionHandler", editorSelHandler);
         context.setVariable("validationHandler", valHandler);
         executeScript(SCRIPT);
-        TableTag tt = (TableTag) context.getVariable(VAR_TABLE);
+        TableTag tt = getTableTag();
         assertSame("Renderer selection handler not set", rendererSelHandler, tt
                 .getRendererSelectionHandler());
         assertSame("Editor selection handler not set", editorSelHandler, tt
@@ -745,6 +779,46 @@ public class TestTableTag extends AbstractTagTest
         tag.processBeforeBody();
         assertEquals("Wrong logic class", ColumnClass.ICON, tag
                 .getLogicDataClass());
+    }
+
+    /**
+     * Tests that during a build operation a special field handler factory is
+     * installed which can later be queried from the tag.
+     */
+    public void testTableFieldHandlerFactoryInstalled() throws Exception
+    {
+        builderData.setBuilderName(BUILDER_TESTTABLE);
+        executeScript(SCRIPT);
+        assertTrue(
+                "FieldHandlerFactory changed",
+                builderData.getFieldHandlerFactory() instanceof DefaultFieldHandlerFactory);
+        TableTag tt = getTableTag();
+        TableFieldHandlerFactory factory = tt.getFieldHandlerFactory();
+        for (String col : COLUMNS)
+        {
+            checkReferences(factory, col, tt.getRowRenderForm());
+            checkReferences(factory, col, tt.getRowEditForm());
+        }
+    }
+
+    /**
+     * Checks whether for a specific field handler references for transformers
+     * and validators have been created.
+     *
+     * @param factory the {@code TableFieldHandlerFactory}
+     * @param col the name of the column
+     * @param form the form instance to be checked
+     */
+    private static void checkReferences(TableFieldHandlerFactory factory,
+            String col, Form form)
+    {
+        FieldHandler field = form.getField(col);
+        assertNotNull("No read transformer for " + col,
+                factory.getReadTransformerReference(field));
+        assertNotNull("No write transformer for " + col,
+                factory.getWriteTransformerReference(field));
+        assertNotNull("No validator for " + col,
+                factory.getValidatorReference(field));
     }
 
     /**
