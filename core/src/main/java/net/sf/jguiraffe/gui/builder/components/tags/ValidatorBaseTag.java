@@ -15,10 +15,8 @@
  */
 package net.sf.jguiraffe.gui.builder.components.tags;
 
+import net.sf.jguiraffe.gui.forms.DefaultValidatorWrapper;
 import net.sf.jguiraffe.gui.forms.ValidationPhase;
-import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
-import net.sf.jguiraffe.transform.TransformerContext;
-import net.sf.jguiraffe.transform.ValidationResult;
 import net.sf.jguiraffe.transform.Validator;
 
 import org.apache.commons.jelly.JellyTagException;
@@ -114,12 +112,12 @@ public class ValidatorBaseTag<T extends Validator> extends
     {
         if (getValidationPhase() == ValidationPhase.SYNTAX)
         {
-            tag.setFieldValidator(new ValidatorWrapperImpl(bean,
+            tag.setFieldValidator(new DefaultValidatorWrapper(bean,
                     getTransformerContext()));
         }
         else
         {
-            tag.setFormValidator(new ValidatorWrapperImpl(bean,
+            tag.setFormValidator(new DefaultValidatorWrapper(bean,
                     getTransformerContext()));
         }
     }
@@ -148,60 +146,4 @@ public class ValidatorBaseTag<T extends Validator> extends
         return false;
     }
 
-    /**
-     * An implementation of the <code>ValidatorWrapper</code> interface that
-     * wraps the validator created by this tag.
-     */
-    static class ValidatorWrapperImpl implements ValidatorWrapper
-    {
-        /** Stores the wrapped validator. */
-        private Validator validator;
-
-        /** Stores the transformer context. */
-        private TransformerContext transformerContext;
-
-        /**
-         * Creates a new instance of <code>ValidatorWrapperImpl</code> and
-         * initializes it.
-         *
-         * @param v the wrapped validator
-         * @param ctx the transformer context to use
-         */
-        public ValidatorWrapperImpl(Validator v, TransformerContext ctx)
-        {
-            validator = v;
-            transformerContext = ctx;
-        }
-
-        /**
-         * Returns the wrapped validator.
-         *
-         * @return the validator
-         */
-        public Validator getValidator()
-        {
-            return validator;
-        }
-
-        /**
-         * Returns the <code>TransformerContext</code> to use.
-         *
-         * @return the transformer context
-         */
-        public TransformerContext getTransformerContext()
-        {
-            return transformerContext;
-        }
-
-        /**
-         * Tests whether the specified object is valid.
-         *
-         * @param o the object to test
-         * @return a result object with information about the object's validity
-         */
-        public ValidationResult isValid(Object o)
-        {
-            return getValidator().isValid(o, getTransformerContext());
-        }
-    }
 }

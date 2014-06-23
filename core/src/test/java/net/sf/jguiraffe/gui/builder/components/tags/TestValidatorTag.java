@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
+import net.sf.jguiraffe.gui.forms.DefaultValidatorWrapper;
 import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.ValidationPhase;
 import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
@@ -91,8 +92,8 @@ public class TestValidatorTag
     private void checkValidator(ValidatorWrapper wrapper, boolean defCtx)
     {
         assertTrue("Wrong validator wrapper type: " + wrapper,
-                wrapper instanceof ValidatorTag.ValidatorWrapperImpl);
-        ValidatorTag.ValidatorWrapperImpl vw = (ValidatorTag.ValidatorWrapperImpl) wrapper;
+                wrapper instanceof DefaultValidatorWrapper);
+        DefaultValidatorWrapper vw = (DefaultValidatorWrapper) wrapper;
         assertEquals("Wrong wrapped validator", validator, vw.getValidator());
         assertEquals("Wrong context", defCtx, getDefaultContext().equals(
                 vw.getTransformerContext()));
@@ -192,7 +193,7 @@ public class TestValidatorTag
     @Test
     public void testValidatorWrapper()
     {
-        ValidatorTag.ValidatorWrapperImpl wrapper = new ValidatorTag.ValidatorWrapperImpl(
+        DefaultValidatorWrapper wrapper = new DefaultValidatorWrapper(
                 validator, getDefaultContext());
         final Object dataObj = "MyDataToValidate";
         EasyMock.expect(validator.isValid(dataObj, getDefaultContext()))

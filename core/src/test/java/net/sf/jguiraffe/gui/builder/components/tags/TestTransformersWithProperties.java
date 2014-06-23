@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.builder.components.tags;
 
 import net.sf.jguiraffe.gui.forms.DefaultFieldHandler;
+import net.sf.jguiraffe.gui.forms.DefaultValidatorWrapper;
 import net.sf.jguiraffe.transform.ChainValidator;
 import net.sf.jguiraffe.transform.Transformer;
 import net.sf.jguiraffe.transform.TransformerContext;
@@ -59,7 +60,7 @@ public class TestTransformersWithProperties extends AbstractTagTest
         DefaultFieldHandler fh = (DefaultFieldHandler) builderData
                 .getFieldHandler(FIELD);
         assertNotNull("No field validator set", fh.getSyntaxValidator());
-        ChainValidator cv = (ChainValidator) ((ValidatorTag.ValidatorWrapperImpl) fh
+        ChainValidator cv = (ChainValidator) ((DefaultValidatorWrapper) fh
                 .getSyntaxValidator()).getValidator();
         assertEquals("Wrong number of child validators", 2, cv.size());
     }

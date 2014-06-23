@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.builder.components.tags;
 
 import static org.junit.Assert.assertEquals;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
+import net.sf.jguiraffe.gui.forms.DefaultValidatorWrapper;
 import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.ValidationPhase;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
@@ -76,7 +77,7 @@ public class TestValidatorsTag
         EasyMock.replay(v);
         tag.addChildValidator(v, null);
         tag.doTag(output);
-        ValidatorTag.ValidatorWrapperImpl wrapper = (ValidatorTag.ValidatorWrapperImpl) input
+        DefaultValidatorWrapper wrapper = (DefaultValidatorWrapper) input
                 .getFieldValidator();
         ChainValidator cv = (ChainValidator) wrapper.getValidator();
         assertEquals("Wrong number of child validators", 1, cv.size());
