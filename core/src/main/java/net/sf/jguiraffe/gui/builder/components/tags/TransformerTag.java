@@ -15,10 +15,8 @@
  */
 package net.sf.jguiraffe.gui.builder.components.tags;
 
-import net.sf.jguiraffe.gui.forms.FormRuntimeException;
-import net.sf.jguiraffe.gui.forms.TransformerWrapper;
+import net.sf.jguiraffe.gui.forms.DefaultTransformerWrapper;
 import net.sf.jguiraffe.transform.Transformer;
-import net.sf.jguiraffe.transform.TransformerContext;
 
 import org.apache.commons.jelly.JellyTagException;
 
@@ -134,12 +132,12 @@ public class TransformerTag extends TransformerBaseTag<Transformer>
     {
         if (getTransformerType() == Type.READ)
         {
-            tag.setReadTransformer(new TransformerWrapperImpl(bean,
+            tag.setReadTransformer(new DefaultTransformerWrapper(bean,
                     getTransformerContext()));
         }
         else
         {
-            tag.setWriteTransformer(new TransformerWrapperImpl(bean,
+            tag.setWriteTransformer(new DefaultTransformerWrapper(bean,
                     getTransformerContext()));
         }
 
@@ -166,70 +164,6 @@ public class TransformerTag extends TransformerBaseTag<Transformer>
          * of a form field. They typically create a representation of the data
          * that is displayed in the GUI.
          */
-        WRITE;
-    }
-
-    /**
-     * An implementation of the <code>TransformerWrapper</code> interface that
-     * wraps the transformer created by this tag.
-     */
-    static class TransformerWrapperImpl implements TransformerWrapper
-    {
-        /** Stores the wrapped transformer. */
-        private Transformer transformer;
-
-        /** Stores the context to use. */
-        private TransformerContext transformerContext;
-
-        /**
-         * Creates a new instance of <code>TransformerWrapperImpl</code> and
-         * initializes it.
-         *
-         * @param t the transformer
-         * @param ctx the transformer context
-         */
-        public TransformerWrapperImpl(Transformer t, TransformerContext ctx)
-        {
-            transformer = t;
-            transformerContext = ctx;
-        }
-
-        /**
-         * Returns the wrapped transformer.
-         *
-         * @return the transformer
-         */
-        public Transformer getTransformer()
-        {
-            return transformer;
-        }
-
-        /**
-         * Returns the transformer context to use.
-         *
-         * @return the transformer context
-         */
-        public TransformerContext getTransformerContext()
-        {
-            return transformerContext;
-        }
-
-        /**
-         * Invokes the transformer.
-         *
-         * @param o the object to transform
-         * @return the transformed object
-         */
-        public Object transform(Object o)
-        {
-            try
-            {
-                return getTransformer().transform(o, getTransformerContext());
-            }
-            catch (Exception ex)
-            {
-                throw new FormRuntimeException(ex);
-            }
-        }
+        WRITE
     }
 }

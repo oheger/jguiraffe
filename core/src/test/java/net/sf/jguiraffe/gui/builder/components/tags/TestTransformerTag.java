@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.forms.DefaultTransformerWrapper;
 import net.sf.jguiraffe.gui.forms.FormRuntimeException;
 import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.TransformerWrapper;
@@ -89,8 +90,8 @@ public class TestTransformerTag
     private void checkTransformer(TransformerWrapper wrapper, boolean defCtx)
     {
         assertTrue("Wrong transformer wrapper type: " + wrapper,
-                wrapper instanceof TransformerTag.TransformerWrapperImpl);
-        TransformerTag.TransformerWrapperImpl tw = (TransformerTag.TransformerWrapperImpl) wrapper;
+                wrapper instanceof DefaultTransformerWrapper);
+        DefaultTransformerWrapper tw = (DefaultTransformerWrapper) wrapper;
         assertEquals("Wrong wrapped transformer", transformer, tw
                 .getTransformer());
         assertEquals("Wrong context", defCtx, getDefaultContext().equals(
@@ -173,7 +174,7 @@ public class TestTransformerTag
     @Test
     public void testTransformerWrapper() throws Exception
     {
-        TransformerTag.TransformerWrapperImpl wrapper = new TransformerTag.TransformerWrapperImpl(
+        DefaultTransformerWrapper wrapper = new DefaultTransformerWrapper(
                 transformer, getDefaultContext());
         final Object dataObj = "DataObject";
         final Object transObj = "TransformedObject";
@@ -191,7 +192,7 @@ public class TestTransformerTag
     @Test
     public void testTransformerWrapperException() throws Exception
     {
-        TransformerTag.TransformerWrapperImpl wrapper = new TransformerTag.TransformerWrapperImpl(
+        DefaultTransformerWrapper wrapper = new DefaultTransformerWrapper(
                 transformer, getDefaultContext());
         final Object dataObj = "DataObject";
         EasyMock.expect(transformer.transform(dataObj, getDefaultContext()))
