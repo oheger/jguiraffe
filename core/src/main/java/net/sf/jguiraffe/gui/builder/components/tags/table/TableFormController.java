@@ -22,7 +22,11 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
+import net.sf.jguiraffe.gui.forms.DummyWrapper;
+import net.sf.jguiraffe.gui.forms.FieldHandler;
 import net.sf.jguiraffe.gui.forms.FormValidatorResults;
+import net.sf.jguiraffe.gui.forms.TransformerWrapper;
+import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
 
 /**
  * <p>
@@ -72,6 +76,9 @@ public class TableFormController
     /** The data model of the table as a list of beans. */
     private final List<Object> dataModel;
 
+    /** The factory for creating transformers. */
+    private final TransformerFactory transformerFactory;
+
     /** The index of the current row. */
     private int currentRow = INVALID_ROW;
 
@@ -84,6 +91,19 @@ public class TableFormController
      */
     public TableFormController(TableTag tabTag)
     {
+        this(tabTag, new TransformerFactory());
+    }
+
+    /**
+     * Creates a new instance of {@code TableFormController} and allows setting
+     * the dependencies to helper objects. This constructor is mainly used for
+     * testing purposes.
+     *
+     * @param tabTag the {@code TableTag} (must not be <b>null</b>)
+     * @param factory the {@code TransformerFactory}
+     */
+    TableFormController(TableTag tabTag, TransformerFactory factory)
+    {
         if (tabTag == null)
         {
             throw new IllegalArgumentException("Tag must not be null!");
@@ -91,6 +111,7 @@ public class TableFormController
 
         tableTag = tabTag;
         dataModel = createModel(tabTag);
+        transformerFactory = factory;
     }
 
     /**
@@ -219,8 +240,7 @@ public class TableFormController
      */
     public Object getColumnValue(int col)
     {
-        return getTableTag().getRowRenderForm()
-                .getField(getColumnFieldName(col)).getComponentHandler()
+        return getRenderField(col).getComponentHandler()
                 .getData();
     }
 
@@ -385,6 +405,50 @@ public class TableFormController
     }
 
     /**
+     * Installs special transformers and validators for the field associated
+     * with the specified column based on its {@code ColumnClass}. This method
+     * checks whether a logic type is defined for this column, if it does not
+     * have a renderer, and if no transformers and validators are defined. If
+     * all these conditions are met, corresponding transformers and validators
+     * are created for the column's logic type and installed at the field
+     * handlers of the row forms.
+     *
+     * @param col the column index
+     * @return a flag whether transformers were installed
+     */
+    public boolean installTransformersForColumnType(int col)
+    {
+        ColumnClass columnClass = getLogicDataClass(col);
+        if (columnClass != null && !hasRenderer(col))
+        {
+            FieldHandler field = getRenderField(col);
+            if (hasNoTransformer(field))
+            {
+                TransformerWrapper readTransformer =
+                        getTransformerFactory().getReadTransformer(
+                                getTableTag(), columnClass);
+                TransformerWrapper writeTransformer =
+                        getTransformerFactory().getWriteTransformer(
+                                getTableTag());
+                ValidatorWrapper validator =
+                        getTransformerFactory().getValidator(getTableTag(),
+                                columnClass);
+                installTransformer(field, readTransformer, writeTransformer,
+                        validator);
+
+                field =
+                        getTableTag().getRowEditForm().getField(
+                                getColumnFieldName(col));
+                installTransformer(field, readTransformer, writeTransformer,
+                        validator);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the {@code TableTag} wrapped by this controller.
      *
      * @return the underlying {@code TableTag}
@@ -392,6 +456,16 @@ public class TableFormController
     TableTag getTableTag()
     {
         return tableTag;
+    }
+
+    /**
+     * Returns the {@code TransformerFactory} used by this controller.
+     *
+     * @return the {@code TransformerFactory}
+     */
+    TransformerFactory getTransformerFactory()
+    {
+        return transformerFactory;
     }
 
     /**
@@ -418,6 +492,68 @@ public class TableFormController
     private TableColumnTag getColumn(int col)
     {
         return getTableTag().getColumn(col);
+    }
+
+    /**
+     * Returns the {@code FieldHandler} from the render form for the specified
+     * column.
+     *
+     * @param col the column index
+     * @return the {@code FieldHandler} for this column in the render form
+     */
+    private FieldHandler getRenderField(int col)
+    {
+        return getTableTag().getRowRenderForm().getField(
+                getColumnFieldName(col));
+    }
+
+    /**
+     * Obtains the {@code TableFieldHandlerFactory} from the table tag.
+     *
+     * @return the {@code TableFieldHandlerFactory}
+     */
+    private TableFieldHandlerFactory getFieldHandlerFactory()
+    {
+        return getTableTag().getFieldHandlerFactory();
+    }
+
+    /**
+     * Checks that for the specified field handler no transformer or validator
+     * is set.
+     *
+     * @param field the {@code FieldHandler}
+     * @return <b>true</b> if not transformer or validator is defined,
+     *         <b>false</b> otherwise
+     */
+    private boolean hasNoTransformer(FieldHandler field)
+    {
+        return getFieldHandlerFactory().getReadTransformerReference(field)
+                .getTransformer() == DummyWrapper.INSTANCE
+                && getFieldHandlerFactory().getWriteTransformerReference(field)
+                        .getTransformer() == DummyWrapper.INSTANCE
+                && getFieldHandlerFactory().getValidatorReference(field)
+                        .getValidator() == DummyWrapper.INSTANCE;
+    }
+
+    /**
+     * Helper method for installing the specified transformers and validators in
+     * the references of the given field handler.
+     *
+     * @param field the {@code FieldHandler}
+     * @param readTransformer the read transformer
+     * @param writeTransformer the write transformer
+     * @param validator the validator
+     */
+    private void installTransformer(FieldHandler field,
+            TransformerWrapper readTransformer,
+            TransformerWrapper writeTransformer, ValidatorWrapper validator)
+    {
+        getFieldHandlerFactory().getReadTransformerReference(field)
+                .setTransformer(readTransformer);
+        getFieldHandlerFactory().getWriteTransformerReference(field)
+                .setTransformer(writeTransformer);
+        getFieldHandlerFactory().getValidatorReference(field).setValidator(
+                validator);
     }
 
     /**

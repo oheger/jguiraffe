@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.builder.components.tags.table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -32,10 +33,13 @@ import java.util.Set;
 import net.sf.jguiraffe.PersonBean;
 import net.sf.jguiraffe.gui.builder.components.tags.TextData;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
+import net.sf.jguiraffe.gui.forms.DummyWrapper;
 import net.sf.jguiraffe.gui.forms.FieldHandler;
 import net.sf.jguiraffe.gui.forms.Form;
 import net.sf.jguiraffe.gui.forms.FormValidatorResults;
 
+import net.sf.jguiraffe.gui.forms.TransformerWrapper;
+import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -824,5 +828,256 @@ public class TestTableFormController
         TableFormController controller = new TableFormController(tableTag);
         assertEquals("Wrong column class", String.class,
                 controller.getDataClass(col));
+    }
+
+    /**
+     * Tests the default transformer factory.
+     */
+    @Test
+    public void testDefaultTransformerFactory()
+    {
+        prepareModel(true);
+        TableFormController controller = new TableFormController(tableTag);
+        assertNotNull("No transformer factory",
+                controller.getTransformerFactory());
+    }
+
+    /**
+     * Tests that no transformers are installed if a renderer is defined for a
+     * column.
+     */
+    @Test
+    public void testInstallTransformersForColumnTypeRenderer()
+    {
+        final int col = 0;
+        TableColumnTag[] columns = createColumns();
+        TransformerFactory transformerFactory =
+                EasyMock.createMock(TransformerFactory.class);
+        TableFieldHandlerFactory fieldFactory =
+                EasyMock.createMock(TableFieldHandlerFactory.class);
+        EasyMock.expect(tableTag.getFieldHandlerFactory())
+                .andReturn(fieldFactory).anyTimes();
+        EasyMock.expect(columns[col].getRendererComponent()).andReturn(this)
+                .anyTimes();
+        EasyMock.expect(columns[col].getLogicDataClass())
+                .andReturn(ColumnClass.NUMBER).anyTimes();
+        EasyMock.replay(columns);
+        EasyMock.replay(transformerFactory, fieldFactory);
+        prepareModel(true);
+
+        TableFormController controller =
+                new TableFormController(tableTag, transformerFactory);
+        assertFalse("Wrong result",
+                controller.installTransformersForColumnType(col));
+    }
+
+    /**
+     * Tests that no transformers are installed if no column type is defined.
+     */
+    @Test
+    public void testInstallTransformersForColumnTypeUndefined()
+    {
+        final int col = 1;
+        TableColumnTag[] columns = createColumns();
+        TransformerFactory transformerFactory =
+                EasyMock.createMock(TransformerFactory.class);
+        TableFieldHandlerFactory fieldFactory =
+                EasyMock.createMock(TableFieldHandlerFactory.class);
+        EasyMock.expect(tableTag.getFieldHandlerFactory())
+                .andReturn(fieldFactory).anyTimes();
+        EasyMock.expect(columns[col].getLogicDataClass()).andReturn(null)
+                .anyTimes();
+        EasyMock.replay(columns);
+        EasyMock.replay(transformerFactory, fieldFactory);
+        prepareModel(true);
+
+        TableFormController controller =
+                new TableFormController(tableTag, transformerFactory);
+        assertFalse("Wrong result",
+                controller.installTransformersForColumnType(col));
+    }
+
+    /**
+     * Helper method for creating a transformer reference.
+     *
+     * @param defined flag whether the reference has a defined transformer
+     * @return the reference
+     */
+    private static TransformerReference createTransformerReference(
+            boolean defined)
+    {
+        TransformerWrapper wrapper =
+                defined ? EasyMock.createMock(TransformerWrapper.class)
+                        : DummyWrapper.INSTANCE;
+        return new TransformerReference(wrapper);
+    }
+
+    /**
+     * Helper method for creating a validator reference.
+     *
+     * @param defined flag whether the reference has a defined validator
+     * @return the reference
+     */
+    private static ValidatorReference createValidatorReference(boolean defined)
+    {
+        ValidatorWrapper wrapper =
+                defined ? EasyMock.createMock(ValidatorWrapper.class)
+                        : DummyWrapper.INSTANCE;
+        return new ValidatorReference(wrapper);
+    }
+
+    /**
+     * Helper method for testing installTransformersForColumnType() if already
+     * transformers are set.
+     *
+     * @param read flag for the read transformer
+     * @param write flag for the write transformer
+     * @param validator flag for the validator
+     */
+    private void checkInstallTransformersForColumnTypeAlreadyDefined(
+            boolean read, boolean write, boolean validator)
+    {
+        final int col = 1;
+        TableColumnTag[] columns = createColumns();
+        TransformerFactory transformerFactory =
+                EasyMock.createMock(TransformerFactory.class);
+        TableFieldHandlerFactory fieldFactory =
+                EasyMock.createMock(TableFieldHandlerFactory.class);
+        FieldHandler renderField = EasyMock.createMock(FieldHandler.class);
+        createRowForms();
+        EasyMock.expect(tableTag.getFieldHandlerFactory())
+                .andReturn(fieldFactory).anyTimes();
+        EasyMock.expect(columns[col].getLogicDataClass())
+                .andReturn(ColumnClass.DATE).anyTimes();
+        EasyMock.expect(columns[col].getRendererComponent()).andReturn(null)
+                .anyTimes();
+        EasyMock.expect(renderForm.getField(FIELD_PREFIX + COLUMN_NAMES[col]))
+                .andReturn(renderField).anyTimes();
+        EasyMock.expect(fieldFactory.getReadTransformerReference(renderField))
+                .andReturn(createTransformerReference(read));
+        EasyMock.expect(fieldFactory.getWriteTransformerReference(renderField))
+                .andReturn(createTransformerReference(write));
+        EasyMock.expect(fieldFactory.getValidatorReference(renderField))
+                .andReturn(createValidatorReference(validator));
+        EasyMock.replay(columns);
+        EasyMock.replay(transformerFactory, fieldFactory);
+        prepareModel(true);
+
+        TableFormController controller =
+                new TableFormController(tableTag, transformerFactory);
+        assertFalse("Wrong result",
+                controller.installTransformersForColumnType(col));
+    }
+
+    /**
+     * Tests that no transformers are installed if the read transformer is set.
+     */
+    @Test
+    public void testInstallTransformersForColumnTypeReadTransformerSet()
+    {
+        checkInstallTransformersForColumnTypeAlreadyDefined(true, false, false);
+    }
+
+    /**
+     * Tests that no transformers are installed if the write transformer is set.
+     */
+    @Test
+    public void testInstallTransformersForColumnTypeWriteTransformerSet()
+    {
+        checkInstallTransformersForColumnTypeAlreadyDefined(false, true, false);
+    }
+
+    /**
+     * Tests that no transformers are installed if the validator is set.
+     */
+    @Test
+    public void testInstallTransformersForColumnTypeValidatorTransformerSet()
+    {
+        checkInstallTransformersForColumnTypeAlreadyDefined(false, false, true);
+    }
+
+    /**
+     * Tests a successful installation of transformers for a column type.
+     */
+    @Test
+    public void testInstallTransformersForColumnTypeSuccess()
+    {
+        final int col = 0;
+        TableColumnTag[] columns = createColumns();
+        TransformerFactory transformerFactory =
+                EasyMock.createMock(TransformerFactory.class);
+        TableFieldHandlerFactory fieldFactory =
+                EasyMock.createMock(TableFieldHandlerFactory.class);
+        FieldHandler renderField = EasyMock.createMock(FieldHandler.class);
+        FieldHandler editField = EasyMock.createMock(FieldHandler.class);
+        TransformerWrapper readWrapper =
+                EasyMock.createMock(TransformerWrapper.class);
+        TransformerWrapper writeWrapper =
+                EasyMock.createMock(TransformerWrapper.class);
+        ValidatorWrapper validatorWrapper =
+                EasyMock.createMock(ValidatorWrapper.class);
+        TransformerReference renderReadTransformer =
+                new TransformerReference(null);
+        TransformerReference renderWriteTransformer =
+                new TransformerReference(null);
+        TransformerReference editReadTransformer =
+                new TransformerReference(null);
+        TransformerReference editWriteTransformer =
+                new TransformerReference(null);
+        ValidatorReference renderValidator = new ValidatorReference(null);
+        ValidatorReference editValidator = new ValidatorReference(null);
+
+        final ColumnClass columnClass = ColumnClass.FLOAT;
+        createRowForms();
+        EasyMock.expect(tableTag.getFieldHandlerFactory())
+                .andReturn(fieldFactory).anyTimes();
+        EasyMock.expect(columns[col].getLogicDataClass())
+                .andReturn(columnClass).anyTimes();
+        EasyMock.expect(columns[col].getRendererComponent()).andReturn(null)
+                .anyTimes();
+        EasyMock.expect(renderForm.getField(FIELD_PREFIX + COLUMN_NAMES[col]))
+                .andReturn(renderField).anyTimes();
+        EasyMock.expect(editForm.getField(FIELD_PREFIX + COLUMN_NAMES[col]))
+                .andReturn(editField).anyTimes();
+        EasyMock.expect(fieldFactory.getReadTransformerReference(renderField))
+                .andReturn(renderReadTransformer).anyTimes();
+        EasyMock.expect(fieldFactory.getWriteTransformerReference(renderField))
+                .andReturn(renderWriteTransformer).anyTimes();
+        EasyMock.expect(fieldFactory.getValidatorReference(renderField))
+                .andReturn(renderValidator).anyTimes();
+        EasyMock.expect(fieldFactory.getReadTransformerReference(editField))
+                .andReturn(editReadTransformer).anyTimes();
+        EasyMock.expect(fieldFactory.getWriteTransformerReference(editField))
+                .andReturn(editWriteTransformer).anyTimes();
+        EasyMock.expect(fieldFactory.getValidatorReference(editField))
+                .andReturn(editValidator).anyTimes();
+        EasyMock.expect(
+                transformerFactory.getReadTransformer(tableTag, columnClass))
+                .andReturn(readWrapper);
+        EasyMock.expect(transformerFactory.getWriteTransformer(tableTag))
+                .andReturn(writeWrapper);
+        EasyMock.expect(transformerFactory.getValidator(tableTag, columnClass))
+                .andReturn(validatorWrapper);
+        EasyMock.replay(columns);
+        EasyMock.replay(transformerFactory, fieldFactory, renderField,
+                editField, readWrapper, writeWrapper, validatorWrapper);
+        prepareModel(true);
+
+        TableFormController controller =
+                new TableFormController(tableTag, transformerFactory);
+        assertTrue("Wrong result",
+                controller.installTransformersForColumnType(col));
+        assertSame("Wrong edit read transformer", readWrapper,
+                editReadTransformer.getTransformer());
+        assertSame("Wrong edit write transformer", writeWrapper,
+                editWriteTransformer.getTransformer());
+        assertSame("Wrong edit validator", validatorWrapper,
+                editValidator.getValidator());
+        assertSame("Wrong render read transformer", readWrapper,
+                renderReadTransformer.getTransformer());
+        assertSame("Wrong render write transformer", writeWrapper,
+                renderWriteTransformer.getTransformer());
+        assertSame("Wrong render validator", validatorWrapper,
+                renderValidator.getValidator());
     }
 }
