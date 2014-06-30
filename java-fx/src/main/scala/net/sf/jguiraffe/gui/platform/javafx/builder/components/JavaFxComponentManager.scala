@@ -15,76 +15,28 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.reflect.Manifest
-import org.apache.commons.lang.StringUtils
+import javafx.beans.property.ObjectProperty
 import javafx.scene.Node
-import javafx.scene.control.ContentDisplay
-import javafx.scene.control.Label
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
-import net.sf.jguiraffe.gui.builder.components.ComponentManager
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.gui.builder.components.WidgetHandler
+import javafx.scene.control.{Button, CheckBox, ComboBox, Control, Label, Labeled, ListView, PasswordField, ProgressBar, RadioButton, Slider, Tab, TabPane, TextArea, TextField, ToggleButton, ToggleGroup, Tooltip}
+import javafx.scene.image.{Image, ImageView}
+
+import net.sf.jguiraffe.gui.builder.components.{ComponentManager, FormBuilderException, WidgetHandler}
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
-import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
-import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
-import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
-import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag
-import net.sf.jguiraffe.gui.builder.components.tags.CheckboxTag
-import net.sf.jguiraffe.gui.builder.components.tags.ComboBoxTag
-import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
-import net.sf.jguiraffe.gui.builder.components.tags.DesktopPanelTag
-import net.sf.jguiraffe.gui.builder.components.tags.FontTag
-import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
-import net.sf.jguiraffe.gui.builder.components.tags.ListBoxTag
-import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
-import net.sf.jguiraffe.gui.builder.components.tags.PasswordFieldTag
-import net.sf.jguiraffe.gui.builder.components.tags.PercentLayoutTag
-import net.sf.jguiraffe.gui.builder.components.tags.ProgressBarTag
-import net.sf.jguiraffe.gui.builder.components.tags.RadioButtonTag
-import net.sf.jguiraffe.gui.builder.components.tags.SliderTag
-import net.sf.jguiraffe.gui.builder.components.tags.SplitterTag
-import net.sf.jguiraffe.gui.builder.components.tags.StaticTextTag
-import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
-import net.sf.jguiraffe.gui.builder.components.tags.TextAreaTag
-import net.sf.jguiraffe.gui.builder.components.tags.TextFieldTag
-import net.sf.jguiraffe.gui.builder.components.tags.ToggleButtonTag
-import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
+import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, DesktopPanelTag, FontTag, FormBaseTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, ScrollSizeSupport, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, TextIconData, ToggleButtonTag, TreeTag}
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
 import net.sf.jguiraffe.gui.forms.ComponentHandler
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
-import net.sf.jguiraffe.locators.Locator
-import net.sf.jguiraffe.locators.LocatorException
-import JavaFxComponentManager.as
-import net.sf.jguiraffe.gui.layout.PercentLayoutBase
-import javafx.scene.control.Control
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
-import javafx.scene.control.TextField
-import javafx.scene.control.TextArea
-import javafx.scene.control.PasswordField
-import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
-import javafx.scene.control.Labeled
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ToggleButton
-import javafx.scene.control.RadioButton
-import javafx.scene.control.ToggleGroup
-import javafx.beans.property.ObjectProperty
-import javafx.scene.control.Tooltip
-import javafx.scene.control.TabPane
-import javafx.scene.control.Tab
-import javafx.scene.control.ComboBox
-import javafx.scene.control.ListView
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
-import org.apache.commons.jelly.TagSupport
-import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
-import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport
-import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag
+import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentManager.as
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
-import javafx.scene.control.ProgressBar
-import javafx.scene.control.Slider
-import net.sf.jguiraffe.gui.builder.components.Orientation
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
+import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
+import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
+import net.sf.jguiraffe.locators.{Locator, LocatorException}
+import org.apache.commons.jelly.TagSupport
+import org.apache.commons.lang.StringUtils
+
+import scala.reflect.Manifest
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -159,14 +111,15 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
   }
 
   /**
-   * @inheritdoc This implementation returns an ''ImageView'' object initialized
-   * with the image defined by the ''Locator''.
+   * @inheritdoc This implementation returns an
+   * [[net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper]] object
+   * initialized with the image defined by the ''Locator''.
    */
   @throws(classOf[FormBuilderException])
   def createIcon(locator: Locator): Object = {
     try {
       val image = new Image(locator.getURL().toExternalForm)
-      new ImageView(image)
+      ImageWrapper(image)
     } catch {
       case lex: LocatorException =>
         throw new FormBuilderException(lex)
@@ -394,7 +347,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
       tab setClosable false
       tab setText tabData.getTitle
       if (tabData.getIcon != null) {
-        tab setGraphic as[Node](tabData.getIcon)
+        tab setGraphic as[ImageWrapper](tabData.getIcon).newImageView()
       }
       if (StringUtils.isNotEmpty(tabData.getToolTip)) {
         initToolTip(tag, tab.tooltipProperty, tabData.getToolTip)
@@ -766,7 +719,7 @@ object JavaFxComponentManager {
    * JGUIraffe library operates on abstract and generic objects type casts have
    * to be performed frequently. This helper method tries to cast the specified
    * object to the desired result type. If this fails, an exception is thrown.
-   * @param [T] the result type
+   * @tparam T the result type
    * @param obj the object to be converted
    * @return the converted object
    * @throws FormBuilderException if conversion fails

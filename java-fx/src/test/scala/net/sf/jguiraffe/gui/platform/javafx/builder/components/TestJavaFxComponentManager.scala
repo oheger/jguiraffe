@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
 import org.apache.commons.jelly.JellyContext
 import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
@@ -144,8 +145,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateIcon() {
     val locator = ClassPathLocator.getInstance("icon.jpg")
-    val icon = manager.createIcon(locator).asInstanceOf[ImageView]
-    assertNotNull("No image", icon.getImage())
+    val icon = manager.createIcon(locator).asInstanceOf[ImageWrapper]
+    assertNotNull("No image", icon.image)
   }
 
   /**
@@ -689,22 +690,23 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     initToolTipCreation(tag)
     tag setPlacementValue TabbedPaneTag.Placement.RIGHT
     val tabData1 = new TabbedPaneTag.TabData
-    val icon = manager.createIcon(ClassPathLocator.getInstance("icon.jpg"))
+    val icon = manager.createIcon(
+      ClassPathLocator.getInstance("icon.jpg")).asInstanceOf[ImageWrapper]
     tabData1 setIcon icon
-    tabData1 setComponent (new Label("Test"))
+    tabData1 setComponent new Label("Test")
     val tabData2 = new TabbedPaneTag.TabData
     tabData2 setTitle "TestTitle"
     tabData2 setToolTip "TestToolTip"
-    tabData2 setComponent (new ContainerWrapper)
+    tabData2 setComponent new ContainerWrapper
     tag.getTabs add tabData1
     tag.getTabs add tabData2
-    val handler = manager.createTabbedPane(tag, false).asInstanceOf[JavaFxTabPaneHandler]
+    val handler = manager.createTabbedPane(tag, create = false).asInstanceOf[JavaFxTabPaneHandler]
     assertEquals("Wrong selected index", 0, handler.getData.intValue)
     val tabPane = handler.component.asInstanceOf[TabPane]
     assertEquals("Wrong side of tabs", Side.RIGHT, tabPane.getSide)
     assertEquals("Wrong number of tabs", 2, tabPane.getTabs.size)
     val tab1 = tabPane.getTabs.get(0)
-    assertEquals("Wrong icon", icon, tab1.getGraphic)
+    assertEquals("Wrong icon", icon.image, tab1.getGraphic.asInstanceOf[ImageView].getImage)
     assertFalse("Closeable", tab1.isClosable)
     assertTrue("Got a title", StringUtils.isEmpty(tab1.getText))
     assertNull("Got a tool tip", tab1.getTooltip)
