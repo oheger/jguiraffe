@@ -42,7 +42,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
   private var controller: TableFormController = _
 
   /** The cell to be tested. */
-  private var cell: BooleanCell[AnyRef] = _
+  private var cell: BooleanCell[Boolean, AnyRef] = _
 
   @Before def setUp() {
     controller = mock[TableFormController]

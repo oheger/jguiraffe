@@ -36,10 +36,12 @@ import org.apache.commons.logging.LogFactory
  *
  * @param formController the form controller
  * @param columnIndex the column index
+ * @tparam S the type of elements contained in the current column
+ * @tparam T the element type of the table view
  */
-private class BooleanCell[T](override val formController: TableFormController,
-                             override val columnIndex: Int) extends CheckBoxTableCell[Boolean, T]
-with FormControllerCell[Boolean, T] {
+private class BooleanCell[S, T](override val formController: TableFormController,
+                             override val columnIndex: Int) extends CheckBoxTableCell[S, T]
+with FormControllerCell[S, T] {
   /** The logger. */
   private val log = LogFactory.getLog(getClass)
 
