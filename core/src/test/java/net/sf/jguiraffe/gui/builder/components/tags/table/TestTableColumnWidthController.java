@@ -532,4 +532,50 @@ public class TestTableColumnWidthController
         final int[] percentSizes = new int[PERCENT_VALUES.length];
         checkRecalibrate(percentSizes);
     }
+
+    /**
+     * Tests whether a series of updates of column sizes does not lead to major
+     * rounding errors.
+     */
+    @Test
+    public void testColumnSizeUpdatesWithPrecision()
+            throws FormBuilderException
+    {
+        final int percentIndex = FIXED_WIDTHS.length - 1;
+        final int totalSize = 1111;
+        int[][] updates = { // array elements are column index and delta
+                        {
+                                0, 7
+                        }, {
+                                percentIndex, 19
+                        }, {
+                                percentIndex + 1, -13
+                        }, {
+                                percentIndex + 2, 3
+                        }, {
+                                2, -11
+                        }, {
+                                percentIndex, -5
+                        }
+                };
+        TableTag tt = setUpTableTag(true);
+        TableColumnWidthController ctrl =
+                TableColumnWidthController.newInstance(tt);
+        int[] widths = ctrl.calculateWidths(totalSize);
+
+        for (int[] update : updates)
+        {
+            widths[update[0]] += update[1];
+            widths[update[0] + 1] -= update[1];
+            ctrl.recalibrate(widths);
+            widths = ctrl.calculateWidths(totalSize);
+        }
+
+        int sum = 0;
+        for (int w : widths)
+        {
+            sum += w;
+        }
+        assertEquals("Wrong total column width", totalSize, sum);
+    }
 }

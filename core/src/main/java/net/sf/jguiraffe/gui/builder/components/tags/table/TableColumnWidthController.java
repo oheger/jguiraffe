@@ -40,7 +40,7 @@ import net.sf.jguiraffe.gui.layout.NumberWithUnit;
 public final class TableColumnWidthController
 {
     /** Constant for percent calculations. */
-    private static final int PERCENT = 100;
+    private static final double PERCENT = 100;
 
     /** An array with the original fixed widths of the columns. */
     private final NumberWithUnit[] originalWidths;
@@ -49,7 +49,7 @@ public final class TableColumnWidthController
     private final int[] fixedWidths;
 
     /** Stores the current percent values. */
-    private final int[] percentValues;
+    private final double[] percentValues;
 
     /** The number of columns with a percent width. */
     private final int numberOfColumnsWithPercentWidth;
@@ -65,7 +65,7 @@ public final class TableColumnWidthController
      * @param percentCnt the number of columns with a percent width
      */
     private TableColumnWidthController(NumberWithUnit[] orgWidths,
-            int[] percents, int percentCnt)
+            double[] percents, int percentCnt)
     {
         originalWidths = orgWidths;
         percentValues = percents;
@@ -198,7 +198,7 @@ public final class TableColumnWidthController
      */
     public int getPercentValue(int index)
     {
-        return percentValues[index];
+        return roundInt(percentValues[index] * PERCENT);
     }
 
     /**
@@ -246,7 +246,7 @@ public final class TableColumnWidthController
             {
                 if (isPercentWidth(i))
                 {
-                    widths[i] = (remaining * percentValues[i]) / PERCENT;
+                    widths[i] = roundInt(remaining * percentValues[i]);
                 }
             }
         }
@@ -281,14 +281,14 @@ public final class TableColumnWidthController
 
         int totalSize = sumUpTotalSize(columnSizes);
         int fixedSize = recalibrateFixedWidths(columnSizes);
-        int remainingSize = totalSize - fixedSize;
+        double remainingSize = totalSize - fixedSize;
 
         for (int i = 0; i < columnSizes.length; i++)
         {
             if (isPercentWidth(i))
             {
                 percentValues[i] = (remainingSize == 0) ? 0
-                        : (PERCENT * columnSizes[i]) / remainingSize;
+                        : columnSizes[i] / remainingSize;
             }
         }
     }
@@ -371,7 +371,7 @@ public final class TableColumnWidthController
      * @return an array with all percent values
      * @throws FormBuilderException if the sum of percent values is invalid
      */
-    private static int[] calculateInitialPercentValues(TableTag tt,
+    private static double[] calculateInitialPercentValues(TableTag tt,
             int percentCnt, int sumPercents, int undefPercentCnt)
             throws FormBuilderException
     {
@@ -380,34 +380,33 @@ public final class TableColumnWidthController
             throw new FormBuilderException(
                     "Sum of percent values is greater than 100: " + sumPercents);
         }
-        int[] percents = new int[tt.getColumnCount()];
+        double[] percents = new double[tt.getColumnCount()];
 
         if (undefPercentCnt > 0)
         {
-            int delta = (PERCENT - sumPercents) / undefPercentCnt;
+            double delta = (PERCENT - sumPercents) / undefPercentCnt;
             for (int i = 0; i < percents.length; i++)
             {
                 TableColumnTag colTag = tt.getColumn(i);
                 if (isPercentWidth(colTag))
                 {
-                    percents[i] = colTag.getPercentWidth();
-                    if (percents[i] == 0)
-                    {
-                        percents[i] = delta;
-                    }
+                    double percentWidth =
+                            (colTag.getPercentWidth() != 0) ? colTag
+                                    .getPercentWidth() : delta;
+                    percents[i] = percentWidth / PERCENT;
                 }
             }
         }
 
         else if (percentCnt > 0)
         {
-            int delta = (PERCENT - sumPercents) / percentCnt;
+            double delta = (PERCENT - sumPercents) / percentCnt / PERCENT;
             for (int i = 0; i < percents.length; i++)
             {
                 TableColumnTag colTag = tt.getColumn(i);
                 if (isPercentWidth(colTag))
                 {
-                    percents[i] = colTag.getPercentWidth() + delta;
+                    percents[i] = colTag.getPercentWidth() / PERCENT + delta;
                 }
             }
         }
@@ -425,11 +424,22 @@ public final class TableColumnWidthController
     private static int sumUpTotalSize(int[] columnSizes)
     {
         int totalSize = 0;
-        for (int i = 0; i < columnSizes.length; i++)
+        for (int columnSize : columnSizes)
         {
-            totalSize += columnSizes[i];
+            totalSize += columnSize;
         }
 
         return totalSize;
+    }
+
+    /**
+     * Helper method for rounding a double value to an int.
+     *
+     * @param value the value
+     * @return the rounded integer value
+     */
+    private static int roundInt(double value)
+    {
+        return (int) Math.round(value);
     }
 }
