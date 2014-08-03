@@ -37,8 +37,7 @@ import net.sf.jguiraffe.gui.layout.NumberWithUnit;
  * @author Oliver Heger
  * @version $Id: TableColumnWidthController.java 205 2012-01-29 18:29:57Z oheger $
  */
-public final class TableColumnWidthController
-{
+public final class TableColumnWidthController implements TableColumnRecalibrator {
     /** Constant for percent calculations. */
     private static final double PERCENT = 100;
 
@@ -254,18 +253,6 @@ public final class TableColumnWidthController
         return widths;
     }
 
-    /**
-     * Recalibrates the internally stored column sizes. This method is intended
-     * to be called if there is an external change in the sizes of the columns
-     * managed by this object, for instance if the user manually changed a
-     * column width. In this case all current column widths have to be passed to
-     * this method. The method then adjusts the sizes of the columns with fixed
-     * widths and re-calculates the percent values of the other columns.
-     *
-     * @param columnSizes an array with the new sizes of the managed columns
-     * @throws IllegalArgumentException if the array passed to this method is
-     *         <b>null</b> or does not have the expected number of elements
-     */
     public void recalibrate(int[] columnSizes)
     {
         if (columnSizes == null)
