@@ -38,25 +38,64 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
 
   import scala.collection.JavaConversions._
 
+  /** The number of pending width change notifications. */
+  private var pendingWidthChangeNotifications = 0
+
   override def call(resizeFeatures: TableView.ResizeFeatures[_]): java.lang.Boolean =
     if (resizeFeatures.getColumn == null) false
-    else handleResize(resizeFeatures)
+    else handleResize(resizeFeatures, updateAffectedColumn = true)
+
+  /**
+   * Notifies this object that the width of a column has changed. This method is
+   * intended to be used for auto-fit operations which are not handled per default
+   * by the resize policy. However, it is also called in reaction of width changes
+   * caused by the policy itself. In those cases, it has to be skipped.
+   * @param column the affected column
+   * @param oldWidth the old width of the column
+   * @param newWidth the new width of the column
+   */
+  def columnWidthChanged(column: TableColumn[_, _], oldWidth: Double, newWidth: Double): Unit = {
+    if (pendingWidthChangeNotifications > 0) pendingWidthChangeNotifications -= 1
+    else handleResize(createResizeFeatures(column, oldWidth, newWidth),
+      updateAffectedColumn = false)
+  }
 
   /**
    * Performs a resize operation. This method is called when the ''ResizeFeatures''
    * object contains valid data.
    * @param resizeFeatures the ''ResizeFeatures'' object
+   * @param updateAffectedColumn a flag whether the target column is to be updated itself; in
+   *                             some scenarios when this method is called,
+   *                             the column width has already been changed; then no update must
+   *                             be performed
    * @return a flag whether the operation was successful
    */
-  private def handleResize(resizeFeatures: TableView.ResizeFeatures[_]): java.lang.Boolean = {
+  private def handleResize(resizeFeatures: TableView.ResizeFeatures[_],
+                           updateAffectedColumn: Boolean): java.lang.Boolean = {
     val updater = new ColumnWidthUpdater(resizeFeatures)
     if (updater.prepareUpdate()) {
-      resizeFeatures.getColumn setPrefWidth (columnWidth(resizeFeatures.getColumn) +
-        resizeFeatures.getDelta)
+      pendingWidthChangeNotifications = updater.changedColumns
+      if (updateAffectedColumn) {
+        pendingWidthChangeNotifications += 1
+        resizeFeatures.getColumn setPrefWidth (columnWidth(resizeFeatures.getColumn) +
+          resizeFeatures.getDelta)
+      }
       recalibrator recalibrate updater.performUpdate()
       true
     } else false
   }
+
+  /**
+   * Creates a ''ResizeFeatures'' object from the given parameters.
+   * @param column the affected column
+   * @param oldWidth the old column width
+   * @param newWidth the new column width
+   * @tparam S the type of the column
+   * @return the ''ResizeFeatures''
+   */
+  private def createResizeFeatures[S](column: TableColumn[S, _], oldWidth: Double,
+                                      newWidth: Double): TableView.ResizeFeatures[S] =
+    new TableView.ResizeFeatures[S](column.getTableView, column, newWidth - oldWidth)
 
   /**
    * An internally used helper class which updates the widths of the single columns
@@ -67,6 +106,9 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
    * @param resizeFeatures the object with resize information
    */
   private class ColumnWidthUpdater(resizeFeatures: TableView.ResizeFeatures[_]) {
+    /** Contains the number of columns that have been changed. */
+    var changedColumns = 0
+
     /** The collection with the columns of the affected table. */
     private val tableColumns = resizeFeatures.getTable.getColumns
 
@@ -104,7 +146,10 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
           val colWidth = columnWidth(column)
           changedWidths(index) = math.min(column.getMaxWidth, math.max(column.getMinWidth,
             colWidth - remainingDelta))
-          remainingDelta -= colWidth - changedWidths(index)
+          if (changedWidths(index) != colWidth) {
+            remainingDelta -= colWidth - changedWidths(index)
+            changedColumns += 1
+          }
           affectedColumns += 1
           index += increment
         }

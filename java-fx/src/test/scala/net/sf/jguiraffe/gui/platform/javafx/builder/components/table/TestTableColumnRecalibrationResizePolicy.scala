@@ -124,6 +124,14 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   }
 
   /**
+   * Prepares the mock for the recalibrator to expect an invocation with an arbitrary
+   * array.
+   */
+  private def expectRecalibrateCall() {
+    recalibrator recalibrate EasyMock.anyObject(classOf[Array[Int]])
+  }
+
+  /**
    * Tests a successful resize operation if the full delta can be applied to the last
    * column.
    */
@@ -195,6 +203,96 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
     whenExecuting(recalibrator) {
       assertTrue("Wrong result", callAndCheckWidths(resizeFeatures(column(lastIndex), delta),
         widths))
+    }
+  }
+
+  /**
+   * Tests whether a change notification of a table column in correctly processed.
+   */
+  @Test def testColumnWidthChanged() {
+    val delta = -8
+    val ColIdx = 1
+    val widths = Array(ColumnWidths(0), ColumnWidths(1), ColumnWidths(2), ColumnWidths(3) - delta)
+    expectRecalibrate(widths)
+
+    whenExecuting(recalibrator) {
+      policy.columnWidthChanged(column(ColIdx), ColumnWidths(ColIdx) - delta, ColumnWidths(ColIdx))
+      checkWidths(widths)
+    }
+  }
+
+  /**
+   * Helper method for testing whether the correct number of column width changed
+   * notifications is ignored after a resize operation. (During a resize column
+   * widths are changed which lead to update events as well; those have to be
+   * ignored).
+   * @param widths an array with the expected column widths
+   * @param delta the delta
+   * @param ignoredCalls the number of calls to be ignored
+   */
+  private def checkIgnoreColumnWidthChangedAfterResize(widths: Array[Double], delta: Double,
+                                                       ignoredCalls: Int) {
+    expectRecalibrate(widths)
+    expectRecalibrateCall()
+
+    whenExecuting(recalibrator) {
+      assertTrue("Wrong result", callAndCheckWidths(resizeFeatures(column(1), delta),
+        widths))
+      for (i <- 1 to ignoredCalls) {
+        policy.columnWidthChanged(column(1), ColumnWidths(1), ColumnWidths(1) + delta)
+      }
+    }
+  }
+
+  /**
+   * Tests that column width changed notifications are ignored after columns
+   * have been updated in a resize operation.
+   */
+  @Test def testIgnoreColumnWidthChangedAfterResize() {
+    val delta = 5
+    val widths = Array(ColumnWidths(0), ColumnWidths(1) + delta, ColumnWidths(2),
+      ColumnWidths(3) - delta)
+    checkIgnoreColumnWidthChangedAfterResize(widths, delta, 3)
+  }
+
+  /**
+   * Tests that column width change notifications are ignored after resize operations
+   * that affect multiple columns.
+   */
+  @Test def testIgnoreColumnWidthChangedAfterResizeMultipleColumns() {
+    val lastIndex = ColumnNames.size - 1
+    column(lastIndex) setMinWidth (ColumnWidths(lastIndex) - 4)
+    val widths = Array(ColumnWidths(0), ColumnWidths(1) + 10, ColumnWidths(2) - 6,
+      ColumnWidths(3) - 4)
+    checkIgnoreColumnWidthChangedAfterResize(widths, 10, 4)
+  }
+
+  /**
+   * Tests that column width change notifications are ignored after resize operations
+   * that affect multiple columns, but some columns have not been changed.
+   */
+  @Test def testIgnoreColumnWidthChangedAfterResizeColumnsNotChanged() {
+    val lastIndex = ColumnNames.size - 1
+    val delta = 10
+    column(lastIndex) setMinWidth ColumnWidths(lastIndex)
+    val widths = Array(ColumnWidths(0), ColumnWidths(1) + delta, ColumnWidths(2) - delta,
+      ColumnWidths(3))
+    checkIgnoreColumnWidthChangedAfterResize(widths, delta, 3)
+  }
+
+  /**
+   * Tests that no column width updates are ignored after a failed resize operation.
+   */
+  @Test def testNoColumnWidthUpdatesIgnoredAfterFailedResize() {
+    val lastIndex = ColumnNames.size - 1
+    val delta = 10
+    column(lastIndex) setMinWidth ColumnWidths(lastIndex)
+    expectRecalibrateCall()
+
+    whenExecuting(recalibrator) {
+      assertFalse("Wrong result", callAndCheckWidths(resizeFeatures(column(lastIndex - 1), delta),
+        ColumnWidths))
+      policy.columnWidthChanged(column(1), ColumnWidths(1), ColumnWidths(1) + delta)
     }
   }
 
