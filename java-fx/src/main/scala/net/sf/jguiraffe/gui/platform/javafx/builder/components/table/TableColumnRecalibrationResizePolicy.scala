@@ -61,6 +61,18 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
   }
 
   /**
+   * Creates a specialized change listener for updates of a column's width
+   * property and registers it at the specified column.
+   * @param column the column to be observed
+   * @return the change listener
+   */
+  def installWidthChangeListener(column: TableColumn[_, _]): TableColumnWidthChangeListener = {
+    val listener = new TableColumnWidthChangeListener(this, column)
+    widthProperty(column) addListener listener
+    listener
+  }
+
+  /**
    * Performs a resize operation. This method is called when the ''ResizeFeatures''
    * object contains valid data.
    * @param resizeFeatures the ''ResizeFeatures'' object

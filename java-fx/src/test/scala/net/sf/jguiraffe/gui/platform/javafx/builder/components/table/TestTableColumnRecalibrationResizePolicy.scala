@@ -15,9 +15,11 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
+import javafx.beans.value.ObservableValue
 import javafx.scene.control.{TableColumn, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnRecalibrator
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
@@ -297,14 +299,36 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   }
 
   /**
+   * Tests whether a width change listener for a column can be installed.
+   */
+  @Test def testInstallWidthChangeListener() {
+    val obsValue = mock[ObservableValue[Number]]
+    val answer = new FetchAnswer[Unit, TableColumnWidthChangeListener]
+    obsValue.addListener(EasyMock.anyObject(classOf[TableColumnWidthChangeListener]))
+    EasyMock.expectLastCall().andAnswer(answer)
+    policy initWidthProperty(column(0), obsValue)
+
+    whenExecuting(obsValue) {
+      val listener = policy installWidthChangeListener column(0)
+      assertSame("Wrong column", column(0), listener.column)
+      assertSame("Wrong policy", policy, listener.policy)
+      assertSame("Listener not registered", listener, answer.get)
+    }
+  }
+
+  /**
    * A mock implementation of the ''ColumnWidthExtractor'' trait.
    *
-   * This implementation allows setting the widths for columns directly. The
-   * explicitly set widths are returned.
+   * This implementation allows setting the widths and width properties for
+   * columns directly. The explicitly set objects are returned.
    */
   private trait MockColumnWidthExtractor extends ColumnWidthExtractor {
     /** A map for storing column widths. */
     private val columnWidths = collection.mutable.Map.empty[TableColumn[_, _], Double]
+
+    /** A map for storing column width properties. */
+    private val widthProperties = collection.mutable.Map.empty[TableColumn[_, _],
+      ObservableValue[Number]]
 
     /**
      * Initializes the width of a specific column.
@@ -313,6 +337,21 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
     def initWidth(pair: (TableColumn[_, _], Double)) {
       columnWidths += pair
     }
+
+    /**
+     * Initializes the width property of a specific column.
+     * @param pair a tuple of a column and its associated with property
+     */
+    def initWidthProperty(pair: (TableColumn[_, _], ObservableValue[Number])) {
+      widthProperties += pair
+    }
+
+    /**
+     * @inheritdoc This implementation returns the width property associated with
+     *             the specified column. It must have been initialized before.
+     */
+    override def widthProperty(column: TableColumn[_, _]): ObservableValue[Number] =
+      widthProperties(column)
 
     /**
      * @inheritdoc This implementation returns a width which must have been set
