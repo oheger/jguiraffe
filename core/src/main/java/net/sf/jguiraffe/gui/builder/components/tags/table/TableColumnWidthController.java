@@ -37,7 +37,9 @@ import net.sf.jguiraffe.gui.layout.NumberWithUnit;
  * @author Oliver Heger
  * @version $Id: TableColumnWidthController.java 205 2012-01-29 18:29:57Z oheger $
  */
-public final class TableColumnWidthController implements TableColumnRecalibrator {
+public final class TableColumnWidthController implements
+        TableColumnRecalibrator, TableColumnWidthCalculator
+{
     /** Constant for percent calculations. */
     private static final double PERCENT = 100;
 
@@ -211,17 +213,6 @@ public final class TableColumnWidthController implements TableColumnRecalibrator
         return numberOfColumnsWithPercentWidth;
     }
 
-    /**
-     * Calculates the current widths of all columns managed by this controller.
-     * The currently available size of the table is specified. This method
-     * mainly calculates the widths of columns with a relative width. It sums up
-     * the fixed widths and subtracts them from the given total size. The
-     * remaining space is used to calculate the absolute widths for columns
-     * whose width is specified as a percent value.
-     *
-     * @param totalSize the total size available
-     * @return an array with the widths of all columns
-     */
     public int[] calculateWidths(int totalSize)
     {
         int[] widths = new int[getColumnCount()];
