@@ -30,20 +30,33 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnRecalibrato
  * has to perform a recalibration to ensure that a resize operation of the
  * table yields correctly adapted column widths.
  *
+ * Unfortunately, this is not trivial. There are some updates of the widths of
+ * columns which do not trigger the policy - mainly auto-fit operations when the
+ * user double-clicks a column header and the column's width is automatically
+ * adjusted to its content. To properly react on such changes, listeners have
+ * to be attached to the width properties of all columns in the managed table
+ * view. However, then some notifications received by these listeners have to be
+ * ignored as they interfere with the resizing logic implemented here.
+ *
  * @param recalibrator the ''TableColumnRecalibrator''
  */
 private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumnRecalibrator)
   extends Callback[TableView.ResizeFeatures[_], java.lang.Boolean] {
-  this: ColumnWidthExtractor =>
+  this: ColumnWidthExtractor with TableWidthExtractor =>
 
   import scala.collection.JavaConversions._
 
   /** The number of pending width change notifications. */
   private var pendingWidthChangeNotifications = 0
 
-  override def call(resizeFeatures: TableView.ResizeFeatures[_]): java.lang.Boolean =
+  /** The width of the managed table. */
+  private var managedTableWidth = 0.0
+
+  override def call(resizeFeatures: TableView.ResizeFeatures[_]): java.lang.Boolean = {
+    managedTableWidth = tableWidth(resizeFeatures.getTable)
     if (resizeFeatures.getColumn == null) false
     else handleResize(resizeFeatures, updateAffectedColumn = true)
+  }
 
   /**
    * Notifies this object that the width of a column has changed. This method is
@@ -55,9 +68,10 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
    * @param newWidth the new width of the column
    */
   def columnWidthChanged(column: TableColumn[_, _], oldWidth: Double, newWidth: Double): Unit = {
-    if (pendingWidthChangeNotifications > 0) pendingWidthChangeNotifications -= 1
-    else handleResize(createResizeFeatures(column, oldWidth, newWidth),
-      updateAffectedColumn = false)
+    if (shouldProcessColumnChange(column)) {
+      handleResize(createResizeFeatures(column, oldWidth, newWidth),
+        updateAffectedColumn = false)
+    }
   }
 
   /**
@@ -71,6 +85,13 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
     widthProperty(column) addListener listener
     listener
   }
+
+  /**
+   * Returns the current value of the internally stored width of the managed
+   * table. This field is updated when the policy is invoked.
+   * @return the current width of the managed table
+   */
+  def currentTableWidth: Double = managedTableWidth
 
   /**
    * Performs a resize operation. This method is called when the ''ResizeFeatures''
@@ -95,6 +116,28 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
       recalibrator recalibrate updater.performUpdate()
       true
     } else false
+  }
+
+  /**
+   * Checks whether a column width change notification should be processed.
+   * There are some criteria which have to be taken into account:
+   * $ - If columns have been resized by this policy, corresponding change
+   * notifications are expected; they have to be ignored
+   * $ - Column change notifications are received when the managed table's width
+   * is changing. In this case, they have to be ignored because they are handled
+   * by the change listener for the table width.
+   * $ - When the table is constructed initial change notifications are sent
+   * which also have to be ignored.
+   * @param column the column affected by the change
+   * @return a flag whether a column change notification is to be processed
+   */
+  private def shouldProcessColumnChange(column: TableColumn[_, _]): Boolean = {
+    if (pendingWidthChangeNotifications > 0) {
+      pendingWidthChangeNotifications -= 1
+      false
+    } else {
+      currentTableWidth == tableWidth(column.getTableView) && currentTableWidth != 0
+    }
   }
 
   /**

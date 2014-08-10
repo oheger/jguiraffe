@@ -39,6 +39,9 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /** Constant for the precision in asserts with doubles. */
   private val Precision = 0.0001
 
+  /** Constant for the width of the test table. */
+  private val TableWidth = 400.0
+
   /** A mock for the object performing the recalibration. */
   private var recalibrator: TableColumnRecalibrator = _
 
@@ -46,12 +49,15 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   private var table: TableView[AnyRef] = _
 
   /** The policy to be tested. */
-  private var policy: TableColumnRecalibrationResizePolicy with MockColumnWidthExtractor = _
+  private var policy: TableColumnRecalibrationResizePolicy with MockColumnWidthExtractor with
+    MockTableWidthExtractor = _
 
   @Before def setUp() {
     recalibrator = mock[TableColumnRecalibrator]
-    policy = new TableColumnRecalibrationResizePolicy(recalibrator) with MockColumnWidthExtractor
+    policy = new TableColumnRecalibrationResizePolicy(recalibrator)
+      with MockColumnWidthExtractor with MockTableWidthExtractor
     table = createTable()
+    initTableWidth()
   }
 
   /**
@@ -67,6 +73,15 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
       table.getColumns add column
     }
     table
+  }
+
+  /**
+   * Performs an initial invocation of the policy which should initialize the
+   * internally tracked table width.
+   */
+  private def initTableWidth(): Unit = {
+    policy.definedTableWidth = TableWidth
+    policy call resizeFeatures(null, 0)
   }
 
   /**
@@ -115,6 +130,13 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    */
   @Test def testIgnoreUndefinedColumn() {
     assertFalse("Wrong result", callAndCheckWidths(resizeFeatures(null, 0), ColumnWidths))
+  }
+
+  /**
+   * Tests whether the width of the managed table is tracked.
+   */
+  @Test def testCurrentColumnWidth() {
+    assertEquals("Wrong table width", TableWidth, policy.currentTableWidth, Precision)
   }
 
   /**
@@ -299,6 +321,29 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   }
 
   /**
+   * Tests that the width of the managed table is checked before a column change
+   * event is processed.
+   */
+  @Test def testIgnoreColumnWidthChangeTableResized() {
+    policy.definedTableWidth = TableWidth - 100
+    whenExecuting(recalibrator) {
+      policy.columnWidthChanged(column(0), 100, 150)
+    }
+  }
+
+  /**
+   * Tests that initial column change events are ignored. In this case, the
+   * table is not yet fully constructed and has no width.
+   */
+  @Test def testIgnoreColumnWidthChangeDuringTableSetup() {
+    policy.definedTableWidth = 0
+    policy call resizeFeatures(null, 0)
+    whenExecuting(recalibrator) {
+      policy.columnWidthChanged(column(0), 0, 50)
+    }
+  }
+
+  /**
    * Tests whether a width change listener for a column can be installed.
    */
   @Test def testInstallWidthChangeListener() {
@@ -360,4 +405,22 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
     override def columnWidth(column: TableColumn[_, _]): Double = columnWidths(column)
   }
 
+  /**
+   * A mock implementation of the ''TableWidthExtractor'' trait which allows
+   * specifying a specific width for the test table.
+   */
+  private trait MockTableWidthExtractor extends TableWidthExtractor {
+    /** The width of the test table. */
+    var definedTableWidth = 0.0
+
+    /**
+     * @inheritdoc This implementation returns the width defined by the member
+     *             field. It is also checked whether the passed in table is
+     *             the test table.
+     */
+    override def tableWidth(testTable: TableView[_]): Double = {
+      assertEquals("Wrong table", table, testTable)
+      definedTableWidth
+    }
+  }
 }
