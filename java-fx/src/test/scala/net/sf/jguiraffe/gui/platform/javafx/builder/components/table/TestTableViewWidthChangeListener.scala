@@ -40,7 +40,8 @@ class TestTableViewWidthChangeListener extends JUnitSuite with EasyMockSugar {
     val Delta = 0.001
     val widths = Array(100, 200)
     val Size = 300
-    EasyMock.expect(controller.calculateWidths(Size)).andReturn(widths)
+    EasyMock.expect(controller.calculateWidths(Size - TableViewWidthChangeListener
+      .BorderWidth)).andReturn(widths)
 
     val listener = new TableViewWidthChangeListener(controller, table)
     whenExecuting(controller) {

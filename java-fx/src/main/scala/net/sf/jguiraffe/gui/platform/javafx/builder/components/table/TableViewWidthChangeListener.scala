@@ -21,6 +21,19 @@ import javafx.scene.control.TableView
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnWidthCalculator
 
 /**
+ * Companion object for ''TableViewWidthChangeListener''.
+ */
+object TableViewWidthChangeListener {
+  /**
+   * Constant defining the border width of a table view. This value has to be
+   * subtracted when calculating the new column widths; otherwise a
+   * horizontal scrollbar is displayed. The value has been determined
+   * empirically.
+   */
+  val BorderWidth = 2
+}
+
+/**
  * A specialized change listener implementation for reacting on changes of the
  * width of a table view component.
  *
@@ -37,9 +50,11 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnWidthCalcul
 private class TableViewWidthChangeListener(val calculator: TableColumnWidthCalculator,
                                            val table: TableView[_])
   extends ChangeListener[java.lang.Number] {
+  import TableViewWidthChangeListener._
+
   override def changed(obsValue: ObservableValue[_ <: Number], oldValue: Number,
                        newValue: Number): Unit = {
-    val widths = calculator calculateWidths newValue.intValue
+    val widths = calculator calculateWidths (newValue.intValue - BorderWidth)
     for (i <- 0 until widths.size) {
       table.getColumns.get(i) setPrefWidth widths(i)
     }
