@@ -22,12 +22,12 @@ import net.sf.jguiraffe.gui.forms.ComponentHandler;
 
 /**
  * <p>
- * A specialized <code>ComponentHandler</code> interface dealing with specific
+ * A specialized {@code ComponentHandler} interface dealing with specific
  * functionality provided by tables.
  * </p>
  * <p>
  * Tables provide some special functionality that is not covered by the default
- * <code>ComponentHandler</code> interface. So this extended interface was
+ * {@code ComponentHandler} interface. So this extended interface was
  * introduced. It provides access to the selected index (or indices in
  * multi-selection mode), or allows sending change notifications if the data of
  * the table's model has changed.
@@ -58,7 +58,7 @@ public interface TableHandler extends ComponentHandler<Object>
     /**
      * Returns an array with the indices of the selected rows. This method is
      * applicable in multi selection mode. It works like
-     * <code>getSelectedIndex()</code>, but multiple indices can be returned.
+     * {@code getSelectedIndex()}, but multiple indices can be returned.
      *
      * @return an array with the indices of the selected rows (never <b>null</b>)
      */
@@ -69,7 +69,7 @@ public interface TableHandler extends ComponentHandler<Object>
      * method an arbitrary number of rows can be selected at once.
      *
      * @param rowIndices an array with the indices of the selected rows (must
-     * not be <b>null</b>; use <code>clearSelection()</code> for clearing any
+     * not be <b>null</b>; use {@code clearSelection()} for clearing any
      * selected rows)
      */
     void setSelectedIndices(int[] rowIndices);
@@ -97,11 +97,11 @@ public interface TableHandler extends ComponentHandler<Object>
     /**
      * Notifies the table that new rows have been inserted. This method can be
      * called if objects have been added to the table's model. It works like
-     * <code>tableDataChanged()</code>, but will probably be more efficient
+     * {@code tableDataChanged()}, but will probably be more efficient
      * because the table only needs to be redrawn if necessary.
      *
      * @param startIdx the start index of the newly added rows
-     * @param endIdx the end index of the newly added rows
+     * @param endIdx the end index of the newly added rows (inclusive)
      * @see #tableDataChanged()
      */
     void rowsInserted(int startIdx, int endIdx);
@@ -109,23 +109,23 @@ public interface TableHandler extends ComponentHandler<Object>
     /**
      * Notifies the table that a number of rows has been deleted. This method
      * can be called if some objects have been deleted from the table's model.
-     * It works like <code>tableDataChanged()</code>, but will probably be
+     * It works like {@code tableDataChanged()}, but will probably be
      * more efficient because the table only needs to be redrawn if necessary.
      *
      * @param startIdx the index of the first affected row
-     * @param endIdx the index of the last affected row
+     * @param endIdx the index of the last affected row (inclusive)
      */
     void rowsDeleted(int startIdx, int endIdx);
 
     /**
      * Notifies the table that a number of rows has been modified. This method
      * can be called if some data objects of the table's model have been
-     * changed. It works like <code>tableDataChanged()</code>, but will
+     * changed. It works like {@code tableDataChanged()}, but will
      * probably be more efficient because the table only needs to be redrawn if
      * necessary.
      *
      * @param startIdx the index of the first affected row
-     * @param endIdx the index of the last affected row
+     * @param endIdx the index of the last affected row (inclusive)
      */
     void rowsUpdated(int startIdx, int endIdx);
 
