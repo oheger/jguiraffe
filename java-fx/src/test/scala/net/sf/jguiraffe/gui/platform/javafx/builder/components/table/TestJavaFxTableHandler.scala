@@ -15,8 +15,10 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
+import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.{SelectionMode, TableView}
 
+import net.sf.jguiraffe.gui.builder.components.Color
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
@@ -29,6 +31,18 @@ object TestJavaFxTableHandler {
 
   /** Constant for the number of rows in the test data. */
   private val Rows = 16
+
+  /** Constant for a style definition for the foreground color. */
+  private val StyleForegroundColor = "-fx-text-fill: #FF80C0;"
+
+  /** Constant for a style definition for the background color. */
+  private val StyleBackgroundColor = "-fx-background-color: #AA99FF;"
+
+  /** Constant for a test foreground color. */
+  private val ForegroundColor = Color.newLogicInstance("#FF80C0")
+
+  /** Constant for a test background color. */
+  private val BackgroundColor = Color.newLogicInstance("#AA99FF")
 
   /**
    * Creates the table view control and sets the correct selection mode.
@@ -70,7 +84,7 @@ object TestJavaFxTableHandler {
    */
   private def createHandler(multiSelect: Boolean = false, model: java.util.List[AnyRef] =
   createModel()): JavaFxTableHandler =
-    new JavaFxTableHandler(createTable(multiSelect), Name, model)
+    new JavaFxTableHandler(createTable(multiSelect), Name, model, new SimpleStringProperty)
 
   /**
    * Creates a test handler and initializes its table model.
@@ -344,6 +358,60 @@ class TestJavaFxTableHandler extends JUnitSuite {
 
     handler.rowsUpdated(Index, Index + 1)
     checkTableItems(handler)
+  }
+
+  /**
+   * Tests whether the selection background color can be obtained.
+   */
+  @Test def testGetSelectionBackground(): Unit = {
+    val handler = createHandler()
+    handler.selectionStyles setValue StyleBackgroundColor
+
+    assertEquals("Wrong selection background", BackgroundColor, handler.getSelectionBackground)
+  }
+
+  /**
+   * Tests whether the selection foreground color can be obtained.
+   */
+  @Test def testGetSelectionForeground(): Unit = {
+    val handler = createHandler()
+    handler.selectionStyles setValue StyleForegroundColor
+
+    assertEquals("Wrong selection foreground", ForegroundColor, handler.getSelectionForeground)
+  }
+
+  /**
+   * Tests whether the selection background color can be set.
+   */
+  @Test def testSetSelectionBackground(): Unit = {
+    val handler = createHandler()
+    handler setSelectionBackground BackgroundColor
+
+    assertEquals("Wrong styles", StyleBackgroundColor, handler.selectionStyles.get.trim)
+  }
+
+  /**
+   * Tests whether the selection foreground color can be set.
+   */
+  @Test def testSetSelectionForeground(): Unit = {
+    val handler = createHandler()
+    handler setSelectionForeground ForegroundColor
+
+    assertEquals("Wrong styles", StyleForegroundColor, handler.selectionStyles.get.trim)
+  }
+
+  /**
+   * Tests whether multiple styles for selected rows can be set.
+   */
+  @Test def testMultipleSelectionStyles(): Unit = {
+    val handler = createHandler()
+    handler setSelectionForeground ForegroundColor
+    handler setSelectionBackground BackgroundColor
+
+    assertTrue("Foreground style not found", handler.selectionStyles.get contains
+      StyleForegroundColor)
+    assertTrue("Background style not found", handler.selectionStyles.get contains
+      StyleBackgroundColor)
   }
 }
 

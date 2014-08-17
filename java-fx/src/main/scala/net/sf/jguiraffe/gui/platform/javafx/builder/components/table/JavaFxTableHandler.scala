@@ -15,11 +15,14 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
+import javafx.beans.property.StringProperty
 import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.builder.components.model.TableHandler
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.{Styles, JavaFxStylesHandler,
+JavaFxComponentHandler}
+import org.apache.commons.lang.StringUtils
 
 import scala.beans.BeanProperty
 
@@ -42,13 +45,26 @@ import scala.beans.BeanProperty
  * table's item collection. (Therefore, it is crucial that correct indices are
  * provided so that the correct objects are updated, inserted, or deleted).
  *
+ * The ''TableHandler'' interface defines methods for changing the colors of
+ * selected rows. It is surprisingly difficult to implement these methods in
+ * JavaFX. This boils down to dynamically changing the styles definition of the
+ * cell representing a selected row. The styles definitions to be applied for
+ * this purpose has to be determined by this handler implementation based on
+ * the methods invoked. They are published to the outside via a property which
+ * is passed to the constructor.
+ *
  * @param table the manged table view component
  * @param name the component name
  * @param model the list serving as table model
+ * @param selectionStyles here the styles to be applied for the selected row are stored
  */
 private class JavaFxTableHandler(table: TableView[AnyRef], val name: String,
-                                 @BeanProperty val model: java.util.List[AnyRef])
+                                 @BeanProperty val model: java.util.List[AnyRef],
+                                  val selectionStyles: StringProperty)
   extends JavaFxComponentHandler[Object](table) with TableHandler {
+  /** An object for creating the styles for the row selection. */
+  private lazy val selectionStylesHandler = createStylesHandler()
+
   /** A flag whether the table supports multiple selection. */
   private val multipleSelection =
     table.getSelectionModel.getSelectionMode == SelectionMode.MULTIPLE
@@ -150,19 +166,42 @@ private class JavaFxTableHandler(table: TableView[AnyRef], val name: String,
     table.getItems addAll(0, model)
   }
 
-  override def getSelectionBackground: Color = {
-    null
-  }
+  override def getSelectionBackground: Color = selectionStylesHandler.getBackgroundColor()
 
+  /**
+   * @inheritdoc
+   * This implementation generates the style for the passed in background color and
+   * exposes it via the ''selectionStyles'' property.
+   */
   override def setSelectionBackground(c: Color): Unit = {
-    null
+    selectionStylesHandler setBackgroundColor c
+    updateSelectionStyles()
   }
 
+  override def getSelectionForeground: Color = selectionStylesHandler.getForegroundColor()
+
+  /**
+   * @inheritdoc
+   * This implementation generates the style for the passed in foreground color and
+   * exposes it via the ''selectionStyles'' property.
+   */
   override def setSelectionForeground(c: Color): Unit = {
-    null
+    selectionStylesHandler setForegroundColor c
+    updateSelectionStyles()
   }
 
-  override def getSelectionForeground: Color = {
-    null
+  /**
+   * Updates the property which exposes the current styles for selected rows.
+   */
+  private def updateSelectionStyles() {
+    selectionStyles set selectionStylesHandler.styles.toExternalForm()
+  }
+
+  /**
+   * Creates the styles handler managing the styles for selected rows.
+   * @return the styles handler
+   */
+  private def createStylesHandler(): JavaFxStylesHandler = {
+    new JavaFxStylesHandler(Styles(StringUtils.defaultString(selectionStyles.get)))
   }
 }
