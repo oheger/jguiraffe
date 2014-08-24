@@ -29,8 +29,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.sf.jguiraffe.PersonBean;
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.tags.TextData;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 import net.sf.jguiraffe.gui.forms.DummyWrapper;
@@ -40,6 +42,7 @@ import net.sf.jguiraffe.gui.forms.FormValidatorResults;
 
 import net.sf.jguiraffe.gui.forms.TransformerWrapper;
 import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
+import net.sf.jguiraffe.gui.layout.NumberWithUnit;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -1079,5 +1082,79 @@ public class TestTableFormController
                 renderWriteTransformer.getTransformer());
         assertSame("Wrong render validator", validatorWrapper,
                 renderValidator.getValidator());
+    }
+
+    /**
+     * Prepares a test for accessing the column width controller.
+     *
+     * @param refWidthController the reference to the width controller
+     * @return the test form controller
+     * @throws FormBuilderException if an error occurs
+     */
+    private TableFormController prepareWidthControllerTest(
+            AtomicReference<TableColumnWidthController> refWidthController)
+            throws FormBuilderException
+    {
+        TableColumnTag[] columns = createColumns();
+        for (int i = 0; i < columns.length; i++)
+        {
+            EasyMock.expect(columns[i].getPercentWidth()).andReturn(0)
+                    .anyTimes();
+            EasyMock.expect(columns[i].getColumnWidth())
+                    .andReturn(new NumberWithUnit((i + 1) * 10)).anyTimes();
+        }
+        EasyMock.replay(columns);
+        TableFormController controller = prepareControllerWithModel();
+        TableColumnWidthController widthController =
+                TableColumnWidthController.newInstance(tableTag);
+        EasyMock.reset(tableTag);
+        EasyMock.expect(tableTag.getColumnWidthController()).andReturn(
+                widthController);
+        EasyMock.replay(tableTag);
+
+        refWidthController.set(widthController);
+        return controller;
+    }
+
+    /**
+     * Tests whether the column width controller can be queried.
+     */
+    @Test
+    public void testGetColumnWidthController() throws FormBuilderException
+    {
+        AtomicReference<TableColumnWidthController> refWidthController =
+                new AtomicReference<TableColumnWidthController>();
+        TableFormController controller =
+                prepareWidthControllerTest(refWidthController);
+        assertEquals("Wrong width controller", refWidthController.get(),
+                controller.getColumnWidthController());
+    }
+
+    /**
+     * Tests whether the object for recalibrating table columns can be obtained.
+     */
+    @Test
+    public void testGetTableColumnRecalibrator() throws FormBuilderException
+    {
+        AtomicReference<TableColumnWidthController> refWidthController =
+                new AtomicReference<TableColumnWidthController>();
+        TableFormController controller =
+                prepareWidthControllerTest(refWidthController);
+        assertEquals("Wrong recalibrator", refWidthController.get(),
+                controller.getColumnRecalibrator());
+    }
+
+    /**
+     * Tests whether the object for calculating column widths can be obtained.
+     */
+    @Test
+    public void testGetTableColumnWidthCalculator() throws FormBuilderException
+    {
+        AtomicReference<TableColumnWidthController> refWidthController =
+                new AtomicReference<TableColumnWidthController>();
+        TableFormController controller =
+                prepareWidthControllerTest(refWidthController);
+        assertEquals("Wrong width calculator", refWidthController.get(),
+                controller.getColumnWidthCalculator());
     }
 }

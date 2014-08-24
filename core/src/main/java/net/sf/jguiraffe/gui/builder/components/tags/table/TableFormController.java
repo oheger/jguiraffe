@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.RandomAccess;
 import java.util.Set;
 
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 import net.sf.jguiraffe.gui.forms.DummyWrapper;
 import net.sf.jguiraffe.gui.forms.FieldHandler;
@@ -402,6 +403,49 @@ public class TableFormController
     public Class<?> getDataClass(int col)
     {
         return getColumn(col).getDataClass();
+    }
+
+    /**
+     * Returns the {@code TableColumnWidthController} for the represented table.
+     * This implementation obtains the controller from the associated
+     * {@code TableTag}.
+     *
+     * @return the {@code TableColumnWidthController}
+     * @throws FormBuilderException if the width controller cannot be obtained
+     * @see TableTag#getColumnWidthController()
+     */
+    public TableColumnWidthController getColumnWidthController()
+            throws FormBuilderException
+    {
+        return getTableTag().getColumnWidthController();
+    }
+
+    /**
+     * Convenience method for querying the {@code TableColumnRecalibrator}. This
+     * method returns the {@code TableColumnWidthController} which also
+     * implements this interface.
+     *
+     * @return the {@code TableColumnRecalibrator}
+     * @throws FormBuilderException if this object cannot be obtained
+     */
+    public TableColumnRecalibrator getColumnRecalibrator()
+            throws FormBuilderException
+    {
+        return getColumnWidthController();
+    }
+
+    /**
+     * Convenience method for querying the {@code TableColumnWidthCalculator}.
+     * This method returns the {@code TableColumnWidthController} which also
+     * implements this interface.
+     *
+     * @return the {@code TableColumnWidthCalculator}
+     * @throws FormBuilderException if this object cannot be obtained
+     */
+    public TableColumnWidthCalculator getColumnWidthCalculator()
+            throws FormBuilderException
+    {
+        return getColumnWidthController();
     }
 
     /**
