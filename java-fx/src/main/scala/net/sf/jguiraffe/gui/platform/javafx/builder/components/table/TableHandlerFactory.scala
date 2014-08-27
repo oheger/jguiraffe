@@ -58,7 +58,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
     tableView setEditable controller.isTableEditable
     installTableWidthListener(controller, tableView)
 
-    val handler = new JavaFxTableHandler(tableView, null, controller.getDataModel,
+    val handler = new JavaFxTableHandler(tableView, controller.getDataModel,
       rowFactory.styleProperty)
     handler.tableDataChanged()
     handler

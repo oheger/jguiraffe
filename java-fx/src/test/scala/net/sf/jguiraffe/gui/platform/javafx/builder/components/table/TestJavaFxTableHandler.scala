@@ -19,6 +19,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.Color
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
@@ -26,9 +27,6 @@ import org.scalatest.junit.JUnitSuite
 import scala.beans.BeanProperty
 
 object TestJavaFxTableHandler {
-  /** Constant for the component name. */
-  private val Name = "TestTableHandler"
-
   /** Constant for the number of rows in the test data. */
   private val Rows = 16
 
@@ -84,7 +82,7 @@ object TestJavaFxTableHandler {
    */
   private def createHandler(multiSelect: Boolean = false, model: java.util.List[AnyRef] =
   createModel()): JavaFxTableHandler =
-    new JavaFxTableHandler(createTable(multiSelect), Name, model, new SimpleStringProperty)
+    new JavaFxTableHandler(createTable(multiSelect), model, new SimpleStringProperty)
 
   /**
    * Creates a test handler and initializes its table model.
@@ -412,6 +410,16 @@ class TestJavaFxTableHandler extends JUnitSuite {
       StyleForegroundColor)
     assertTrue("Background style not found", handler.selectionStyles.get contains
       StyleBackgroundColor)
+  }
+
+  /**
+   * Tests whether the handler supports change events.
+   */
+  @Test def testChangeEventSource() {
+    val handler = createHandler()
+    val source: ChangeEventSource = handler
+    assertEquals("Wrong change event property", tableFrom(handler).getSelectionModel
+      .selectedItemProperty, source.observableValue)
   }
 }
 

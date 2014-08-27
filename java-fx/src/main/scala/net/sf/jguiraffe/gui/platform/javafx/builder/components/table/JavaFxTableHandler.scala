@@ -22,6 +22,7 @@ import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.builder.components.model.TableHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.{Styles, JavaFxStylesHandler,
 JavaFxComponentHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.apache.commons.lang.StringUtils
 
 import scala.beans.BeanProperty
@@ -33,7 +34,8 @@ import scala.beans.BeanProperty
  * This handler implements the typical functionality based on a table component.
  * The handler's data is the index of the selected row (in case of single
  * selection) or an array of indices of selected rows (in case of multiple
- * selection support).
+ * selection support). This handler supports change events. They are generated whenever the
+ * selection in the table changes.
  *
  * In addition, the methods defined by the ''TableHandler'' interface are
  * implemented. Among others, this means that a list serving as table model has
@@ -54,20 +56,22 @@ import scala.beans.BeanProperty
  * is passed to the constructor.
  *
  * @param table the manged table view component
- * @param name the component name
  * @param model the list serving as table model
  * @param selectionStyles here the styles to be applied for the selected row are stored
  */
-private class JavaFxTableHandler(table: TableView[AnyRef], val name: String,
+private class JavaFxTableHandler(table: TableView[AnyRef],
                                  @BeanProperty val model: java.util.List[AnyRef],
                                   val selectionStyles: StringProperty)
-  extends JavaFxComponentHandler[Object](table) with TableHandler {
+  extends JavaFxComponentHandler[Object](table) with TableHandler with ChangeEventSource {
   /** An object for creating the styles for the row selection. */
   private lazy val selectionStylesHandler = createStylesHandler()
 
   /** A flag whether the table supports multiple selection. */
   private val multipleSelection =
     table.getSelectionModel.getSelectionMode == SelectionMode.MULTIPLE
+
+  /** The property for implementing support for change events. */
+  override val observableValue = table.getSelectionModel.selectedItemProperty
 
   /** The type of this handler. It depends in the table's selection mode. */
   @BeanProperty val `type` = if (multipleSelection) classOf[Array[Int]]
