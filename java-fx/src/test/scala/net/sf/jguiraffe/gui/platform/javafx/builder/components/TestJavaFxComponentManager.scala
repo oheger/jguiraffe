@@ -15,83 +15,31 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import javafx.geometry.Side
+import javafx.scene.Node
+import javafx.scene.control._
+import javafx.scene.image.{Image, ImageView}
+import javafx.scene.layout.FlowPane
+import javafx.scene.text.Text
+
+import net.sf.jguiraffe.gui.builder.components.{Color, ComponentBuilderData, FormBuilderException, Orientation}
+import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
+import net.sf.jguiraffe.gui.builder.components.tags.table.{TableFormController, TableTag}
+import net.sf.jguiraffe.gui.forms.{ComponentHandler, ComponentStoreImpl}
+import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.TableHandlerFactory
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
+import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
+import net.sf.jguiraffe.locators.ClassPathLocator
 import org.apache.commons.jelly.JellyContext
 import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull, assertSame, assertTrue}
+import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-import javafx.scene.Node
-import javafx.scene.control.ContentDisplay
-import javafx.scene.control.Label
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
-import javafx.scene.text.Text
-import net.sf.jguiraffe.gui.builder.components.Color
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag
-import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag
-import net.sf.jguiraffe.gui.builder.components.tags.FontTag
-import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
-import net.sf.jguiraffe.gui.builder.components.tags.PercentLayoutTag
-import net.sf.jguiraffe.gui.forms.ComponentStoreImpl
-import net.sf.jguiraffe.gui.layout.BorderLayout
-import net.sf.jguiraffe.gui.layout.ButtonLayout
-import net.sf.jguiraffe.gui.layout.PercentLayoutBase
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
-import net.sf.jguiraffe.locators.ClassPathLocator
-import net.sf.jguiraffe.gui.builder.components.tags.TextFieldTag
-import javafx.scene.control.TextField
-import javafx.scene.control.TextInputControl
-import net.sf.jguiraffe.gui.builder.components.tags.TextAreaTag
-import javafx.scene.control.TextArea
-import net.sf.jguiraffe.gui.builder.components.tags.PasswordFieldTag
-import javafx.scene.control.PasswordField
-import net.sf.jguiraffe.gui.builder.components.tags.StaticTextTag
-import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag
-import javafx.scene.control.Button
-import net.sf.jguiraffe.gui.builder.components.tags.CheckboxTag
-import javafx.scene.control.CheckBox
-import net.sf.jguiraffe.gui.builder.components.tags.ToggleButtonTag
-import javafx.scene.control.ToggleButton
-import net.sf.jguiraffe.gui.builder.components.tags.RadioButtonTag
-import javafx.scene.control.RadioButton
-import javafx.scene.control.ToggleGroup
-import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
-import javafx.scene.control.TabPane
-import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
-import javafx.geometry.Side
-import javafx.scene.layout.FlowPane
-import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
-import net.sf.jguiraffe.gui.builder.components.tags.ComboBoxTag
-import javafx.scene.control.ComboBox
-import net.sf.jguiraffe.gui.builder.components.tags.ListBoxTag
-import javafx.scene.control.ListView
-import javafx.scene.control.SelectionMode
-import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
-import javafx.scene.control.Control
-import net.sf.jguiraffe.gui.builder.components.tags.TreeTag
-import net.sf.jguiraffe.gui.forms.ComponentHandler
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
-import javafx.scene.control.TreeView
-import net.sf.jguiraffe.gui.builder.components.tags.ProgressBarTag
-import javafx.scene.control.ProgressBar
-import net.sf.jguiraffe.gui.builder.components.tags.SliderTag
-import net.sf.jguiraffe.gui.builder.components.Orientation
-import javafx.scene.control.Slider
-import net.sf.jguiraffe.gui.builder.components.tags.SplitterTag
-import javafx.scene.control.SplitPane
 
 /**
  * Test class for ''JavaFxComponentManager''.
@@ -666,7 +614,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests whether a radio group can be created.
    */
   @Test def testCreateRadioGroup() {
-    import collection.JavaConversions._
+    import scala.collection.JavaConversions._
     val radio1 = new RadioButton
     val radio2 = new RadioButton
     val map = Map("radio1" -> radio1.asInstanceOf[Object], "radio2" -> radio2)
@@ -922,7 +870,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
     whenExecuting(handler, factory) {
-      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory, null)
+      manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
+        treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null)
       assertSame("Wrong handler", handler, manager.createTree(tag, false))
     }
     checkDefaultSize(treeView)
@@ -945,11 +894,76 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
     whenExecuting(handler, factory) {
-      manager = new JavaFxComponentManager(new DefaultToolTipFactory, factory, null)
+      manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
+        treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null)
       assertSame("Wrong handler", handler, manager.createTree(tag, false))
     }
     assertEquals("Wrong scroll width", tag.xScrollSize, treeView.getPrefWidth.toInt)
     assertEquals("Wrong scroll height", tag.yScrollSize, treeView.getPrefHeight.toInt)
+    tag.verify(sizeHandler)
+  }
+
+  /**
+   * Tests whether a default factory for table handlers is created.
+   */
+  @Test def testDefaultTableHandlerFactory() {
+    assertNotNull("No table handler factory", manager.tableHandlerFactory)
+  }
+
+  /**
+   * Tests the creation of a table view if the create flag is set.
+   */
+  @Test def testCreateTableCreate() {
+    assertNull("Got a handler", manager.createTable(new TableTag, create = true))
+  }
+
+  /**
+   * Tests whether a table can be created.
+   */
+  @Test def testCreateTable() {
+    val sizeHandler = mock[UnitSizeHandler]
+    val handler = mock[ComponentHandler[Object]]
+    val factory = mock[TableHandlerFactory]
+    val controller = mock[TableFormController]
+    val tag = new TableTagTestImpl(controller) with ScrollSizeSupportUndefined
+    val tableView = new TableView[AnyRef]
+    val context = new JellyContext
+    tag setContext context
+    EasyMock.expect(factory.createTableHandler(controller)).andReturn(handler)
+    EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+
+    whenExecuting(handler, factory) {
+      manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
+        tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null)
+      assertSame("Wrong handler", handler, manager.createTable(tag, create = false))
+    }
+    checkDefaultSize(tableView)
+  }
+
+  /**
+   * Tests that a scroll size definition is taken into account when creating a table.
+   */
+  @Test def testCreateTableScrollSize() {
+    val sizeHandler = mock[UnitSizeHandler]
+    val handler = mock[ComponentHandler[Object]]
+    val factory = mock[TableHandlerFactory]
+    val controller = mock[TableFormController]
+    val tag = new TableTagTestImpl(controller) with ScrollSizeSupportSpecific
+    val tableView = new TableView[AnyRef]
+    val context = new JellyContext
+    tag setContext context
+    EasyMock.expect(factory.createTableHandler(controller)).andReturn(handler)
+    EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+
+    whenExecuting(handler, factory) {
+      manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
+        tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null)
+      assertSame("Wrong handler", handler, manager.createTable(tag, create = false))
+    }
+    assertEquals("Wrong scroll width", tag.xScrollSize, tableView.getPrefWidth.toInt)
+    assertEquals("Wrong scroll height", tag.yScrollSize, tableView.getPrefHeight.toInt)
     tag.verify(sizeHandler)
   }
 
@@ -1087,7 +1101,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateSplitter() {
     val factory = mock[SplitPaneFactory]
-    val manager = new JavaFxComponentManager(null, null, factory)
+    val manager = new JavaFxComponentManager(toolTipFactory = null, treeHandlerFactory = null,
+      tableHandlerFactory = null, splitPaneFactory = factory)
     val tag = new SplitterTag
     tag setName "MySplitter"
     val split = new SplitPane
@@ -1098,4 +1113,12 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       assertEquals("Not initialized", tag.getName, split.getId)
     }
   }
+
+  /**
+   * A test implementation of a table tag which allows injecting a mock form controller.
+   * @param getTableFormController the mock form controller
+   */
+  private class TableTagTestImpl(override val getTableFormController: TableFormController)
+    extends TableTag
+
 }

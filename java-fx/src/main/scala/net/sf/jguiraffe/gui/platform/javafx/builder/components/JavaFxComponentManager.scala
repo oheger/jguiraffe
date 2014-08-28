@@ -28,6 +28,7 @@ import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentManager.as
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.TableHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
@@ -43,10 +44,12 @@ import scala.reflect.Manifest
  *
  * @param toolTipFactory the factory object for creating tool tips
  * @param treeHandlerFactory the factory for creating ''TreeHandler''s
+ * @param tableHandlerFactory the factory for creating table handlers
  * @param splitPaneFactory the factory for creating split panes
  */
 class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
   val treeHandlerFactory: TreeHandlerFactory,
+  val tableHandlerFactory: TableHandlerFactory,
   val splitPaneFactory: SplitPaneFactory)
   extends ComponentManager {
   /**
@@ -54,7 +57,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
    * with a default tool tip factory.
    */
   def this() = this(new DefaultToolTipFactory, new TreeHandlerFactory,
-    new SplitPaneFactoryImpl)
+    new TableHandlerFactory, new SplitPaneFactoryImpl)
 
   /**
    * @inheritdoc This implementation expects that the container is a
@@ -428,9 +431,20 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
     }
   }
 
+  /**
+   * @inheritdoc
+   * This implementation delegates to the associated ''TableHandlerFactory'' to
+   * create a JavaFX ''TableView'' component.
+   */
   def createTable(tag: TableTag, create: Boolean): ComponentHandler[Object] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    if (create) null
+    else {
+      val handler = tableHandlerFactory createTableHandler tag.getTableFormController
+      val ctrl = JavaFxComponentManager.as[Control](handler.getComponent)
+      initControl(tag, ctrl)
+      JavaFxComponentManager.initScrollSize(tag, ctrl)
+      handler
+    }
   }
 
   /**
