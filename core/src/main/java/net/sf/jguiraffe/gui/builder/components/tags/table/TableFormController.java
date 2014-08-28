@@ -377,6 +377,16 @@ public class TableFormController
     }
 
     /**
+     * Returns a flag whether the table is editable.
+     *
+     * @return the editable flag for the whole table
+     */
+    public boolean isTableEditable()
+    {
+        return getTableTag().isTableEditable();
+    }
+
+    /**
      * Returns the logic data class of the specified column. Result may be
      * <b>null</b> if no logic column class was assigned. In this case, the
      * {@code Class} object returned by {@code getDataClass()} may be used to

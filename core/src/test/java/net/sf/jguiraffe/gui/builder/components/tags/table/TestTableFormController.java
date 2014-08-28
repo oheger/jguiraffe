@@ -798,6 +798,40 @@ public class TestTableFormController
     }
 
     /**
+     * Helper method for testing the editable flag for the whole table.
+     *
+     * @param editable the editable flag
+     */
+    private void checkTableEditable(boolean editable)
+    {
+        EasyMock.expect(tableTag.isTableEditable()).andReturn(editable)
+                .anyTimes();
+        prepareModel(true);
+
+        TableFormController controller = new TableFormController(tableTag);
+        assertEquals("Wrong editable flag", editable,
+                controller.isTableEditable());
+    }
+
+    /**
+     * Tests the table editable flag if it is true.
+     */
+    @Test
+    public void testIsTableEditableTrue()
+    {
+        checkTableEditable(true);
+    }
+
+    /**
+     * Tests the table editable flag if it is false.
+     */
+    @Test
+    public void testIsTableEditableFalse()
+    {
+        checkTableEditable(false);
+    }
+
+    /**
      * Tests whether the logic data class of a column can be queried.
      */
     @Test
