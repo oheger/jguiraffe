@@ -15,6 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.layout
 
+import javafx.scene.control.Label
+
 import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -183,5 +185,31 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
     wrapper = new ContainerWrapper(Some(sizeHandler))
     val adapter = checkCreatePercentLayoutContainer()
     assertSame("Size handler not passed", sizeHandler, adapter.getSizeHandler)
+  }
+
+  /**
+   * Tests whether a node can be obtained which is directly passed in.
+   */
+  @Test def testObtainPossiblyWrappedNodeNode() {
+    val node = new Label("test")
+    assertSame("Wrong result", node, ContainerWrapper.obtainPossiblyWrappedNode(node))
+  }
+
+  /**
+   * Tests whether a node can be obtained from a container wrapper.
+   */
+  @Test def testObtainPossiblyWrappedNodeContainer() {
+    val node = new Text("Test")
+    wrapper.addComponent(node, null)
+    val pane = ContainerWrapper.obtainPossiblyWrappedNode(wrapper).asInstanceOf[Pane]
+    checkChildren(pane, node)
+  }
+
+  /**
+   * Tests whether invalid input is handled correctly by obtainPossiblyWrappedNode().
+   */
+  @Test(expected = classOf[FormBuilderException])
+  def testObtainPossiblyWrappedNodeOther() {
+    ContainerWrapper.obtainPossiblyWrappedNode(this)
   }
 }

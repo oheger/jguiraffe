@@ -84,14 +84,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
    */
   @throws(classOf[FormBuilderException])
   def addComponent(component: Object, constraints: Object) {
-    component match {
-      case nd: Node =>
-        components += ComponentData(nd, constraints)
-      case wrap: ContainerWrapper =>
-        components += ComponentData(wrap.createContainer(), constraints)
-      case _ =>
-        throw new FormBuilderException("Unsupported component: " + component)
-    }
+    components += ComponentData(ContainerWrapper.obtainPossiblyWrappedNode(component), constraints)
   }
 
   /**
@@ -121,7 +114,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
    * returned. Otherwise, result is the default system font.
    * @return the font of this container
    */
-  def getContainerFont: Font = font.getOrElse(Font.getDefault())
+  def getContainerFont: Font = font.getOrElse(Font.getDefault)
 
   /**
    * Creates the correct ''Pane'' implementation for the current layout. If no
@@ -186,5 +179,27 @@ object ContainerWrapper {
       throw new IllegalArgumentException("Not a ContainerWrapper: " + obj)
     }
     obj.asInstanceOf[ContainerWrapper]
+  }
+
+  /**
+   * Interprets the passed in component and tries to obtain a ''Node'' from it.
+   * In some situations the library has to deal with objects with can either by
+   * JavaFX nodes or containers that wrap other nodes. This method allows handling
+   * such objects transparently by automatically extracting the referenced ''Node''
+   * instance: if the passed in object is already a node, it is returned.
+   * Otherwise, it has to be a ''ContainerWrapper''; in this case, the container
+   * pane is created and returned. All other input causes an exception.
+   * @param component the component to be inspected
+   * @return the ''Node'' extracted from this component
+   * @throws FormBuilderException if the component is not supported
+   */
+  def obtainPossiblyWrappedNode(component: AnyRef): Node = {
+    component match {
+      case nd: Node => nd
+      case wrapper: ContainerWrapper =>
+        wrapper.createContainer()
+      case other =>
+        throw new FormBuilderException("Cannot extract node from: " + other)
+    }
   }
 }
