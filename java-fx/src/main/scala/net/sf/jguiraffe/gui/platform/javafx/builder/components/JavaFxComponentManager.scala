@@ -356,14 +356,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
         initToolTip(tag, tab.tooltipProperty, tabData.getToolTip)
       }
 
-      tab setContent (tabData.getComponent match {
-        case cw: ContainerWrapper =>
-          cw.createContainer()
-        case nd: Node =>
-          nd
-        case other =>
-          throw new FormBuilderException("Invalid content of a tab pane: " + other)
-      })
+      tab setContent ContainerWrapper.obtainPossiblyWrappedNode(tabData.getComponent)
       tab
     }
 
