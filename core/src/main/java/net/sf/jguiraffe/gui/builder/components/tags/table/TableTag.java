@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sf.jguiraffe.gui.app.Application;
 import net.sf.jguiraffe.gui.builder.components.Color;
 import net.sf.jguiraffe.gui.builder.components.ColorHelper;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
@@ -763,6 +764,8 @@ public class TableTag extends InputComponentTag implements Composite,
 
         tableFormController = new TableFormController(this);
         installTableFieldHandlerFactory();
+        setEditorValidationHandler(createDefaultEditorValidationHandler());
+
         super.processBeforeBody();
     }
 
@@ -869,5 +872,21 @@ public class TableTag extends InputComponentTag implements Composite,
     {
         getBuilderData().setFieldHandlerFactory(
                 getFieldHandlerFactory().getWrappedFactory());
+    }
+
+    /**
+     * Creates a default {@code TableEditorValidationHandler}. This method is
+     * called before the tag's body is processed. So it is possible to override
+     * this handler by tags in the body.
+     *
+     * @return the default {@code TableEditorValidationHandler}
+     */
+    private TableEditorValidationHandler createDefaultEditorValidationHandler()
+    {
+        DefaultTableEditorValidationHandler handler =
+                new DefaultTableEditorValidationHandler();
+        handler.setApplication(getBuilderData().getBeanContext().getBean(
+                Application.class));
+        return handler;
     }
 }

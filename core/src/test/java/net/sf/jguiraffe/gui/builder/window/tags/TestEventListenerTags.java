@@ -19,6 +19,11 @@ import java.util.ArrayList;
 import java.util.EventListener;
 
 import net.sf.jguiraffe.di.BeanContext;
+import net.sf.jguiraffe.di.BeanStore;
+import net.sf.jguiraffe.di.impl.DefaultBeanStore;
+import net.sf.jguiraffe.di.impl.providers.ConstantBeanProvider;
+import net.sf.jguiraffe.gui.app.Application;
+import net.sf.jguiraffe.gui.app.ApplicationContextImpl;
 import net.sf.jguiraffe.gui.builder.action.FormActionImpl;
 import net.sf.jguiraffe.gui.builder.components.TreeHandlerImpl;
 import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionListener;
@@ -26,10 +31,8 @@ import net.sf.jguiraffe.gui.builder.event.FormEventManager;
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager;
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManagerImpl;
 import net.sf.jguiraffe.gui.builder.window.WindowImpl;
-
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.easymock.EasyMock;
-import org.junit.Test;
 
 /**
  * Test class for several concrete event listener tags.
@@ -118,6 +121,21 @@ public class TestEventListenerTags extends AbstractWindowTagTest
     }
 
     /**
+     * {@inheritDoc} This implementation adds the central application bean to
+     * the parent bean store.
+     */
+    @Override
+    protected BeanStore createParentBeanStore()
+    {
+        DefaultBeanStore store = new DefaultBeanStore();
+        Application app = new Application();
+        app.setApplicationContext(new ApplicationContextImpl());
+        store.addBeanProvider(Application.BEAN_APPLICATION,
+                ConstantBeanProvider.getInstance(Application.class, app));
+        return store;
+    }
+
+    /**
      * Checks which listeners have been registered at the form event manager.
      *
      * @param expected the expected string
@@ -144,7 +162,7 @@ public class TestEventListenerTags extends AbstractWindowTagTest
         builderData.setBuilderName(builderName);
         executeScript(SCRIPT);
         builderData.invokeCallBacks();
-        StringBuffer buf = new StringBuffer(COMP_NAME);
+        StringBuilder buf = new StringBuilder(COMP_NAME);
         buf.append(" -> ").append(listenerType);
         checkFormEventRegistration(buf.toString());
     }
@@ -176,7 +194,6 @@ public class TestEventListenerTags extends AbstractWindowTagTest
     /**
      * Tests whether a mouse listener can be registered.
      */
-    @Test
     public void testMouseListener() throws Exception
     {
         checkFormEventListener(MOUSE_BUILDER, "MOUSE");
@@ -269,7 +286,7 @@ public class TestEventListenerTags extends AbstractWindowTagTest
     /**
      * Prepares a test for registering a listener at a bean.
      *
-     * @param expTypes the expected listener type
+     * @param expType the expected listener type
      * @return the mock event manager
      */
     private FormEventManagerTestImpl prepareBeanRegistrationTest(

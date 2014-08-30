@@ -21,13 +21,18 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import net.sf.jguiraffe.di.BeanContext;
+import net.sf.jguiraffe.di.BeanStore;
+import net.sf.jguiraffe.di.impl.DefaultBeanStore;
+import net.sf.jguiraffe.di.impl.providers.ConstantBeanProvider;
+import net.sf.jguiraffe.gui.app.Application;
+import net.sf.jguiraffe.gui.app.ApplicationContext;
 import net.sf.jguiraffe.gui.builder.components.DefaultFieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.tags.AbstractTagTest;
+import net.sf.jguiraffe.gui.builder.utils.MessageOutput;
 import net.sf.jguiraffe.gui.forms.ComponentHandlerImpl;
 import net.sf.jguiraffe.gui.forms.FieldHandler;
 import net.sf.jguiraffe.gui.forms.Form;
-
 import org.apache.commons.jelly.JellyTagException;
 import org.easymock.EasyMock;
 
@@ -196,6 +201,9 @@ public class TestTableTag extends AbstractTagTest
             + "EDITABLE = false SCROLLWIDTH = NumberWithUnit [ 10.0cm ] "
             + "SCROLLHEIGHT = NumberWithUnit [ 3.0in ]" + TABLE_COLUMNS;
 
+    /** The central application object. */
+    private Application application;
+
     /**
      * Generates a string representation for a column.
      *
@@ -210,7 +218,8 @@ public class TestTableTag extends AbstractTagTest
 
     /**
      * Sets up the Jelly context. Creates the model for the table and stores it
-     * as a variable in the context.
+     * as a variable in the context. Also, a special bean context is put into
+     * the builder data object.
      */
     @Override
     protected void setUpJelly()
@@ -222,6 +231,40 @@ public class TestTableTag extends AbstractTagTest
             model.add(ModelBean.fromString(s));
         }
         context.setVariable(VAR_MODEL, model);
+    }
+
+    /**
+     * {@inheritDoc} This implementation adds the central application bean to
+     * the parent bean store.
+     */
+    @Override
+    protected BeanStore createParentBeanStore()
+    {
+        DefaultBeanStore store = new DefaultBeanStore();
+        store.addBeanProvider(Application.BEAN_APPLICATION,
+                ConstantBeanProvider.getInstance(Application.class,
+                        createApplicationBean()));
+        return store;
+    }
+
+    /**
+     * Creates a bean for the central application. This is needed by the tag
+     * when it creates the default editor validation handler.
+     *
+     * @return the application bean
+     */
+    private Application createApplicationBean()
+    {
+        application = EasyMock.createMock(Application.class);
+        ApplicationContext appCtx =
+                EasyMock.createMock(ApplicationContext.class);
+        MessageOutput msgOutput = EasyMock.createMock(MessageOutput.class);
+        EasyMock.expect(appCtx.getMessageOutput()).andReturn(msgOutput)
+                .anyTimes();
+        EasyMock.expect(application.getApplicationContext()).andReturn(appCtx)
+                .anyTimes();
+        EasyMock.replay(appCtx, application, msgOutput);
+        return application;
     }
 
     /**
@@ -364,8 +407,6 @@ public class TestTableTag extends AbstractTagTest
                 .getRendererSelectionHandler());
         assertNull("Editor selection handler is set", tt
                 .getEditorSelectionHandler());
-        assertNull("Editor validation handler is set", tt
-                .getEditorValidationHandler());
         checkSimpleTableForm(tt.getRowRenderForm());
         checkSimpleTableForm(tt.getRowEditForm());
         for (TableColumnTag tct : tt.getColumns())
@@ -819,6 +860,22 @@ public class TestTableTag extends AbstractTagTest
                 factory.getWriteTransformerReference(field));
         assertNotNull("No validator for " + col,
                 factory.getValidatorReference(field));
+    }
+
+    /**
+     * Tests whether the tag initializes a validation handler.
+     */
+    public void testValidationHandlerInitialized() throws Exception
+    {
+        builderData.setBuilderName(BUILDER_TESTTABLE);
+        executeScript(SCRIPT);
+
+        TableTag tt = getTableTag();
+        assertNotNull("No validation handler set",
+                tt.getEditorValidationHandler());
+        assertSame("Validation handler not initialized", application,
+                ((DefaultTableEditorValidationHandler) tt
+                        .getEditorValidationHandler()).getApplication());
     }
 
     /**

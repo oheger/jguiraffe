@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.URL;
 
 import junit.framework.TestCase;
+import net.sf.jguiraffe.di.BeanStore;
 import net.sf.jguiraffe.di.impl.DefaultBeanContext;
 import net.sf.jguiraffe.gui.builder.components.Color;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
@@ -143,9 +144,21 @@ public abstract class AbstractTagTest extends TestCase
         builderData.put(context);
         output = XMLOutput.createDummyXMLOutput();
         builderData.setBeanContext(new DefaultBeanContext(
-                new JellyContextBeanStore(context, null)));
+                new JellyContextBeanStore(context, createParentBeanStore())));
         DIBuilderData diData = new DIBuilderData();
         diData.put(context);
+    }
+
+    /**
+     * Creates the parent bean store for the bean context used during script
+     * execution. By overriding this method derived classes can inject their own
+     * beans into the context used by the script.
+     *
+     * @return the parent bean store
+     */
+    protected BeanStore createParentBeanStore()
+    {
+        return null;
     }
 
     /**
