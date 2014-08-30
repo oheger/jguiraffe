@@ -15,11 +15,12 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
-import javafx.scene.Node
 import javafx.scene.control.TableColumn.CellDataFeatures
 import javafx.scene.control.{Label, TableColumn}
+import javafx.scene.layout.Pane
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnClass, TableFormController}
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
@@ -97,7 +98,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    * @param columnClass the logic class to be returned for this column
    * @param editable flag whether this column should be editable
    */
-  private def prepareController(colIdx: Int, renderer: Node = null,
+  private def prepareController(colIdx: Int, renderer: AnyRef= null,
                                 columnClass: ColumnClass = ColumnClass.STRING,
                                 editable: Boolean = false) {
     EasyMock.expect(controller.hasRenderer(colIdx)).andReturn(renderer != null).anyTimes()
@@ -153,6 +154,24 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
       val column = createAndCheckColumn(ColIdx, expEditFlag = false)
       val cell = extractCell[RenderCell](column)
       assertSame("Wrong renderer node", renderer, cell.getGraphic)
+    }
+  }
+
+  /**
+   * Tests whether a column with a renderer component is handled correctly if the
+   * renderer is wrapped in a container.
+   */
+  @Test def testColumnWithWrappedRenderer() {
+    val ColIdx = 0
+    val wrapper = mock[ContainerWrapper]
+    val pane = new Pane
+    EasyMock.expect(wrapper.createContainer()).andReturn(pane)
+    prepareController(ColIdx, renderer = wrapper)
+
+    whenExecuting(controller, wrapper) {
+      val column = createAndCheckColumn(ColIdx, expEditFlag = false)
+      val cell = extractCell[RenderCell](column)
+      assertSame("Wrong renderer node", pane, cell.getGraphic)
     }
   }
 

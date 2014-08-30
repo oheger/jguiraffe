@@ -16,11 +16,11 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.Node
 import javafx.scene.control.{TableCell, TableColumn}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnClass, TableFormController}
 import net.sf.jguiraffe.gui.platform.javafx.common.FunctionCallback
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 
 /**
  * A factory class for creating the columns of a table view defined by a
@@ -43,7 +43,7 @@ private class ColumnFactory {
     if (controller.hasRenderer(columnIndex)) {
       createColumnWithCallbacks(controller, columnIndex, editable = false) { f =>
         new RenderCell(controller,
-          controller.getColumnRenderer(columnIndex).asInstanceOf[Node])
+          ContainerWrapper.obtainPossiblyWrappedNode(controller.getColumnRenderer(columnIndex)))
       }
     } else {
       controller installTransformersForColumnType columnIndex
