@@ -15,16 +15,6 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.LayoutManager;
-import java.awt.font.TextAttribute;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -56,6 +46,15 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.TreeSelectionModel;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.LayoutManager;
+import java.awt.font.TextAttribute;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
@@ -95,14 +94,12 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableColumnWidthListener;
-import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableEditorValidationHandler;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableModel;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableSelectionHandler;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventManager;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingPercentLayoutAdapter;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
 import net.sf.jguiraffe.locators.Locator;
-
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -962,11 +959,6 @@ public class SwingComponentManager implements ComponentManager
             initTableColumnWidths(tag, table);
             initComponent(table, tag);
 
-            if (tag.getEditorValidationHandler() == null)
-            {
-                tag
-                        .setEditorValidationHandler(new SwingTableEditorValidationHandler());
-            }
             if (tag.getEditorSelectionHandler() == null)
             {
                 tag.setEditorSelectionHandler(new SwingTableSelectionHandler());
