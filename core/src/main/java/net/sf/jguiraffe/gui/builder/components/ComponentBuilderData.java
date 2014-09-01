@@ -242,6 +242,9 @@ public class ComponentBuilderData implements Composite,
     /** Stores the name of the current default button. */
     private String defaultButtonName;
 
+    /** A counter that determines whether callbacks are disabled. */
+    private int callBacksEnabledState;
+
     /**
      * Creates a new instance of {@code ComponentBuilderData}.
      */
@@ -888,17 +891,58 @@ public class ComponentBuilderData implements Composite,
     }
 
     /**
+     * Disables the call back mechanism. Newly added callbacks are ignored and
+     * will not be executed by {@link #invokeCallBacks()}. Calls to this method
+     * can be nested. A corresponding number of {@link #enableCallBacks()} is
+     * necessary in order to enable callbacks again.
+     *
+     * @since 1.3
+     */
+    public void disableCallBacks()
+    {
+        callBacksEnabledState--;
+    }
+
+    /**
+     * Enables the call back mechanism. This is the counter part of
+     * {@link #disableCallBacks()}.
+     *
+     * @since 1.3
+     */
+    public void enableCallBacks()
+    {
+        callBacksEnabledState++;
+    }
+
+    /**
+     * Returns a flag whether the call back mechanism is currently enabled. If
+     * this method returns <b>false</b>, all callbacks added to this object are
+     * ignored.
+     *
+     * @return <b>true</b> if callbacks are enabled, <b>false</b> otherwise
+     * @since 1.3
+     */
+    public boolean isCallBacksEnabled()
+    {
+        return callBacksEnabledState >= 0;
+    }
+
+    /**
      * Registers the specified call back at this builder data object. It will be
      * invoked after the building operation is complete for the current form
      * context.
      *
      * @param callBack the call back object
      * @param param a parameter object; this object is passed to the call back
-     * when it is invoked
+     *        when it is invoked
      */
     public void addCallBack(ComponentBuilderCallBack callBack, Object param)
     {
-        fetchFormContextData().getCallBacks().add(new CallBackData(callBack, param));
+        if (isCallBacksEnabled())
+        {
+            fetchFormContextData().getCallBacks().add(
+                    new CallBackData(callBack, param));
+        }
     }
 
     /**
