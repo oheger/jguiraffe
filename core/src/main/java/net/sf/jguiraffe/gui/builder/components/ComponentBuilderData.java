@@ -18,9 +18,11 @@ package net.sf.jguiraffe.gui.builder.components;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.di.impl.DefaultBeanContext;
@@ -204,6 +206,9 @@ public class ComponentBuilderData implements Composite,
     /** Stores a map with the so far requested widget handlers. */
     private final Map<Object, WidgetHandler> widgetHandlers;
 
+    /** A list for the context listeners registered at this object. */
+    private final List<FormContextListener> contextListeners;
+
     /**
      * Stores a reference to the main form object that is set up during the
      * builder operation.
@@ -246,6 +251,7 @@ public class ComponentBuilderData implements Composite,
         formStack = new Stack<Form>();
         formEventManagers = new HashMap<Form, FormEventManager>();
         widgetHandlers = new HashMap<Object, WidgetHandler>();
+        contextListeners = new CopyOnWriteArrayList<FormContextListener>();
     }
 
     /**
@@ -549,18 +555,38 @@ public class ComponentBuilderData implements Composite,
     }
 
     /**
-     * Installs a new form context for the specified form. This method can be
-     * called by complex components that create their own (sub) form instances.
-     * It has the following effect:
-     * <ul>
-     * <li>{@code pushComponentStore()} is called with the component
-     * store of the specified form. So newly created components will be added to
-     * this store.</li>
-     * <li>The event manager for this form is obtained using
-     * {@code getEventManagerForForm()} and made to the active event
-     * manager. This ensures that event listener registration logic for the sub
-     * form is handled by the appropriate event manager.</li>
-     * </ul>
+     * Adds a {@code FormContextListener} object to this data object. The
+     * listener receives notifications when a new form context is created or the
+     * current context is closed. This method can be called from an arbitrary
+     * thread
+     *
+     * @param listener the listener to be registered (must not be <b>null</b>)
+     * @throws IllegalArgumentException if the listener is <b>null</b>
+     * @since 1.3
+     */
+    public void addFormContextListener(FormContextListener listener)
+    {
+        if (listener == null)
+        {
+            throw new IllegalArgumentException("Listener must not be null!");
+        }
+        contextListeners.add(listener);
+    }
+
+    /**
+     * Removes the specified {@code FormContextListener} from this object.
+     *
+     * @param listener the listener to be removed
+     * @since 1.3
+     */
+    public void removeFormContextListener(FormContextListener listener)
+    {
+        contextListeners.remove(listener);
+    }
+
+    /**
+     * Installs a new form context for the specified form. Works like the method
+     * with the same name, but passes <b>null</b> for the source.
      *
      * @param f the sub form of the new form context (must not be <b>null</b>)
      * @throws IllegalArgumentException if the form instance is <b>null</b>
@@ -569,36 +595,84 @@ public class ComponentBuilderData implements Composite,
      */
     public void pushFormContext(Form f)
     {
-        if (f == null)
+        pushFormContext(f, null);
+    }
+
+    /**
+     * Installs a new form context for the specified form and passes information
+     * about the responsible source. This method can be called by complex
+     * components that create their own (sub) form instances. It has the
+     * following effect:
+     * <ul>
+     * <li>{@code pushComponentStore()} is called with the component store of
+     * the specified form. So newly created components will be added to this
+     * store.</li>
+     * <li>The event manager for this form is obtained using
+     * {@code getEventManagerForForm()} and made to the active event manager.
+     * This ensures that event listener registration logic for the sub form is
+     * handled by the appropriate event manager.</li>
+     * <li>Registered {@code FormContextListener} objects are notified about the
+     * newly created context.</li>
+     * </ul>
+     *
+     * @param form the sub form of the new form context (must not be
+     *        <b>null</b>)
+     * @param source the source object responsible for the form context
+     * @throws IllegalArgumentException if the form instance is <b>null</b>
+     * @see #pushComponentStore(ComponentStore)
+     * @see #getEventManagerForForm(Form)
+     * @since 1.3
+     */
+    public void pushFormContext(Form form, Object source)
+    {
+        if (form == null)
         {
             throw new IllegalArgumentException(
                     "Form for context must not be null!");
         }
-        formStack.push(f);
-        pushComponentStore(f.getComponentStore());
+        formStack.push(form);
+        pushComponentStore(form.getComponentStore());
         setEventManager(null);
+        fireFormContextCreated(form, source);
     }
 
     /**
-     * Removes the outer most form context. This method is the counter part of
-     * {@code pushFormContext()}. It makes the previous form to the
-     * active form again (and ensures that the correct component store and event
-     * manager are selected. This method must be called after processing of a
-     * sub form has completed. <em>Note:</em> This method calls
-     * {@code popComponentStore()} to make the component store of the
-     * previous form to the current one. Clients must be aware that the calls to
-     * the push and pop methods must be symmetric and correctly nested,
-     * otherwise the association between the current forms and their component
-     * stores may get lost!
+     * Removes the outer most form context. Works like the method with the same
+     * name, but no information about a source is provided.
      *
      * @return the {@code Form} instance of the removed form context
      * @throws FormBuilderException if an error occurs when closing the current
-     * form context
-     * @throws IllegalStateException if {@code pushFormContext()} has not
-     * been called before (and the context to be removed is the root context)
-     * @see #pushFormContext(Form)
+     *         form context
+     * @throws IllegalStateException if {@code pushFormContext()} has not been
+     *         called before (and the context to be removed is the root context)
      */
     public Form popFormContext() throws FormBuilderException
+    {
+        return popFormContext(null);
+    }
+
+    /**
+     * Removes the outer most form context passing in information about the
+     * responsible source. This method is the counter part of
+     * {@code pushFormContext()}. It makes the previous form to the active form
+     * again (and ensures that the correct component store and event manager are
+     * selected. This method must be called after processing of a sub form has
+     * completed. <em>Note:</em> This method calls {@code popComponentStore()}
+     * to make the component store of the previous form to the current one.
+     * Clients must be aware that the calls to the push and pop methods must be
+     * symmetric and correctly nested, otherwise the association between the
+     * current forms and their component stores may get lost!
+     *
+     * @param source the source object responsible for the form context
+     * @return the {@code Form} instance of the removed form context
+     * @throws FormBuilderException if an error occurs when closing the current
+     *         form context
+     * @throws IllegalStateException if {@code pushFormContext()} has not been
+     *         called before (and the context to be removed is the root context)
+     * @see #pushFormContext(Form, Object)
+     * @since 1.3
+     */
+    public Form popFormContext(Object source) throws FormBuilderException
     {
         if (formStack.size() <= 1)
         {
@@ -609,6 +683,7 @@ public class ComponentBuilderData implements Composite,
         Form result = formStack.pop();
         popComponentStore();
         setEventManager(null);
+        fireFormContextClosed(result, source);
         return result;
     }
 
@@ -951,13 +1026,11 @@ public class ComponentBuilderData implements Composite,
     }
 
     /**
-     * Allows to set a specific {@code BeanContext}. This is not
-     * necessary normally, because the bean context is correctly set up. The
-     * preferred way is to call {@code initBeanContext()} and let this
-     * method construct an appropriate hierarchy of contexts and bean stores.
+     * Allows to set a specific {@code BeanContext}. This is not necessary
+     * normally, because the bean context is correctly set up automatically
+     * taking account the appropriate hierarchy of contexts and bean stores.
      *
      * @param ctx the new bean context to be used
-     * @see #initBeanContext(BeanContext, net.sf.jguiraffe.di.BeanStore, JellyContext)
      */
     public void setBeanContext(BeanContext ctx)
     {
@@ -1079,6 +1152,34 @@ public class ComponentBuilderData implements Composite,
     protected ToolTipManager createToolTipManager()
     {
         return new DefaultToolTipManager(this);
+    }
+
+    /**
+     * Notifies registered listeners about a newly created form context.
+     *
+     * @param form the sub form of the new form context
+     * @param source the source object responsible for the form context
+     */
+    private void fireFormContextCreated(Form form, Object source)
+    {
+        for (FormContextListener listener : contextListeners)
+        {
+            listener.formContextCreated(form, source);
+        }
+    }
+
+    /**
+     * Notifies registered listeners about a form context that has been closed.
+     *
+     * @param form the sub form of the closed form context
+     * @param source the source object responsible for the form context
+     */
+    private void fireFormContextClosed(Form form, Object source)
+    {
+        for (FormContextListener listener : contextListeners)
+        {
+            listener.formContextClosed(form, source);
+        }
     }
 
     /**

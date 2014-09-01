@@ -275,7 +275,7 @@ public class TestComponentBuilderData
         data.invokeCallBacks();
         for (int i = 0; i < 10; i++)
         {
-            TestCallBack cb = (TestCallBack) lst.get(i);
+            TestCallBack cb = lst.get(i);
             assertSame(data, cb.getBuilderData());
             assertEquals(new Integer(i), cb.getParams());
         }
@@ -622,6 +622,72 @@ public class TestComponentBuilderData
         data.addCallBack(mockCb, null);
         data.popFormContext();
         EasyMock.verify(mockCb);
+    }
+
+    /**
+     * Tests whether a form context listener is notified for a newly created
+     * context.
+     */
+    @Test
+    public void testFormContextListenerContextCreated()
+    {
+        FormContextListener listener =
+                EasyMock.createMock(FormContextListener.class);
+        Form ctxForm = new Form(tctx, bindingStrategy);
+        listener.formContextCreated(ctxForm, this);
+        EasyMock.replay(listener);
+
+        initForm();
+        data.addFormContextListener(listener);
+        data.pushFormContext(ctxForm, this);
+        EasyMock.verify(listener);
+    }
+
+    /**
+     * Tests whether a form context listener is notified about a closed context.
+     */
+    @Test
+    public void testFormContextListenerContextClosed()
+            throws FormBuilderException
+    {
+        FormContextListener listener =
+                EasyMock.createMock(FormContextListener.class);
+        Form ctxForm = new Form(tctx, bindingStrategy);
+        listener.formContextClosed(ctxForm, this);
+        EasyMock.replay(listener);
+
+        initForm();
+        data.pushFormContext(ctxForm, this);
+        data.addFormContextListener(listener);
+        data.popFormContext(this);
+        EasyMock.verify(listener);
+    }
+
+    /**
+     * Tests whether a form context listener can be removed again.
+     */
+    @Test
+    public void testRemoveFormContextListener() throws FormBuilderException
+    {
+        FormContextListener listener =
+                EasyMock.createMock(FormContextListener.class);
+        Form ctxForm = new Form(tctx, bindingStrategy);
+        EasyMock.replay(listener);
+
+        initForm();
+        data.addFormContextListener(listener);
+        data.removeFormContextListener(listener);
+        data.pushFormContext(ctxForm, this);
+        data.popFormContext(this);
+    }
+
+    /**
+     * Tries to add a null form context listener.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddFormContextListenerNull()
+    {
+        data.addFormContextListener(null);
     }
 
     /**
