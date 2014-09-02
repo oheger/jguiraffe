@@ -21,7 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.sf.jguiraffe.PersonBean;
+import net.sf.jguiraffe.di.BeanStore;
 import net.sf.jguiraffe.di.impl.DefaultBeanContext;
+import net.sf.jguiraffe.di.impl.DefaultBeanStore;
+import net.sf.jguiraffe.di.impl.providers.ConstantBeanProvider;
+import net.sf.jguiraffe.gui.app.Application;
+import net.sf.jguiraffe.gui.app.ApplicationContextImpl;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
@@ -178,10 +183,10 @@ public abstract class AbstractTableModelTest
     }
 
     /**
-     * Invokes the <code>processBeforeBody()</code> method on the passed in
+     * Invokes the {@code processBeforeBody()} method on the passed in
      * table tag. This method can be used if the tag in its processed form is
      * needed. It assumes that the passed in tag has been created by the
-     * <code>setUpTableTag()</code> method.
+     * {@code setUpTableTag()} method.
      *
      * @param tt the table tag
      * @throws FormBuilderException if an exception occurs
@@ -190,7 +195,28 @@ public abstract class AbstractTableModelTest
     public static void processTableTag(TableTag tt) throws JellyTagException,
             FormBuilderException
     {
+        ComponentBuilderData builderData =
+                ComponentBuilderData.get(tt.getContext());
+        builderData.setBeanContext(new DefaultBeanContext(
+                new JellyContextBeanStore(tt.getContext(),
+                        createParentBeanStore())));
         ((TableTagTestImpl) tt).processBeforeBody();
+    }
+
+    /**
+     * Creates a bean store which contains an application bean. This is needed
+     * when processing a table tag.
+     *
+     * @return the bean store
+     */
+    private static BeanStore createParentBeanStore()
+    {
+        DefaultBeanStore store = new DefaultBeanStore();
+        Application app = new Application();
+        app.setApplicationContext(new ApplicationContextImpl());
+        store.addBeanProvider(Application.BEAN_APPLICATION,
+                ConstantBeanProvider.getInstance(Application.class, app));
+        return store;
     }
 
     /**
@@ -201,13 +227,13 @@ public abstract class AbstractTableModelTest
     public static Collection<PersonBean> setUpTestData()
     {
         List<PersonBean> data = new LinkedList<PersonBean>();
-        for (int i = 0; i < TEST_DATA.length; i++)
+        for (Object[] td : TEST_DATA)
         {
             PersonBean bean = new PersonBean();
-            bean.setFirstName(TEST_DATA[i][0].toString());
-            bean.setLastName(TEST_DATA[i][1].toString());
-            bean.setIdNo(((Integer) TEST_DATA[i][2]).intValue());
-            bean.setSalary(((Double) TEST_DATA[i][3]).doubleValue());
+            bean.setFirstName(td[0].toString());
+            bean.setLastName(td[1].toString());
+            bean.setIdNo(((Integer) td[2]).intValue());
+            bean.setSalary(((Double) td[3]).doubleValue());
             data.add(bean);
         }
         return data;
@@ -246,7 +272,7 @@ public abstract class AbstractTableModelTest
         private TableTag tableTag;
 
         /**
-         * Creates a new instance of <code>TableColumnTagTestImpl</code> and
+         * Creates a new instance of {@code TableColumnTagTestImpl} and
          * sets the parent table tag.
          *
          * @param tt the table tag
