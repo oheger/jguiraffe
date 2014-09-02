@@ -104,7 +104,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    */
   @Test def testContainerFontUndefined() {
     assertFalse("Got an initial font", wrapper.font.isDefined)
-    assertEquals("Wrong container default font", Font.getDefault(),
+    assertEquals("Wrong container default font", Font.getDefault,
       wrapper.getContainerFont)
   }
 
@@ -211,5 +211,18 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   @Test(expected = classOf[FormBuilderException])
   def testObtainPossiblyWrappedNodeOther() {
     ContainerWrapper.obtainPossiblyWrappedNode(this)
+  }
+
+  /**
+   * Tests whether a list with the components of a wrapper can be obtained.
+   */
+  @Test def testGetComponents() {
+    val node1 = new Label("c1")
+    val node2 = new Text("c2")
+    wrapper.addComponent(node1, null)
+    wrapper.addComponent(node2, "a constraint")
+
+    val components = wrapper.getComponents
+    assertEquals("Wrong components", List(node1, node2), components)
   }
 }

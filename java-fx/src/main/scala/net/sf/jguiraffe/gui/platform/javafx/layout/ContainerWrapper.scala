@@ -110,6 +110,13 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
   }
 
   /**
+   * Returns a list with all components stored in this wrapper.
+   * @return a list with the components in this wrapper
+   */
+  def getComponents: List[Node] =
+    (components map (_.component)).toList
+
+  /**
    * Returns the ''Font'' for this container. If a font has been set, it is
    * returned. Otherwise, result is the default system font.
    * @return the font of this container
