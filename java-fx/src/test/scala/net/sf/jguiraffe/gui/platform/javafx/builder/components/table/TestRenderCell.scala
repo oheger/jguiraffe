@@ -19,6 +19,9 @@ import javafx.scene.Node
 import javafx.scene.control.{ContentDisplay, Label, TableColumn, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
+import net.sf.jguiraffe.gui.forms.Form
+import org.apache.commons.jelly.Tag
+import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
@@ -34,16 +37,16 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
   /** The mock for the form controller. */
   private var formController: TableFormController = _
 
-  /** The renderer component. */
-  private var rendererComponent: Node = _
+  /** The cell component manager. */
+  private var cellComponentManager: CellComponentManagerTestImpl = _
 
   /** The cell to be tested. */
   private var cell: RenderCell = _
 
   @Before def setUp() {
     formController = mock[TableFormController]
-    rendererComponent = new Label("Renderer")
-    cell = new RenderCell(formController, rendererComponent)
+    cellComponentManager = new CellComponentManagerTestImpl(new Label("Renderer"))
+    cell = new RenderCell(formController, cellComponentManager)
     cell updateIndex RowIndex
     cell updateTableColumn new TableColumn[AnyRef, AnyRef]
     cell updateTableView new TableView[AnyRef]
@@ -54,7 +57,14 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
    */
   @Test def testRenderComponent() {
     assertEquals("Wrong content display", ContentDisplay.GRAPHIC_ONLY, cell.getContentDisplay)
-    assertSame("Wrong graphic", rendererComponent, cell.getGraphic)
+    assertSame("Wrong graphic", cellComponentManager.rendererComponent, cell.getGraphic)
+  }
+
+  /**
+   * Tests whether the cell has correctly registered itself.
+   */
+  @Test def testRegistration(): Unit = {
+    assertSame("Wrong registered cell", cell, cellComponentManager.registeredCell)
   }
 
   /**
@@ -64,6 +74,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
     whenExecuting(formController) {
       cell.updateItem(this, empty = true)
       assertSame("Item not updated", this, cell.getItem)
+      assertNull("Got a selected cell", cellComponentManager.selectedCell)
     }
   }
 
@@ -75,6 +86,36 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
     whenExecuting(formController) {
       cell.updateItem(this, empty = false)
       assertSame("Item not updated", this, cell.getItem)
+      assertSame("Wrong selected cell", cell, cellComponentManager.selectedCell)
     }
+  }
+}
+
+/**
+ * A mock implementation of the cell component manager.
+ * @param rendererComponent the renderer component
+ */
+private class CellComponentManagerTestImpl(val rendererComponent: Node) extends
+CellComponentManager(EasyMock.createNiceMock(classOf[Tag]),
+  EasyMock.createNiceMock(classOf[Form])) {
+  /** The cell that has been passed to registerCell(). */
+  var registeredCell: AnyRef = _
+
+  /** The cell that has been passed to selectCell(). */
+  var selectedCell: AnyRef = _
+
+  /**
+   * @inheritdoc Stores the passed in cell and returns the renderer component.
+   */
+  override def registerCell(cell: AnyRef): Node = {
+    registeredCell = cell
+    rendererComponent
+  }
+
+  /**
+   * @inheritdoc Stores the passed in cell.
+   */
+  override def selectCell(cell: AnyRef): Unit = {
+    selectedCell = cell
   }
 }

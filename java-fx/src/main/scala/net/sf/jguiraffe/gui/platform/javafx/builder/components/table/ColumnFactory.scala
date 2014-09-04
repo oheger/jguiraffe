@@ -20,7 +20,6 @@ import javafx.scene.control.{TableCell, TableColumn}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnClass, TableFormController}
 import net.sf.jguiraffe.gui.platform.javafx.common.FunctionCallback
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 
 /**
  * A factory class for creating the columns of a table view defined by a
@@ -42,8 +41,7 @@ private class ColumnFactory {
     AnyRef] = {
     if (controller.hasRenderer(columnIndex)) {
       createColumnWithCallbacks(controller, columnIndex, editable = false) { f =>
-        new RenderCell(controller,
-          ContainerWrapper.obtainPossiblyWrappedNode(controller.getColumnRenderer(columnIndex)))
+        new RenderCell(controller, obtainCellComponentManager(controller, columnIndex))
       }
     } else {
       controller installTransformersForColumnType columnIndex
@@ -80,5 +78,18 @@ private class ColumnFactory {
     column setCellFactory FunctionCallback(cellCallback)
     column setEditable editable
     column
+  }
+
+  /**
+   * Obtains the ''CellComponentManager'' required for a ''RenderCell'' from the
+   * given ''TableFormController''. The component manager is stored as renderer
+   * component for the given column. A corresponding type cast has to be performed.
+   * @param controller the ''TableFormController''
+   * @param columnIndex the column index
+   * @return the ''CellComponentManager''
+   */
+  private def obtainCellComponentManager(controller: TableFormController,
+                                         columnIndex: Int): CellComponentManager = {
+    controller.getColumnRenderer(columnIndex).asInstanceOf[CellComponentManager]
   }
 }
