@@ -16,13 +16,12 @@
 package net.sf.jguiraffe.gui.builder.components.tags;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 
+import net.sf.jguiraffe.gui.builder.components.AccessibleComposite;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.Composite;
+import net.sf.jguiraffe.gui.builder.components.CompositeImpl;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
-
 import org.apache.commons.jelly.JellyTagException;
 
 /**
@@ -51,18 +50,34 @@ import org.apache.commons.jelly.JellyTagException;
 public abstract class ContainerTag extends SimpleComponentTag implements
         Composite
 {
-    /** Stores the components that have been added to this container. */
-    private Collection<Object[]> components;
-
-    /** Stores a reference to the layout object for this container. */
-    private Object layout;
+    /** The object implementing the Composite interface. */
+    private AccessibleComposite composite;
 
     /**
-     * Creates a new instance of <code>ContainerTag</code>.
+     * Returns the {@code AccessibleComposite} implementation used by this
+     * container tag.
+     *
+     * @return the {@code AccessibleComposite}
+     * @since 1.3
      */
-    public ContainerTag()
+    public AccessibleComposite getComposite()
     {
-        components = new LinkedList<Object[]>();
+        return composite;
+    }
+
+    /**
+     * Sets the {@code AccessibleComposite} implementation used by this
+     * container tag. Container tags make use of a default
+     * {@code AccessibleComposite} object. For special use cases, it is possible
+     * to replace this implementation by a special one. This is then used for
+     * storing components and layout objects.
+     *
+     * @param composite the {@code AccessibleComposite} to be used
+     * @since 1.3
+     */
+    public void setComposite(AccessibleComposite composite)
+    {
+        this.composite = composite;
     }
 
     /**
@@ -75,9 +90,7 @@ public abstract class ContainerTag extends SimpleComponentTag implements
      */
     public void addComponent(Object comp, Object constraints)
     {
-        components.add(new Object[] {
-                comp, constraints
-        });
+        getComposite().addComponent(comp, constraints);
     }
 
     /**
@@ -87,7 +100,7 @@ public abstract class ContainerTag extends SimpleComponentTag implements
      */
     public Object getLayout()
     {
-        return layout;
+        return getComposite().getLayout();
     }
 
     /**
@@ -98,7 +111,7 @@ public abstract class ContainerTag extends SimpleComponentTag implements
      */
     public void setLayout(Object layout)
     {
-        this.layout = layout;
+        getComposite().setLayout(layout);
     }
 
     /**
@@ -110,6 +123,18 @@ public abstract class ContainerTag extends SimpleComponentTag implements
     public Object getContainer()
     {
         return getComponent();
+    }
+
+    /**
+     * {@inheritDoc} This implementation obtains the {@code AccessibleComposite}
+     * for this tag.
+     */
+    @Override
+    protected void processBeforeBody() throws JellyTagException,
+            FormBuilderException
+    {
+        setComposite(new CompositeImpl());
+        super.processBeforeBody();
     }
 
     /**
@@ -128,14 +153,15 @@ public abstract class ContainerTag extends SimpleComponentTag implements
     protected Object createComponent(ComponentManager manager, boolean create)
             throws JellyTagException, FormBuilderException
     {
-        Object container = createContainer(manager, create, components);
+        Object container =
+                createContainer(manager, create, getComposite().getComponents());
         if (!create)
         {
             if (getLayout() != null)
             {
                 manager.setContainerLayout(container, getLayout());
             }
-            addComponents(manager, container, components);
+            addComponents(manager, container, getComposite().getComponents());
         }
         return container;
     }
@@ -155,20 +181,19 @@ public abstract class ContainerTag extends SimpleComponentTag implements
     protected void addComponents(ComponentManager manager, Object container,
             Collection<Object[]> comps) throws FormBuilderException
     {
-        for (Iterator<Object[]> it = comps.iterator(); it.hasNext();)
+        for (Object[] compData : comps)
         {
-            Object[] compData = it.next();
             manager.addContainerComponent(container, compData[0], compData[1]);
         }
     }
 
     /**
      * Creates the container widget. This method is called by the implementation
-     * of <code>{@link #createComponent(ComponentManager)}</code>. Concrete
+     * of {@link #createComponent(ComponentManager, boolean)}. Concrete
      * sub classes must define it to return the specific GUI container widget.
      * The passed in collection with the child components can be used when
      * needed for initialization. In all cases later the
-     * <code>{@link #addComponents(ComponentManager, Object, Collection) addComponents()}</code>
+     * {@link #addComponents(ComponentManager, Object, Collection) addComponents()}
      * method will be called to add the children automatically (so if the
      * children are already processed, this method should be overwritten with an
      * empty implementation).
