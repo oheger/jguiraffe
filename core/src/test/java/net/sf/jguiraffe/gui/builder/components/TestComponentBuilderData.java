@@ -112,6 +112,16 @@ public class TestComponentBuilderData
     }
 
     /**
+     * Tests whether the expected default container selector is set.
+     */
+    @Test
+    public void testDefaultContainerSelector()
+    {
+        assertTrue("Wrong container selector",
+                data.getContainerSelector() instanceof DefaultContainerSelector);
+    }
+
+    /**
      * Tests accessing the form before it has been initialized. This should cause
      * an exception.
      */

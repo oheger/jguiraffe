@@ -197,6 +197,9 @@ public class ComponentBuilderData implements Composite,
     /** Stores a reference to the field handler factory. */
     private FieldHandlerFactory fieldHandlerFactory;
 
+    /** The container selector used during the builder operation. */
+    private ContainerSelector containerSelector;
+
     /** A stack for managing the form-relevant information. */
     private final Stack<FormContextData> formContextStack;
 
@@ -255,6 +258,7 @@ public class ComponentBuilderData implements Composite,
         formEventManagers = new HashMap<Form, FormEventManager>();
         widgetHandlers = new HashMap<Object, WidgetHandler>();
         contextListeners = new CopyOnWriteArrayList<FormContextListener>();
+        containerSelector = new DefaultContainerSelector();
     }
 
     /**
@@ -354,6 +358,28 @@ public class ComponentBuilderData implements Composite,
     public void setFieldHandlerFactory(FieldHandlerFactory fieldHandlerFactory)
     {
         this.fieldHandlerFactory = fieldHandlerFactory;
+    }
+
+    /**
+     * Returns the {@code ContainerSelector} used by this object.
+     *
+     * @return the {@code ContainerSelector}
+     * @since 1.3
+     */
+    public ContainerSelector getContainerSelector()
+    {
+        return containerSelector;
+    }
+
+    /**
+     * Sets the {@code ContainerSelector} to be used by this object.
+     *
+     * @param containerSelector the {@code ContainerSelector}
+     * @since 1.3
+     */
+    public void setContainerSelector(ContainerSelector containerSelector)
+    {
+        this.containerSelector = containerSelector;
     }
 
     /**
