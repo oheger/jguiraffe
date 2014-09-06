@@ -18,9 +18,9 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 import javafx.scene.Node
 import javafx.scene.control.{ContentDisplay, Label, TableColumn, TableView}
 
+import net.sf.jguiraffe.gui.builder.components.tags.ContainerTag
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import net.sf.jguiraffe.gui.forms.Form
-import org.apache.commons.jelly.Tag
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
@@ -96,7 +96,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
  * @param rendererComponent the renderer component
  */
 private class CellComponentManagerTestImpl(val rendererComponent: Node) extends
-CellComponentManager(EasyMock.createNiceMock(classOf[Tag]),
+CellComponentManager(EasyMock.createNiceMock(classOf[ContainerTag]),
   EasyMock.createNiceMock(classOf[Form])) {
   /** The cell that has been passed to registerCell(). */
   var registeredCell: AnyRef = _

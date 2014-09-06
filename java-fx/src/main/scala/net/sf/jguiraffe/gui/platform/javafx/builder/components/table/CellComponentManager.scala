@@ -18,8 +18,9 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 import java.lang.reflect.{InvocationHandler, Method}
 import javafx.scene.Node
 
-import net.sf.jguiraffe.gui.builder.components.tags.ComponentBaseTag
-import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderData, ComponentManager}
+import net.sf.jguiraffe.gui.builder.components.tags.table.ColumnComponentTag
+import net.sf.jguiraffe.gui.builder.components.tags.{ComponentBaseTag, ContainerTag}
+import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import org.apache.commons.jelly.{Tag, XMLOutput}
@@ -70,7 +71,7 @@ object CellComponentManager {
  * @param tag the tag that created the form context controlled by this object
  * @param form the form for the current column
  */
-class CellComponentManager(val tag: Tag, val form: Form) {
+class CellComponentManager(val tag: ContainerTag, val form: Form) {
   /** A map for the registered cells. */
   private val cells = collection.mutable.Map.empty[AnyRef, Form]
 
@@ -102,8 +103,7 @@ class CellComponentManager(val tag: Tag, val form: Form) {
    */
   def registerCell(cell: AnyRef): Node = {
     val builderData = ComponentBuilderData.get(tag.getContext)
-    val container = new ContainerWrapper
-    builderData setRootContainer container
+    val composite: CompositeImpl = installComposite(builderData)
     val newForm = new Form(form.getTransformerContext, form.getBindingStrategy)
     cells += cell -> newForm
 
@@ -111,7 +111,7 @@ class CellComponentManager(val tag: Tag, val form: Form) {
     executeTagForCellRegistration()
     builderData.popFormContext()
 
-    container.getComponents.head
+    extractUIComponent(composite)
   }
 
   /**
@@ -144,7 +144,39 @@ class CellComponentManager(val tag: Tag, val form: Form) {
    * Executes the tag and constructs a new form and UI for a newly registered cell.
    */
   private def executeTagForCellRegistration(): Unit = {
-    tag.getBody.run(tag.getContext, new XMLOutput)
+    tag.getBody.run(tag.getContext, XMLOutput.createDummyXMLOutput())
+  }
+
+  /**
+   * Install an alternative ''Composite'' in which the UI for the column is
+   * stored. Note that we cannot simply access the tag passed to this
+   * object for this purpose. Jelly creates a new tag instance when executing
+   * the tag body because this is now done in a separate thread.
+   * @param builderData the ''ComponentBuilderData'' object
+   * @return the alternative ''Composite'' object
+   */
+  private def installComposite(builderData: ComponentBuilderData): CompositeImpl = {
+    val composite = new CompositeImpl
+    builderData setContainerSelector new ContainerSelector {
+      override def getComposite(tag: Composite): Composite =
+        tag match {
+          case t: ColumnComponentTag =>
+            composite
+          case comp => comp
+        }
+    }
+    composite
+  }
+
+  /**
+   * Extracts the UI component for a newly registered cell from the given
+   * composite object.
+   * @param composite the composite
+   * @return the root UI component
+   */
+  private def extractUIComponent(composite: CompositeImpl): Node = {
+    val component = composite.getComponents.iterator().next()(0)
+    ContainerWrapper.obtainPossiblyWrappedNode(component)
   }
 }
 
