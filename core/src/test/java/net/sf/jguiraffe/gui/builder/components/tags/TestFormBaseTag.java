@@ -20,14 +20,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
+import net.sf.jguiraffe.gui.builder.components.Composite;
+import net.sf.jguiraffe.gui.builder.components.ContainerSelector;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 import net.sf.jguiraffe.gui.forms.TransformerContextImpl;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
-
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
-import org.apache.commons.jelly.MissingAttributeException;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -184,13 +186,31 @@ public class TestFormBaseTag
     }
 
     /**
+     * Tests whether an enclosing container tag can be found.
+     */
+    @Test
+    public void testFindContainer()
+    {
+        ContainerSelector selector =
+                EasyMock.createMock(ContainerSelector.class);
+        Composite composite = EasyMock.createMock(Composite.class);
+        ContainerTag container = new PanelTag();
+        EasyMock.expect(selector.getComposite(container)).andReturn(composite);
+        EasyMock.replay(selector, composite);
+        tag.setParent(container);
+        ComponentBuilderData.get(tag.getContext()).setContainerSelector(
+                selector);
+
+        assertSame("Wrong composite", composite, tag.findContainer());
+    }
+
+    /**
      * A concrete test tag implementation.
      */
     private static class TestTag extends FormBaseTag
     {
         @Override
-        protected void process() throws MissingAttributeException,
-                JellyTagException
+        protected void process() throws JellyTagException
         {
             // just a dummy
         }
