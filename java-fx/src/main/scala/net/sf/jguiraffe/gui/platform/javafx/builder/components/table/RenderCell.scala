@@ -53,8 +53,8 @@ private class RenderCell(val formController: TableFormController,
   override def updateItem(item: AnyRef, empty: Boolean) {
     super.updateItem(item, empty)
     if (!empty) {
-      cellComponentManager selectCell this
       formController selectCurrentRow getIndex
+      cellComponentManager selectCell this
     }
   }
 

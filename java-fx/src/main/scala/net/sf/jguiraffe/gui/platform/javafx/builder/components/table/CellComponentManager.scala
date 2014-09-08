@@ -75,8 +75,8 @@ class CellComponentManager(val tag: ContainerTag, val form: Form) {
   /** A map for the registered cells. */
   private val cells = collection.mutable.Map.empty[AnyRef, Form]
 
-  /** The form for the currently active cell. */
-  private var formOfCurrentCell: Form = _
+  /** A map for the data of the current row render form. */
+  private val currentData = collection.mutable.Map.empty[String, AnyRef]
 
   /**
    * Installs a special ''ComponentManager'' proxy implementation for the
@@ -115,22 +115,31 @@ class CellComponentManager(val tag: ContainerTag, val form: Form) {
   }
 
   /**
-   * Selects the specified cell. This activates the form associated with this
-   * cell. So each access to the column form is redirected to this cell's form.
+   * Selects the specified cell. This determines the form associated with this
+   * cell. It is filled with the current data values provided by the component
+   * handler proxies via the ''initFieldData()'' method.
    * @param cell the cell to be selected
    */
   def selectCell(cell: AnyRef): Unit = {
-    formOfCurrentCell = cells(cell)
+    val formOfCurrentCell = cells(cell)
+    currentData.iterator foreach { kv =>
+      val handler = formOfCurrentCell.getField(kv._1).getComponentHandler
+        .asInstanceOf[ComponentHandler[AnyRef]]
+      handler setData kv._2
+    }
   }
 
   /**
-   * Determines the ''ComponentHandler'' with the given name in the currently
-   * selected cell form.
-   * @param name the name of the component in question
-   * @return the found ''ComponentHandler''
+   * Initializes the current data of the given field. This method is called by a
+   * proxy for a component handler when it is passed new data. (This happens when
+   * the form for the current row is initialized.) It stores the passed in value
+   * in an internal data structure. When the cell for this row gets selected its
+   * form is initialized with the data collected here.
+   * @param name the name of the field in question
+   * @param data the data for this field
    */
-  private[table] def fetchDelegateComponentHandler(name: String): ComponentHandler[_] =
-    formOfCurrentCell.getField(name).getComponentHandler
+  private[table] def initFieldData(name: String, data: AnyRef): Unit =
+    currentData += name -> data
 
   /**
    * Creates a proxy for a component manager.
@@ -214,26 +223,27 @@ InvocationHandler {
 /**
  * An ''InvocationHandler'' implementation for the proxy of a component handler.
  *
- * The purpose of this proxy is to delegate to the corresponding ''ComponentHandler''
- * in the form of the currently active cell.
+ * The purpose of this proxy is to intercept calls to the ''setData()'' method
+ * which are triggered when the form of the current row of the table is filled
+ * with data. This data is passed to the associated ''CellComponentManager''
+ * object; from there it is propagated to the cell responsible for displaying
+ * the current row.
  * @param cellManager the ''CellComponentManager''
  * @param name the name of the associated property
  */
 private class ComponentHandlerInvocationHandler(cellManager: CellComponentManager,
                                                 name: String) extends InvocationHandler {
-  /** A set with the names of methods to be ignored. */
-  private val MethodsToIgnore = Set("getComponent", "getOuterComponent")
+  /** The name of the setData() method. */
+  private val MethodSetData = "setData"
 
   /**
    * @inheritdoc
-   * Determines the ''ComponentHandler'' to invoke and delegates to it. Some
-   * methods are excluded; they are implemented as no-ops.
+   * Intercepts a ''setData()'' call and passes the data to the ''CellComponentManager''.
    */
   override def invoke(proxy: scala.Any, method: Method, args: Array[AnyRef]): AnyRef = {
-    if (MethodsToIgnore.contains(method.getName)) null
-    else {
-      val delegate = cellManager fetchDelegateComponentHandler name
-      method.invoke(delegate, args: _*)
+    if(MethodSetData == method.getName) {
+      cellManager.initFieldData(name, args(0))
     }
+    null
   }
 }

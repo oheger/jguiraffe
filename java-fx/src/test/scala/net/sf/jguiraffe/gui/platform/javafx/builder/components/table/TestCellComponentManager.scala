@@ -112,13 +112,14 @@ class TestCellComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether a component handler proxy ignores the method getOuterComponent().
+   * Tests whether a component handler proxy ignores most methods.
    */
   @Test def testComponentHandlerProxyIgnoreGetOuterComponent(): Unit = {
     val proxy = prepareComponentManagerProxy()
     val handler = proxy.createTextField(new TextFieldTag, false)
 
-    assertNull("Wrong result", handler.getOuterComponent)
+    assertNull("Wrong result (1)", handler.getOuterComponent)
+    assertNull("Wrong type", handler.getType)
   }
 
   /**
@@ -184,7 +185,7 @@ class TestCellComponentManager extends JUnitSuite with EasyMockSugar {
 
   /**
    * Tests whether a component handler proxy created by the component manager proxy
-   * can be used to access data in the column form.
+   * can be used to write data in the target component.
    */
   @Test def testDataAccessViaComponentHandlerProxy(): Unit = {
     val proxy = prepareComponentManagerProxy()
@@ -195,8 +196,8 @@ class TestCellComponentManager extends JUnitSuite with EasyMockSugar {
     val answer = expectTagExecution(body)
     whenExecuting(body) {
       manager registerCell this
-      manager selectCell this
       field setData TestValue
+      manager selectCell this
       checkFieldData(answer.contextForm, TestValue)
     }
   }
@@ -225,7 +226,7 @@ class TestCellComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testSelectCurrentCell(): Unit = {
     val proxy = prepareComponentManagerProxy()
-    initColumnForm(proxy)
+    val field = initColumnForm(proxy)
     val TestValue1 = "SomeTestData"
     val TestValue2 = "OtherTestData"
     val Cell1 = "Cell1"
@@ -237,12 +238,12 @@ class TestCellComponentManager extends JUnitSuite with EasyMockSugar {
     whenExecuting(body) {
       manager registerCell Cell1
       manager registerCell Cell2
-      answer1.contextForm.getField(ComponentName) setData TestValue1
-      answer2.contextForm.getField(ComponentName) setData TestValue2
+      field setData TestValue1
       manager selectCell Cell1
-      checkFieldData(form, TestValue1)
+      field setData TestValue2
       manager selectCell Cell2
-      checkFieldData(form, TestValue2)
+      checkFieldData(answer1.contextForm, TestValue1)
+      checkFieldData(answer2.contextForm, TestValue2)
     }
   }
 
