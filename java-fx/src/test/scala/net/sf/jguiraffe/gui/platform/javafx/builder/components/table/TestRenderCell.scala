@@ -53,11 +53,10 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether the correct render component has been installed.
+   * Tests whether the correct content display flag has been set.
    */
-  @Test def testRenderComponent() {
+  @Test def testRenderContentDisplay() {
     assertEquals("Wrong content display", ContentDisplay.GRAPHIC_ONLY, cell.getContentDisplay)
-    assertSame("Wrong graphic", cellComponentManager.rendererComponent, cell.getGraphic)
   }
 
   /**
@@ -75,6 +74,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
       cell.updateItem(this, empty = true)
       assertSame("Item not updated", this, cell.getItem)
       assertNull("Got a selected cell", cellComponentManager.selectedCell)
+      assertNull("Got a graphic", cell.getGraphic)
     }
   }
 
@@ -87,6 +87,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
       cell.updateItem(this, empty = false)
       assertSame("Item not updated", this, cell.getItem)
       assertSame("Wrong selected cell", cell, cellComponentManager.selectedCell)
+      assertSame("Wrong graphic", cellComponentManager.rendererComponent, cell.getGraphic)
     }
   }
 }

@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
+import javafx.scene.Node
 import javafx.scene.control.{ContentDisplay, TableCell}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
@@ -42,7 +43,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 private class RenderCell(val formController: TableFormController,
                          val cellComponentManager: CellComponentManager)
   extends TableCell[AnyRef, AnyRef] {
-  initCellUI()
+  /** The visual representation for this cell. */
+  private val uiNode = initCellUI()
 
   /**
    * @inheritdoc
@@ -55,14 +57,19 @@ private class RenderCell(val formController: TableFormController,
     if (!empty) {
       formController selectCurrentRow getIndex
       cellComponentManager selectCell this
+      setGraphic(uiNode)
+    } else {
+      setGraphic(null)
     }
   }
 
   /**
-   * Initializes the UI of this cell. Installs the renderer component.
+   * Initializes the UI of this cell. Obtains the renderer component
+   * which is obtained from the ''CellComponentManager''.
+   * @return the UI component to be used for this cell
    */
-  private def initCellUI() {
-    setGraphic(cellComponentManager registerCell this)
+  private def initCellUI(): Node = {
     setContentDisplay(ContentDisplay.GRAPHIC_ONLY)
+    cellComponentManager registerCell this
   }
 }
