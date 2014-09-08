@@ -24,21 +24,27 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
  * A specialized ''TableCell'' implementation that renders a complete form.
  *
  * It is possible to define a renderer component for a table column. This can
- * be a container consisting of multiple components. The component has been
- * set up during the builder operation, and and fields it contains have been
- * connected to the row render form of the table. Therefore, this table
- * implementation can be pretty straight-forward. It just has to install the
+ * be a container consisting of multiple components. For each cell instance
+ * created for the table a separate UI component has to be created. The
+ * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.table.CellComponentManager]]
+ * passed to the constructor takes care of this. Therefore, this cell
+ * implementation can be pretty straight-forward. It just has to register itself
+ * at the ''CellComponentManager'' and install the provided
  * renderer component as graphic for the cell. Whenever the cell value changes
- * the ''updateItem()'' method is called. Here just the current row of the
- * table has to be selected; this causes the fields of the renderer form to
- * be initialized and updates the graphical renderer components directly.
+ * the ''updateItem()'' method is called. Here the current row of the
+ * table has to be selected, and the cell has to set itself as the current,
+ * active cell at the ''CellComponentManager''; this causes the fields of the
+ * renderer form to be connected to the cell-specific form. Thus, the graphical
+ * renderer components are updated.
  *
  * @param formController the ''TableFormController''
- * @param renderComponent the component to be used as cell renderer
+ * @param cellComponentManager the ''CellComponentManager''
  */
-private class RenderCell(val formController: TableFormController, val renderComponent: Node)
+private class RenderCell(val formController: TableFormController,
+                         val cellComponentManager: CellComponentManager)
   extends TableCell[AnyRef, AnyRef] {
-  initCellUI()
+  /** The visual representation for this cell. */
+  private val uiNode = initCellUI()
 
   /**
    * @inheritdoc
@@ -50,14 +56,20 @@ private class RenderCell(val formController: TableFormController, val renderComp
     super.updateItem(item, empty)
     if (!empty) {
       formController selectCurrentRow getIndex
+      cellComponentManager selectCell this
+      setGraphic(uiNode)
+    } else {
+      setGraphic(null)
     }
   }
 
   /**
-   * Initializes the UI of this cell. Installs the renderer component.
+   * Initializes the UI of this cell. Obtains the renderer component
+   * which is obtained from the ''CellComponentManager''.
+   * @return the UI component to be used for this cell
    */
-  private def initCellUI() {
-    setGraphic(renderComponent)
+  private def initCellUI(): Node = {
     setContentDisplay(ContentDisplay.GRAPHIC_ONLY)
+    cellComponentManager registerCell this
   }
 }

@@ -71,6 +71,7 @@ import net.sf.jguiraffe.gui.builder.components.Container;
 import net.sf.jguiraffe.gui.builder.components.DefaultFieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.builder.components.FormContextListener;
 import net.sf.jguiraffe.gui.builder.enablers.ElementEnabler;
 import net.sf.jguiraffe.gui.builder.utils.MessageOutput;
 import net.sf.jguiraffe.gui.builder.window.Window;
@@ -370,21 +371,34 @@ public class TestJellyBuilder implements BuilderData
     private ComponentBuilderData prepareCreateCompBuilderDataTest()
     {
         ComponentManager manager = new ComponentManagerImpl();
+        return prepareCreateCompBuilderDataTest(manager);
+    }
+
+    /**
+     * Prepares a test for creating a component builder data object based on the
+     * passed in {@code ComponentManager}.
+     *
+     * @param manager the component manager to be used
+     * @return the data object created by the builder
+     */
+    private ComponentBuilderData prepareCreateCompBuilderDataTest(
+            ComponentManager manager)
+    {
         builder.setComponentManager(manager);
         FieldHandlerFactory fhFactory = new DefaultFieldHandlerFactory();
         builder.setFieldHandlerFactory(fhFactory);
         Object container = "root";
-        ComponentBuilderData data = builder.createComponentBuilderData(this,
-                container);
-        assertSame("Wrong field handler factory", fhFactory, data
-                .getFieldHandlerFactory());
-        assertSame("Wrong component manager", manager, data
-                .getComponentManager());
+        ComponentBuilderData data =
+                builder.createComponentBuilderData(this, container);
+        assertSame("Wrong field handler factory", fhFactory,
+                data.getFieldHandlerFactory());
+        assertSame("Wrong component manager", manager,
+                data.getComponentManager());
         assertSame("Wrong root container", container, data.getRootContainer());
-        assertSame("Wrong transformer context", TRANSFORMER_CONTEXT, data
-                .getTransformerContext());
-        assertSame("Wrong resource group", DEF_RES_GRP, data
-                .getDefaultResourceGroup());
+        assertSame("Wrong transformer context", TRANSFORMER_CONTEXT,
+                data.getTransformerContext());
+        assertSame("Wrong resource group", DEF_RES_GRP,
+                data.getDefaultResourceGroup());
         return data;
     }
 
@@ -440,6 +454,27 @@ public class TestJellyBuilder implements BuilderData
         assertEquals("Root container not set", rootContainer, data
                 .getRootContainer());
         EasyMock.verify(bc);
+    }
+
+    /**
+     * Tests whether the component manager is automatically registered as form
+     * context listener if it implements this interface.
+     */
+    @Test
+    public void testCreateComponentBuilderDataFormContextListener()
+    {
+        ComponentManagerFormContextListener manager =
+                EasyMock.createMock(ComponentManagerFormContextListener.class);
+        Form form = new Form(TRANSFORMER_CONTEXT, BINDING_STRATEGY);
+        manager.formContextCreated(EasyMock.anyObject(Form.class),
+                EasyMock.anyObject());
+        EasyMock.expectLastCall().atLeastOnce();
+        EasyMock.replay(manager);
+        ComponentBuilderData builderData =
+                prepareCreateCompBuilderDataTest(manager);
+
+        builderData.pushFormContext(form);
+        EasyMock.verify(manager);
     }
 
     /**
@@ -1736,5 +1771,13 @@ public class TestJellyBuilder implements BuilderData
         {
             this.textField = textField;
         }
+    }
+
+    /**
+     * A combined interface for a component manager and a form context listener.
+     */
+    private static interface ComponentManagerFormContextListener extends
+            ComponentManager, FormContextListener
+    {
     }
 }

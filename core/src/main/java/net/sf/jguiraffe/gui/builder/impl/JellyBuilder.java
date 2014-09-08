@@ -42,6 +42,7 @@ import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.DefaultFieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.builder.components.FormContextListener;
 import net.sf.jguiraffe.gui.builder.components.tags.FormBuilderTagLibrary;
 import net.sf.jguiraffe.gui.builder.window.Window;
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData;
@@ -689,7 +690,7 @@ public class JellyBuilder extends JellyBeanBuilder implements Builder
         {
             result.setBuilderName(getName());
         }
-        result.setComponentManager(getComponentManager());
+        initComponentManagerOnBuilderData(result);
         result.setFieldHandlerFactory(getFieldHandlerFactory());
         result.setDefaultResourceGroup(data.getDefaultResourceGroup());
         result.setRootContainer(rootContainer);
@@ -927,14 +928,15 @@ public class JellyBuilder extends JellyBeanBuilder implements Builder
     }
 
     /**
-     * Registers the {@code BeanCreationListener} objects defined by the {@code
-     * BuilderData} object at the specified {@code BeanContext}. This method is
-     * called by {@link #initBuilderBeanContext(BuilderData, JellyContext)} with
-     * the newly created {@code BeanContext} as parameter. If the {@code
-     * BuilderData} object contains bean creation listeners, these listeners
-     * have to be added to the context. (Note: this method is called in any
-     * case, even if the collection with creation listeners is <b>null</b> or
-     * empty.)
+     * Registers the {@code BeanCreationListener} objects defined by the
+     * {@code BuilderData} object at the specified {@code BeanContext}. This
+     * method is called by
+     * {@link #initBuilderBeanContext(BuilderData, JellyContext, InvocationHelper)}
+     * with the newly created {@code BeanContext} as parameter. If the
+     * {@code BuilderData} object contains bean creation listeners, these
+     * listeners have to be added to the context. (Note: this method is called
+     * in any case, even if the collection with creation listeners is
+     * <b>null</b> or empty.)
      *
      * @param context the {@code BeanContext} used by the builder
      * @param data the {@code BuilderData} object
@@ -967,6 +969,25 @@ public class JellyBuilder extends JellyBeanBuilder implements Builder
         if (data.getParentContext() == null)
         {
             throw new BuilderException("No parent bean context set!");
+        }
+    }
+
+    /**
+     * Initializes the {@code ComponentBuilderData} object with the
+     * {@code ComponentManager}. This method also checks whether the component
+     * manager is a {@link FormContextListener}. In this case, it is registered
+     * at the {@code ComponentBuilderData}.
+     *
+     * @param builderData the {@code ComponentBuilderData}
+     */
+    private void initComponentManagerOnBuilderData(
+            ComponentBuilderData builderData)
+    {
+        builderData.setComponentManager(getComponentManager());
+        if (getComponentManager() instanceof FormContextListener)
+        {
+            builderData
+                    .addFormContextListener((FormContextListener) getComponentManager());
         }
     }
 

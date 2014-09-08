@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.builder.components;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -108,6 +109,16 @@ public class TestComponentBuilderData
         assertNull("Got a root container", data.getRootContainer());
         assertNull("Got a builder name", data.getBuilderName());
         assertNull("Got a component manager", data.getComponentManager());
+    }
+
+    /**
+     * Tests whether the expected default container selector is set.
+     */
+    @Test
+    public void testDefaultContainerSelector()
+    {
+        assertTrue("Wrong container selector",
+                data.getContainerSelector() instanceof DefaultContainerSelector);
     }
 
     /**
@@ -275,7 +286,7 @@ public class TestComponentBuilderData
         data.invokeCallBacks();
         for (int i = 0; i < 10; i++)
         {
-            TestCallBack cb = (TestCallBack) lst.get(i);
+            TestCallBack cb = lst.get(i);
             assertSame(data, cb.getBuilderData());
             assertEquals(new Integer(i), cb.getParams());
         }
@@ -305,6 +316,73 @@ public class TestComponentBuilderData
             assertEquals("Wrong exception message",
                     "TestCallBackEx exception!", fex.getMessage());
         }
+    }
+
+    /**
+     * Tests whether callbacks can be disabled.
+     */
+    @Test
+    public void testDisableCallBacks() throws FormBuilderException
+    {
+        ComponentBuilderCallBack callBack =
+                EasyMock.createMock(ComponentBuilderCallBack.class);
+        EasyMock.replay(callBack);
+        initForm();
+
+        data.disableCallBacks();
+        data.addCallBack(callBack, null);
+        data.invokeCallBacks();
+    }
+
+    /**
+     * Tests whether callbacks can be enabled again.
+     */
+    @Test
+    public void testEnableCallBacks() throws FormBuilderException
+    {
+        ComponentBuilderCallBack callBack =
+                EasyMock.createMock(ComponentBuilderCallBack.class);
+        callBack.callBack(data, this);
+        EasyMock.replay(callBack);
+        initForm();
+
+        data.disableCallBacks();
+        data.enableCallBacks();
+        data.addCallBack(callBack, this);
+        data.invokeCallBacks();
+        EasyMock.verify(callBack);
+    }
+
+    /**
+     * Tests whether the enabled state of the callback mechanism can be queried.
+     */
+    @Test
+    public void testIsCallBacksEnabled()
+    {
+        assertTrue("Callbacks not enabled", data.isCallBacksEnabled());
+        data.disableCallBacks();
+        assertFalse("Callbacks still enabled", data.isCallBacksEnabled());
+        data.enableCallBacks();
+        assertTrue("Callbacks not re-enabled", data.isCallBacksEnabled());
+    }
+
+    /**
+     * Tests whether nested and repeated calls to enable or disable callbacks
+     * are handled correctly.
+     */
+    @Test
+    public void testIsCallBacksEnabledNested()
+    {
+        data.enableCallBacks();
+        data.disableCallBacks();
+        assertTrue("Wrong enabled flag (1)", data.isCallBacksEnabled());
+        data.disableCallBacks();
+        assertFalse("Wrong enabled flag (2)", data.isCallBacksEnabled());
+        data.disableCallBacks();
+        data.enableCallBacks();
+        assertFalse("Wrong enabled flag (3)", data.isCallBacksEnabled());
+        data.enableCallBacks();
+        assertTrue("Wrong enabled flag (4)", data.isCallBacksEnabled());
     }
 
     /**
@@ -622,6 +700,72 @@ public class TestComponentBuilderData
         data.addCallBack(mockCb, null);
         data.popFormContext();
         EasyMock.verify(mockCb);
+    }
+
+    /**
+     * Tests whether a form context listener is notified for a newly created
+     * context.
+     */
+    @Test
+    public void testFormContextListenerContextCreated()
+    {
+        FormContextListener listener =
+                EasyMock.createMock(FormContextListener.class);
+        Form ctxForm = new Form(tctx, bindingStrategy);
+        listener.formContextCreated(ctxForm, this);
+        EasyMock.replay(listener);
+
+        initForm();
+        data.addFormContextListener(listener);
+        data.pushFormContext(ctxForm, this);
+        EasyMock.verify(listener);
+    }
+
+    /**
+     * Tests whether a form context listener is notified about a closed context.
+     */
+    @Test
+    public void testFormContextListenerContextClosed()
+            throws FormBuilderException
+    {
+        FormContextListener listener =
+                EasyMock.createMock(FormContextListener.class);
+        Form ctxForm = new Form(tctx, bindingStrategy);
+        listener.formContextClosed(ctxForm, this);
+        EasyMock.replay(listener);
+
+        initForm();
+        data.pushFormContext(ctxForm, this);
+        data.addFormContextListener(listener);
+        data.popFormContext(this);
+        EasyMock.verify(listener);
+    }
+
+    /**
+     * Tests whether a form context listener can be removed again.
+     */
+    @Test
+    public void testRemoveFormContextListener() throws FormBuilderException
+    {
+        FormContextListener listener =
+                EasyMock.createMock(FormContextListener.class);
+        Form ctxForm = new Form(tctx, bindingStrategy);
+        EasyMock.replay(listener);
+
+        initForm();
+        data.addFormContextListener(listener);
+        data.removeFormContextListener(listener);
+        data.pushFormContext(ctxForm, this);
+        data.popFormContext(this);
+    }
+
+    /**
+     * Tries to add a null form context listener.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddFormContextListenerNull()
+    {
+        data.addFormContextListener(null);
     }
 
     /**

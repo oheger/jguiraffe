@@ -19,6 +19,7 @@ import java.util.MissingResourceException;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.Composite;
+import net.sf.jguiraffe.gui.builder.components.ContainerSelector;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
@@ -101,9 +102,9 @@ public abstract class FormBaseTag extends TagSupport implements ConditionalTag
 
     /**
      * The main method of this tag class. This implementation checks if the tag
-     * can be executed (by calling <code>{@link #canProcess()}</code>. If
+     * can be executed (by calling {@link #canProcess()}. If
      * this is the case, control is passed to the
-     * <code>{@link #process()}</code> method.
+     * {@link #process()} method.
      *
      * @param output the output object (ignored because form builder tags do not
      * produce any output)
@@ -128,8 +129,7 @@ public abstract class FormBaseTag extends TagSupport implements ConditionalTag
     }
 
     /**
-     * Returns the current <code>{@link ComponentBuilderData}</code> object from the
-     * context.
+     * Returns the current {@link ComponentBuilderData} object from the context.
      *
      * @param context the jelly context
      * @return the builder data
@@ -319,11 +319,11 @@ public abstract class FormBaseTag extends TagSupport implements ConditionalTag
 
     /**
      * Tries to determine the container to which this component should be added.
-     * This implementation first looks for an enclosing
-     * <code>&lt;container&gt;</code> tag (i.e. a tag implementing the
-     * {@link Composite} interface. If this is found, the container object
-     * defined there is used. Otherwise the method assumes that the new
-     * component should be added to the top level container, which can be
+     * This implementation first looks for an enclosing {@code <container>} tag
+     * (i.e. a tag implementing the {@link Composite} interface. If this is
+     * found, the container object defined there is used (determined by the
+     * current {@link ContainerSelector}). Otherwise the method assumes that the
+     * new component should be added to the top level container, which can be
      * obtained from the builder data object.
      *
      * @return the container object
@@ -331,21 +331,15 @@ public abstract class FormBaseTag extends TagSupport implements ConditionalTag
     public Composite findContainer()
     {
         Composite result = (Composite) findAncestorWithClass(Composite.class);
-        if (result == null)
-        {
-            // if not found, use the builder data, which maintains the root
-            // container
-            result = getBuilderData();
-        }
-
-        return result;
+        return (result != null) ? getBuilderData().getContainerSelector()
+                .getComposite(result) : getBuilderData();
     }
 
     /**
      * Performs processing of this tag before its body is evaluated. This can be
      * necessary if some initialization has to be performed first which is
      * required by nested tags. This method is automatically called by
-     * <code>doTag()</code>. This base implementation is left empty.
+     * {@code doTag()}. This base implementation is left empty.
      *
      * @throws JellyTagException if a jelly specific error occurs
      * @throws FormBuilderException if an error in the builder framework occurs
@@ -356,7 +350,7 @@ public abstract class FormBaseTag extends TagSupport implements ConditionalTag
 
     /**
      * Executes this tag. Here concrete sub classes must place their tag logic.
-     * This method is invoked by <code>doTag()</code> if execution is allowed.
+     * This method is invoked by {@code doTag()} if execution is allowed.
      *
      * @throws JellyTagException if a jelly specific error occurs
      * @throws FormBuilderException if an error in the builder framework occurs

@@ -101,7 +101,7 @@ public abstract class ColumnComponentTag extends ContainerTag
         super.processBeforeBody();
 
         // Add newly created components to the associated form
-        getBuilderData().pushFormContext(getTableForm(tableTag));
+        getBuilderData().pushFormContext(getTableForm(tableTag), this);
         // But use a component store that triggers us if necessary
         getBuilderData().pushComponentStore(
                 new ComponentStoreDelegate(
@@ -161,7 +161,7 @@ public abstract class ColumnComponentTag extends ContainerTag
         }
 
         getBuilderData().popComponentStore();
-        getBuilderData().popFormContext();
+        getBuilderData().popFormContext(this);
     }
 
     /**

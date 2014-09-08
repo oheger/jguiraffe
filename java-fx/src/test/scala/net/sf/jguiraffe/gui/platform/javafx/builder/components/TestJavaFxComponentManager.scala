@@ -24,10 +24,12 @@ import javafx.scene.text.Text
 
 import net.sf.jguiraffe.gui.builder.components.{Color, ComponentBuilderData, FormBuilderException, Orientation}
 import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
-import net.sf.jguiraffe.gui.builder.components.tags.table.{TableFormController, TableTag}
-import net.sf.jguiraffe.gui.forms.{ComponentHandler, ComponentStoreImpl}
+import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnRendererTag,
+TableFormController, TableTag}
+import net.sf.jguiraffe.gui.forms.{Form, ComponentHandler, ComponentStoreImpl}
 import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.TableHandlerFactory
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager,
+TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
@@ -1112,6 +1114,61 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       assertSame("Wrong split pane", split, manager.createSplitter(tag, false))
       assertEquals("Not initialized", tag.getName, split.getId)
     }
+  }
+
+  /**
+   * Tests the notification of a form context creation if the source is of no interest.
+   */
+  @Test def testFormContextCreatedIrrelevant() {
+    val form = mock[Form]
+    whenExecuting(form) {
+      manager.formContextCreated(form, this)
+    }
+  }
+
+  /**
+   * Tests the notification of a form context creation if the source is a column component
+   * tag.
+   */
+  @Test def testFormContextCreatedForColumnComponent() {
+    val form = mock[Form]
+    val tag = new ColumnRendererTag
+    val context = new JellyContext
+    val builderData = new ComponentBuilderData
+    tag setContext context
+    builderData put context
+
+    manager.formContextCreated(form, tag)
+    val proxyManager = builderData.getComponentManager
+    val cellManager = proxyManager.createBorderLayout(null).asInstanceOf[CellComponentManager]
+    assertSame("Wrong form", form, cellManager.form)
+    assertSame("Wrong tag", tag, cellManager.tag)
+  }
+
+  /**
+   * Tests a form context closed notification that is of no interest.
+   */
+  @Test def testFormContextClosedIrrelevant() {
+    val form = mock[Form]
+    whenExecuting(form) {
+      manager.formContextClosed(form, this)
+    }
+  }
+
+  /**
+   * Tests the reaction on a form context closed notification if the source is a column
+   * component.
+   */
+  @Test def testFormContextClosedForColumnComponent() {
+    val form = mock[Form]
+    val tag = new ColumnRendererTag
+    val context = new JellyContext
+    val builderData = new ComponentBuilderData
+    tag setContext context
+    builderData put context
+
+    manager.formContextClosed(form, tag)
+    assertSame("Component manager not reset", manager, builderData.getComponentManager)
   }
 
   /**

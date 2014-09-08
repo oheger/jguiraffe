@@ -20,15 +20,16 @@ import javafx.scene.Node
 import javafx.scene.control.{Button, CheckBox, ComboBox, Control, Label, Labeled, ListView, PasswordField, ProgressBar, RadioButton, Slider, Tab, TabPane, TextArea, TextField, ToggleButton, ToggleGroup, Tooltip}
 import javafx.scene.image.{Image, ImageView}
 
-import net.sf.jguiraffe.gui.builder.components.{ComponentManager, FormBuilderException, WidgetHandler}
+import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
 import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, DesktopPanelTag, FontTag, FormBaseTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, ScrollSizeSupport, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, TextIconData, ToggleButtonTag, TreeTag}
-import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag
+import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnComponentTag, TableTag}
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
-import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.forms.{Form, ComponentHandler}
 import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentManager.as
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.TableHandlerFactory
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager,
+TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
@@ -51,7 +52,7 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
   val treeHandlerFactory: TreeHandlerFactory,
   val tableHandlerFactory: TableHandlerFactory,
   val splitPaneFactory: SplitPaneFactory)
-  extends ComponentManager {
+  extends ComponentManager with FormContextListener {
   /**
    * Creates a new instance of ''JavaFxComponentManager'' and initializes it
    * with a default tool tip factory.
@@ -453,6 +454,36 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)
       handler
+    }
+  }
+
+  /**
+   * A new sub form context has been created. If this action was caused by a
+   * ''ColumnComponentTag'', a special ''ComponentManager'' is temporarily
+   * installed to handle the processing of the column component in a
+   * special way.
+   * @param form the ''Form'' object associated with the new context
+   */
+  override def formContextCreated(form: Form, source: scala.Any): Unit = {
+    source match {
+      case tag: ColumnComponentTag =>
+        val cellManager = new CellComponentManager(tag, form)
+        cellManager installComponentManagerProxy tag
+      case _ => // ignore others
+    }
+  }
+
+  /**
+   * A sub form context has been closed. If necessary, the ''ComponentManager''
+   * reference in the builder data is reset.
+   * @param form the ''Form'' object associated with the context
+   */
+  override def formContextClosed(form: Form, source: scala.Any): Unit = {
+    source match {
+      case tag: ColumnComponentTag =>
+        val builderData = ComponentBuilderData get tag.getContext
+        builderData setComponentManager this
+      case _ => // ignore others
     }
   }
 
