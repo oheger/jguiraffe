@@ -403,8 +403,6 @@ public class TestTableTag extends AbstractTagTest
         assertNotNull("Table has no model", tt.getTableModel());
         assertEquals("Wrong size of table model", MODEL_DATA.length, tt
                 .getTableModel().size());
-        assertNull("Renderer selection handler is set", tt
-                .getRendererSelectionHandler());
         assertNull("Editor selection handler is set", tt
                 .getEditorSelectionHandler());
         checkSimpleTableForm(tt.getRowRenderForm());
@@ -876,6 +874,23 @@ public class TestTableTag extends AbstractTagTest
         assertSame("Validation handler not initialized", application,
                 ((DefaultTableEditorValidationHandler) tt
                         .getEditorValidationHandler()).getApplication());
+    }
+
+    /**
+     * Tests whether a default renderer selection handler is created.
+     */
+    public void testDefaultRendererSelectionHandler() throws Exception
+    {
+        Object component = EasyMock.createMock(Object.class);
+        EasyMock.replay(component);
+        builderData.setBuilderName(BUILDER_TESTTABLE);
+        executeScript(SCRIPT);
+
+        TableTag tt = getTableTag();
+        TableSelectionHandler selectionHandler =
+                tt.getRendererSelectionHandler();
+        selectionHandler.prepareComponent(null, tt, component, false, false, 0,
+                0);
     }
 
     /**

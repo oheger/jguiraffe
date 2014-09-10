@@ -43,7 +43,7 @@ import org.apache.commons.jelly.MissingAttributeException;
  * some auxiliary tags that can be placed in the body of this tag such tables
  * can be created and initialized. Though tables can be used for editing data
  * they are no typical input components because they do not store their data in
- * a form bean using a <code>ComponentHandler</code>. Instead they are
+ * a form bean using a {@code ComponentHandler}. Instead they are
  * initialized with a <em>model</em>, which is simply a collection of Java
  * beans. For each element in this collection a row will be displayed in the
  * table. (The column's are derived from the table's column definition; see
@@ -57,25 +57,25 @@ import org.apache.commons.jelly.MissingAttributeException;
  * specified. The exact structure of the table is specified by nested tags.
  * </p>
  * <p>
- * For each column to be displayed in the table a <code>&lt;column&gt;</code>
+ * For each column to be displayed in the table a {@code <column></column>}
  * tag (implemented by the {@link TableColumnTag} class) must be placed in the body
  * of the table tag. This tag determines the column's header and the name of the
  * property of the model objects that is to be displayed in this column.
  * Further, a {@link net.sf.jguiraffe.transform.Transformer Transformer} can be
  * specified for formatting the data, and - in case of an editable column - a
  * validator. These attributes are analogous to standard input components. More
- * information can be found in the documentation of the <code>ColumnTag</code>.
+ * information can be found in the documentation of the {@code ColumnTag}.
  * </p>
  * <p>
  * Table tags are input component tags, which means that for each table a
  * component handler will be created. This is a specialized handler that can be
  * used to access specific table functionality. Per default this handler will
- * not be added to the form's fields, but with setting the <code>noField</code>
+ * not be added to the form's fields, but with setting the {@code noField}
  * attribute to <b>false</b> this behavior can be changed.
  * </p>
  * <p>
  * The following table lists the attributes supported by the
- * <code>TableTag</code> tag handler class:
+ * {@code TableTag} tag handler class:
  * <table border="1">
  * <tr>
  * <th>Attribute</th>
@@ -86,7 +86,7 @@ import org.apache.commons.jelly.MissingAttributeException;
  * <td valign="top">model</td>
  * <td>Here the name of a bean must be provided that serves as the data model
  * for the table. This bean must be a collection. If it implements the
- * <code>java.util.List</code> interface, it is directly used. Otherwise it is
+ * {@code java.util.List} interface, it is directly used. Otherwise it is
  * copied into a new list because direct access to the elements by index is
  * needed. The collection can contain arbitrary Java beans whose properties will
  * be accessed using reflection. The bean is looked up in the current bean
@@ -166,6 +166,17 @@ import org.apache.commons.jelly.MissingAttributeException;
 public class TableTag extends InputComponentTag implements Composite,
         ScrollSizeSupport
 {
+    /** A dummy default implementation of a selection handler. */
+    private static final TableSelectionHandler DUMMY_SELECTION_HANDLER =
+            new TableSelectionHandler()
+            {
+                public void prepareComponent(Object table, TableTag tableTag,
+                        Object component, boolean selected, boolean hasFocus,
+                        int row, int col)
+                {
+                }
+            };
+
     /** Stores the form for rendering a row. */
     private Form renderForm;
 
@@ -331,9 +342,9 @@ public class TableTag extends InputComponentTag implements Composite,
     }
 
     /**
-     * Returns the selection background color as <code>Color</code> object.
-     * This is the value set by the <code>setSelectionBackground()</code>
-     * method transformed into a <code>Color</code> representation.
+     * Returns the selection background color as {@code Color} object.
+     * This is the value set by the {@code setSelectionBackground()}
+     * method transformed into a {@code Color} representation.
      *
      * @return the selection background color
      */
@@ -343,9 +354,9 @@ public class TableTag extends InputComponentTag implements Composite,
     }
 
     /**
-     * Returns the selection foreground color as <code>Color</code> object.
-     * This is the value set by the <code>setSelectionForeground()</code>
-     * method transformed into a <code>Color</code> representation.
+     * Returns the selection foreground color as {@code Color} object.
+     * This is the value set by the {@code setSelectionForeground()}
+     * method transformed into a {@code Color} representation.
      *
      * @return the selection foreground color
      */
@@ -469,7 +480,7 @@ public class TableTag extends InputComponentTag implements Composite,
     /**
      * Sets the selection handler for editor components. This method will be
      * invoked by tags in the body to set a concrete implementation of the
-     * <code>{@link TableSelectionHandler}</code> interface.
+     * {@link TableSelectionHandler} interface.
      *
      * @param editorSelectionHandler the selection handler for editor components
      */
@@ -492,7 +503,7 @@ public class TableTag extends InputComponentTag implements Composite,
     /**
      * Sets the editor validation handler. This method will be called by nested
      * tags to set a concrete implementation of the
-     * <code>{@link TableEditorValidationHandler}</code> interface.
+     * {@link TableEditorValidationHandler} interface.
      *
      * @param editorValidationHandler the editor validation handler
      */
@@ -503,19 +514,22 @@ public class TableTag extends InputComponentTag implements Composite,
     }
 
     /**
-     * Returns the selection handler for renderer components.
+     * Returns the selection handler for renderer components. This method
+     * never returns <b>null</b>. If no handler was set, a dummy handler
+     * is returned.
      *
      * @return the renderer selection handler
      */
     public TableSelectionHandler getRendererSelectionHandler()
     {
-        return rendererSelectionHandler;
+        return (rendererSelectionHandler != null) ? rendererSelectionHandler
+                : DUMMY_SELECTION_HANDLER;
     }
 
     /**
      * Sets the selection handler for renderer components. This method will be
      * invoked by tags in the body to set a concrete implementation of the
-     * <code>{@link TableSelectionHandler}</code> interface.
+     * {@link TableSelectionHandler} interface.
      *
      * @param rendererSelectionHandler the selection handler for renderer
      * components
@@ -540,7 +554,7 @@ public class TableTag extends InputComponentTag implements Composite,
     /**
      * Sets the title of the message box that is displayed if validation fails.
      * This property can be evaluated by the current
-     * <code>{@link TableEditorValidationHandler}</code>. This object is
+     * {@link TableEditorValidationHandler}. This object is
      * triggered whenever validation of user input in a custom editor fails. In
      * this case typically a message box with the validation error message(s) is
      * displayed. With this property the caption of this message box is
@@ -588,8 +602,8 @@ public class TableTag extends InputComponentTag implements Composite,
 
     /**
      * Returns the form with the renderers defined for this table. All
-     * components defined in <code>&lt;colrenderer&gt;</code> tags for columns
-     * of this table will be collected into a <code>Form</code> object. For
+     * components defined in {@code <colrenderer>} tags for columns
+     * of this table will be collected into a {@code Form} object. For
      * columns that do not define their own renderers default
      * {@link net.sf.jguiraffe.gui.forms.FieldHandler FieldHandler} objects will
      * be added to this form. So this form object contains a complete
@@ -606,8 +620,8 @@ public class TableTag extends InputComponentTag implements Composite,
 
     /**
      * Returns the form with the editors defined for this table. This method is
-     * analogous to <code>getRowRenderForm()</code>, but the returned
-     * <code>Form</code> object contains the defined editor components (plus the
+     * analogous to {@code getRowRenderForm()}, but the returned
+     * {@code Form} object contains the defined editor components (plus the
      * default {@link net.sf.jguiraffe.gui.forms.FieldHandler FieldHandler}
      * objects to be used for columns that do not have their own editor).
      *
@@ -694,7 +708,7 @@ public class TableTag extends InputComponentTag implements Composite,
 
     /**
      * Returns an object representing the container. This method from the
-     * <code>Composite</code> interface is not supported by this tag.
+     * {@code Composite} interface is not supported by this tag.
      *
      * @return the container object
      */
@@ -706,7 +720,7 @@ public class TableTag extends InputComponentTag implements Composite,
 
     /**
      * Sets a layout object for this container. This method from the
-     * <code>Composite</code> interface is not supported by this tag.
+     * {@code Composite} interface is not supported by this tag.
      *
      * @param layout the layout to be set
      */
