@@ -96,6 +96,7 @@ import net.sf.jguiraffe.gui.builder.event.PlatformEventManager;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableColumnWidthListener;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableModel;
+import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableRowHeightUpdater;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableSelectionHandler;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventManager;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingPercentLayoutAdapter;
@@ -149,12 +150,28 @@ public class SwingComponentManager implements ComponentManager
     /** The mapping between string and TextAttribute constants. */
     private final Map<String, TextAttribute> textAttributeMapping;
 
+    /** The object for updating row heights for tables. */
+    private final SwingTableRowHeightUpdater tableRowHeightUpdater;
+
     /**
      * Creates a new instance of {@code SwingComponentManager}.
      */
     public SwingComponentManager()
     {
+        this(new SwingTableRowHeightUpdater());
+    }
+
+    /**
+     * Creates a new instance of {@code SwingComponentManager} and initializes
+     * it with the given dependencies. This constructor is mainly used for
+     * testing purposes.
+     *
+     * @param tableRowHeightUpdater the {@code SwingTableRowHeightUpdater}
+     */
+    SwingComponentManager(SwingTableRowHeightUpdater tableRowHeightUpdater)
+    {
         textAttributeMapping = initTextAttributeMapping();
+        this.tableRowHeightUpdater = tableRowHeightUpdater;
     }
 
     /**
@@ -958,7 +975,6 @@ public class SwingComponentManager implements ComponentManager
             SwingTableModel model = new SwingTableModel(tag, table);
             table.setModel(model);
             initTableColumnWidths(tag, table);
-            initColumnRenderers(tag.getTableFormController(), model, table);
             initComponent(table, tag);
 
             if (tag.getEditorSelectionHandler() == null)
@@ -985,6 +1001,11 @@ public class SwingComponentManager implements ComponentManager
             {
                 table.setSelectionForeground(SwingComponentUtils
                         .logic2SwingColor(tag.getSelectionForegroundColor()));
+            }
+
+            if (initColumnRenderers(tag.getTableFormController(), model, table))
+            {
+                getTableRowHeightUpdater().updateRowHeights(table);
             }
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
@@ -1325,6 +1346,16 @@ public class SwingComponentManager implements ComponentManager
     }
 
     /**
+     * Returns the {@code SwingTableRowHeightUpdater} used by this object.
+     *
+     * @return the {@code SwingTableRowHeightUpdater}
+     */
+    SwingTableRowHeightUpdater getTableRowHeightUpdater()
+    {
+        return tableRowHeightUpdater;
+    }
+
+    /**
      * Helper method for initializing a text field.
      *
      * @param tag the tag describing the field
@@ -1440,17 +1471,22 @@ public class SwingComponentManager implements ComponentManager
      * @param controller the {@code TableFormController}
      * @param tableModel the table model
      * @param table the table
+     * @return a flag whether at least one custom renderer is defined
      */
-    private static void initColumnRenderers(TableFormController controller,
-                                            SwingTableModel tableModel, JTable table)
+    private static boolean initColumnRenderers(TableFormController controller,
+            SwingTableModel tableModel, JTable table)
     {
+        boolean foundCustomRenderer = false;
         for (int i = 0; i < controller.getColumnCount(); i++)
         {
             if (controller.hasRenderer(i))
             {
                 table.getColumnModel().getColumn(i)
                         .setCellRenderer(tableModel.getRenderer());
+                foundCustomRenderer = true;
             }
         }
+
+        return foundCustomRenderer;
     }
 }

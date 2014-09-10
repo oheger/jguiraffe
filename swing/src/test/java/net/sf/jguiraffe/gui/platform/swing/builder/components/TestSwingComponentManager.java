@@ -114,6 +114,7 @@ import net.sf.jguiraffe.gui.layout.Unit;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.AbstractTableModelTest;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableColumnWidthListener;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableModel;
+import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableRowHeightUpdater;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventManager;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
 import net.sf.jguiraffe.locators.ClassPathLocator;
@@ -124,7 +125,9 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.impl.TagScript;
+import org.apache.commons.lang.mutable.MutableObject;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -157,7 +160,9 @@ public class TestSwingComponentManager
     @Before
     public void setUp() throws Exception
     {
-        manager = new SwingComponentManager();
+        manager =
+                new SwingComponentManager(
+                        EasyMock.createMock(SwingTableRowHeightUpdater.class));
         context = new JellyContext();
     }
 
@@ -1257,7 +1262,8 @@ public class TestSwingComponentManager
     @Test
     public void testCreateTable() throws FormBuilderException
     {
-        SwingTableComponentHandler handler = checkTableHandler(createTableTag(false));
+        SwingTableComponentHandler handler =
+                checkTableHandler(createTableTag(false));
         assertFalse("No single selection mode", handler.isMultiSelection());
         assertEquals("Wrong auto resize",
                 JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS, handler.getTable()
@@ -1377,6 +1383,19 @@ public class TestSwingComponentManager
     @Test
     public void testCreateTableWithColumnRenderer() throws FormBuilderException
     {
+        final MutableObject refUpdatedTable = new MutableObject();
+        manager.getTableRowHeightUpdater().updateRowHeights(
+                EasyMock.anyObject(JTable.class));
+        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>()
+        {
+            public Object answer() throws Throwable
+            {
+                refUpdatedTable.setValue(EasyMock.getCurrentArguments()[0]);
+                return null;
+            }
+        });
+        EasyMock.replay(manager.getTableRowHeightUpdater());
+
         TableTag tag = createTableTag(false);
         SwingTableComponentHandler handler = checkTableHandler(tag);
         JTable table = handler.getTable();
@@ -1385,6 +1404,19 @@ public class TestSwingComponentManager
                         AbstractTableModelTest.IDX_RENDERER_COLUMN);
         assertEquals("Renderer not set", handler.getTableModel().getRenderer(),
                 rendererColumn.getCellRenderer());
+        EasyMock.verify(manager.getTableRowHeightUpdater());
+        assertEquals("Wrong updated table", handler.getTable(),
+                refUpdatedTable.getValue());
+    }
+
+    /**
+     * Tests whether a default row height updater for tables is created.
+     */
+    @Test
+    public void testDefaultTableRowHeightUpdater()
+    {
+        manager = new SwingComponentManager();
+        assertNotNull("No table row height updater", manager.getTableRowHeightUpdater());
     }
 
     /**
