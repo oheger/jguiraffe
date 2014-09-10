@@ -90,6 +90,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.TextIconData;
 import net.sf.jguiraffe.gui.builder.components.tags.ToggleButtonTag;
 import net.sf.jguiraffe.gui.builder.components.tags.TreeTag;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnWidthController;
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController;
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableTag;
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
@@ -957,6 +958,7 @@ public class SwingComponentManager implements ComponentManager
             SwingTableModel model = new SwingTableModel(tag, table);
             table.setModel(model);
             initTableColumnWidths(tag, table);
+            initColumnRenderers(tag.getTableFormController(), model, table);
             initComponent(table, tag);
 
             if (tag.getEditorSelectionHandler() == null)
@@ -1427,6 +1429,27 @@ public class SwingComponentManager implements ComponentManager
                 {
                     log.warn("Ignoring font attribute " + e.getKey());
                 }
+            }
+        }
+    }
+
+    /**
+     * Initializes custom renderer components for the columns of the specified
+     * table.
+     *
+     * @param controller the {@code TableFormController}
+     * @param tableModel the table model
+     * @param table the table
+     */
+    private static void initColumnRenderers(TableFormController controller,
+                                            SwingTableModel tableModel, JTable table)
+    {
+        for (int i = 0; i < controller.getColumnCount(); i++)
+        {
+            if (controller.hasRenderer(i))
+            {
+                table.getColumnModel().getColumn(i)
+                        .setCellRenderer(tableModel.getRenderer());
             }
         }
     }

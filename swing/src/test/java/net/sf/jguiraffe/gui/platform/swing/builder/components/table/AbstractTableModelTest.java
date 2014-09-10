@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -89,6 +90,9 @@ public abstract class AbstractTableModelTest
             }
     };
 
+    /** The index of the column with a custom renderer. */
+    public static final int IDX_RENDERER_COLUMN = COLUMN_NAMES.length - 1;
+
     /** Constant for the name of the model variable. */
     protected static final String VAR_MODEL = "dataModel";
 
@@ -108,9 +112,9 @@ public abstract class AbstractTableModelTest
      * @throws JellyTagException if the tag is used incorrectly
      * @throws FormBuilderException if an error occurs
      */
-    public static TableTag setUpTableTag(Collection<?> data, boolean width,
-            String scrollWidth, String scrollHeight) throws JellyTagException,
-            FormBuilderException
+    public static TableTagTestImpl setUpTableTag(Collection<?> data,
+            boolean width, String scrollWidth, String scrollHeight)
+            throws JellyTagException, FormBuilderException
     {
         ComponentManager cm = EasyMock.createNiceMock(ComponentManager.class);
         TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.class);
@@ -139,6 +143,10 @@ public abstract class AbstractTableModelTest
             colTag.setName(COLUMN_NAMES[i]);
             colTag.setColumnClass(COLUMN_TYPES[i]);
             colTag.setEditable(EDIT_FLAGS[i]);
+            if (i == IDX_RENDERER_COLUMN)
+            {
+                colTag.installRenderer(new JLabel());
+            }
             if (width)
             {
                 colTag.setWidth(COLUMN_WIDTHS[i] + Unit.DLU.getUnitName());

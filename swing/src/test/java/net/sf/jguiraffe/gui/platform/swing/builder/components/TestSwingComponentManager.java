@@ -23,25 +23,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.font.TextAttribute;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -75,6 +56,20 @@ import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.TreeSelectionModel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.font.TextAttribute;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
@@ -119,13 +114,11 @@ import net.sf.jguiraffe.gui.layout.Unit;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.AbstractTableModelTest;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableColumnWidthListener;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.table.SwingTableModel;
-import net.sf.jguiraffe.gui.platform.swing.builder.event.ChangeListener;
 import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventManager;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
 import net.sf.jguiraffe.locators.ClassPathLocator;
 import net.sf.jguiraffe.locators.Locator;
 import net.sf.jguiraffe.transform.TransformerContext;
-
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.jelly.JellyContext;
@@ -1379,6 +1372,22 @@ public class TestSwingComponentManager
     }
 
     /**
+     * Tests whether a column renderer is correctly set.
+     */
+    @Test
+    public void testCreateTableWithColumnRenderer() throws FormBuilderException
+    {
+        TableTag tag = createTableTag(false);
+        SwingTableComponentHandler handler = checkTableHandler(tag);
+        JTable table = handler.getTable();
+        TableColumn rendererColumn =
+                table.getColumnModel().getColumn(
+                        AbstractTableModelTest.IDX_RENDERER_COLUMN);
+        assertEquals("Renderer not set", handler.getTableModel().getRenderer(),
+                rendererColumn.getCellRenderer());
+    }
+
+    /**
      * Creates an initialized table tag.
      *
      * @param width a flag whether the widths of the columns should be
@@ -1417,7 +1426,7 @@ public class TestSwingComponentManager
     /**
      * Checks a component handler created for a table. We only need to check
      * whether a correct table with a correct model is created. The tests for
-     * <code>SwingTableModel</code> ensure that the table will be properly
+     * {@code SwingTableModel} ensure that the table will be properly
      * initialized.
      *
      * @param tag the table tag
@@ -1431,8 +1440,7 @@ public class TestSwingComponentManager
                 ch instanceof SwingTableComponentHandler);
         SwingTableComponentHandler tabHandler = (SwingTableComponentHandler) ch;
         assertNotNull("No table created", tabHandler.getTable());
-        assertTrue("Incorrect model: " + tabHandler.getTableModel(), tabHandler
-                .getTableModel() instanceof SwingTableModel);
+        assertNotNull("No model: ", tabHandler.getTableModel());
         SwingTableModel model = tabHandler.getTableModel();
         assertSame("Wrong underlying tag", tag, model.getTableTag());
         assertNotNull("No validation handler set", model.getTableTag()
@@ -1721,43 +1729,6 @@ public class TestSwingComponentManager
     private Icon createIcon() throws FormBuilderException
     {
         return (Icon) manager.createIcon(ClassPathLocator.getInstance(ICON_RES));
-    }
-
-    /**
-     * A test listener that receives the generated events.
-     */
-    static class TestEventListener implements ActionListener, FocusListener,
-            ChangeListener
-    {
-        public Object event;
-
-        public int called;
-
-        public void actionPerformed(ActionEvent e)
-        {
-            setEvent(e);
-        }
-
-        public void focusGained(FocusEvent e)
-        {
-            setEvent(e);
-        }
-
-        public void focusLost(FocusEvent e)
-        {
-            setEvent(e);
-        }
-
-        public void componentChanged(Object e)
-        {
-            setEvent(e);
-        }
-
-        private synchronized void setEvent(Object e)
-        {
-            event = e;
-            called++;
-        }
     }
 
     /**
