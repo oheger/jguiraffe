@@ -32,6 +32,27 @@ import org.junit.Test;
  */
 public class TestSwingTableRowHeightUpdater
 {
+    /**
+     * Constant for the heights of the cells in the test table.
+     */
+    private static final int[][] CELL_HEIGHTS = new int[][] {
+            {
+                    10, 8, 16, 8
+            }, {
+                    12, 50, 48, 16
+            }, {
+                    24, 18, 16, 12
+            }
+    };
+
+    /**
+     * Constant for the maximum heights in the cells of the test table per row.
+     * These are the values the updater has to determine.
+     */
+    private static final int[] EXPECTED_HEIGHTS = new int[] {
+            16, 50, 24
+    };
+
     /** The updater to be tested. */
     private SwingTableRowHeightUpdater updater;
 
@@ -42,46 +63,64 @@ public class TestSwingTableRowHeightUpdater
     }
 
     /**
-     * Tests whether the row heights are updated correctly.
+     * Expects a processing of the heights of the rows in the specified range.
+     *
+     * @param table the table mock
+     * @param startRow the start row
+     * @param endRow the end row (including)
      */
-    @Test
-    public void testUpdateRowHeights()
+    private static void expectRowProcessing(JTable table, int startRow,
+            int endRow)
     {
-        final int[][] cellHeights = {
-                {
-                        10, 8, 16, 8
-                }, {
-                        12, 50, 48, 16
-                }
-        };
-        final int[] expectedHeights = {
-                16, 50
-        };
-        JTable table = EasyMock.createMock(JTable.class);
         TableCellRenderer renderer =
                 EasyMock.createMock(TableCellRenderer.class);
         Component component = EasyMock.createMock(Component.class);
-        EasyMock.expect(table.getRowCount()).andReturn(expectedHeights.length)
-                .anyTimes();
         EasyMock.expect(table.getColumnCount())
-                .andReturn(cellHeights[0].length).anyTimes();
-        for (int row = 0; row < expectedHeights.length; row++)
+                .andReturn(CELL_HEIGHTS[0].length).anyTimes();
+        for (int row = startRow; row < endRow; row++)
         {
             EasyMock.expect(table.getRowHeight(row)).andReturn(10);
-            for (int col = 0; col < cellHeights[row].length; col++)
+            for (int col = 0; col < CELL_HEIGHTS[row].length; col++)
             {
                 EasyMock.expect(table.getCellRenderer(row, col)).andReturn(
                         renderer);
                 EasyMock.expect(table.prepareRenderer(renderer, row, col))
                         .andReturn(component);
                 EasyMock.expect(component.getPreferredSize()).andReturn(
-                        new Dimension(0, cellHeights[row][col]));
+                        new Dimension(0, CELL_HEIGHTS[row][col]));
             }
-            table.setRowHeight(row, expectedHeights[row]);
+            table.setRowHeight(row, EXPECTED_HEIGHTS[row]);
         }
-        EasyMock.replay(table, renderer, component);
+        EasyMock.replay(renderer, component);
+    }
+
+    /**
+     * Tests whether the row heights of a full table are updated correctly.
+     */
+    @Test
+    public void testUpdateRowHeights()
+    {
+        JTable table = EasyMock.createMock(JTable.class);
+        EasyMock.expect(table.getRowCount()).andReturn(EXPECTED_HEIGHTS.length)
+                .anyTimes();
+        expectRowProcessing(table, 0, EXPECTED_HEIGHTS.length);
+        EasyMock.replay(table);
 
         updater.updateRowHeights(table);
+        EasyMock.verify(table);
+    }
+
+    /**
+     * Tests whether a specific range of table rows can be updated.
+     */
+    @Test
+    public void testUpdateRowHeightsInRange()
+    {
+        JTable table = EasyMock.createMock(JTable.class);
+        expectRowProcessing(table, 1, 2);
+        EasyMock.replay(table);
+
+        updater.updateRowHeights(table, 1, 1);
         EasyMock.verify(table);
     }
 }

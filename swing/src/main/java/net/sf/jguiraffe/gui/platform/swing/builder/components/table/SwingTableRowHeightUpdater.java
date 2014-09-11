@@ -43,7 +43,20 @@ public class SwingTableRowHeightUpdater
      */
     public void updateRowHeights(JTable table)
     {
-        for (int row = 0; row < table.getRowCount(); row++)
+        updateRowHeights(table, 0, table.getRowCount() - 1);
+    }
+
+    /**
+     * Updates the heights of all rows of the specified table in the given
+     * range.
+     *
+     * @param table the table
+     * @param startRow the index of the first row
+     * @param endRow the index of the last row (including)
+     */
+    public void updateRowHeights(JTable table, int startRow, int endRow)
+    {
+        for (int row = startRow; row <= endRow; row++)
         {
             int rowHeight = table.getRowHeight(row);
             for (int col = 0; col < table.getColumnCount(); col++)
