@@ -1410,6 +1410,80 @@ public class TestSwingComponentManager
     }
 
     /**
+     * Prepares a test for checking whether row height updates are performed
+     * when the model of a table is changed.
+     *
+     * @return the component handler for a newly created table
+     * @throws FormBuilderException if an error occurs
+     */
+    private SwingTableComponentHandler prepareRowHeightUpdateTestOnModelChange()
+            throws FormBuilderException
+    {
+        manager.getTableRowHeightUpdater().updateRowHeights(
+                EasyMock.anyObject(JTable.class));
+        EasyMock.replay(manager.getTableRowHeightUpdater());
+        TableTag tag = createTableTag(false);
+        SwingTableComponentHandler handler = checkTableHandler(tag);
+        EasyMock.reset(manager.getTableRowHeightUpdater());
+        return handler;
+    }
+
+    /**
+     * Tests whether the row height updater for tables is triggered if new rows
+     * are added to a table.
+     */
+    @Test
+    public void testCreateTableRowHeightUpdateOnInsertedRows()
+            throws FormBuilderException
+    {
+        final int startRow = 3;
+        final int endRow = 8;
+        SwingTableComponentHandler handler =
+                prepareRowHeightUpdateTestOnModelChange();
+
+        manager.getTableRowHeightUpdater().updateRowHeights(handler.getTable(),
+                startRow, endRow);
+        EasyMock.replay(manager.getTableRowHeightUpdater());
+        handler.getTableModel().fireTableRowsInserted(startRow, endRow);
+        EasyMock.verify(manager.getTableRowHeightUpdater());
+    }
+
+    /**
+     * Tests whether the row height updater for tables is triggered if rows are
+     * updated in a table.
+     */
+    @Test
+    public void testCreateTableRowHeightUpdateOnUpdateRows()
+            throws FormBuilderException
+    {
+        final int startRow = 4;
+        final int endRow = 7;
+        SwingTableComponentHandler handler =
+                prepareRowHeightUpdateTestOnModelChange();
+
+        manager.getTableRowHeightUpdater().updateRowHeights(handler.getTable(),
+                startRow, endRow);
+        EasyMock.replay(manager.getTableRowHeightUpdater());
+        handler.getTableModel().fireTableRowsUpdated(startRow, endRow);
+        EasyMock.verify(manager.getTableRowHeightUpdater());
+    }
+
+    /**
+     * Tests that a rows deleted event does not cause a row height update in a
+     * table.
+     */
+    @Test
+    public void testCreateTableNoRowHeightUpdateOnDeletedRows()
+            throws FormBuilderException
+    {
+        SwingTableComponentHandler handler =
+                prepareRowHeightUpdateTestOnModelChange();
+        EasyMock.replay(manager.getTableRowHeightUpdater());
+
+        handler.getTableModel().fireTableRowsDeleted(0, 2);
+    }
+
+    /**
      * Tests whether a default row height updater for tables is created.
      */
     @Test

@@ -44,6 +44,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.Component;
@@ -1006,6 +1008,7 @@ public class SwingComponentManager implements ComponentManager
             if (initColumnRenderers(tag.getTableFormController(), model, table))
             {
                 getTableRowHeightUpdater().updateRowHeights(table);
+                registerRowHeightListener(table, model);
             }
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
@@ -1462,6 +1465,30 @@ public class SwingComponentManager implements ComponentManager
                 }
             }
         }
+    }
+
+    /**
+     * Registers a special listener at the passed in table model which causes an
+     * update of the table's row heights on certain changes of the table's
+     * content.
+     *
+     * @param table the table
+     * @param model the table model
+     */
+    private void registerRowHeightListener(final JTable table,
+            SwingTableModel model)
+    {
+        model.addTableModelListener(new TableModelListener()
+        {
+            public void tableChanged(TableModelEvent e)
+            {
+                if (e.getType() != TableModelEvent.DELETE)
+                {
+                    getTableRowHeightUpdater().updateRowHeights(table,
+                            e.getFirstRow(), e.getLastRow());
+                }
+            }
+        });
     }
 
     /**
