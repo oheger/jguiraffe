@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 
 /**
@@ -48,26 +49,37 @@ public class SwingTableRowHeightUpdater
 
     /**
      * Updates the heights of all rows of the specified table in the given
-     * range.
+     * range. Note that this obviously has to be done in a separate task in the
+     * event queue; otherwise, row height updates do not have any effect.
      *
      * @param table the table
      * @param startRow the index of the first row
      * @param endRow the index of the last row (including)
      */
-    public void updateRowHeights(JTable table, int startRow, int endRow)
+    public void updateRowHeights(final JTable table, final int startRow,
+            final int endRow)
     {
-        for (int row = startRow; row <= endRow; row++)
+        SwingUtilities.invokeLater(new Runnable()
         {
-            int rowHeight = table.getRowHeight(row);
-            for (int col = 0; col < table.getColumnCount(); col++)
+            public void run()
             {
-                Component component =
-                        table.prepareRenderer(table.getCellRenderer(row, col),
-                                row, col);
-                rowHeight =
-                        Math.max(rowHeight, component.getPreferredSize().height);
+
+                for (int row = startRow; row <= endRow; row++)
+                {
+                    int rowHeight = table.getRowHeight(row);
+                    for (int col = 0; col < table.getColumnCount(); col++)
+                    {
+                        Component component =
+                                table.prepareRenderer(
+                                        table.getCellRenderer(row, col), row,
+                                        col);
+                        rowHeight =
+                                Math.max(rowHeight,
+                                        component.getPreferredSize().height);
+                    }
+                    table.setRowHeight(row, rowHeight);
+                }
             }
-            table.setRowHeight(row, rowHeight);
-        }
+        });
     }
 }

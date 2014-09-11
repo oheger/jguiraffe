@@ -15,12 +15,19 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,14 +74,16 @@ public class TestSwingTableRowHeightUpdater
      *
      * @param table the table mock
      * @param startRow the start row
-     * @param endRow the end row (including)
+     * @param endRow the end row (excluding)
+     * @return a latch for determining when the operation is finished
      */
-    private static void expectRowProcessing(JTable table, int startRow,
-            int endRow)
+    private static CountDownLatch expectRowProcessing(JTable table,
+            int startRow, int endRow)
     {
         TableCellRenderer renderer =
                 EasyMock.createMock(TableCellRenderer.class);
         Component component = EasyMock.createMock(Component.class);
+        final CountDownLatch latch = new CountDownLatch(endRow - startRow);
         EasyMock.expect(table.getColumnCount())
                 .andReturn(CELL_HEIGHTS[0].length).anyTimes();
         for (int row = startRow; row < endRow; row++)
@@ -90,8 +99,40 @@ public class TestSwingTableRowHeightUpdater
                         new Dimension(0, CELL_HEIGHTS[row][col]));
             }
             table.setRowHeight(row, EXPECTED_HEIGHTS[row]);
+            EasyMock.expectLastCall().andAnswer(new IAnswer<Object>()
+            {
+                public Object answer() throws Throwable
+                {
+                    assertTrue("Not in EDT",
+                            SwingUtilities.isEventDispatchThread());
+                    latch.countDown();
+                    return null;
+                }
+            });
         }
         EasyMock.replay(renderer, component);
+        return latch;
+    }
+
+    /**
+     * Verifies the mock for the table to ensure that row height updates have
+     * been performed correctly. This has to be done in the event dispatch
+     * thread.
+     *
+     * @param table the table mock
+     * @param latch the latch for synchronizing with the update operation
+     */
+    private static void verifyTableMock(JTable table, CountDownLatch latch)
+    {
+        try
+        {
+            assertTrue("Time out", latch.await(10, TimeUnit.SECONDS));
+        }
+        catch (InterruptedException iex)
+        {
+            fail("Waiting was interrupted: " + iex);
+        }
+        EasyMock.verify(table);
     }
 
     /**
@@ -103,11 +144,12 @@ public class TestSwingTableRowHeightUpdater
         JTable table = EasyMock.createMock(JTable.class);
         EasyMock.expect(table.getRowCount()).andReturn(EXPECTED_HEIGHTS.length)
                 .anyTimes();
-        expectRowProcessing(table, 0, EXPECTED_HEIGHTS.length);
+        CountDownLatch latch =
+                expectRowProcessing(table, 0, EXPECTED_HEIGHTS.length);
         EasyMock.replay(table);
 
         updater.updateRowHeights(table);
-        EasyMock.verify(table);
+        verifyTableMock(table, latch);
     }
 
     /**
@@ -117,10 +159,10 @@ public class TestSwingTableRowHeightUpdater
     public void testUpdateRowHeightsInRange()
     {
         JTable table = EasyMock.createMock(JTable.class);
-        expectRowProcessing(table, 1, 2);
+        CountDownLatch latch = expectRowProcessing(table, 1, 2);
         EasyMock.replay(table);
 
         updater.updateRowHeights(table, 1, 1);
-        EasyMock.verify(table);
+        verifyTableMock(table, latch);
     }
 }
