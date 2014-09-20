@@ -28,6 +28,10 @@
   <body>
     <release version="1.3" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="6">
+        The documentation of the MessageOutput interface was improved regarding
+        the way the passed in message text is processed.
+      </action>
       <action dev="oheger" type="fix" issue="5">
         The colrenderer tag now works as expected in Swing.
       </action>
