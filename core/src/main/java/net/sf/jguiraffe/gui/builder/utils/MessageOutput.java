@@ -23,15 +23,36 @@ import net.sf.jguiraffe.gui.builder.window.Window;
  * independent way.
  * </p>
  * <p>
- * This interface defines some constants representing the typical options
- * supported by message boxes, e.g. message type or available options. A main
- * <code>show()</code> method is used to display the message box. Its result
- * value indicates the pressed button.
+ * This interface defines a main {@code show()} method to display a message box
+ * of a pre-defined type. The type is specified using one of the the constants
+ * defined by this interface. The method expects a title (as string) and an
+ * object representing the message to be displayed. From this object the
+ * {@code toString()} is called in order to obtain the message text to be
+ * displayed. Concrete implementations have to implement a certain amount of
+ * processing on the message text:
+ * <ul>
+ * <li>The character '\n' should cause a newline in the message. That way
+ * messages with multiple lines can be created.</li>
+ * <li>A reasonable line wrapping should be performed to prevent that the
+ * message window becomes too wide or that parts of the message text are cut
+ * off.</li>
+ * </ul>
+ * In addition, this interface defines some constants for the buttons to be
+ * displayed in the constructed message window. For instance, it is possible to
+ * have just an OK button or specify that buttons for a YES/NO/CANCEL question
+ * are generated. The return value of the {@code show()} method indicates the
+ * pressed button.
+ * </p>
+ * <p>
+ * Note that the {@code show()} method must be called in the UI thread! It lies
+ * in the responsibility of the caller to use the current
+ * {@link GUISynchronizer} to ensure that the invocation happens in the correct
+ * thread.
  * </p>
  * <p>
  * Concrete implementations will map the functionality provided by this
  * interface to GUI library specific classes. A Swing related implementation for
- * instance could use Swing's <code>JOptionPane</code> to provide the required
+ * instance could use Swing's {@code JOptionPane} to provide the required
  * functionality.
  * </p>
  *
@@ -75,7 +96,7 @@ public interface MessageOutput
 
     /**
      * Constant for the return value YES. Note that this value is identical to
-     * the <code>RET_OK</code> return value. This is analogous to Swing.
+     * the {@code RET_OK} return value. This is analogous to Swing.
      */
     int RET_YES = RET_OK;
 
@@ -83,19 +104,21 @@ public interface MessageOutput
     int RET_NO = 4;
 
     /**
-     * Displays a message box based on the given options.
+     * Displays a message box based on the given options. Please refer to the
+     * class comment for further details about the parameters and how they are
+     * interpreted.
      *
      * @param parent the parent window
      * @param message the message itself; can be an arbitrary object whose
-     * <code>toString()</code> method will be used to obtain the text to be
+     * {@code toString()} method will be used to obtain the text to be
      * displayed
      * @param title the message box's title
      * @param messageType the type of the message; this must be one the
-     * <code>MESSAGE_XXXX</code> constants
+     * {@code MESSAGE_XXXX} constants
      * @param buttonType defines the buttons to be displayed; this must be one
-     * of the <code>BTN_XXXX</code> constants
+     * of the {@code BTN_XXXX} constants
      * @return a flag for the button pressed by the user; this will be one of
-     * the <code>RET_XXXX</code> constants
+     * the {@code RET_XXXX} constants
      */
     int show(Window parent, Object message, String title, int messageType,
             int buttonType);
