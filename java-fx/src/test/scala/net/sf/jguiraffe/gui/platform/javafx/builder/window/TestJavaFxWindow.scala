@@ -15,46 +15,31 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
-import org.easymock.EasyMock
-import org.easymock.IAnswer
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import javafx.application.Platform
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.event.{EventHandler, EventType}
+import javafx.scene.input.{MouseButton, MouseEvent}
+import javafx.scene.layout.FlowPane
+import javafx.scene.text.Text
+import javafx.scene.{Parent, Scene}
+import javafx.stage.{Stage, WindowEvent => FxWindowEvent}
+
+import net.sf.jguiraffe.gui.builder.event.{FormMouseEvent, FormMouseListener}
+import net.sf.jguiraffe.gui.builder.window._
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import net.sf.jguiraffe.gui.platform.javafx.{FetchAnswer, JavaFxTestHelper}
+import org.easymock.EasyMock.{eq => argEquals}
+import org.easymock.{EasyMock, IAnswer}
+import org.junit.Assert.{assertEquals, assertFalse, assertNull, assertSame, assertTrue}
 import org.junit.runner.RunWith
+import org.junit.{Before, BeforeClass, Test}
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
-import javafx.application.Platform
-import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.event.EventHandler
-import javafx.event.EventType
-import javafx.scene.Group
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.scene.input.MouseButton
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.FlowPane
-import javafx.scene.text.Text
-import javafx.stage.Stage
-import javafx.stage.{ WindowEvent => FxWindowEvent }
-import net.sf.jguiraffe.gui.builder.event.FormMouseEvent
-import net.sf.jguiraffe.gui.builder.event.FormMouseListener
-import net.sf.jguiraffe.gui.builder.window.Window
-import net.sf.jguiraffe.gui.builder.window.WindowClosingStrategy
-import net.sf.jguiraffe.gui.builder.window.WindowEvent
-import net.sf.jguiraffe.gui.builder.window.WindowListener
-import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
-import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * Test class for ''JavaFxWindow''.
@@ -159,7 +144,7 @@ class TestJavaFxWindow extends JUnitSuite {
    */
   @Test def testGetTitle() {
     val title = "WindowTitle"
-    EasyMock.expect(stage.getTitle()).andReturn(title)
+    EasyMock.expect(stage.getTitle).andReturn(title)
     val wnd = createWindow()
     PowerMock.replayAll()
     assertEquals("Wrong title", title, wnd.getTitle)
@@ -198,7 +183,7 @@ class TestJavaFxWindow extends JUnitSuite {
     stage.show()
     val wnd = createWindow()
     PowerMock.replayAll()
-    wnd.setVisible(true)
+    wnd.setVisible(f = true)
     PowerMock.verifyAll()
   }
 
@@ -209,7 +194,7 @@ class TestJavaFxWindow extends JUnitSuite {
     stage.hide()
     val wnd = createWindow()
     PowerMock.replayAll()
-    wnd.setVisible(false)
+    wnd.setVisible(f = false)
     PowerMock.verifyAll()
   }
 
@@ -248,7 +233,7 @@ class TestJavaFxWindow extends JUnitSuite {
     stage.show()
     EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
       def answer(): Object = {
-        assertTrue("Not in dispatch thread", Platform.isFxApplicationThread())
+        assertTrue("Not in dispatch thread", Platform.isFxApplicationThread)
         null
       }
     })
@@ -280,7 +265,7 @@ class TestJavaFxWindow extends JUnitSuite {
     stage.close()
     PowerMock.replayAll()
     wnd.setWindowClosingStrategy(strat)
-    assertTrue("Wrong result", wnd.close(true))
+    assertTrue("Wrong result", wnd.close(force = true))
     assertTrue("Closing not permitted", wnd.closingPermitted)
   }
 
@@ -294,7 +279,7 @@ class TestJavaFxWindow extends JUnitSuite {
     stage.close()
     PowerMock.replayAll()
     wnd.setWindowClosingStrategy(strat)
-    assertTrue("Wrong result", wnd.close(false))
+    assertTrue("Wrong result", wnd.close(force = false))
     assertTrue("Closing not permitted", wnd.closingPermitted)
     PowerMock.verifyAll()
   }
@@ -308,7 +293,7 @@ class TestJavaFxWindow extends JUnitSuite {
     EasyMock.expect(strat.canClose(wnd)).andReturn(false)
     wnd.setWindowClosingStrategy(strat)
     PowerMock.replayAll()
-    assertFalse("Wrong result", wnd.close(false))
+    assertFalse("Wrong result", wnd.close(force = false))
     assertFalse("Closing not permitted", wnd.closingPermitted)
     PowerMock.verifyAll()
   }
@@ -336,7 +321,7 @@ class TestJavaFxWindow extends JUnitSuite {
    * Expects a window listener to be registered at the mock window.
    */
   private def expectWindowListener() {
-    stage.addEventHandler(EasyMock.eq(FxWindowEvent.ANY),
+    stage.addEventHandler(argEquals(FxWindowEvent.ANY),
       EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
   }
 
@@ -344,7 +329,7 @@ class TestJavaFxWindow extends JUnitSuite {
    * Expects a mouse listener to be registered at the mock window.
    */
   private def expectMouseListener() {
-    stage.addEventHandler(EasyMock.eq(MouseEvent.ANY),
+    stage.addEventHandler(argEquals(MouseEvent.ANY),
       EasyMock.anyObject(classOf[EventHandler[MouseEvent]]))
   }
 
@@ -353,7 +338,7 @@ class TestJavaFxWindow extends JUnitSuite {
    * window.
    */
   private def expectClosingListener() {
-    stage.addEventFilter(EasyMock.eq(FxWindowEvent.WINDOW_CLOSE_REQUEST),
+    stage.addEventFilter(argEquals(FxWindowEvent.WINDOW_CLOSE_REQUEST),
       EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
   }
 
@@ -379,7 +364,7 @@ class TestJavaFxWindow extends JUnitSuite {
     answer.get.handle(new FxWindowEvent(stage, FxWindowEvent.WINDOW_HIDING))
     PowerMock.verifyAll()
     assertEquals("Wrong event type", WindowEvent.Type.WINDOW_OPENED,
-      eventAnswer.get.getType())
+      eventAnswer.get.getType)
   }
 
   /**
@@ -395,9 +380,9 @@ class TestJavaFxWindow extends JUnitSuite {
     EasyMock.expectLastCall().andAnswer(listenerAnswer)
     expectClosingListener()
     val evType: EventType[MouseEvent] = MouseEvent.MOUSE_CLICKED
-    event.getEventType()
+    event.getEventType
     EasyMock.expectLastCall().andReturn(evType).anyTimes()
-    EasyMock.expect(event.getButton()).andReturn(MouseButton.PRIMARY).anyTimes()
+    EasyMock.expect(event.getButton).andReturn(MouseButton.PRIMARY).anyTimes()
     val eventAnswer = new FetchAnswer[Object, FormMouseEvent]
     mouseListener.mouseClicked(EasyMock.anyObject(classOf[FormMouseEvent]))
     EasyMock.expectLastCall().andAnswer(eventAnswer)
@@ -409,7 +394,7 @@ class TestJavaFxWindow extends JUnitSuite {
     listenerAnswer.get.handle(event)
     PowerMock.verifyAll()
     assertEquals("Wrong event type", FormMouseEvent.Type.MOUSE_CLICKED,
-      eventAnswer.get.getType())
+      eventAnswer.get.getType)
   }
 
   /**
@@ -425,7 +410,7 @@ class TestJavaFxWindow extends JUnitSuite {
       new FetchAnswer[Object, EventHandler[FxWindowEvent]](argIdx = 1)
     expectClosingListener()
     EasyMock.expectLastCall().andAnswer(listenerAnswer)
-    event.getEventType()
+    event.getEventType
     EasyMock.expectLastCall().andReturn(FxWindowEvent.WINDOW_CLOSE_REQUEST).anyTimes()
     event.consume()
     PowerMock.replayAll()
@@ -446,12 +431,12 @@ class TestJavaFxWindow extends JUnitSuite {
       new FetchAnswer[Object, EventHandler[FxWindowEvent]](argIdx = 1)
     expectClosingListener()
     EasyMock.expectLastCall().andAnswer(listenerAnswer)
-    event.getEventType()
+    event.getEventType
     EasyMock.expectLastCall().andReturn(FxWindowEvent.WINDOW_CLOSE_REQUEST).anyTimes()
     stage.close()
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage)
-    assertTrue("Wrong result", wnd.close(false))
+    assertTrue("Wrong result", wnd.close(force = false))
     listenerAnswer.get.handle(event)
     PowerMock.verifyAll()
   }
@@ -460,7 +445,7 @@ class TestJavaFxWindow extends JUnitSuite {
    * Tests whether the root container can be queried.
    */
   @Test def testGetRootContainerDefault() {
-    prepareApplyTest(true)
+    prepareApplyTest(withListeners = true)
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage)
     assertTrue("Wrong root container",
@@ -473,11 +458,19 @@ class TestJavaFxWindow extends JUnitSuite {
    */
   @Test def testGetRootContainerWithSizeHandler() {
     val sizeHandler = PowerMock.createMock(classOf[UnitSizeHandler])
-    prepareApplyTest(true)
+    prepareApplyTest(withListeners = true)
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage, Some(sizeHandler))
     val root = wnd.getRootContainer
     assertSame("Wrong size handler", sizeHandler, root.sizeHandler.get)
+  }
+
+  /**
+   * Tests whether the wrapped window can be queried.
+   */
+  @Test def testGetWrappedWindow() {
+    val wnd: WindowWrapper = createWindow()
+    assertSame("Wrong wrapped window", stage, wnd.getWrappedWindow)
   }
 }
 

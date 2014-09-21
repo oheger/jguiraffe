@@ -21,11 +21,7 @@ import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import net.sf.jguiraffe.gui.builder.event.FormMouseEvent
 import net.sf.jguiraffe.gui.builder.event.FormMouseListener
-import net.sf.jguiraffe.gui.builder.window.InvariantWindowClosingStrategy
-import net.sf.jguiraffe.gui.builder.window.Window
-import net.sf.jguiraffe.gui.builder.window.WindowClosingStrategy
-import net.sf.jguiraffe.gui.builder.window.WindowEvent
-import net.sf.jguiraffe.gui.builder.window.WindowListener
+import net.sf.jguiraffe.gui.builder.window._
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.MouseEventAdapter
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.WindowEventAdapter
@@ -57,7 +53,10 @@ private class JavaFxWindow private[window] (val stage: Stage,
   windowListeners: EventListenerList[WindowEvent, WindowListener],
   mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener],
   @BeanProperty val rootContainer: ContainerWrapper)
-  extends Window {
+  extends Window with WindowWrapper {
+  /** The underlying wrapped window. */
+  override val getWrappedWindow = stage
+
   /** The parent window of this window. */
   @BeanProperty var parentWindow: Window = _
 
