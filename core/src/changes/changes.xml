@@ -28,6 +28,15 @@
   <body>
     <release version="1.3" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="8">
+        SwingMessageOutput no longer allows HTML-based formatting. Leading and
+        trailing html tags are removed from the message text.
+      </action>
+      <action dev="oheger" type="fix" issue="7">
+        SwingMessageOutput now allows specifying a maximum line length.
+        Message texts are processed so that no line exceeds the specified
+        length. Line wrapping is enabled per default.
+      </action>
       <action dev="oheger" type="fix" issue="6">
         The documentation of the MessageOutput interface was improved regarding
         the way the passed in message text is processed.
