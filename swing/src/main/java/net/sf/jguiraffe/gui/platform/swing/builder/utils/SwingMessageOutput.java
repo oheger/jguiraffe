@@ -85,6 +85,12 @@ public class SwingMessageOutput implements MessageOutput
             JOptionPane.CLOSED_OPTION
     };
 
+    /** Constant for a starting HTML tag. */
+    private static final String HTML_START = "<html>";
+
+    /** Constant for a closing HTML tag. */
+    private static final String HTML_END = "</html>";
+
     /** Constant for the default maximum line length. */
     private static final int DEFAULT_MAX_LINE_LENGTH = 80;
 
@@ -268,11 +274,12 @@ public class SwingMessageOutput implements MessageOutput
             return StringUtils.EMPTY;
         }
 
+        String msg = removeHtmlTags(message);
         if (getMaximumLineLength() != NO_LINE_WRAP)
         {
-            return lineWrap(message);
+            return lineWrap(msg);
         }
-        return message;
+        return msg;
     }
 
     /**
@@ -282,9 +289,9 @@ public class SwingMessageOutput implements MessageOutput
      * @param message the message
      * @return the message with line wrapping performed
      */
-    private String lineWrap(Object message)
+    private String lineWrap(String message)
     {
-        String[] lines = message.toString().split(String.valueOf(CR));
+        String[] lines = message.split(String.valueOf(CR));
         StringBuilder buf = new StringBuilder(BUF_LENGTH);
         boolean first = true;
 
@@ -301,6 +308,20 @@ public class SwingMessageOutput implements MessageOutput
             buf.append(WordUtils.wrap(line, getMaximumLineLength(), CR, true));
         }
         return buf.toString();
+    }
+
+    /**
+     * Removes leading and trailing html tags from the message string. HTML
+     * formatting is not supported.
+     *
+     * @param message the message
+     * @return the processed message
+     */
+    private static String removeHtmlTags(Object message)
+    {
+        String s = message.toString();
+        return StringUtils.removeEndIgnoreCase(
+                StringUtils.removeStartIgnoreCase(s, HTML_START), HTML_END);
     }
 
     /**

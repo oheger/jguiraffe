@@ -210,6 +210,19 @@ public class TestSwingMessageOutput
     }
 
     /**
+     * Tests that enclosing html tags are removed from a message.
+     */
+    @Test
+    public void testRemoveHTMLTags()
+    {
+        final String msg = "<html>" + MESSAGE + "</hTML>";
+
+        JOptionPane op = output.createOptionPane(null, msg, TITLE,
+                JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
+        assertEquals("Wrong message", MESSAGE, op.getMessage());
+    }
+
+    /**
      * Tests creating the dialog from the option pane when no parent window is
      * defined.
      */
