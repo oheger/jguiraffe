@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.swing.builder.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -116,6 +117,96 @@ public class TestSwingMessageOutput
                 .getOptionType());
         assertEquals("Wrong message type", JOptionPane.WARNING_MESSAGE, op
                 .getMessageType());
+    }
+
+    /**
+     * Produces a pretty long text message.
+     * @return the long text message
+     */
+    private static String longMessage()
+    {
+        final int count = 32;
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            buf.append(MESSAGE);
+        }
+        return buf.toString();
+    }
+
+    /**
+     * Tests whether long text messages are line wrapped.
+     */
+    @Test
+    public void testMessageLineWrap()
+    {
+        String msg  = longMessage();
+        JOptionPane op = output.createOptionPane(null, msg, TITLE,
+                JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
+
+        checkLineWrapping(msg, op);
+    }
+
+    /**
+     * Checks whether a message string is correctly wrapped into multiple lines.
+     * @param msg the expected message string
+     * @param op the option pane
+     */
+    private static void checkLineWrapping(String msg, JOptionPane op) {
+        String[] lines = op.getMessage().toString().split("\n");
+        StringBuilder buf = new StringBuilder();
+        for (String line : lines)
+        {
+            assertTrue("Line is too long: " + line, line.length() <= 80);
+            buf.append(' ').append(line);
+        }
+        assertEquals("Wrong message", msg, buf.toString().trim());
+    }
+
+    /**
+     * Tests whether line wrapping can be disabled.
+     */
+    @Test
+    public void testDisableLineWrap()
+    {
+        String msg = longMessage();
+        output = new SwingMessageOutput(SwingMessageOutput.NO_LINE_WRAP);
+        JOptionPane op = output.createOptionPane(null, msg, TITLE,
+                JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
+
+        assertEquals("Line was wrapped", msg, op.getMessage());
+    }
+
+    /**
+     * Tests whether the maximum line length passed to the constructor is validated.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testInitWithInvalidMaximumLineLength()
+    {
+        new SwingMessageOutput(0);
+    }
+
+    /**
+     * Tests that newline characters are handled correctly when performing line wrapping.
+     */
+    @Test
+    public void testLineWrapWithNewLines()
+    {
+        String msg = String.valueOf(MESSAGE) + '\n' + longMessage();
+
+        JOptionPane op = output.createOptionPane(null, msg, TITLE,
+                JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
+        checkLineWrapping(msg.replace('\n', ' '), op);
+    }
+
+    /**
+     * Tests whether a null message is handled correctly.
+     */
+    @Test
+    public void testNullMessage()
+    {
+        JOptionPane op = output.createOptionPane(null, null, TITLE,
+                JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
+        assertEquals("Wrong message", "", op.getMessage());
     }
 
     /**

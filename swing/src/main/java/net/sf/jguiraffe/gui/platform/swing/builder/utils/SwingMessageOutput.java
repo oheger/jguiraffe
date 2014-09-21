@@ -15,22 +15,23 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.utils;
 
-import java.awt.Component;
-
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import java.awt.Component;
 
 import net.sf.jguiraffe.gui.builder.utils.MessageOutput;
 import net.sf.jguiraffe.gui.builder.window.Window;
 import net.sf.jguiraffe.gui.builder.window.WindowUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 
 /**
  * <p>
- * A Swing specific implementation of the <code>MessageOutput</code>
+ * A Swing specific implementation of the {@code MessageOutput}
  * interface.
  * </p>
  * <p>
- * This implementation makes use of <code>JOptionPane</code> for displaying
+ * This implementation makes use of {@code JOptionPane} for displaying
  * message boxes.
  * </p>
  *
@@ -39,6 +40,15 @@ import net.sf.jguiraffe.gui.builder.window.WindowUtils;
  */
 public class SwingMessageOutput implements MessageOutput
 {
+    /**
+     * Constant for a line length which disables line wrapping. If this value is
+     * passed to the constructor, the message text is not wrapped into multiple
+     * lines.
+     *
+     * @since 1.3
+     */
+    public static final int NO_LINE_WRAP = -1;
+
     /** An array with the supported message types. */
     private static final int[] MESSAGE_TYPES = {
             MESSAGE_ERROR, MESSAGE_INFO, MESSAGE_PLAIN, MESSAGE_QUESTION,
@@ -75,6 +85,60 @@ public class SwingMessageOutput implements MessageOutput
             JOptionPane.CLOSED_OPTION
     };
 
+    /** Constant for the default maximum line length. */
+    private static final int DEFAULT_MAX_LINE_LENGTH = 80;
+
+    /** Constant for the initial length of the buffer for text processing. */
+    private static final int BUF_LENGTH = 256;
+
+    /** Constant for the newline character. */
+    private static final String CR = "\n";
+
+    /** The maximum length of a line for the message text. */
+    private final int maximumLineLength;
+
+    /**
+     * Creates a new instance of {@code SwingMessageOutput} and sets a default
+     * maximum line length.
+     */
+    public SwingMessageOutput()
+    {
+        this(DEFAULT_MAX_LINE_LENGTH);
+    }
+
+    /**
+     * Creates a new instance of {@code SwingMessageOutput} with the specified
+     * maximum message line length. Before the message is displayed, it is
+     * ensured that single lines do not exceed this maximum length; if
+     * necessary, the text is split into multiple lines. To disable line
+     * wrapping, the value {@link #NO_LINE_WRAP} can be passed.
+     *
+     * @param maxLineLength the maximum length of a line for the message text
+     *        (in characters); must be &gt; 0
+     * @throws IllegalArgumentException if an invalid line length is passed in
+     * @since 1.3
+     */
+    public SwingMessageOutput(int maxLineLength)
+    {
+        if (maxLineLength != NO_LINE_WRAP && maxLineLength < 1)
+        {
+            throw new IllegalArgumentException(
+                    "Maximum line length must be > 0!");
+        }
+        maximumLineLength = maxLineLength;
+    }
+
+    /**
+     * Returns the maximum line length for the messages to be displayed.
+     *
+     * @return the maximum line length
+     * @since 1.3
+     */
+    public int getMaximumLineLength()
+    {
+        return maximumLineLength;
+    }
+
     /**
      * Displays a message box.
      *
@@ -105,7 +169,7 @@ public class SwingMessageOutput implements MessageOutput
 
     /**
      * Converts the passed in message type into the corresponding type used by
-     * <code>JOptionPane</code>.
+     * {@code JOptionPane}.
      *
      * @param type the type to be converted
      * @return the corresponding Swing constant
@@ -117,7 +181,7 @@ public class SwingMessageOutput implements MessageOutput
 
     /**
      * Converts the passed in button type into the corresponding option type
-     * used by <code>JOptionPane</code>.
+     * used by {@code JOptionPane}.
      *
      * @param type the type to be converted
      * @return the corresponding Swing constant
@@ -128,11 +192,11 @@ public class SwingMessageOutput implements MessageOutput
     }
 
     /**
-     * Converts the passed in return value from the <code>JOptionPane</code>
-     * to the corresponding <code>RET_XXXX</code> constant.
+     * Converts the passed in return value from the {@code JOptionPane}
+     * to the corresponding {@code RET_XXXX} constant.
      *
      * @param value the return value from the option pane
-     * @return the corresponding <code>RET_XXXX</code> constant
+     * @return the corresponding {@code RET_XXXX} constant
      */
     protected int convertReturnValue(int value)
     {
@@ -152,7 +216,7 @@ public class SwingMessageOutput implements MessageOutput
     protected JOptionPane createOptionPane(Window parent, Object message,
             String title, int messageType, int optionType)
     {
-        return new JOptionPane(message, messageType, optionType);
+        return new JOptionPane(processMessage(message), messageType, optionType);
     }
 
     /**
@@ -183,6 +247,60 @@ public class SwingMessageOutput implements MessageOutput
     {
         return pane.createDialog((parent != null) ? (Component) WindowUtils
                 .getPlatformWindow(parent) : null, title);
+    }
+
+    /**
+     * Processes the given message before it is displayed. This method
+     * implements some conversions to ensure that a valid message is displayed
+     * in a visually pleasant way. It does the following changes:
+     * <ul>
+     * <li>If a maximum line length is specified, line wrapping is performed.</li>
+     * <li>If the message string is wrapped in HTML tags, they are removed.</li>
+     * </ul>
+     *
+     * @param message the message
+     * @return the processed message
+     */
+    private Object processMessage(Object message)
+    {
+        if (message == null)
+        {
+            return StringUtils.EMPTY;
+        }
+
+        if (getMaximumLineLength() != NO_LINE_WRAP)
+        {
+            return lineWrap(message);
+        }
+        return message;
+    }
+
+    /**
+     * Performs line wrapping for the specified message object. For each line in
+     * the message string the maximum line length is enforced.
+     *
+     * @param message the message
+     * @return the message with line wrapping performed
+     */
+    private String lineWrap(Object message)
+    {
+        String[] lines = message.toString().split(String.valueOf(CR));
+        StringBuilder buf = new StringBuilder(BUF_LENGTH);
+        boolean first = true;
+
+        for (String line : lines)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                buf.append(CR);
+            }
+            buf.append(WordUtils.wrap(line, getMaximumLineLength(), CR, true));
+        }
+        return buf.toString();
     }
 
     /**
