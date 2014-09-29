@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -15,13 +15,32 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.utils
 
-import net.sf.jguiraffe.gui.builder.utils.MessageOutput
-import net.sf.jguiraffe.gui.builder.window.Window
+/**
+ * The ''MessageOutput'' implementation for JavaFX.
+ *
+ * Almost all functionality is implemented by the base class. This class mainly
+ * mixes in the default providers for dynamically obtaining the required
+ * components.
+ *
+ * @param maximumTextWidth the maximum width of the label for displaying the
+ *                         message text; if the text is wider, it is wrapped
+ */
+class JavaFxMessageOutput(maximumTextWidth: Double) extends JavaFxMessageOutputBase(maximumTextWidth)
+with MessageOutputStageProvider with MessageOutputButtonProvider with MessageOutputIconProvider {
+  /**
+   * Creates a new instance of ''JavaFxMessageOutput'' and initializes it with
+   * a default maximum text length.
+   */
+  def this() = this(JavaFxMessageOutput.DefaultMaximumTextWidth)
+}
 
-class JavaFxMessageOutput extends MessageOutput {
-  def show(parent: Window, message: Object, title: String, messageType: Int,
-    buttonType: Int): Int = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+/**
+ * Companion object for ''JavaFxMessageOutput''.
+ */
+object JavaFxMessageOutput {
+  /**
+   * Constant for a default maximum text width. This width is used by the
+   * default constructor, if no specific value is passed in.
+   */
+  val DefaultMaximumTextWidth = 640.0
 }
