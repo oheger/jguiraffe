@@ -84,7 +84,6 @@ BeanContextClient {
   override def show(parent: Window, message: scala.Any, title: String, messageType: Int,
                     buttonType: Int): Int = {
     val stage = createMessageStage(parent)
-
     val icon = messageIcon(messageType)
 
     val label = new Label(String.valueOf(message))
@@ -99,9 +98,17 @@ BeanContextClient {
     val scene = new Scene(pane)
     stage setScene scene
     initStage(stage, title)
+
+    returnCode = initializeReturnCodeForClose(buttonType)
     stage.showAndWait()
-    returnCode
+    currentReturnCode
   }
+
+  /**
+   * Returns the current return code. This is mainly used for testing purposes.
+   * @return the current return code
+   */
+  private [utils] def currentReturnCode = returnCode
 
   /**
    * Creates the stage in which the message is to be displayed. It is obtained from
@@ -244,4 +251,19 @@ BeanContextClient {
    */
   private def fetchOkButton(stage: Stage): Button =
     initButton(okButton(applicationContext), MessageOutput.RET_OK, stage)
+
+  /**
+   * Determines the code to be returned if the user closes the message dialog with
+   * the [X] button. This is equivalent with pressing ESC. The code to be returned
+   * in this case depends on the button type.
+   * @param buttonType the button type
+   * @return the code to be returned if the user closes the message window
+   */
+  private def initializeReturnCodeForClose(buttonType: Int): Int =
+    buttonType match {
+      case MessageOutput.BTN_OK_CANCEL => MessageOutput.RET_CANCEL
+      case MessageOutput.BTN_YES_NO_CANCEL => MessageOutput.RET_CANCEL
+      case MessageOutput.BTN_YES_NO => MessageOutput.RET_NO
+      case _ => MessageOutput.RET_OK
+    }
 }

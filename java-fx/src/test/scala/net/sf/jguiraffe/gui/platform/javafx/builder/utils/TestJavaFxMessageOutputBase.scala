@@ -95,7 +95,7 @@ class TestJavaFxMessageOutputBase extends JUnitSuite with EasyMockSugar {
   private def invokeShow(parent: Window, messageType: Int, buttonType: Int): Unit = {
     output.expectedMessageType = messageType
     JavaFxTestHelper.runInFxThread { () =>
-      assertEquals("Wrong result", 0, output.show(parent, Message, Title, messageType, buttonType))
+      assertTrue("Wrong result", output.show(parent, Message, Title, messageType, buttonType) >= 0)
     }
   }
 
@@ -249,9 +249,7 @@ class TestJavaFxMessageOutputBase extends JUnitSuite with EasyMockSugar {
     Platform.runLater(new Runnable {
       override def run(): Unit = {
         btn.fire()
-        // invoking show() a 2nd time returns the result set via the button
-        syncQueue put Integer.valueOf(output.show(parent, Message, Title,
-          MessageOutput.MESSAGE_INFO, buttonType))
+        syncQueue put output.currentReturnCode
       }
     })
     assertEquals("Wrong result", expResult, syncQueue.take().intValue)
@@ -323,6 +321,59 @@ class TestJavaFxMessageOutputBase extends JUnitSuite with EasyMockSugar {
     val msgOutput = new JavaFxMessageOutput
     assertEquals("Wrong default text width", JavaFxMessageOutput.DefaultMaximumTextWidth,
       msgOutput.maximumTextWidth, .001)
+  }
+
+  /**
+   * Helper method for testing the result produced by a normal close operation
+   * on the message window.
+   * @param buttonType the button type
+   * @param expResult the expected result
+   */
+  private def checkResultForClose(buttonType: Int, expResult: Int): Unit = {
+    val syncQueue = new SynchronousQueue[Integer]
+    output.expectedMessageType = MessageOutput.MESSAGE_QUESTION
+    Platform.runLater(new Runnable {
+      override def run(): Unit = {
+        syncQueue.put(Integer valueOf output.show(createParent(), Message, Title,
+          MessageOutput.MESSAGE_QUESTION, buttonType))
+      }
+    })
+    assertEquals("Wrong result", expResult, syncQueue.take().intValue())
+  }
+
+  /**
+   * Tests the result for a closed window if only the OK button is present.
+   */
+  @Test def testResultForCloseOk(): Unit = {
+    checkResultForClose(MessageOutput.BTN_OK, MessageOutput.RET_OK)
+  }
+
+  /**
+   * Tests the result for a closed window with OK and Cancel buttons.
+   */
+  @Test def testResultForCloseOkCancel(): Unit = {
+    checkResultForClose(MessageOutput.BTN_OK_CANCEL, MessageOutput.RET_CANCEL)
+  }
+
+  /**
+   * Tests the result for a closed window with Yes, No, and Cancel buttons.
+   */
+  @Test def testResultForCloseYesNoCancel(): Unit = {
+    checkResultForClose(MessageOutput.BTN_YES_NO_CANCEL, MessageOutput.RET_CANCEL)
+  }
+
+  /**
+   * Tests the result for a closed window with Yes and No buttons.
+   */
+  @Test def testResultForCloseYesNo(): Unit = {
+    checkResultForClose(MessageOutput.BTN_YES_NO, MessageOutput.RET_NO)
+  }
+
+  /**
+   * Tests the result for a closed window if an invalid button type is provided.
+   */
+  @Test def testResultForCloseInvalidButtons(): Unit = {
+    checkResultForClose(-1, MessageOutput.RET_OK)
   }
 
   /**
