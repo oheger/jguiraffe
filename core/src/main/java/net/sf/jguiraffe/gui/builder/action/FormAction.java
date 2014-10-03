@@ -42,8 +42,13 @@ import net.sf.jguiraffe.gui.builder.event.BuilderEvent;
  * available for the user because of the actual state of the application.</li>
  * <li>It has a task, which is an arbitrary object. This task will be invoked
  * when the action is executed. It is possible to set the task at runtime.</li>
- * <li>It has an <code>execute()</code> method for invoking the action.</li>
+ * <li>It has an {@code execute()} method for invoking the action.</li>
  * </ul>
+ * </p>
+ * <p>
+ * Note: Concrete implementations cannot be expected to be thread-safe; the
+ * manipulation of an action's properties is only safe in the UI thread of the
+ * platform in use.
  * </p>
  *
  * @author Oliver Heger
@@ -111,9 +116,9 @@ public interface FormAction
      * is triggered. It can be changed at runtime to assign the action a
      * different behavior (however this feature should be used with care). Which
      * tasks an action supports, is up to a concrete implementation. Every
-     * <code>FormAction</code> implementation should support objects
-     * implementing one of these interfaces: <code>Runnable</code>,
-     * <code>{@link ActionTask}</code>.
+     * {@code FormAction} implementation should support objects
+     * implementing one of these interfaces: {@code Runnable},
+     * {@link ActionTask}.
      *
      * @param task the task for this action
      * @throws IllegalArgumentException if the task is not supported by this
