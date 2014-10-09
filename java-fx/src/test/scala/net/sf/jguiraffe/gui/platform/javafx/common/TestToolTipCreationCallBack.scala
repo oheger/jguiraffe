@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.common
 
 import java.util.concurrent.CountDownLatch
+import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.control.{Control, TextField, Tooltip}
 
-import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ToolTipFactory}
+import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
+import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderCallBack, ComponentBuilderData}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.apache.commons.jelly.JellyContext
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.Assert.{assertEquals, assertSame}
+import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
-import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.control.Control
-import javafx.scene.control.TextField
-import javafx.scene.control.Tooltip
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
-import net.sf.jguiraffe.gui.builder.components.tags.LabelTag
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 
 /**
  * Test class for ''ToolTipCreationCallBack''.

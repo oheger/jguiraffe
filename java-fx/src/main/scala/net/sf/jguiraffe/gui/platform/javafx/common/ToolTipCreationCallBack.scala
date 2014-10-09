@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
-
-import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
-import org.apache.commons.jelly.TagSupport
-import org.apache.commons.logging.LogFactory
+package net.sf.jguiraffe.gui.platform.javafx.common
 
 import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
-import javafx.scene.control.Control
-import javafx.scene.control.Tooltip
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
+import javafx.scene.control.{Control, Tooltip}
+
+import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderCallBack, ComponentBuilderData}
+import org.apache.commons.jelly.TagSupport
+import org.apache.commons.logging.LogFactory
 
 /**
  * An internally used helper class for creating the tool tips of controls
@@ -49,7 +46,7 @@ import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
  *
  * @param toolTipFactory the factory for tool tips
  */
-private class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
+class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
   extends ComponentBuilderCallBack {
   /** The logger. */
   private val log = LogFactory.getLog(classOf[ToolTipCreationCallBack])
@@ -80,7 +77,7 @@ private class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * Returns the current list with requests for tool tip creations.
    * @return the current list with tool tip creation requests
    */
-  def requests: List[ToolTipCreationRequest] = toolTipRequests
+  private[common] def requests: List[ToolTipCreationRequest] = toolTipRequests
 
   /**
    * @inheritdoc This implementation starts the initialization of tool tips
@@ -99,7 +96,7 @@ private class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * Creates all requested tool tips and assigns them to the corresponding
    * controls. This method is called by ''callBack()'' in the Java FX thread.
    */
-  private[components] def createAndAssignToolTips() {
+  private[common] def createAndAssignToolTips() {
     requests foreach (handleCreateToolTipRequest(_))
   }
 
@@ -117,7 +114,7 @@ private class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
 /**
  * The companion object for ''ToolTipCreationCallBack''.
  */
-private object ToolTipCreationCallBack {
+object ToolTipCreationCallBack {
   /**
    * Constant for the key in the Jelly context under which an instance is
    * stored.

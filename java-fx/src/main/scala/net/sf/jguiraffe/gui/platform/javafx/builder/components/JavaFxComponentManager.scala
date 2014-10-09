@@ -32,8 +32,8 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellCompon
 TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
-import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ToolTipFactory,
-ImageWrapper}
+import net.sf.jguiraffe.gui.platform.javafx.common.{ToolTipCreationCallBack,
+DefaultToolTipFactory, ToolTipFactory, ImageWrapper}
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
 import org.apache.commons.jelly.TagSupport
