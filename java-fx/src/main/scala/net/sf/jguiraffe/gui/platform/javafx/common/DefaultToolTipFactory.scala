@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.common
 
 import javafx.scene.control.Tooltip
 
@@ -22,7 +22,7 @@ import javafx.scene.control.Tooltip
  *
  * This class creates very basic ''Tooltip'' instances that are just
  * initialized with the passed in text. It is used per default by
- * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentManager]]
+ * the standard manager implementations which create components
  * if no custom factory is provided.
  */
 class DefaultToolTipFactory extends ToolTipFactory {

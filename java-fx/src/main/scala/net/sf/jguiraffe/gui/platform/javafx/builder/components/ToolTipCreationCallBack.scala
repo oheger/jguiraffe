@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.apache.commons.jelly.TagSupport
 import org.apache.commons.logging.LogFactory
 

@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.common
 
-import org.scalatest.junit.JUnitSuite
-import org.junit.Test
-import org.junit.Before
-import org.junit.Assert._
-import org.junit.BeforeClass
+import java.util.concurrent.atomic.AtomicReference
+
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper.toRunnable
-import java.util.concurrent.atomic.AtomicReference
+import org.junit.Assert._
+import org.junit.{Before, BeforeClass, Test}
+import org.scalatest.junit.JUnitSuite
 
 /**
  * Test class for ''DefaultToolTipFactory''.

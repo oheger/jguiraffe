@@ -18,6 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 import net.sf.jguiraffe.gui.builder.components.WidgetHandler
 import javafx.scene.Node
 import net.sf.jguiraffe.gui.builder.components.Color
+import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import scala.beans.BeanProperty
 import javafx.scene.control.Control
 import javafx.scene.control.Tooltip
@@ -31,7 +32,7 @@ import org.apache.commons.logging.LogFactory
  * ''Node''.
  *
  * The creation of tool tips is delegated to a
- * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.ToolTipFactory]]
+ * [[ToolTipFactory]]
  * object which is also passed to the constructor. This allows applications to
  * customize tool tips.
  *

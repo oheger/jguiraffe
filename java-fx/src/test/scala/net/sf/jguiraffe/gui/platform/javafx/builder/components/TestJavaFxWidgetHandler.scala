@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

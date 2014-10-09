@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import java.util.concurrent.CountDownLatch
 
+import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ToolTipFactory}
 import org.apache.commons.jelly.JellyContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
