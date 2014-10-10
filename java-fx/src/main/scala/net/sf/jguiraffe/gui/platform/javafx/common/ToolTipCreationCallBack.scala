@@ -20,7 +20,7 @@ import javafx.beans.property.ObjectProperty
 import javafx.scene.control.{Control, Tooltip}
 
 import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderCallBack, ComponentBuilderData}
-import org.apache.commons.jelly.TagSupport
+import org.apache.commons.jelly.{JellyContext, TagSupport}
 import org.apache.commons.logging.LogFactory
 
 /**
@@ -128,9 +128,20 @@ object ToolTipCreationCallBack {
    * registered as call back at the component builder data object.
    * @param tag the current tag
    * @param factory the tool tip factory
+   * @return the instance living in the context of the provided tag
    */
-  def getInstance(tag: TagSupport, factory: ToolTipFactory): ToolTipCreationCallBack = {
-    val context = tag.getContext
+  def getInstance(tag: TagSupport, factory: ToolTipFactory): ToolTipCreationCallBack =
+    getInstance(tag.getContext, factory)
+
+  /**
+   * Obtains an instance of ''ToolTipCreationCallBack'' from the passed in
+   * ''JellyContext''. If this is the first request, a new instance is created
+   * and is also registered as call back at the component builder data object.
+   * @param context the ''JellyContext''
+   * @param factory the tool tip factory
+   * @return the instance living in the specified context
+   */
+  def getInstance(context: JellyContext, factory: ToolTipFactory): ToolTipCreationCallBack = {
     context.getVariable(ContextKey) match {
       case cb: ToolTipCreationCallBack => cb
       case _ =>
