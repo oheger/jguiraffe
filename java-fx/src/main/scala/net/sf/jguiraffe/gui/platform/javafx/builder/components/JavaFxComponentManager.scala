@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -32,8 +32,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellCompon
 TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
-import net.sf.jguiraffe.gui.platform.javafx.common.{ToolTipCreationCallBack,
-DefaultToolTipFactory, ToolTipFactory, ImageWrapper}
+import net.sf.jguiraffe.gui.platform.javafx.common._
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
 import org.apache.commons.jelly.TagSupport
@@ -49,11 +48,11 @@ import scala.reflect.Manifest
  * @param tableHandlerFactory the factory for creating table handlers
  * @param splitPaneFactory the factory for creating split panes
  */
-class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
+class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
   val treeHandlerFactory: TreeHandlerFactory,
   val tableHandlerFactory: TableHandlerFactory,
   val splitPaneFactory: SplitPaneFactory)
-  extends ComponentManager with FormContextListener {
+  extends ComponentManager with FormContextListener with ToolTipCreationSupport {
   /**
    * Creates a new instance of ''JavaFxComponentManager'' and initializes it
    * with a default tool tip factory.
@@ -562,16 +561,15 @@ class JavaFxComponentManager(val toolTipFactory: ToolTipFactory,
 
   /**
    * Creates a tool tip with the specified text and initializes the given
-   * property with it. The tool tip creation itself is done by the specialized
-   * callback object.
+   * property with it. The tool tip creation itself is handled by the
+   * ''ToolTipCreationSupport'' trait.
    * @param tag the current component tag to be processed
    * @param property the property for the tool tip
    * @param tip the text of the tool tip
    */
   private def initToolTip(tag: ComponentBaseTag,
     property: ObjectProperty[Tooltip], tip: String) {
-    val callBack = ToolTipCreationCallBack.getInstance(tag, toolTipFactory)
-    callBack.addCreateToolTipRequest(property, tip)
+    addCreateToolTipRequest(tag, property, tip)
   }
 }
 

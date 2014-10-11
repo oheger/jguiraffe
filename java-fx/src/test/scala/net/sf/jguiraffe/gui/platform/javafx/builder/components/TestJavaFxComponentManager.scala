@@ -22,21 +22,18 @@ import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.FlowPane
 import javafx.scene.text.Text
 
+import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnRendererTag, TableFormController, TableTag}
+import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
 import net.sf.jguiraffe.gui.builder.components.{Color, ComponentBuilderData, FormBuilderException, Orientation}
-import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
-import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnRendererTag,
-TableFormController, TableTag}
-import net.sf.jguiraffe.gui.forms.{Form, ComponentHandler, ComponentStoreImpl}
+import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager,
-TableHandlerFactory}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
-import net.sf.jguiraffe.gui.platform.javafx.common.{ToolTipCreationCallBack,
-DefaultToolTipFactory, ImageWrapper}
+import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.ClassPathLocator
-import org.apache.commons.jelly.JellyContext
+import org.apache.commons.jelly.{JellyContext, Tag}
 import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull, assertSame, assertTrue}
@@ -55,7 +52,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   private var manager: JavaFxComponentManager = _
 
   @Before def setUp() {
-    manager = new JavaFxComponentManager
+    manager = new JavaFxComponentManager with MockToolTipCreationSupport
   }
 
   /**
@@ -68,6 +65,24 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       ctrl.getPrefWidth, .001)
     assertEquals("Got a preferred height", Control.USE_COMPUTED_SIZE,
       ctrl.getPrefHeight, .001)
+  }
+
+  /**
+   * Returns an object for testing tool tip creation.
+   * @return the ''MockToolTipCreationSupport''
+   */
+  private def mockToolTipSupport(): MockToolTipCreationSupport = manager
+    .asInstanceOf[MockToolTipCreationSupport]
+
+  /**
+   * Creates a ''JellyContext'' and installs it in the given tag.
+   * @param tag the tag
+   * @return the ''JellyContext''
+   */
+  private def createAndInstallContext(tag: Tag): JellyContext = {
+    val context = new JellyContext
+    tag setContext context
+    context
   }
 
   /**
@@ -320,36 +335,17 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Prepares the given tag so that a tool tip creation request can be issued.
-   * This method can be called by test cases which include the creation of a
-   * tool tip.
-   * @param tag the tag used by the test case
-   */
-  private def initToolTipCreation(tag: ComponentBaseTag) {
-    tag setContext (new JellyContext)
-    val builderData = new ComponentBuilderData
-    builderData.put(tag.getContext())
-    builderData.pushComponentStore(new ComponentStoreImpl)
-  }
-
-  /**
    * Tests whether the tool tip is evaluated when creating a control.
    */
   @Test def testInitControlToolTip() {
-    //TODO rework test for creating tooltips
-//    val tag = new LabelTag
-//    initToolTipCreation(tag)
-//    val tip = "MyToolTip"
-//    tag setTooltip tip
-//    val label = manager.createLabel(tag, false).asInstanceOf[Label]
-//    val callBack = ToolTipCreationCallBack.getInstance(tag, null)
-//
-//    assertSame("Wrong tool tip factory", manager.toolTipFactory,
-//      callBack.toolTipFactory)
-//    assertEquals("Wrong number of requests", 1, callBack.requests.size)
-//    val req = callBack.requests.head
-//    assertEquals("Wrong tip property", label.tooltipProperty, req.prop)
-//    assertEquals("Wrong tip text", tip, req.tip)
+    val tag = new LabelTag
+    val context = createAndInstallContext(tag)
+    val tip = "MyToolTip"
+    tag setTooltip tip
+    val label = manager.createLabel(tag, create = false).asInstanceOf[Label]
+
+    val tipSupport = mockToolTipSupport()
+    assertFalse("Too many tooltips", tipSupport.verifyToolTipCreationRequest(context, label, tip))
   }
 
   /**
@@ -639,7 +635,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateTabbedPane() {
     val tag = new TabbedPaneTag
-    initToolTipCreation(tag)
+    val context = createAndInstallContext(tag)
     tag setPlacementValue TabbedPaneTag.Placement.RIGHT
     val tabData1 = new TabbedPaneTag.TabData
     val icon = manager.createIcon(
@@ -666,14 +662,11 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tab2 = tabPane.getTabs.get(1)
     assertNull("Got an icon", tab2.getGraphic)
     assertEquals("Wrong text", tabData2.getTitle, tab2.getText)
-    val cb = ToolTipCreationCallBack.getInstance(tag, null)
-    //TODO rework test for creating tooltips
-//    assertEquals("Wrong number of tool tip requests", 1, cb.requests.size)
-//    val req = cb.requests.head
-//    assertEquals("Wrong property", tab2.tooltipProperty, req.prop)
-//    assertEquals("Wrong tool tip", tabData2.getToolTip, req.tip)
     assertTrue("ContainerWrapper not resolved",
       tab2.getContent.isInstanceOf[FlowPane])
+    val tipSupport = mockToolTipSupport()
+    assertFalse("Too many tooltips", tipSupport.verifyToolTipCreationRequest(context,
+      tab2.tooltipProperty(), tabData2.getToolTip))
   }
 
   /**
