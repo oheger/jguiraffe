@@ -22,23 +22,20 @@ import javafx.scene.image.{Image, ImageView}
 
 import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
-import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, DesktopPanelTag, FontTag, FormBaseTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, ScrollSizeSupport, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, TextIconData, ToggleButtonTag, TreeTag}
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnComponentTag, TableTag}
+import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, ComponentBaseTag, DesktopPanelTag, FontTag, FormBaseTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, ScrollSizeSupport, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, TextIconData, ToggleButtonTag, TreeTag}
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
-import net.sf.jguiraffe.gui.forms.{Form, ComponentHandler}
+import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentManager.as
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager,
-TableHandlerFactory}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
+import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
 import org.apache.commons.jelly.TagSupport
 import org.apache.commons.lang.StringUtils
-
-import scala.reflect.Manifest
 
 /**
  * The Java FX-based implementation of the ''ComponentManager'' interface.
@@ -434,7 +431,7 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
     if (create) null
     else {
       val handler = tableHandlerFactory createTableHandler tag.getTableFormController
-      val ctrl = JavaFxComponentManager.as[Control](handler.getComponent)
+      val ctrl = as[Control](handler.getComponent)
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)
       handler
@@ -450,7 +447,7 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
     if (create) null
     else {
       val handler = treeHandlerFactory.createTreeHandler(tag)
-      val ctrl = JavaFxComponentManager.as[Control](handler.getComponent)
+      val ctrl = as[Control](handler.getComponent)
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)
       handler
@@ -534,7 +531,7 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
    */
   private def initLabeled(label: Labeled, tag: ComponentBaseTag,
     data: TextIconData) {
-    label.setText(JavaFxComponentManager.mnemonicText(data.getCaption,
+    label.setText(ComponentUtils.mnemonicText(data.getCaption,
       data.getMnemonic))
     if (data.getIcon != null) {
       label.setGraphic(data.getIcon.asInstanceOf[ImageView])
@@ -586,9 +583,6 @@ object JavaFxComponentManager {
   /** Constant for the font weight bold. */
   private val FontWeightBold = "bold"
 
-  /** Constant for the mnemonic marker. */
-  private val MnemonicMarker = '_'
-
   /**
    * Initializes standard properties of the given node from the specified tag.
    * @param tag the component tag
@@ -627,38 +621,6 @@ object JavaFxComponentManager {
     }
 
     stylesHandler.styles
-  }
-
-  /**
-   * Adds a mnemonic marker to the specified text if possible. In Java FX, a
-   * mnemonic character is specified by putting an underscore in front of it.
-   * This method tries to find the given mnemonic character in the text. If
-   * it is found (ignoring case), the text is modified to contain the
-   * underscore.
-   * @param txt the text to be modified
-   * @param mnemonic the mnemonic character
-   * @return the manipulated string
-   */
-  private[components] def mnemonicText(txt: String, mnemonic: Char): String = {
-    if (txt == null) null
-    else {
-      var pos = txt.indexOf(mnemonic)
-      if (pos < 0) {
-        var mnemonicCase = if (mnemonic.isUpper) mnemonic.toLower
-        else mnemonic.toUpper
-        pos = txt.indexOf(mnemonicCase)
-      }
-      if (pos < 0) txt
-      else {
-        val buf = new java.lang.StringBuilder(txt.length + 1)
-        if (pos > 0) {
-          buf.append(txt.substring(0, pos))
-        }
-        buf append MnemonicMarker
-        buf.append(txt.substring(pos))
-        buf.toString()
-      }
-    }
   }
 
   /**
@@ -748,25 +710,6 @@ object JavaFxComponentManager {
     }
     if (ySize > 0) {
       ctrl setPrefHeight ySize
-    }
-  }
-
-  /**
-   * Helper method for converting an object to the specified type. Because the
-   * JGUIraffe library operates on abstract and generic objects type casts have
-   * to be performed frequently. This helper method tries to cast the specified
-   * object to the desired result type. If this fails, an exception is thrown.
-   * @tparam T the result type
-   * @param obj the object to be converted
-   * @return the converted object
-   * @throws FormBuilderException if conversion fails
-   */
-  private def as[T](obj: Any)(implicit m: Manifest[T]): T = {
-    obj match {
-      case t: T => t
-      case _ =>
-        throw new FormBuilderException("Wrong object! Expected " + m.toString +
-          ", was: " + obj)
     }
   }
 }

@@ -126,39 +126,6 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether mnemonicText() can handle null input.
-   */
-  @Test def testMnemonicTextNull() {
-    assertNull("Wrong result", JavaFxComponentManager.mnemonicText(null, 'x'))
-  }
-
-  /**
-   * Tests whether a text with a mnemonic is correctly manipulated.
-   */
-  @Test def testMnemonicTextFound() {
-    assertEquals("Wrong result (1)", "A _Test", JavaFxComponentManager.mnemonicText("A Test", 'T'))
-    assertEquals("Wrong result (2)", "_Test", JavaFxComponentManager.mnemonicText("Test", 'T'))
-    assertEquals("Wrong result (3)", "ab_c", JavaFxComponentManager.mnemonicText("abc", 'c'))
-    assertEquals("Wrong result (4)", "_a", JavaFxComponentManager.mnemonicText("a", 'a'))
-  }
-
-  /**
-   * Tests whether whether case is ignored when searching for mnemonics.
-   */
-  @Test def testMnemonicTextCase() {
-    assertEquals("Wrong result (1)", "a_bc", JavaFxComponentManager.mnemonicText("abc", 'B'))
-    assertEquals("Wrong result (2)", "A_BC", JavaFxComponentManager.mnemonicText("ABC", 'b'))
-  }
-
-  /**
-   * Tests mnemonicText() if the mnemonic cannot be found.
-   */
-  @Test def testMnemonicTextNotFound() {
-    assertEquals("Wrong result (1)", "check", JavaFxComponentManager.mnemonicText("check", 'z'))
-    assertEquals("Wrong result (2)", "", JavaFxComponentManager.mnemonicText("", 'a'))
-  }
-
-  /**
    * Tests createLabel() if the create flag is true.
    */
   @Test def testCreateLabelCreate() {
