@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -15,42 +15,81 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
-import net.sf.jguiraffe.gui.builder.action.ActionBuilder
-import net.sf.jguiraffe.gui.builder.action.ActionData
-import net.sf.jguiraffe.gui.builder.action.ActionManager
-import net.sf.jguiraffe.gui.builder.action.FormAction
-import net.sf.jguiraffe.gui.builder.action.PopupMenuHandler
+import javafx.beans.property.{BooleanProperty, SimpleBooleanProperty}
+import javafx.event.ActionEvent
+import javafx.scene.control.{CheckMenuItem, Menu, MenuBar, MenuItem}
+import javafx.scene.image.ImageView
+
+import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionData, ActionManager, FormAction, PopupMenuHandler}
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
+import net.sf.jguiraffe.gui.platform.javafx.common.{ComponentUtils, ImageWrapper}
 
+/**
+ * JavaFX-specific implementation of the ''ActionManager'' interface.
+ */
 class JavaFxActionManager extends ActionManager {
+  /**
+   * @inheritdoc
+   * This implementation returns JavaFX-specific action implementation.
+   */
   def createAction(actionBuilder: ActionBuilder, actionData: ActionData): FormAction = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    val action = new JavaFxAction(actionData)
+    action setTask actionData.getTask
+    action
   }
 
+  /**
+   * @inheritdoc
+   * This implementation expects a ''JavaFxAction'' object to be passed in.
+   * From there, the properties for initializing a new menu item are obtained.
+   * There is also a property binding performed to connect properties of the
+   * action with corresponding properties of the menu item.
+   */
   def createMenuItem(actionBuilder: ActionBuilder, action: FormAction,
-    checked: Boolean, parent: Object): FormAction = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+                     checked: Boolean, parent: Object): MenuItem = {
+    val fxAction = as[JavaFxAction](action)
+    addItemToMenu(parent, bindActionToMenuItem(fxAction, createInitializedMenuItem(fxAction
+      .actionData, checked)))
   }
 
+  /**
+   * @inheritdoc
+   * This implementation either creates a ''MenuItem'' or a
+   * ''CheckedMenuItem'' depending on the passed in ''checked'' flag. A special
+   * ''ComponentHandler'' wrapping this menu item is returned.
+   */
   def createMenuItem(actionBuilder: ActionBuilder,
-    actionData: ActionData, checked: Boolean, parent: Object): ComponentHandler[_] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+                     actionData: ActionData, checked: Boolean,
+                     parent: Object): ComponentHandler[_] = {
+    val (item, property) = createInitializedMenuItem(actionData, checked)
+    new MenuItemComponentHandler(addItemToMenu(parent, item), property, actionData.getName)
   }
 
-  def createMenuBar(actionBuilder: ActionBuilder): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc
+   * This implementation returns a JavaFX ''MenuBar'' object.
+   */
+  def createMenuBar(actionBuilder: ActionBuilder): Object = new MenuBar
 
+  /**
+   * @inheritdoc
+   * This implementation creates a JavaFX ''Menu'' object and adds it to the
+   * parent (which must be a ''MenuBar'').
+   */
   def createMenu(actionBuilder: ActionBuilder, menu: Object,
-    data: TextIconData, parent: Object): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+                 data: TextIconData, parent: Object): Object = {
+    if (menu == null) new Menu
+    else {
+      val fxMenu = as[Menu](menu)
+      fxMenu setText ComponentUtils.mnemonicText(data.getCaption, data.getMnemonic)
+      fxMenu setGraphic iconToImageView(data.getIcon)
+      as[MenuBar](parent).getMenus add fxMenu
+
+      menu
+    }
   }
 
   def createToolbar(actionBuilder: ActionBuilder): Object = {
@@ -59,13 +98,14 @@ class JavaFxActionManager extends ActionManager {
   }
 
   def createToolbarButton(actionBuilder: ActionBuilder, action: FormAction,
-    checked: Boolean, parent: Object): Object = {
+                          checked: Boolean, parent: Object): Object = {
     //TODO implementation
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
   def createToolbarButton(actionBuilder: ActionBuilder,
-    data: ActionData, checked: Boolean, parent: Object): ComponentHandler[_] = {
+                          data: ActionData, checked: Boolean,
+                          parent: Object): ComponentHandler[_] = {
     //TODO implementation
     throw new UnsupportedOperationException("Not yet implemented!");
   }
@@ -81,8 +121,79 @@ class JavaFxActionManager extends ActionManager {
   }
 
   def registerPopupMenuHandler(component: Object, handler: PopupMenuHandler,
-    compData: ComponentBuilderData) {
+                               compData: ComponentBuilderData) {
     //TODO implementation
     throw new UnsupportedOperationException("Not yet implemented!");
+  }
+
+  /**
+   * Converts an icon passed to a creation method to an ''ImageView''. If the
+   * icon is defined, it is converted. Otherwise, result is '''null'''.
+   * @param icon the icon
+   * @return the ''ImageView'' to be set on a newly created control
+   */
+  private def iconToImageView(icon: AnyRef): ImageView =
+    if (icon == null) null
+    else as[ImageWrapper](icon).newImageView()
+
+  /**
+   * Creates a ''MenuItem'' based on the content of the specified ''ActionData''
+   * object. The concrete type of menu item depends on the ''checked''
+   * parameter. The return value also contains the ''BooleanProperty''
+   * associated with the checked state of the menu item.
+   * @param actionData the ''ActionData''
+   * @param checked flag whether a checked menu item is to be created
+   * @return the new menu item and the property with its checked state
+   */
+  private def createInitializedMenuItem(actionData: ActionData, checked: Boolean): (MenuItem,
+    BooleanProperty) = {
+    if (!checked) (initializeMenuItem(new MenuItem, actionData), new SimpleBooleanProperty)
+    else {
+      val checkItem = new CheckMenuItem
+      (initializeMenuItem(checkItem, actionData), checkItem.selectedProperty)
+    }
+  }
+
+  /**
+   * Initializes a menu item from the properties of the given ''ActionData''
+   * object.
+   * @param item the item to be initialized
+   * @param actionData the ''ActionData''
+   * @return the initialized menu item
+   */
+  private def initializeMenuItem(item: MenuItem, actionData: ActionData): MenuItem = {
+    item setAccelerator AcceleratorConverter.convertAccelerator(actionData.getAccelerator)
+    item setGraphic iconToImageView(actionData.getIcon)
+    item setText ComponentUtils.mnemonicText(actionData.getText, actionData.getMnemonicKey.toChar)
+    item
+  }
+
+  /**
+   * Binds the properties of an action to the corresponding properties of the
+   * given menu item.
+   * @param action the action
+   * @param itemData a tuple consisting of the menu item and the property to be
+   *                 bound to the action's ''checked'' property
+   * @return the menu item
+   */
+  private def bindActionToMenuItem(action: JavaFxAction, itemData: (MenuItem,
+    BooleanProperty)): MenuItem = {
+    val (item, checkProperty) = itemData
+    item.disableProperty bind action.enabled.not()
+    checkProperty bind action.checked
+    item.addEventHandler(ActionEvent.ACTION, action)
+    item
+  }
+
+  /**
+   * Adds a menu item to its parent menu. The parent object must be a JavaFX
+   * menu.
+   * @param parent the parent menu
+   * @param item the item to be added
+   * @return the menu item
+   */
+  private def addItemToMenu(parent: Object, item: MenuItem): MenuItem = {
+    as[Menu](parent).getItems add item
+    item
   }
 }
