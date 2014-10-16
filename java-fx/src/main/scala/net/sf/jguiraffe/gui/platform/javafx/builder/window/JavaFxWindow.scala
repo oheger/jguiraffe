@@ -15,19 +15,17 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
-import scala.beans.BeanProperty
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
-import net.sf.jguiraffe.gui.builder.event.FormMouseEvent
-import net.sf.jguiraffe.gui.builder.event.FormMouseListener
+
+import net.sf.jguiraffe.gui.builder.event.{FormMouseEvent, FormMouseListener}
 import net.sf.jguiraffe.gui.builder.window._
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.MouseEventAdapter
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.WindowEventAdapter
-import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.{EventListenerList, MouseEventAdapter, WindowEventAdapter}
+import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
+
+import scala.beans.BeanProperty
 
 /**
  * The Java FX-based implementation of the ''Window'' interface.
@@ -52,7 +50,7 @@ import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 private class JavaFxWindow private[window] (val stage: Stage,
   windowListeners: EventListenerList[WindowEvent, WindowListener],
   mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener],
-  @BeanProperty val rootContainer: ContainerWrapper)
+  @BeanProperty val rootContainer: WindowRootContainerWrapper)
   extends Window with WindowWrapper {
   /** The underlying wrapped window. */
   override val getWrappedWindow = stage
@@ -176,7 +174,7 @@ private object JavaFxWindow {
   def apply(stage: Stage, sizeHandler: Option[UnitSizeHandler] = None): JavaFxWindow = {
     val wndListeners = new EventListenerList[WindowEvent, WindowListener]
     val mouseListeners = new EventListenerList[FormMouseEvent, FormMouseListener]
-    val root = new ContainerWrapper(sizeHandler)
+    val root = new WindowRootContainerWrapper(sizeHandler)
     val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners, root)
 
     WindowEventAdapter(stage, wnd, wndListeners)

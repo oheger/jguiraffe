@@ -29,7 +29,6 @@ import net.sf.jguiraffe.gui.builder.window._
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import net.sf.jguiraffe.gui.platform.javafx.{FetchAnswer, JavaFxTestHelper}
 import org.easymock.EasyMock.{eq => argEquals}
 import org.easymock.{EasyMock, IAnswer}
@@ -70,7 +69,7 @@ class TestJavaFxWindow extends JUnitSuite {
       classOf[EventListenerList[WindowEvent, WindowListener]])
     mouseListeners = PowerMock.createMock(
       classOf[EventListenerList[FormMouseEvent, FormMouseListener]])
-    new JavaFxWindow(stage, windowListeners, mouseListeners, new ContainerWrapper)
+    new JavaFxWindow(stage, windowListeners, mouseListeners, new WindowRootContainerWrapper)
   }
 
   /**
@@ -448,8 +447,8 @@ class TestJavaFxWindow extends JUnitSuite {
     prepareApplyTest(withListeners = true)
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage)
-    assertTrue("Wrong root container",
-      wnd.getRootContainer.isInstanceOf[ContainerWrapper])
+    val root = wnd.getRootContainer
+    assertFalse("Got a menu", root.menuBar.isDefined)
   }
 
   /**
