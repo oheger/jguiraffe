@@ -15,29 +15,20 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
-import scala.beans.BeanProperty
-import scala.beans.BooleanBeanProperty
-
-import org.apache.commons.jelly.JellyContext
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotSame
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.scalatest.junit.JUnitSuite
-
 import javafx.scene.Group
+import javafx.scene.control.MenuBar
 import javafx.scene.text.Text
 import javafx.stage.Modality
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.gui.builder.window.Window
-import net.sf.jguiraffe.gui.builder.window.WindowBuilderData
-import net.sf.jguiraffe.gui.builder.window.WindowData
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
-import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
+
+import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, ComponentBuilderData}
+import net.sf.jguiraffe.gui.builder.window.{Window, WindowBuilderData, WindowData}
+import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
+import org.apache.commons.jelly.JellyContext
+import org.junit.Assert._
+import org.junit.{Before, BeforeClass, Test}
+import org.scalatest.junit.JUnitSuite
+
+import scala.beans.{BeanProperty, BooleanBeanProperty}
 
 /**
  * Test class for ''JavaFxWindowManager''.
@@ -70,7 +61,7 @@ class TestJavaFxWindowManager extends JUnitSuite {
     val frame = manager.createFrame(builderData, new WindowDataImpl, null)
     manager.createFrame(builderData, new WindowDataImpl, frame)
     assertNotSame("Single window instance", primaryStage, frame)
-    assertSame("Wrong parent", primaryStage, frame.getParentWindow())
+    assertSame("Wrong parent", primaryStage, frame.getParentWindow)
     assertNotSame("Got same stages", extractStage(primaryStage), extractStage(frame))
   }
 
@@ -141,6 +132,51 @@ class TestJavaFxWindowManager extends JUnitSuite {
   }
 
   /**
+   * Helper method for creating a window with the specified menu bar.
+   * @param menuBar the menu bar
+   * @return the window
+   */
+  private def createWindowWithMenuBar(menuBar: AnyRef): Window = {
+    val builderData = createWindowBuilderData()
+    val windowData = new WindowDataImpl(menuBar = menuBar)
+    val wndNew = manager.createFrame(builderData, windowData, null)
+    manager.createFrame(builderData, windowData, wndNew)
+  }
+
+  /**
+   * Obtains the root container from the specified window and casts it to the
+   * given target type.
+   * @param window the window
+   * @return the root container
+   */
+  private def extractRootContainer(window: Window): WindowRootContainerWrapper =
+    window.getRootContainer.asInstanceOf[WindowRootContainerWrapper]
+
+  /**
+   * Tests whether a menu bar is correctly initialized.
+   */
+  @Test def testInitMenuBar(): Unit = {
+    val menuBar = new MenuBar
+    assertEquals("Wrong menu bar", menuBar, extractRootContainer(createWindowWithMenuBar(menuBar)
+    ).menuBar.get)
+  }
+
+  /**
+   * Tests whether a missing menu bar is handled correctly.
+   */
+  @Test def testInitNoMenuBar(): Unit = {
+    assertFalse("Got a menu bar", extractRootContainer(createWindowWithMenuBar(null)).menuBar
+      .isDefined)
+  }
+
+  /**
+   * Tests whether an invalid menu bar is handled correctly.
+   */
+  @Test(expected = classOf[FormBuilderException]) def testInitInvalidMenuBar(): Unit = {
+    createWindowWithMenuBar(this)
+  }
+
+  /**
    * Tests the modality of a new frame window.
    */
   @Test def testCreateFrameModality() {
@@ -184,14 +220,14 @@ class TestJavaFxWindowManager extends JUnitSuite {
    * Tests whether a non-modal dialog window can be created.
    */
   @Test def testCreateDialogNonModal() {
-    checkCreateDialog(false, Modality.NONE)
+    checkCreateDialog(modal = false, Modality.NONE)
   }
 
   /**
    * Tests whether a modal dialog window can be created.
    */
   @Test def testCreateDialogModal() {
-    checkCreateDialog(true, Modality.APPLICATION_MODAL)
+    checkCreateDialog(modal = true, Modality.APPLICATION_MODAL)
   }
 
   /**

@@ -15,12 +15,14 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
+import javafx.scene.control.MenuBar
 import javafx.stage.Modality
 import javafx.stage.Stage
 import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData
 import net.sf.jguiraffe.gui.builder.window.WindowData
 import net.sf.jguiraffe.gui.builder.window.WindowManager
+import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils
 import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 
 /**
@@ -102,6 +104,18 @@ class JavaFxWindowManager extends WindowManager {
     wnd.setTitle(data.getTitle)
     fxwnd.windowController = data.getController
     initWindowBounds(data, fxwnd.stage)
+    initMenuBar(fxwnd, data.getMenuBar)
+  }
+
+  /**
+   * Initializes the window's menu bar if one is defined.
+   * @param window the window
+   * @param menuBar the optional menu bar
+   */
+  def initMenuBar(window: JavaFxWindow, menuBar: AnyRef): Unit = {
+    if (menuBar != null) {
+      window.rootContainer.menuBar = Some(ComponentUtils.as[MenuBar](menuBar))
+    }
   }
 
   /**
