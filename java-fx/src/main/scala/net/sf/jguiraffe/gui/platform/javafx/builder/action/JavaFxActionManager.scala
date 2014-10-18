@@ -21,7 +21,7 @@ import javafx.scene.control._
 import javafx.scene.image.ImageView
 
 import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionData, ActionManager, FormAction, PopupMenuHandler}
-import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
+import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, ComponentBuilderData}
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
@@ -86,9 +86,7 @@ class JavaFxActionManager extends ActionManager {
       val fxMenu = as[Menu](menu)
       fxMenu setText ComponentUtils.mnemonicText(data.getCaption, data.getMnemonic)
       fxMenu setGraphic iconToImageView(data.getIcon)
-      as[MenuBar](parent).getMenus add fxMenu
-
-      menu
+      appendMenu(parent, fxMenu)
     }
   }
 
@@ -187,6 +185,28 @@ class JavaFxActionManager extends ActionManager {
     checkProperty bind action.checked
     item.addEventHandler(ActionEvent.ACTION, action)
     item
+  }
+
+  /**
+   * Appends a new menu to the given parent. The parent can be either a menu
+   * bar or another menu.
+   * @param parent the parent
+   * @param fxMenu the menu to be appended
+   * @return the appended menu item
+   */
+  private def appendMenu(parent: Object, fxMenu: Menu): Menu = {
+    parent match {
+      case bar: MenuBar =>
+        bar.getMenus add fxMenu
+
+      case m: Menu =>
+        m.getItems add fxMenu
+
+      case _ =>
+        throw new FormBuilderException("Unsupported parent for menu: " + parent)
+    }
+
+    fxMenu
   }
 
   /**

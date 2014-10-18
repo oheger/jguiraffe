@@ -20,6 +20,7 @@ import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.KeyCombination
 
 import net.sf.jguiraffe.gui.builder.action.{Accelerator, ActionBuilder, ActionData, ActionTask}
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, Keys, Modifiers}
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
@@ -185,6 +186,31 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
 
     manager.createMenu(actionBuilder, menu, data, menuBar)
     checkMenuItemBasicProperties(actData, menu)
+  }
+
+  /**
+   * Tests whether a menu can be added to another menu.
+   */
+  @Test def testCreateMenuNested(): Unit = {
+    val menu = new Menu
+    val parentMenu = new Menu
+    val data = new TextIconData(null)
+    data setText ActionText
+
+    manager.createMenu(actionBuilder, menu, data, parentMenu)
+    assertEquals("Wrong number of items", 1, parentMenu.getItems.size)
+    assertEquals("Wrong item", menu, parentMenu.getItems.get(0))
+  }
+
+  /**
+   * Tests whether an invalid parent is detected when creating a menu.
+   */
+  @Test(expected = classOf[FormBuilderException]) def testCreateMenuInvalidParent(): Unit = {
+    val menu = new Menu
+    val data = new TextIconData(null)
+    data setText ActionText
+
+    manager.createMenu(actionBuilder, menu, data, this)
   }
 
   /**
