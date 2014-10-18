@@ -16,9 +16,10 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
 import javafx.beans.property.{BooleanProperty, SimpleBooleanProperty}
+import javafx.event.{ActionEvent, EventHandler}
 
 import net.sf.jguiraffe.gui.builder.action.{ActionData, ActionHelper, FormAction}
-import net.sf.jguiraffe.gui.builder.event.BuilderEvent
+import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, BuilderEvent}
 
 import scala.beans.BeanProperty
 
@@ -31,9 +32,13 @@ import scala.beans.BeanProperty
  * used. This makes it possible to handle updates automatically via property
  * bindings.
  *
+ * In addition, this class is also a handler for action events. Thus, it can be
+ * directly connected to JavaFX controls which can trigger events of this type.
+ *
  * @param actionData an object defining the properties of this action
  */
-private class JavaFxAction(val actionData: ActionData) extends FormAction {
+private class JavaFxAction(val actionData: ActionData) extends FormAction with
+EventHandler[ActionEvent] {
   /**
    * The property for storing the enabled state of this action.
    */
@@ -59,4 +64,13 @@ private class JavaFxAction(val actionData: ActionData) extends FormAction {
     ActionHelper.invokeActionTask(task, this, event)
 
   override def getName: String = actionData.getName
+
+  /**
+   * @inheritdoc
+   * This implementation executes this action with a ''FormActionEvent''
+   * created based on the current ''ActionEvent''.
+   */
+  override def handle(event: ActionEvent): Unit = {
+    execute(new FormActionEvent(event, null, null, getName))
+  }
 }

@@ -15,9 +15,13 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
+import javafx.event.ActionEvent
+
 import net.sf.jguiraffe.gui.builder.action.{ActionData, ActionTask}
-import net.sf.jguiraffe.gui.builder.event.BuilderEvent
+import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, BuilderEvent}
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 import org.easymock.EasyMock
+import org.easymock.EasyMock.{eq => eqArgs}
 import org.junit.Assert._
 import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
@@ -135,5 +139,27 @@ class TestJavaFxAction extends JUnitSuite with EasyMockSugar {
       action setTask task
       action execute event
     }
+  }
+
+  /**
+   * Tests whether an action can handle action events.
+   */
+  @Test def testHandleActionEvent(): Unit = {
+    val ActionName = "MyTestAction"
+    val task = mock[ActionTask]
+    val answer = new FetchAnswer[AnyRef, FormActionEvent](argIdx = 1)
+    task.run(eqArgs(action), EasyMock.anyObject(classOf[FormActionEvent]))
+    EasyMock.expectLastCall() andAnswer answer
+    EasyMock.expect(actionData.getName).andReturn(ActionName).anyTimes()
+
+    val actionEvent = new ActionEvent
+    whenExecuting(task, actionData) {
+      action setTask task
+      action handle actionEvent
+    }
+
+    val event = answer.value
+    assertEquals("Wrong source", actionEvent, event.getSource)
+    assertEquals("Wrong action command", ActionName, event.getCommand)
   }
 }
