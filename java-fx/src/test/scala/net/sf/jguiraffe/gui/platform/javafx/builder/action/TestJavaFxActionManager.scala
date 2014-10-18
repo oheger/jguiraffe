@@ -15,7 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
-import javafx.scene.control.{CheckMenuItem, Menu, MenuBar, MenuItem}
+import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.KeyCombination
 
@@ -292,6 +292,17 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
       val item = createAndCheckMenuItemFromAction(action, checked = false)
       item.fire()
     }
+  }
+
+  /**
+   * Tests whether a separator can be added to a menu.
+   */
+  @Test def testAddMenuSeparator(): Unit = {
+    val menu = new Menu
+
+    manager.addMenuSeparator(actionBuilder, menu)
+    assertEquals("Wrong number of menu items", 1, menu.getItems.size)
+    assertTrue("Wrong separator item", menu.getItems.get(0).isInstanceOf[SeparatorMenuItem])
   }
 }
 

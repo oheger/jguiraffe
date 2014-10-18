@@ -17,7 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
 import javafx.beans.property.{BooleanProperty, SimpleBooleanProperty}
 import javafx.event.ActionEvent
-import javafx.scene.control.{CheckMenuItem, Menu, MenuBar, MenuItem}
+import javafx.scene.control._
 import javafx.scene.image.ImageView
 
 import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionData, ActionManager, FormAction, PopupMenuHandler}
@@ -110,9 +110,13 @@ class JavaFxActionManager extends ActionManager {
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
-  def addMenuSeparator(actionBuilder: ActionBuilder, menu: Object) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+  /**
+   * @inheritdoc
+   * This implementation adds a separator menu item to the specified menu. The
+   * menu is expected to be a ''Menu'' object.
+   */
+  def addMenuSeparator(actionBuilder: ActionBuilder, menu: Object): Unit = {
+    addItemToMenu(menu, new SeparatorMenuItem)
   }
 
   def addToolBarSeparator(actionBuilder: ActionBuilder, toolBar: Object) {
