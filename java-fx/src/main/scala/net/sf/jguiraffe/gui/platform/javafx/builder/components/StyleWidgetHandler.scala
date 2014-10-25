@@ -42,14 +42,14 @@ private trait StyleWidgetHandler extends WidgetHandler {
    * @inheritdoc The background color is obtained from the wrapped node's
    *             styles.
    */
-  def getBackgroundColor: Color = stylesHandler.getBackgroundColor
+  override def getBackgroundColor: Color = stylesHandler.getBackgroundColor
 
   /**
    * @inheritdoc This implementation passes the color to the styles handler.
    *             Then all styles are transformed to text and passed to the wrapped
    *             node.
    */
-  def setBackgroundColor(c: Color) {
+  override def setBackgroundColor(c: Color) {
     stylesHandler setBackgroundColor c
     updateWidgetStyles()
   }
@@ -58,14 +58,14 @@ private trait StyleWidgetHandler extends WidgetHandler {
    * @inheritdoc The foreground color is obtained from the wrapped node's
    *             styles.
    */
-  def getForegroundColor: Color = stylesHandler.getForegroundColor()
+  override def getForegroundColor: Color = stylesHandler.getForegroundColor()
 
   /**
    * @inheritdoc This implementation passes the color to the styles handler.
    *             Then all styles are transformed to text and passed to the wrapped
    *             node.
    */
-  def setForegroundColor(c: Color) {
+  override def setForegroundColor(c: Color) {
     stylesHandler setForegroundColor c
     updateWidgetStyles()
   }
@@ -74,14 +74,14 @@ private trait StyleWidgetHandler extends WidgetHandler {
    * @inheritdoc The node's font is dynamically created based on its styles
    *             definitions.
    */
-  def getFont: JavaFxFont = stylesHandler.getFont
+  override def getFont: JavaFxFont = stylesHandler.getFont
 
   /**
    * @inheritdoc This implementation expects that the argument is of type
    *             ''JavaFxFont''. It applies the data of the font object to the wrapped
    *             node's styles definition,
    */
-  def setFont(font: Object) {
+  override def setFont(font: Object) {
     stylesHandler.setFont(font.asInstanceOf[JavaFxFont])
     updateWidgetStyles()
   }

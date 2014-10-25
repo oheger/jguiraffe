@@ -34,20 +34,8 @@ class TestStyleWidgetHandler {
 
   @Before def setUp(): Unit = {
     styleProperty = new SimpleStringProperty("-fx-unknown: 1;")
-    handler = new StyleWidgetHandler {
+    handler = new WidgetHandlerAdapter with StyleWidgetHandler {
       override val style: StringProperty = styleProperty
-
-      override def isVisible: Boolean = unexpected()
-
-      override def setVisible(f: Boolean): Unit = unexpected()
-
-      override def getToolTip: String = unexpected()
-
-      override def getWidget: AnyRef = unexpected()
-
-      override def setToolTip(tip: String): Unit = unexpected()
-
-      private def unexpected(): Nothing = throw new AssertionError("Unexpected method call!")
     }
   }
 

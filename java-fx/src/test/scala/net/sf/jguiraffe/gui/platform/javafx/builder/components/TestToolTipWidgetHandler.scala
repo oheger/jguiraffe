@@ -18,13 +18,12 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 import javafx.beans.property.{ObjectProperty, SimpleObjectProperty}
 import javafx.scene.control.Tooltip
 
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper._
-import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper._
 import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.easymock.EasyMock
-import org.junit.{BeforeClass, Test, Before}
 import org.junit.Assert._
+import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
@@ -57,29 +56,9 @@ class TestToolTipWidgetHandler extends JUnitSuite with EasyMockSugar {
     tipProperty = new SimpleObjectProperty[Tooltip]
     factory = mock[ToolTipFactory]
 
-    handler = new ToolTipWidgetHandler {
+    handler = new WidgetHandlerAdapter with ToolTipWidgetHandler {
       override val toolTipFactory: ToolTipFactory = factory
       override val toolTipProperty: ObjectProperty[Tooltip] = tipProperty
-
-      override def isVisible: Boolean = unexpected()
-
-      override def getBackgroundColor: Color = unexpected()
-
-      override def getForegroundColor: Color = unexpected()
-
-      override def getFont: AnyRef = unexpected()
-
-      override def setVisible(f: Boolean): Unit = unexpected()
-
-      override def setFont(font: scala.Any): Unit = unexpected()
-
-      override def getWidget: AnyRef = unexpected()
-
-      override def setBackgroundColor(c: Color): Unit = unexpected()
-
-      override def setForegroundColor(c: Color): Unit = unexpected()
-
-      private def unexpected(): Nothing = throw new AssertionError("Unexpected method call!")
     }
   }
 
