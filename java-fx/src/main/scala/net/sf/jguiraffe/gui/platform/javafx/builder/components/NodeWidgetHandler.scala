@@ -17,8 +17,6 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import javafx.scene.Node
 
-import org.apache.commons.logging.LogFactory
-
 import scala.beans.BeanProperty
 
 /**
@@ -29,25 +27,11 @@ import scala.beans.BeanProperty
  * support for tooltips. Other functionality is directly mapped to methods of
  * the wrapped ''Node''.
  */
-private class NodeWidgetHandler(@BeanProperty val widget: Node) extends StyleWidgetHandler {
+private class NodeWidgetHandler(@BeanProperty val widget: Node) extends StyleWidgetHandler with
+NoToolTipSupport {
   override val style = widget.styleProperty
 
   override def isVisible: Boolean = widget.isVisible
 
   override def setVisible(f: Boolean): Unit = widget setVisible f
-
-  /**
-   * @inheritdoc This implementation always returns '''null'''. Plain nodes do
-   *             not support tool tips.
-   */
-  override def getToolTip: String = null
-
-  /**
-   * @inheritdoc This is a dummy implementation. The passed in tool tip text is
-   *             ignored.
-   */
-  override def setToolTip(tip: String): Unit = {
-    LogFactory.getLog(classOf[NodeWidgetHandler])
-      .warn("Widget does not support tool tips: " + widget)
-  }
 }
