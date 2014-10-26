@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 /**
  * A simple data class representing a font in Java FX.
@@ -25,14 +25,14 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
  * properties are of type String - they directly correspond to style sheet
  * definitions.
  *
- * @param familiy the font family
+ * @param family the font family
  * @param size the font size
  * @param style the font style
  * @param weight the font weight
  * @param fontDef a kind of meta attribute for a font definition in a single
  * style (this corresponds to the Java FX `fx-font` attribute)
  */
-private case class JavaFxFont(family: Option[String] = None,
+private[components] case class JavaFxFont(family: Option[String] = None,
   size: Option[String] = None,
   style: Option[String] = None,
   weight: Option[String] = None,

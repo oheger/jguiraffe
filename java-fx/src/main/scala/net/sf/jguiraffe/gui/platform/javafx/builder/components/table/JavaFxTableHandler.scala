@@ -20,8 +20,8 @@ import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.builder.components.model.TableHandler
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.{Styles, JavaFxStylesHandler,
-JavaFxComponentHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{Styles, JavaFxStylesHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.apache.commons.lang.StringUtils
 

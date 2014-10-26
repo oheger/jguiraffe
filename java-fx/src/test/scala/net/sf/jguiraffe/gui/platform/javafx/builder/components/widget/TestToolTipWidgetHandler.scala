@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 import javafx.beans.property.{ObjectProperty, SimpleObjectProperty}
 import javafx.scene.control.Tooltip
 
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper._
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.WidgetHandlerAdapter
 import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.easymock.EasyMock
 import org.junit.Assert._

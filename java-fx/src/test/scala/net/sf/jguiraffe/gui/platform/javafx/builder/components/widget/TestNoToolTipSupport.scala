@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.WidgetHandlerAdapter
 import org.junit.Assert._
 import org.junit.{Before, Test}
 

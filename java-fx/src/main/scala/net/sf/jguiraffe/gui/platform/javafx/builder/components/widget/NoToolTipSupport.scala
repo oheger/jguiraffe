@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 import net.sf.jguiraffe.gui.builder.components.WidgetHandler
 import org.apache.commons.logging.LogFactory
@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory
  *
  * This trait has dummy implementations for the methods dealing with tool tips.
  */
-trait NoToolTipSupport extends WidgetHandler {
+private trait NoToolTipSupport extends WidgetHandler {
   /**
    * @inheritdoc This implementation always returns '''null'''.
    */

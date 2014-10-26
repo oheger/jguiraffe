@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 import net.sf.jguiraffe.gui.builder.components.Color
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 /**
  * A class for managing the styles of a Java FX node.
  *
  * This class adds a kind of semantic layer on top of the
- * [[net.sf.jguiraffe.gui.platform.javafx.builder.components.Styles]] class.
+ * [[widget.Styles]] class.
  * It assigns concrete objects to different style sheet definitions, e.g. fonts
  * or colors. It can be used to set and to query these objects.
  *
@@ -30,7 +31,7 @@ import net.sf.jguiraffe.gui.builder.components.Color
  *
  * @param styles the ''Styles'' object associated with this instance
  */
-private class JavaFxStylesHandler(val styles: Styles = Styles()) {
+private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
   /**
    * Returns the background color defined by the associated style sheet. If
    * the style sheet does not define a background color, result is a special

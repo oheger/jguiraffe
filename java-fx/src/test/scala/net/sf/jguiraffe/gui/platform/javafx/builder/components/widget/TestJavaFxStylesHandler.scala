@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
-
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 import net.sf.jguiraffe.gui.builder.components.Color
+import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
+import org.junit.{Before, Test}
+import org.scalatest.junit.JUnitSuite
 
 /**
  * Test class for ''JavaFxStylesHandler''.

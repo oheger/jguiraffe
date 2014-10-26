@@ -15,14 +15,15 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import net.sf.jguiraffe.gui.builder.components.WidgetHandler
 import javafx.scene.Node
-import net.sf.jguiraffe.gui.builder.components.Color
-import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
-import scala.beans.BeanProperty
 import javafx.scene.control.Control
-import javafx.scene.control.Tooltip
+
+import net.sf.jguiraffe.gui.builder.components.{Color, WidgetHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont, JavaFxStylesHandler, Styles}
+import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.apache.commons.logging.LogFactory
+
+import scala.beans.BeanProperty
 
 /**
  * Java FX-specific implementation of the ''WidgetHandler'' interface.

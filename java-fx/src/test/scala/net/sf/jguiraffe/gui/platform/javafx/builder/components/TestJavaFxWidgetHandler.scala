@@ -15,6 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont, Styles,
+JavaFxStylesHandler}
 import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.easymock.EasyMock
 import org.junit.Assert.assertEquals

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 import javafx.beans.property.ObjectProperty
 import javafx.scene.control.Tooltip
@@ -33,7 +33,7 @@ import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
  * provided; this is used for creating ''Tooltip'' objects for the plain texts
  * passed to the handler.
  */
-trait ToolTipWidgetHandler extends WidgetHandler {
+private trait ToolTipWidgetHandler extends WidgetHandler {
   /**
    * The property of the wrapped widget for storing the tool tip objects.
    */

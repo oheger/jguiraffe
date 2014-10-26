@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.jguiraffe.gui.platform.javafx.builder.components
+package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
+
+import org.apache.commons.logging.LogFactory
 
 import scala.util.parsing.combinator.JavaTokenParsers
-import org.apache.commons.logging.LogFactory
 
 /**
  * An internally used helper class for managing style sheet definitions for
@@ -32,7 +33,7 @@ import org.apache.commons.logging.LogFactory
  *
  * @param map the map with the original styles definitions
  */
-private class Styles private (map: Map[String, String]) {
+private[components] class Styles private (map: Map[String, String]) {
   /**
    * Holds the current map with style definitions.
    */
@@ -117,7 +118,7 @@ private class Styles private (map: Map[String, String]) {
  * An instance can be created based on an existing styles definition. It is
  * also possible to create an empty instance.
  */
-private object Styles {
+private[components] object Styles {
   /** The logger. */
   private val Log = LogFactory.getLog(classOf[Styles])
 
