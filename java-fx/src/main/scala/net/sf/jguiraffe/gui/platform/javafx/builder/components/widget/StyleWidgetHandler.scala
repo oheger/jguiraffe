@@ -31,7 +31,7 @@ import net.sf.jguiraffe.gui.builder.components.{Color, WidgetHandler}
  * based on CSS styles. Concrete subclasses have to provide access to the
  * actual widget's style property.
  */
-private trait StyleWidgetHandler extends WidgetHandler {
+private[components] trait StyleWidgetHandler extends WidgetHandler {
   /** The styles handler used by this object. */
   lazy val stylesHandler = createStylesHandler()
 

@@ -27,8 +27,8 @@ import scala.beans.BeanProperty
  * support for tooltips. Other functionality is directly mapped to methods of
  * the wrapped ''Node''.
  */
-private class NodeWidgetHandler(@BeanProperty val widget: Node) extends StyleWidgetHandler with
-NoToolTipSupport {
+private[components] class NodeWidgetHandler(@BeanProperty val widget: Node) extends
+StyleWidgetHandler with NoToolTipSupport {
   override val style = widget.styleProperty
 
   override def isVisible: Boolean = widget.isVisible

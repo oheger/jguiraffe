@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -24,12 +24,13 @@ import javafx.scene.text.Text
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnRendererTag, TableFormController, TableTag}
 import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
-import net.sf.jguiraffe.gui.builder.components.{Color, ComponentBuilderData, FormBuilderException, Orientation}
+import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.JavaFxFont
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{MenuItemWidgetHandler,
+ControlWidgetHandler, NodeWidgetHandler, JavaFxFont}
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
@@ -317,15 +318,46 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether a widget handler can be created.
+   * Tests whether a widget handler for a plain node can be created.
    */
-  @Test def testCreateWidgetHandler() {
+  @Test def testWidgetHandlerForNode(): Unit = {
+    val node = new ImageView
+    val handler = manager getWidgetHandlerFor node
+
+    assertTrue("Wrong widget handler type", handler.isInstanceOf[NodeWidgetHandler])
+    assertSame("Wrong widget", node, handler.getWidget)
+  }
+
+  /**
+   * Tests whether a widget handler for a control can be created.
+   */
+  @Test def testWidgetHandlerForControl() {
     val widget = new Label
     val handler = manager.getWidgetHandlerFor(widget)
-      .asInstanceOf[JavaFxWidgetHandler]
+      .asInstanceOf[ControlWidgetHandler]
     assertSame("Wrong wrapped widget", widget, handler.widget)
     assertSame("Wrong tool tip factory", manager.toolTipFactory,
       handler.toolTipFactory)
+  }
+
+  /**
+   * Tests whether a widget handler for a menu item can be created.
+   */
+  @Test def testWidgetHandlerForMenuItem(): Unit = {
+    val item = new MenuItem
+    val handler = manager getWidgetHandlerFor item
+
+    assertTrue("Wrong widget handler type", handler.isInstanceOf[MenuItemWidgetHandler])
+    assertSame("Wrong widget", item, handler.getWidget)
+  }
+
+  /**
+   * Tests whether an exception is thrown if an unsupported object is passed to
+   * widgetHandlerFor().
+   */
+  @Test(expected = classOf[FormBuilderRuntimeException]) def testWidgetHandlerForUnknownObject():
+  Unit = {
+    manager getWidgetHandlerFor this
   }
 
   /**

@@ -17,7 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import javafx.beans.property.ObjectProperty
 import javafx.scene.Node
-import javafx.scene.control.{Button, CheckBox, ComboBox, Control, Label, Labeled, ListView, PasswordField, ProgressBar, RadioButton, Slider, Tab, TabPane, TextArea, TextField, ToggleButton, ToggleGroup, Tooltip}
+import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
 
 import net.sf.jguiraffe.gui.builder.components._
@@ -29,8 +29,7 @@ import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont, Styles,
-JavaFxStylesHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget._
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
@@ -85,12 +84,21 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
   def createEventManager(): PlatformEventManager = new JavaFxEventManager
 
   /**
-   * @inheritdoc This implementation expects the passed in object to be of type
-   * ''Node''. It returns a corresponding widget handler implementation.
+   * @inheritdoc This implementation can deal with several different widgets
+   *             and returns corresponding handler implementations. If the
+   *             passed in widget cannot be matched, an exception is thrown.
    */
   def getWidgetHandlerFor(component: Object): WidgetHandler = {
-    assert(component != null, "No component provided!")
-    new JavaFxWidgetHandler(component.asInstanceOf[Node], toolTipFactory)
+    component match {
+      case control: Control =>
+        new ControlWidgetHandler(control, toolTipFactory)
+      case node: Node =>
+        new NodeWidgetHandler(node)
+      case item: MenuItem =>
+        new MenuItemWidgetHandler(item)
+      case _ => throw new FormBuilderRuntimeException("Cannot create widget handler for " +
+        component)
+    }
   }
 
   /**

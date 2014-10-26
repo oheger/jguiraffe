@@ -29,7 +29,7 @@ import javafx.scene.control.MenuItem
  *
  * @param item the menu item wrapped by this handler
  */
-private class MenuItemWidgetHandler(item: MenuItem) extends StyleWidgetHandler with
+private[components] class MenuItemWidgetHandler(item: MenuItem) extends StyleWidgetHandler with
 NoToolTipSupport {
   override val getWidget = item
 

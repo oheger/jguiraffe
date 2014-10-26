@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory
  *
  * This trait has dummy implementations for the methods dealing with tool tips.
  */
-private trait NoToolTipSupport extends WidgetHandler {
+private[components] trait NoToolTipSupport extends WidgetHandler {
   /**
    * @inheritdoc This implementation always returns '''null'''.
    */

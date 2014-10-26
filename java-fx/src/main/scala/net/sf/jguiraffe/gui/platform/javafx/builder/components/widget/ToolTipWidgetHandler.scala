@@ -33,7 +33,7 @@ import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
  * provided; this is used for creating ''Tooltip'' objects for the plain texts
  * passed to the handler.
  */
-private trait ToolTipWidgetHandler extends WidgetHandler {
+private[components] trait ToolTipWidgetHandler extends WidgetHandler {
   /**
    * The property of the wrapped widget for storing the tool tip objects.
    */

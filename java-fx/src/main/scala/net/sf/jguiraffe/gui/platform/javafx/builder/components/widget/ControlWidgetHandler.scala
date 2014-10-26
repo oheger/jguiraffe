@@ -28,7 +28,8 @@ import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
  * @param control the control wrapped by this handler
  * @param toolTipFactory the factory for creating tool tips
  */
-private class ControlWidgetHandler(control: Control, override val toolTipFactory: ToolTipFactory)
+private[components] class ControlWidgetHandler(control: Control, override val toolTipFactory:
+ToolTipFactory)
   extends NodeWidgetHandler(control) with ToolTipWidgetHandler {
   override val toolTipProperty = control.tooltipProperty
 }
