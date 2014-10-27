@@ -61,6 +61,17 @@ object TestJavaFxActionManager {
   }
 
   /**
+   * Creates a default action builder object.
+   * @return the ''ActionBuilder''
+   */
+  private def createActionBuilder(): ActionBuilder = {
+    val builder = new ActionBuilder
+    builder setMenuIcon true
+    builder setToolbarText true
+    builder
+  }
+
+  /**
    * Creates an action data object with default settings.
    * @return the data object
    */
@@ -114,7 +125,7 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
   private var manager: JavaFxActionManager = _
 
   @Before def setUp(): Unit = {
-    actionBuilder = new ActionBuilder
+    actionBuilder = createActionBuilder()
     manager = new JavaFxActionManager
   }
 
@@ -246,6 +257,17 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
     val itemHandler = checkCreateMenuItemFromData(checked = true)
     val checkItem = itemHandler.item.asInstanceOf[CheckMenuItem]
     assertSame("Wrong property", checkItem.selectedProperty, itemHandler.property)
+  }
+
+  /**
+   * Tests that the action builder's flag for suppressing icons in menu items is
+   * taken into account.
+   */
+  @Test def testCreateMenuItemSuppressIcon(): Unit = {
+    actionBuilder setMenuIcon false
+    val item = manager.createMenuItem(actionBuilder, createAction(), checked = false, new Menu)
+
+    assertNull("Got an icon", item.getGraphic)
   }
 
   /**

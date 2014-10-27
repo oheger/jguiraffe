@@ -52,7 +52,7 @@ class JavaFxActionManager extends ActionManager {
                      checked: Boolean, parent: Object): MenuItem = {
     val fxAction = as[JavaFxAction](action)
     addItemToMenu(parent, bindActionToMenuItem(fxAction, createInitializedMenuItem(fxAction
-      .actionData, checked)))
+      .actionData, actionBuilder, checked)))
   }
 
   /**
@@ -64,7 +64,7 @@ class JavaFxActionManager extends ActionManager {
   def createMenuItem(actionBuilder: ActionBuilder,
                      actionData: ActionData, checked: Boolean,
                      parent: Object): ComponentHandler[_] = {
-    val (item, property) = createInitializedMenuItem(actionData, checked)
+    val (item, property) = createInitializedMenuItem(actionData, actionBuilder, checked)
     new MenuItemComponentHandler(addItemToMenu(parent, item), property, actionData.getName)
   }
 
@@ -144,15 +144,18 @@ class JavaFxActionManager extends ActionManager {
    * parameter. The return value also contains the ''BooleanProperty''
    * associated with the checked state of the menu item.
    * @param actionData the ''ActionData''
+   * @param actionBuilder the ''ActionBuilder''
    * @param checked flag whether a checked menu item is to be created
    * @return the new menu item and the property with its checked state
    */
-  private def createInitializedMenuItem(actionData: ActionData, checked: Boolean): (MenuItem,
+  private def createInitializedMenuItem(actionData: ActionData, actionBuilder: ActionBuilder,
+                                        checked: Boolean): (MenuItem,
     BooleanProperty) = {
-    if (!checked) (initializeMenuItem(new MenuItem, actionData), new SimpleBooleanProperty)
+    if (!checked) (initializeMenuItem(new MenuItem, actionData, actionBuilder),
+      new SimpleBooleanProperty)
     else {
       val checkItem = new CheckMenuItem
-      (initializeMenuItem(checkItem, actionData), checkItem.selectedProperty)
+      (initializeMenuItem(checkItem, actionData, actionBuilder), checkItem.selectedProperty)
     }
   }
 
@@ -161,11 +164,15 @@ class JavaFxActionManager extends ActionManager {
    * object.
    * @param item the item to be initialized
    * @param actionData the ''ActionData''
+   * @param actionBuilder the ''ActionBuilder''
    * @return the initialized menu item
    */
-  private def initializeMenuItem(item: MenuItem, actionData: ActionData): MenuItem = {
+  private def initializeMenuItem(item: MenuItem, actionData: ActionData,
+                                 actionBuilder: ActionBuilder): MenuItem = {
     item setAccelerator AcceleratorConverter.convertAccelerator(actionData.getAccelerator)
-    item setGraphic iconToImageView(actionData.getIcon)
+    if (actionBuilder.isMenuIcon) {
+      item setGraphic iconToImageView(actionData.getIcon)
+    }
     item setText ComponentUtils.mnemonicText(actionData.getText, actionData.getMnemonicKey.toChar)
     item
   }
