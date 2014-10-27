@@ -1032,6 +1032,42 @@ public class TablePopupHandler implements PopupMenuHandler
     </ul>
   </p>
   <p>
+    As another example we show how a menu item can be declared without the
+    reference to an action and then be connected to an event listener. As stated
+    in the section <a href="#Main_menus_and_tool_bars">Main menus and tool bars</a>,
+    it is recommended to use actions for the definition of menu items and tool
+    bar buttons because this approach is more flexible. However, if a menu item
+    is more or less static, and the functionality it represents is only located
+    in the menu and not in other places, it is easier to declare it directly.
+    The following fragment from a builder script shows an excerpt from a menu
+    definition followed by a tag which assigns an event listener to the
+    <em>Cut</em> item from the <em>Edit</em> menu (the declaration of the event
+    listener bean has been omitted):
+  </p>
+    <source><![CDATA[
+    ...
+    <a:menu text="Edit" mnemonic="E">
+      <a:menuitem name="editCut" text="Cut" mnemonic="C" acceleratorDef="CONTROL X"/>
+      ...
+    </a:menu>
+    ...
+  <a:eventListener component="editCut" eventType="ACTION" beanName="cutListener"/>
+    ]]></source>
+  <p>
+    Note the following points:
+    <ul>
+      <li>The menu item is assigned a name via the <em>name</em> attribute. This
+      causes it to be stored as a UI component so that it can be referenced later
+      on.</li>
+      <li>The <code>&lt;eventListener&gt;</code> tag uses the same name in its
+      <em>component</em> attribute.</li>
+      <li>The event type is <em>action</em>; the referenced listener bean must
+      implement the
+      <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/event/FormActionListener.html">
+      FormActionListener</a></code> interface.</li>
+    </ul>
+  </p>
+  <p>
     So using the <code>&lt;a:eventListener&gt;</code> tag the same functionality
     is available as when using <code>FormEventManager</code> directly. Before
     we end this discussion, we want to add some words about the creation of
