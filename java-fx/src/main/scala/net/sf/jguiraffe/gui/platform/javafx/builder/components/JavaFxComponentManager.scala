@@ -50,7 +50,8 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
   val treeHandlerFactory: TreeHandlerFactory,
   val tableHandlerFactory: TableHandlerFactory,
   val splitPaneFactory: SplitPaneFactory)
-  extends ComponentManager with FormContextListener with ToolTipCreationSupport {
+  extends ComponentManager with FormContextListener with ToolTipCreationSupport
+  with ButtonHandlerFactory {
   /**
    * Creates a new instance of ''JavaFxComponentManager'' and initializes it
    * with a default tool tip factory.
@@ -217,6 +218,22 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
   }
 
   /**
+   * @inheritdoc This implementation returns a special component handler
+   *             implementation wrapping the passed in button. It has to be
+   *             distinguished whether the button is a plain button or a
+   *             toggle button.
+   */
+  override def createButtonHandler(button: ButtonBase, command: String): ComponentHandler[java.lang
+  .Boolean] = {
+    button match {
+      case toggle: ToggleButton =>
+        new JavaFxToggleButtonHandler(toggle, command)
+      case _ =>
+        new JavaFxButtonHandler(button, command)
+    }
+  }
+
+  /**
    * @inheritdoc This implementation creates a JavaFX ''Button'' control wrapped
    * by a ''JavaFxButtonHandler''.
    */
@@ -225,7 +242,7 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
     else {
       val button = new Button
       initLabeled(button, tag, tag.getTextIconData)
-      button setDefaultButton (tag.isDefault)
+      button setDefaultButton tag.isDefault
       new JavaFxButtonHandler(button, tag.getCommand)
     }
   }

@@ -542,6 +542,29 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+   * Tests whether a handler for a regular button can be created.
+   */
+  @Test def testCreateButtonHandler(): Unit = {
+    val button = new Button
+    val Command = "MyButtonCommand"
+    val handler = manager.createButtonHandler(button, Command).asInstanceOf[JavaFxButtonHandler]
+    assertSame("Wrong wrapped button", button, handler.getComponent)
+    assertEquals("Wrong command", Command, handler.actionCommand)
+  }
+
+  /**
+   * Tests whether a handler for a toggle button can be created.
+   */
+  @Test def testCreateButtonHandlerForToggleButton(): Unit = {
+    val button = new ToggleButton
+    val Command = "MyButtonCommand"
+    val handler = manager.createButtonHandler(button,
+      Command).asInstanceOf[JavaFxToggleButtonHandler]
+    assertSame("Wrong wrapped button", button, handler.getComponent)
+    assertEquals("Wrong command", Command, handler.actionCommand)
+  }
+
+  /**
    * Tests the creation of a check box if the create flag is set.
    */
   @Test def testCreateCheckboxCreate() {
