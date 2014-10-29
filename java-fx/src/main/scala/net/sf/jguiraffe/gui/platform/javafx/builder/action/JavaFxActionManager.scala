@@ -25,12 +25,15 @@ import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, ComponentB
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
-import net.sf.jguiraffe.gui.platform.javafx.common.{ComponentUtils, ImageWrapper}
+import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, ComponentUtils,
+ImageWrapper}
 
 /**
  * JavaFX-specific implementation of the ''ActionManager'' interface.
+ *
+ * @param buttonHandlerFactory a factory for creating button component handlers
  */
-class JavaFxActionManager extends ActionManager {
+class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory) extends ActionManager {
   /**
    * @inheritdoc
    * This implementation returns JavaFX-specific action implementation.

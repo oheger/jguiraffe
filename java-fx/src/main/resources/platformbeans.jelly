@@ -44,7 +44,11 @@
     The action manager.
   -->
   <di:bean name="jguiraffe.actionManager"
-    beanClassName="net.sf.jguiraffe.gui.platform.javafx.builder.action.JavaFxActionManager"/>
+    beanClassName="net.sf.jguiraffe.gui.platform.javafx.builder.action.JavaFxActionManager">
+    <di:constructor>
+      <di:param refName="jguiraffe.componentManager"/>
+    </di:constructor>
+  </di:bean>
 
   <!--
     The window manager.

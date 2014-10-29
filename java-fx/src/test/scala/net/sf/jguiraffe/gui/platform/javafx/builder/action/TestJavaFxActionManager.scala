@@ -23,7 +23,7 @@ import net.sf.jguiraffe.gui.builder.action.{Accelerator, ActionBuilder, ActionDa
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, Keys, Modifiers}
-import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
+import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, ImageWrapper}
 import org.easymock.EasyMock
 import org.easymock.EasyMock.{eq => eqArg}
 import org.junit.Assert._
@@ -121,12 +121,16 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
   /** The action builder. */
   private var actionBuilder: ActionBuilder = _
 
+  /** A button handler factory used by the test manager. */
+  private var buttonHandlerFactory: ButtonHandlerFactory = _
+
   /** The manager to be tested. */
   private var manager: JavaFxActionManager = _
 
   @Before def setUp(): Unit = {
     actionBuilder = createActionBuilder()
-    manager = new JavaFxActionManager
+    buttonHandlerFactory = mock[ButtonHandlerFactory]
+    manager = new JavaFxActionManager(buttonHandlerFactory)
   }
 
   /**
