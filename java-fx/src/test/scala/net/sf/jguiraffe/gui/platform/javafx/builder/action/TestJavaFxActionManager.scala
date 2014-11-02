@@ -356,6 +356,13 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong number of menu items", 1, menu.getItems.size)
     assertTrue("Wrong separator item", menu.getItems.get(0).isInstanceOf[SeparatorMenuItem])
   }
+
+  /**
+   * Tests whether a tool bar component can be created.
+   */
+  @Test def testCreateToolBar(): Unit = {
+    assertTrue("Got tool bar items", manager.createToolbar(actionBuilder).getItems.isEmpty)
+  }
 }
 
 /**

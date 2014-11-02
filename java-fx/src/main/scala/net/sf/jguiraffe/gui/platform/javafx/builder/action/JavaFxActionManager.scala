@@ -93,10 +93,10 @@ class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory) extend
     }
   }
 
-  def createToolbar(actionBuilder: ActionBuilder): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
-  }
+  /**
+   * @inheritdoc This implementation returns a new JavaFX tool bar control.
+   */
+  def createToolbar(actionBuilder: ActionBuilder): ToolBar = new ToolBar
 
   def createToolbarButton(actionBuilder: ActionBuilder, action: FormAction,
                           checked: Boolean, parent: Object): Object = {
