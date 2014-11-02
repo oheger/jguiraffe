@@ -30,7 +30,7 @@ import org.apache.commons.jelly.JellyContext;
  * scripts with actions and related tags. An instance is stored in the Jelly
  * context and can be accessed by all interested components. The role of this
  * class is almost analogous to the
- * {@link net.sf.jguiraffe.gui.forms.components.ComponentBuilderData ComponentBuilderData}
+ * {@link net.sf.jguiraffe.gui.builder.components.ComponentBuilderData ComponentBuilderData}
  * class in the form builder package.
  * </p>
  * <p>
@@ -81,6 +81,9 @@ public class ActionBuilder implements SimpleBeanStoreImpl.BeanContributor
 
     /** Holds a reference to the platform specific action manager. */
     private ActionManager actionManager;
+
+    /** The current Jelly context. */
+    private JellyContext context;
 
     /** Stores the menu icon flag. */
     private boolean menuIcon;
@@ -175,6 +178,18 @@ public class ActionBuilder implements SimpleBeanStoreImpl.BeanContributor
     }
 
     /**
+     * Returns the current {@code JellyContext} this object lives in. This
+     * property is initialized when this instance is stored in a context.
+     *
+     * @return the current {@code JellyContext}
+     * @since 1.3
+     */
+    public JellyContext getContext()
+    {
+        return context;
+    }
+
+    /**
      * Obtains the names of the beans supported by this bean contributor. This
      * implementation returns the names of the actions stored in the internal
      * action store and some other helper objects.
@@ -248,7 +263,9 @@ public class ActionBuilder implements SimpleBeanStoreImpl.BeanContributor
         {
             throw new IllegalArgumentException("Context must not be null!");
         }
+
         context.setVariable(CTX_KEY, this);
+        this.context = context;
     }
 
     /**

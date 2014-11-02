@@ -15,16 +15,21 @@
  */
 package net.sf.jguiraffe.gui.builder.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import net.sf.jguiraffe.di.impl.SimpleBeanStoreImpl;
 import net.sf.jguiraffe.di.impl.providers.ConstantBeanProvider;
-
 import org.apache.commons.jelly.JellyContext;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test class for ActionBuilder.
@@ -32,7 +37,7 @@ import junit.framework.TestCase;
  * @author Oliver Heger
  * @version $Id: TestActionBuilder.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TestActionBuilder extends TestCase
+public class TestActionBuilder
 {
     /** Constant for the names of the test actions. */
     private static final String ACTION_NAME = "TestAction";
@@ -43,16 +48,16 @@ public class TestActionBuilder extends TestCase
     /** Stores the action builder to be tested. */
     private ActionBuilder data;
 
-    @Override
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
         data = new ActionBuilder();
     }
 
     /**
      * Tests whether the action builder can be put into the Jelly context.
      */
+    @Test
     public void testPut()
     {
         JellyContext ctx = new JellyContext();
@@ -64,23 +69,29 @@ public class TestActionBuilder extends TestCase
      * Tries storing the action builder in a null context. This should cause an
      * exception.
      */
+    @Test(expected = IllegalArgumentException.class)
     public void testPutNullContext()
     {
-        try
-        {
-            data.put(null);
-            fail("Could store action builder in null context!");
-        }
-        catch (IllegalArgumentException iex)
-        {
-            // ok
-        }
+        data.put(null);
+    }
+
+    /**
+     * Tests whether the Jelly context of the test instance is initialized after
+     * it has been put into the context.
+     */
+    @Test
+    public void testContextInitializedAfterPut()
+    {
+        JellyContext ctx = new JellyContext();
+        data.put(ctx);
+        assertSame("Wrong context", ctx, data.getContext());
     }
 
     /**
      * Tests obtaining the action builder from a null context. Result should be
      * null.
      */
+    @Test
     public void testGetNullContext()
     {
         assertNull("Wrong result for null context", ActionBuilder.get(null));
@@ -90,6 +101,7 @@ public class TestActionBuilder extends TestCase
      * Tests obtaining the action builder from a context that does not contain
      * an instance. Result should be null.
      */
+    @Test
     public void testGetNoInstance()
     {
         assertNull("Wrong result for empty context", ActionBuilder
@@ -142,6 +154,7 @@ public class TestActionBuilder extends TestCase
     /**
      * Tests the set with the names of the supported beans.
      */
+    @Test
     public void testBeanNames()
     {
         setUpActionStore();
@@ -154,6 +167,7 @@ public class TestActionBuilder extends TestCase
     /**
      * Tests the beanNames() methods when no action store exists.
      */
+    @Test
     public void testBeanNamesNoStore()
     {
         Set<String> names = new HashSet<String>();
@@ -164,6 +178,7 @@ public class TestActionBuilder extends TestCase
     /**
      * Tests whether the actions can be obtained using the getBean() method.
      */
+    @Test
     public void testGetBeanActions()
     {
         setUpActionStore();
@@ -180,6 +195,7 @@ public class TestActionBuilder extends TestCase
     /**
      * Tests obtaining the other helper objects from the getBean() method.
      */
+    @Test
     public void testGetBeanOther()
     {
         setUpActionStore();
@@ -190,6 +206,7 @@ public class TestActionBuilder extends TestCase
     /**
      * Tests the getBean() method when no action store exists.
      */
+    @Test
     public void testGetBeanNoStore()
     {
         assertNull("Found action store", data
@@ -200,23 +217,17 @@ public class TestActionBuilder extends TestCase
      * Tests querying an unknown action through the getBean() method. This
      * should cause an exception.
      */
+    @Test(expected = NoSuchElementException.class)
     public void testGetBeanUnknownAction()
     {
         setUpActionStore();
-        try
-        {
-            data.getBean("action:unknownAction");
-            fail("Could obtain unknown action!");
-        }
-        catch (NoSuchElementException nsex)
-        {
-            // ok
-        }
+        data.getBean("action:unknownAction");
     }
 
     /**
      * Tests getBean() when null is passed in.
      */
+    @Test
     public void testGetBeanNull()
     {
         assertNull("Wrong result for null bean name", data.getBean(null));
@@ -225,6 +236,7 @@ public class TestActionBuilder extends TestCase
     /**
      * Tests whether a bean store is correctly initialized.
      */
+    @Test
     public void testInitBeanStore()
     {
         setUpActionStore();
