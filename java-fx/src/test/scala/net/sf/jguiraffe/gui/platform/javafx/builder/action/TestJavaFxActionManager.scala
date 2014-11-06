@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
+import javafx.scene.Node
 import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.KeyCombination
@@ -23,7 +24,10 @@ import net.sf.jguiraffe.gui.builder.action.{Accelerator, ActionBuilder, ActionDa
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, Keys, Modifiers}
-import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, ImageWrapper}
+import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
+import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
+import org.apache.commons.jelly.JellyContext
 import org.easymock.EasyMock
 import org.easymock.EasyMock.{eq => eqArg}
 import org.junit.Assert._
@@ -44,6 +48,9 @@ object TestJavaFxActionManager {
 
   /** Constant for the action text with mnemonic character. */
   private val ActionTextWithMnemonic = "E_xecute"
+
+  /** Constant for a tool tip for an action. */
+  private val ActionToolTip = "This action does something interesting."
 
   /** The image associated with menus or buttons. */
   private var image: Image = _
@@ -68,6 +75,8 @@ object TestJavaFxActionManager {
     val builder = new ActionBuilder
     builder setMenuIcon true
     builder setToolbarText true
+    val context = new JellyContext
+    builder put context
     builder
   }
 
@@ -78,6 +87,7 @@ object TestJavaFxActionManager {
   private def createActionData(): ActionDataImpl =
     ActionDataImpl(getName = "TestAction", getText = ActionText,
       getMnemonicKey = 'x', getAccelerator = TestAccelerator, getIcon = icon,
+      getToolTip = ActionToolTip,
       getTask = EasyMock.createMock(classOf[Runnable]))
 
   /**
@@ -88,16 +98,31 @@ object TestJavaFxActionManager {
     new JavaFxAction(createActionData())
 
   /**
+   * Determines the expected text for an action based on the presence of a mnemonic.
+   * @param data the action data
+   * @return the expected text for this action
+   */
+  private def expectedActionText(data: ActionData): String =
+    if (data.getMnemonicKey > 0) ActionTextWithMnemonic
+    else ActionText
+
+  /**
+   * Checks the image assigned to an action component.
+   * @param graphic the node representing the image
+   */
+  private def checkImage(graphic: Node): Unit = {
+    assertEquals("Wrong icon", image, graphic.asInstanceOf[ImageView].getImage)
+  }
+
+  /**
    * Checks whether the correct basic properties for a menu item have been
    * initialized.
    * @param data the object with the expected properties
    * @param item the item to be checked
    */
   private def checkMenuItemBasicProperties(data: ActionDataImpl, item: MenuItem): Unit = {
-    val expText = if (data.getMnemonicKey > 0) ActionTextWithMnemonic
-    else ActionText
-    assertEquals("Wrong text", expText, item.getText)
-    assertEquals("Wrong icon", image, item.getGraphic.asInstanceOf[ImageView].getImage)
+    assertEquals("Wrong text", expectedActionText(data), item.getText)
+    checkImage(item.getGraphic)
   }
 
   /**
@@ -108,6 +133,18 @@ object TestJavaFxActionManager {
   private def checkMenuItem(data: ActionDataImpl, item: MenuItem): Unit = {
     checkMenuItemBasicProperties(data, item)
     assertEquals("Wrong accelerator", keyCombination, item.getAccelerator)
+  }
+
+  /**
+   * Checks the most important properties of a (tool bar) button.
+   * @param data the object with the expected properties
+   * @param button the button to be checked
+   * @return the very same button
+   */
+  private def checkButtonBasicProperties(data: ActionDataImpl, button: ButtonBase): ButtonBase = {
+    assertEquals("Wrong text", expectedActionText(data), button.getText)
+    checkImage(button.getGraphic)
+    button
   }
 }
 
@@ -125,12 +162,12 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
   private var buttonHandlerFactory: ButtonHandlerFactory = _
 
   /** The manager to be tested. */
-  private var manager: JavaFxActionManager = _
+  private var manager: JavaFxActionManager with MockToolTipCreationSupport = _
 
   @Before def setUp(): Unit = {
     actionBuilder = createActionBuilder()
     buttonHandlerFactory = mock[ButtonHandlerFactory]
-    manager = new JavaFxActionManager(buttonHandlerFactory)
+    manager = new JavaFxActionManager(buttonHandlerFactory) with MockToolTipCreationSupport
   }
 
   /**
@@ -362,6 +399,82 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateToolBar(): Unit = {
     assertTrue("Got tool bar items", manager.createToolbar(actionBuilder).getItems.isEmpty)
+  }
+
+  /**
+   * Tests whether a correct default tool tip factory is created.
+   */
+  @Test def testDefaultToolTipFactory(): Unit = {
+    assertTrue("Wrong tool tip factory", manager.toolTipFactory.isInstanceOf[DefaultToolTipFactory])
+  }
+
+  /**
+   * Checks whether a tool bar button has the expected properties. This method
+   * also checks whether a tool tip was created.
+   * @param data the data object with the expected properties
+   * @param button the button to be checked
+   * @return the checked button
+   */
+  private def checkButton(data: ActionDataImpl, button: ButtonBase): ButtonBase = {
+    assertFalse("Too many tooltip requests", manager.verifyToolTipCreationRequest(actionBuilder
+      .getContext, button, ActionToolTip))
+    checkButtonBasicProperties(data, button)
+  }
+
+  /**
+   * Helper method for testing whether a tool bar button can be created from a
+   * data object.
+   * @param checked the checked flag
+   * @return the newly created button
+   */
+  private def checkCreateToolbarButtonFromData(checked: Boolean): ButtonBase = {
+    val buttonHandler = mock[ComponentHandler[java.lang.Boolean]]
+    val answer = new FetchAnswer[ComponentHandler[java.lang.Boolean],
+      ButtonBase](retVal = buttonHandler)
+    val parent = new ToolBar
+    val data = createActionData()
+    EasyMock.expect(buttonHandlerFactory.createButtonHandler(EasyMock.anyObject(classOf[ButtonBase]),
+      eqArg(data.getName))).andAnswer(answer)
+
+    whenExecuting(buttonHandler, buttonHandlerFactory) {
+      assertSame("Wrong handler", buttonHandler, manager.createToolbarButton(actionBuilder, data,
+        checked, parent))
+      assertEquals("Wrong number of items in tool bar", 1, parent.getItems.size)
+      assertEquals("Wrong button", checkButton(data, answer.get), parent.getItems.get(0))
+    }
+    answer.get
+  }
+
+  /**
+   * Tests whether a toolbar button can be created from a data object.
+   */
+  @Test def testCreateToolbarButtonFromData(): Unit = {
+    assertEquals("Wrong button class", classOf[Button], checkCreateToolbarButtonFromData(checked
+      = false).getClass)
+  }
+
+  /**
+   * Tests whether a toggle button can be created for the tool bar.
+   */
+  @Test def testCreateCheckedToolbarButtonFromData(): Unit = {
+    assertTrue("Wrong toggle button", checkCreateToolbarButtonFromData(checked = true)
+      .isInstanceOf[ToggleButton])
+  }
+
+  /**
+   * Tests that an undefined tool tip is handled correctly for tool bar buttons.
+   */
+  @Test def testCreateToolbarButtonNoToolTip(): Unit = {
+    val buttonHandler = mock[ComponentHandler[java.lang.Boolean]]
+    EasyMock.expect(buttonHandlerFactory.createButtonHandler(EasyMock.anyObject
+      (classOf[ButtonBase]),
+      EasyMock.anyObject(classOf[String]))).andReturn(buttonHandler)
+    val data = createActionData().copy(getToolTip = null)
+
+    whenExecuting(buttonHandler, buttonHandlerFactory) {
+      manager.createToolbarButton(actionBuilder, data, checked = false, new ToolBar)
+    }
+    manager.verifyNoInteraction()
   }
 }
 

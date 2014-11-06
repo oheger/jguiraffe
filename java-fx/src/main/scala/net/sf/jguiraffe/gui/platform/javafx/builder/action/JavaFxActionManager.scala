@@ -25,15 +25,25 @@ import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, ComponentB
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
-import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, ComponentUtils,
-ImageWrapper}
+import net.sf.jguiraffe.gui.platform.javafx.common._
 
 /**
  * JavaFX-specific implementation of the ''ActionManager'' interface.
  *
  * @param buttonHandlerFactory a factory for creating button component handlers
+ * @param toolTipFactory a factory for creating tool tips
  */
-class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory) extends ActionManager {
+class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory,
+                          override val toolTipFactory: ToolTipFactory) extends ActionManager with
+ToolTipCreationSupport {
+  /**
+   * Creates a new instance of ''JavaFxActionManager'' with default dependencies.
+   * @param buttonHandlerFactory a factory for creating button component handlers
+   * @return the newly created instance
+   */
+  def this(buttonHandlerFactory: ButtonHandlerFactory) = this(buttonHandlerFactory,
+    new DefaultToolTipFactory)
+
   /**
    * @inheritdoc
    * This implementation returns JavaFX-specific action implementation.
@@ -104,11 +114,23 @@ class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory) extend
     throw new UnsupportedOperationException("Not yet implemented!");
   }
 
+  /**
+   * @inheritdoc This implementation creates a button and initializes it from
+   *             the given action data object. The button is added to the
+   *             parent which has to be a ''ToolBar''. The associated
+   *             ''ButtonHandlerFactory'' is used to create a handler.
+   */
   def createToolbarButton(actionBuilder: ActionBuilder,
                           data: ActionData, checked: Boolean,
                           parent: Object): ComponentHandler[_] = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    val button = if(checked) new ToggleButton else new Button
+    button setText textWithMnemonic(data)
+    button setGraphic iconToImageView(data.getIcon)
+    if(data.getToolTip != null) {
+      addCreateToolTipRequest(actionBuilder.getContext, button, data.getToolTip)
+    }
+    ComponentUtils.as[ToolBar](parent).getItems add button
+    buttonHandlerFactory.createButtonHandler(button, data.getName)
   }
 
   /**
@@ -140,6 +162,15 @@ class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory) extend
   private def iconToImageView(icon: AnyRef): ImageView =
     if (icon == null) null
     else as[ImageWrapper](icon).newImageView()
+
+  /**
+   * Determines the text for an action control taking an optional mnemonic
+   * into account.
+   * @param actionData the ''ActionData'' object
+   * @return the text for the corresponding action control
+   */
+  private def textWithMnemonic(actionData: ActionData): String =
+    ComponentUtils.mnemonicText(actionData.getText, actionData.getMnemonicKey.toChar)
 
   /**
    * Creates a ''MenuItem'' based on the content of the specified ''ActionData''
@@ -176,7 +207,7 @@ class JavaFxActionManager(val buttonHandlerFactory: ButtonHandlerFactory) extend
     if (actionBuilder.isMenuIcon) {
       item setGraphic iconToImageView(actionData.getIcon)
     }
-    item setText ComponentUtils.mnemonicText(actionData.getText, actionData.getMnemonicKey.toChar)
+    item setText textWithMnemonic(actionData)
     item
   }
 

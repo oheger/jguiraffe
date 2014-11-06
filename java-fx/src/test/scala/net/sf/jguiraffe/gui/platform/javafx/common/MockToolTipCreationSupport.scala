@@ -60,6 +60,13 @@ trait MockToolTipCreationSupport extends ToolTipCreationSupport {
     verifyToolTipCreationRequest(context, control.tooltipProperty, tip)
 
   /**
+   * Verifies that no tool tip request was added.
+   */
+  def verifyNoInteraction(): Unit = {
+    assertTrue("Got requests", processedRequests.isEmpty)
+  }
+
+  /**
    * @inheritdoc
    * This implementation just records this request.
    */
