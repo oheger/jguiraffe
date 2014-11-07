@@ -20,7 +20,7 @@ import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.KeyCombination
 
-import net.sf.jguiraffe.gui.builder.action.{Accelerator, ActionBuilder, ActionData, ActionTask}
+import net.sf.jguiraffe.gui.builder.action._
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, Keys, Modifiers}
@@ -141,7 +141,7 @@ object TestJavaFxActionManager {
    * @param button the button to be checked
    * @return the very same button
    */
-  private def checkButtonBasicProperties(data: ActionDataImpl, button: ButtonBase): ButtonBase = {
+  private def checkButtonBasicProperties(data: ActionData, button: ButtonBase): ButtonBase = {
     assertEquals("Wrong text", expectedActionText(data), button.getText)
     checkImage(button.getGraphic)
     button
@@ -369,15 +369,25 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+   * Creates a mock for an action task and prepares it to expect its
+   * execution.
+   * @param action the action
+   * @return the task mock
+   */
+  private def prepareActionTask(action: FormAction): ActionTask = {
+    val task = mock[ActionTask]
+    task.run(eqArg(action), EasyMock.anyObject(classOf[FormActionEvent]))
+    action setTask task
+    task
+  }
+
+  /**
    * Tests whether an action gets executed when the menu item is triggered.
    */
   @Test def testActionPerformedByMenuItem(): Unit = {
-    val task = mock[ActionTask]
     val action = createAction()
-    task.run(eqArg(action), EasyMock.anyObject(classOf[FormActionEvent]))
-    action setTask task
 
-    whenExecuting(task) {
+    whenExecuting(prepareActionTask(action)) {
       val item = createAndCheckMenuItemFromAction(action, checked = false)
       item.fire()
     }
@@ -415,7 +425,7 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
    * @param button the button to be checked
    * @return the checked button
    */
-  private def checkButton(data: ActionDataImpl, button: ButtonBase): ButtonBase = {
+  private def checkButton(data: ActionData, button: ButtonBase): ButtonBase = {
     assertFalse("Too many tooltip requests", manager.verifyToolTipCreationRequest(actionBuilder
       .getContext, button, ActionToolTip))
     checkButtonBasicProperties(data, button)
@@ -475,6 +485,81 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
       manager.createToolbarButton(actionBuilder, data, checked = false, new ToolBar)
     }
     manager.verifyNoInteraction()
+  }
+
+  /**
+   * Helper method for testing the creation of a tool bar button based on an action.
+   * @param checked the checked flag
+   * @return the newly created button
+   */
+  private def checkCreateToolbarButtonFromAction(checked: Boolean): ButtonBase = {
+    val action = createAction()
+    val toolBar = new ToolBar
+
+    val button = checkButton(action.actionData, manager.createToolbarButton(actionBuilder,
+      action, checked, toolBar))
+    assertEquals("Wrong number of items in toolbar", 1, toolBar.getItems.size)
+    assertEquals("Wrong item", button, toolBar.getItems.get(0))
+    button
+  }
+
+  /**
+   * Tests whether a toolbar button can be created from an action.
+   */
+  @Test def testCreateToolbarButtonFromAction(): Unit = {
+    assertTrue("Wrong button class", checkCreateToolbarButtonFromAction(checked = false)
+      .isInstanceOf[Button])
+  }
+
+  /**
+   * Tests whether a toggle toolbar button can be created from an action.
+   */
+  @Test def testCreateToggleToolbarButtonFromAction(): Unit = {
+    assertTrue("Wrong button class", checkCreateToolbarButtonFromAction(checked = true)
+      .isInstanceOf[ToggleButton])
+  }
+
+  /**
+   * Tests whether the enabled property of an action is associated with the tool bar
+   * button that is created for this action.
+   */
+  @Test def testActionEnabledPropertyAssociatedWithButton(): Unit = {
+    val action = createAction()
+    val button = manager.createToolbarButton(actionBuilder, action, checked = false, new ToolBar)
+
+    assertFalse("Not enabled (1)", button.isDisable)
+    action setEnabled false
+    assertTrue("Not disabled", button.isDisable)
+    action setEnabled true
+    assertFalse("Not enabled (2)", button.isDisable)
+  }
+
+  /**
+   * Tests whether the checked property of an action is associated with the tool bar
+   * toggle button that is created for this action.
+   */
+  @Test def testActionCheckedPropertyAssociatedWithButton(): Unit = {
+    val action = createAction()
+    val button = manager.createToolbarButton(actionBuilder, action, checked = true, new ToolBar).asInstanceOf[ToggleButton]
+
+    assertFalse("Already selected", button.isSelected)
+    action setChecked true
+    assertTrue("Not selected", button.isSelected)
+    action setChecked false
+    assertFalse("Still selected", button.isSelected)
+  }
+
+  /**
+   * Tests whether an action used for creating a toolbar button is executed
+   * when the button is clicked.
+   */
+  @Test def testActionPerformedByButton(): Unit = {
+    val action = createAction()
+
+    whenExecuting(prepareActionTask(action)) {
+      val button = manager.createToolbarButton(actionBuilder, action, checked = false, new ToolBar)
+      button.fire()
+    }
   }
 }
 

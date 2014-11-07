@@ -108,10 +108,17 @@ ToolTipCreationSupport {
    */
   def createToolbar(actionBuilder: ActionBuilder): ToolBar = new ToolBar
 
+  /**
+   * @inheritdoc This implementation creates a JavaFX button control; the
+   *             concrete type depends on the ''checked'' flag. The action
+   *             is connected connected to the corresponding properties of
+   *             the new button.
+   */
   def createToolbarButton(actionBuilder: ActionBuilder, action: FormAction,
-                          checked: Boolean, parent: Object): Object = {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+                          checked: Boolean, parent: Object): ButtonBase = {
+    val fxAction = ComponentUtils.as[JavaFxAction](action)
+    bindActionToButton(fxAction, createInitializedButton(actionBuilder, fxAction.actionData,
+      checked, parent, Some(fxAction.checked)))
   }
 
   /**
@@ -123,14 +130,8 @@ ToolTipCreationSupport {
   def createToolbarButton(actionBuilder: ActionBuilder,
                           data: ActionData, checked: Boolean,
                           parent: Object): ComponentHandler[_] = {
-    val button = if(checked) new ToggleButton else new Button
-    button setText textWithMnemonic(data)
-    button setGraphic iconToImageView(data.getIcon)
-    if(data.getToolTip != null) {
-      addCreateToolTipRequest(actionBuilder.getContext, button, data.getToolTip)
-    }
-    ComponentUtils.as[ToolBar](parent).getItems add button
-    buttonHandlerFactory.createButtonHandler(button, data.getName)
+    buttonHandlerFactory.createButtonHandler(createInitializedButton(actionBuilder, data,
+      checked, parent), data.getName)
   }
 
   /**
@@ -212,6 +213,16 @@ ToolTipCreationSupport {
   }
 
   /**
+   * Binds the enabled property of the given action to the specified property.
+   * This is interpreted as the ''disable'' property of a node.
+   * @param action the action
+   * @param property the property to be bound
+   */
+  private def bindActionToEnabledProperty(action: JavaFxAction, property: BooleanProperty): Unit = {
+    property bind action.enabled.not()
+  }
+
+  /**
    * Binds the properties of an action to the corresponding properties of the
    * given menu item.
    * @param action the action
@@ -222,7 +233,7 @@ ToolTipCreationSupport {
   private def bindActionToMenuItem(action: JavaFxAction, itemData: (MenuItem,
     BooleanProperty)): MenuItem = {
     val (item, checkProperty) = itemData
-    item.disableProperty bind action.enabled.not()
+    bindActionToEnabledProperty(action, item.disableProperty)
     checkProperty bind action.checked
     item.addEventHandler(ActionEvent.ACTION, action)
     item
@@ -260,5 +271,58 @@ ToolTipCreationSupport {
   private def addItemToMenu(parent: Object, item: MenuItem): MenuItem = {
     as[Menu](parent).getItems add item
     item
+  }
+
+  /**
+   * Creates and initializes a toolbar button. The button is initialized based on the
+   * passed in action data object. It is also added to the parent, which has to be a
+   * ''ToolBar'' object.
+   * @param actionBuilder the ''ActionBuilder''
+   * @param data the data object with the action properties
+   * @param checked the checked flag
+   * @param parent the parent component
+   * @param checkedProperty an optional checked property to be associated with a toggle button
+   * @return the newly created button
+   */
+  private def createInitializedButton(actionBuilder: ActionBuilder, data: ActionData, checked:
+  Boolean, parent: Object, checkedProperty: Option[BooleanProperty] = None): ButtonBase = {
+    val button = createButtonControl(checked, checkedProperty)
+    button setText textWithMnemonic(data)
+    button setGraphic iconToImageView(data.getIcon)
+    if (data.getToolTip != null) {
+      addCreateToolTipRequest(actionBuilder.getContext, button, data.getToolTip)
+    }
+    ComponentUtils.as[ToolBar](parent).getItems add button
+    button
+  }
+
+  /**
+   * Actually creates the button control to be added to the tool bar. If applicable,
+   * the button's selected property is connected to the action.
+   * @param checked the checked flag
+   * @param checkedProperty an optional checked property to be associated with a toggle button
+   * @return the newly created button
+   */
+  private def createButtonControl(checked: Boolean, checkedProperty: Option[BooleanProperty]):
+  ButtonBase = {
+    if (checked) {
+      val toggleButton = new ToggleButton
+      checkedProperty foreach (toggleButton.selectedProperty bind _)
+      toggleButton
+    } else new Button
+  }
+
+  /**
+   * Associates the specified action with the given button. This method deals
+   * with the enabled property and the action listener. The checked property
+   * is handled when creating the button.
+   * @param action the action
+   * @param button the button
+   * @return the associated button
+   */
+  private def bindActionToButton(action: JavaFxAction, button: ButtonBase): ButtonBase = {
+    bindActionToEnabledProperty(action, button.disableProperty)
+    button.addEventHandler(ActionEvent.ACTION, action)
+    button
   }
 }
