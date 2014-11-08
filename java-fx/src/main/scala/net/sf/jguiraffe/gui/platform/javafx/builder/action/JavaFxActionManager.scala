@@ -287,7 +287,9 @@ ToolTipCreationSupport {
   private def createInitializedButton(actionBuilder: ActionBuilder, data: ActionData, checked:
   Boolean, parent: Object, checkedProperty: Option[BooleanProperty] = None): ButtonBase = {
     val button = createButtonControl(checked, checkedProperty)
-    button setText textWithMnemonic(data)
+    if (actionBuilder.isToolbarText) {
+      button setText textWithMnemonic(data)
+    }
     button setGraphic iconToImageView(data.getIcon)
     if (data.getToolTip != null) {
       addCreateToolTipRequest(actionBuilder.getContext, button, data.getToolTip)

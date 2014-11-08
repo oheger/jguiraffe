@@ -28,6 +28,7 @@ import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
 import org.apache.commons.jelly.JellyContext
+import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
 import org.easymock.EasyMock.{eq => eqArg}
 import org.junit.Assert._
@@ -560,6 +561,18 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
       val button = manager.createToolbarButton(actionBuilder, action, checked = false, new ToolBar)
       button.fire()
     }
+  }
+
+  /**
+   * Tests whether the text of a button is suppressed if the corresponding
+   * property is set in the ActionBuilder.
+   */
+  @Test def testCreateToolbarButtonSuppressText(): Unit = {
+    actionBuilder setToolbarText false
+    val button = manager.createToolbarButton(actionBuilder, createAction(), checked = false, new
+        ToolBar)
+
+    assertTrue("Got button text", StringUtils.isEmpty(button.getText))
   }
 }
 
