@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
+import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
@@ -573,6 +574,18 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
         ToolBar)
 
     assertTrue("Got button text", StringUtils.isEmpty(button.getText))
+  }
+
+  /**
+   * Tests whether a separator can be added to a toolbar.
+   */
+  @Test def testAddToolbarSeparator(): Unit = {
+    val toolBar = new ToolBar
+    manager.addToolBarSeparator(actionBuilder, toolBar)
+
+    assertEquals("Wrong number of items", 1, toolBar.getItems.size)
+    val separator = toolBar.getItems.get(0).asInstanceOf[Separator]
+    assertEquals("Wrong orientation", Orientation.VERTICAL, separator.getOrientation)
   }
 }
 

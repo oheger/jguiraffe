@@ -17,12 +17,14 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
 import javafx.beans.property.{BooleanProperty, SimpleBooleanProperty}
 import javafx.event.ActionEvent
+import javafx.geometry.Orientation
+import javafx.scene.Node
 import javafx.scene.control._
 import javafx.scene.image.ImageView
 
 import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionData, ActionManager, FormAction, PopupMenuHandler}
-import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, ComponentBuilderData}
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
+import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderData, FormBuilderException}
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
@@ -143,9 +145,12 @@ ToolTipCreationSupport {
     addItemToMenu(menu, new SeparatorMenuItem)
   }
 
-  def addToolBarSeparator(actionBuilder: ActionBuilder, toolBar: Object) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+  /**
+   * @inheritdoc This implementation adds a separator control to the specified
+   *             toolbar. The toolbar is expected to be ''ToolBar'' object.
+   */
+  def addToolBarSeparator(actionBuilder: ActionBuilder, toolBar: Object): Unit = {
+    addItemToToolbar(toolBar, new Separator(Orientation.VERTICAL))
   }
 
   def registerPopupMenuHandler(component: Object, handler: PopupMenuHandler,
@@ -294,8 +299,7 @@ ToolTipCreationSupport {
     if (data.getToolTip != null) {
       addCreateToolTipRequest(actionBuilder.getContext, button, data.getToolTip)
     }
-    ComponentUtils.as[ToolBar](parent).getItems add button
-    button
+    addItemToToolbar(parent, button)
   }
 
   /**
@@ -312,6 +316,17 @@ ToolTipCreationSupport {
       checkedProperty foreach (toggleButton.selectedProperty bind _)
       toggleButton
     } else new Button
+  }
+
+  /**
+   * Adds the specified node to a toolbar object.
+   * @param toolBar the toolbar (has to be of type ''ToolBar'')
+   * @param item the item to be added
+   * @return the item that was added
+   */
+  private def addItemToToolbar[T <: Node](toolBar: Object, item: T): T = {
+    ComponentUtils.as[ToolBar](toolBar).getItems add item
+    item
   }
 
   /**
