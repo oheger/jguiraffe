@@ -15,29 +15,26 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.action;
 
-import java.awt.Component;
+import javax.swing.JPopupMenu;
 import java.awt.event.MouseEvent;
 
-import javax.swing.Action;
-import javax.swing.JPopupMenu;
-
-import net.sf.jguiraffe.gui.builder.action.ActionData;
-import net.sf.jguiraffe.gui.builder.action.FormAction;
-import net.sf.jguiraffe.gui.builder.action.PopupMenuBuilder;
+import net.sf.jguiraffe.gui.builder.action.AbstractPopupMenuBuilder;
+import net.sf.jguiraffe.gui.builder.action.ActionBuilder;
+import net.sf.jguiraffe.gui.builder.action.ActionManager;
 
 /**
  * <p>
- * A specialized implementation of the <code>PopupMenuBuilder</code> interface
+ * A specialized implementation of the {@code PopupMenuBuilder} interface
  * for constructing Swing popup menus.
  * </p>
  * <p>
- * This implementation creates a <code>javax.swing.JPopupMenu</code> object when
- * a new builder instance is created. The several <code>add()</code> methods
+ * This implementation creates a {@code javax.swing.JPopupMenu} object when
+ * a new builder instance is created. The several {@code add()} methods
  * populate this menu. They expect that objects compatible with Swing are passed
  * as parameters (e.g. Swing actions or Swing menu components).
  * </p>
  * <p>
- * The <code>create()</code> method returns the current popup menu. It also
+ * The {@code create()} method returns the current popup menu. It also
  * displays the menu for the affected component (this component and the location
  * where to display the popup must be specified at construction time).
  * </p>
@@ -45,7 +42,7 @@ import net.sf.jguiraffe.gui.builder.action.PopupMenuBuilder;
  * @author Oliver Heger
  * @version $Id: SwingPopupMenuBuilder.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class SwingPopupMenuBuilder implements PopupMenuBuilder
+public class SwingPopupMenuBuilder extends AbstractPopupMenuBuilder
 {
     /** Stores the original mouse event. */
     private final MouseEvent triggeringEvent;
@@ -54,15 +51,19 @@ public class SwingPopupMenuBuilder implements PopupMenuBuilder
     private final JPopupMenu menu;
 
     /**
-     * Creates a new instance of <code>SwingPopupMenuBuilder</code> and
-     * initializes it with the mouse event that triggered the invocation of this
-     * builder.
+     * Creates a new instance of {@code SwingPopupMenuBuilder} and initializes
+     * it with information about the action manager to be delegated to and the
+     * mouse event that triggered the invocation of this builder.
      *
+     * @param actMan the {@code ActionManager}
+     * @param builder the {@code ActionBuilder}
      * @param event the triggering event (must not be <b>null</b>)
      * @throws IllegalArgumentException if the event is <b>null</b>
      */
-    public SwingPopupMenuBuilder(MouseEvent event)
+    public SwingPopupMenuBuilder(ActionManager actMan, ActionBuilder builder,
+            MouseEvent event)
     {
+        super(actMan, builder);
         if (event == null)
         {
             throw new IllegalArgumentException(
@@ -74,6 +75,22 @@ public class SwingPopupMenuBuilder implements PopupMenuBuilder
     }
 
     /**
+     * Creates a new instance of {@code SwingPopupMenuBuilder} and initializes
+     * it with the triggering mouse event.
+     *
+     * @param event the triggering event (must not be <b>null</b>)
+     * @throws IllegalArgumentException if the event is <b>null</b>
+     * @deprecated Use the constructor which expects information about an
+     *             {@code ActionManager}; this constructor only creates a partly
+     *             initialized object.
+     */
+    @Deprecated
+    public SwingPopupMenuBuilder(MouseEvent event)
+    {
+        this(null, null, event);
+    }
+
+    /**
      * Returns the event that triggered the invocation of this builder.
      *
      * @return the triggering mouse event
@@ -81,59 +98,6 @@ public class SwingPopupMenuBuilder implements PopupMenuBuilder
     public MouseEvent getTriggeringEvent()
     {
         return triggeringEvent;
-    }
-
-    /**
-     * Adds an action to the popup menu constructed by this builder. The action
-     * passed in must implement the <code>javax.swing.Action</code> interface.
-     *
-     * @param action the action to add
-     * @return a reference to this builder
-     * @throws IllegalArgumentException if the action is no Swing action
-     */
-    public PopupMenuBuilder addAction(FormAction action)
-    {
-        if (!(action instanceof Action))
-        {
-            throw new IllegalArgumentException("Action must be a Swing Action!");
-        }
-
-        getMenu().add((Action) action);
-        return this;
-    }
-
-    /**
-     * Adds a separator to the menu constructed by this builder.
-     *
-     * @return a reference to this builder
-     */
-    public PopupMenuBuilder addSeparator()
-    {
-        getMenu().addSeparator();
-        return this;
-    }
-
-    /**
-     * Adds a sub menu to the current menu. This implementation allows adding
-     * arbitrary <code>java.awt.Component</code> objects, which is in line with
-     * the <code>add()</code> method of <code>javax.swing.JMenu</code>. If the
-     * object passed to this method is not a <code>Component</code>, an
-     * exception is thrown.
-     *
-     * @param subMenu the menu object to add
-     * @return a reference to this builder
-     * @throws IllegalArgumentException if the passed in object is not supported
-     */
-    public PopupMenuBuilder addSubMenu(Object subMenu)
-    {
-        if (!(subMenu instanceof Component))
-        {
-            throw new IllegalArgumentException(
-                    "Object to add to the menu must be an awt Component!");
-        }
-
-        getMenu().add((Component) subMenu);
-        return this;
     }
 
     /**
@@ -149,22 +113,6 @@ public class SwingPopupMenuBuilder implements PopupMenuBuilder
     }
 
     /**
-     * Returns a builder for constructing a sub menu. This implementation
-     * returns a specialized implementation of <code>PopupMenuBuilder</code>,
-     * which can construct sub menus and is initialized with the specified menu
-     * description.
-     *
-     * @param menuDesc the description of the new sub menu (must not be
-     *        <b>null</b>)
-     * @return a builder for defining the new menu
-     * @throws IllegalArgumentException if the menu description is undefined
-     */
-    public PopupMenuBuilder subMenuBuilder(ActionData menuDesc)
-    {
-        return new SwingSubMenuBuilder(menuDesc);
-    }
-
-    /**
      * Returns the menu that is constructed by this builder.
      *
      * @return the current menu
@@ -175,8 +123,8 @@ public class SwingPopupMenuBuilder implements PopupMenuBuilder
     }
 
     /**
-     * Displays the specified popu menu. This method is called by
-     * <code>create()</code> with the current menu. This implementation displays
+     * Displays the specified popup menu. This method is called by
+     * {@code create()} with the current menu. This implementation displays
      * the popup menu as specified by the triggering event.
      *
      * @param m the menu to display
@@ -185,5 +133,10 @@ public class SwingPopupMenuBuilder implements PopupMenuBuilder
     {
         m.show(getTriggeringEvent().getComponent(),
                 getTriggeringEvent().getX(), getTriggeringEvent().getY());
+    }
+
+    @Override
+    protected Object getMenuUnderConstruction() {
+        return getMenu();
     }
 }

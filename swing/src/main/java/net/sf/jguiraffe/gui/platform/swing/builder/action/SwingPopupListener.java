@@ -160,6 +160,6 @@ class SwingPopupListener extends MouseAdapter
      */
     protected PopupMenuBuilder createMenuBuilder(MouseEvent event)
     {
-        return new SwingPopupMenuBuilder(event);
+        return new SwingPopupMenuBuilder(null, null, event);
     }
 }

@@ -17,18 +17,18 @@ package net.sf.jguiraffe.gui.platform.swing.builder.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
-import javax.swing.MenuElement;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
 
-import net.sf.jguiraffe.gui.builder.action.PopupMenuBuilder;
-
+import net.sf.jguiraffe.gui.builder.action.ActionBuilder;
+import net.sf.jguiraffe.gui.builder.action.ActionManager;
+import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -37,43 +37,23 @@ import org.junit.Test;
  * @author Oliver Heger
  * @version $Id: TestSwingPopupMenuBuilder.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TestSwingPopupMenuBuilder extends AbstractSwingMenuBuilderTest
+public class TestSwingPopupMenuBuilder
 {
     /** Constant for the triggering mouse event. */
     private static final MouseEvent EVENT = new MouseEvent(new JTextField(),
             42, System.currentTimeMillis(), 0, 150, 100, 1, true);
 
-    /**
-     * Creates the builder to test. This implementation returns a
-     * SwingPopupMenuBuilder that is initialized with the test event.
-     */
-    @Override
-    protected PopupMenuBuilder createBuilder()
-    {
-        return new SwingPopupMenuBuilderTestImpl(EVENT);
-    }
+    /** The builder to be tested. */
+    private SwingPopupMenuBuilderTestImpl builder;
 
-    /**
-     * Obtains the components of the specified menu. The menu is expected to be
-     * a popup menu.
-     *
-     * @param menu the menu
-     * @return the components of this menu
-     */
-    @Override
-    protected Object[] getComponents(MenuElement menu)
+    @Before
+    public void setUp() throws Exception
     {
-        return ((Container) menu).getComponents();
-    }
-
-    /**
-     * Convenience method for obtaining the test builder.
-     *
-     * @return the test builder
-     */
-    private SwingPopupMenuBuilderTestImpl getTestBuilder()
-    {
-        return (SwingPopupMenuBuilderTestImpl) getBuilder();
+        ActionManager actionManager = EasyMock.createMock(ActionManager.class);
+        ActionBuilder actionBuilder = EasyMock.createMock(ActionBuilder.class);
+        builder = new SwingPopupMenuBuilderTestImpl(actionManager, actionBuilder, EVENT);
+        assertSame("Wrong action manager", actionManager, builder.getActionManager());
+        assertSame("Wrong action builder", actionBuilder, builder.getActionBuilder());
     }
 
     /**
@@ -82,9 +62,8 @@ public class TestSwingPopupMenuBuilder extends AbstractSwingMenuBuilderTest
     @Test
     public void testInit()
     {
-        SwingPopupMenuBuilder pb = getTestBuilder();
-        assertNotNull("No popup menu", pb.getMenu());
-        assertEquals("Wrong triggering event", EVENT, pb.getTriggeringEvent());
+        assertNotNull("No popup menu", builder.getMenu());
+        assertEquals("Wrong triggering event", EVENT, builder.getTriggeringEvent());
     }
 
     /**
@@ -94,7 +73,17 @@ public class TestSwingPopupMenuBuilder extends AbstractSwingMenuBuilderTest
     @Test(expected = IllegalArgumentException.class)
     public void testInitNoEvent()
     {
-        new SwingPopupMenuBuilder(null);
+        new SwingPopupMenuBuilder(null, null, null);
+    }
+
+    /**
+     * Tests whether the correct menu object is returned.
+     */
+    @Test
+    public void testGetMenuUnderConstruction()
+    {
+        assertEquals("Wrong menu under construction", builder.getMenu(),
+                builder.getMenuUnderConstruction());
     }
 
     /**
@@ -103,8 +92,8 @@ public class TestSwingPopupMenuBuilder extends AbstractSwingMenuBuilderTest
     @Test
     public void testCreate()
     {
-        testAddAction();
-        assertTrue("Show was not called", getTestBuilder().showCalled);
+        assertEquals("Wrong result", builder.getMenu(), builder.create());
+        assertTrue("Show was not called", builder.showCalled);
     }
 
     /**
@@ -114,8 +103,8 @@ public class TestSwingPopupMenuBuilder extends AbstractSwingMenuBuilderTest
     public void testShowMenu()
     {
         JPopupMenuMock menu = new JPopupMenuMock();
-        getTestBuilder().mockShow = false;
-        getTestBuilder().showMenu(menu);
+        builder.mockShow = false;
+        builder.showMenu(menu);
         assertEquals("Wrong component", EVENT.getComponent(),
                 menu.showComponent);
         assertEquals("Wrong x", EVENT.getX(), menu.showX);
@@ -134,9 +123,10 @@ public class TestSwingPopupMenuBuilder extends AbstractSwingMenuBuilderTest
         /** A flag whether the showMenu() method is invoked. */
         boolean showCalled;
 
-        public SwingPopupMenuBuilderTestImpl(MouseEvent event)
+        public SwingPopupMenuBuilderTestImpl(ActionManager actMan,
+                ActionBuilder builder, MouseEvent event)
         {
-            super(event);
+            super(actMan, builder, event);
         }
 
         /**
