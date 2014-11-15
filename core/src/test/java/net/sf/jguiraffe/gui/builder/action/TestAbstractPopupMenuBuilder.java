@@ -20,8 +20,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
-
+import net.sf.jguiraffe.gui.builder.components.tags.TextIconData;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -136,6 +137,101 @@ public class TestAbstractPopupMenuBuilder
     }
 
     /**
+     * Tests whether a sub menu builder can be requested and used to add a sub
+     * menu.
+     */
+    @Test
+    public void testSubMenuBuilder() throws FormActionException
+    {
+        final ActionDataImpl actionData = new ActionDataImpl();
+        actionData.setText("Some text");
+        actionData.setIcon("Some icon");
+        actionData.setMnemonicKey('M');
+        final Object subMenu = new Object();
+        IAnswer tiDataAnswer = new IAnswer()
+        {
+            public Object answer() throws Throwable
+            {
+                TextIconData tiData =
+                        (TextIconData) EasyMock.getCurrentArguments()[2];
+                assertEquals("Wrong text", actionData.getText(),
+                        tiData.getText());
+                assertEquals("Wrong icon", actionData.getIcon(),
+                        tiData.getIcon());
+                assertEquals("Wrong mnemonic", 'M', tiData.getMnemonic());
+                return subMenu;
+            }
+        };
+        EasyMock.expect(
+                builder.getActionManager().createMenu(
+                        EasyMock.eq(builder.getActionBuilder()),
+                        EasyMock.eq(null),
+                        EasyMock.anyObject(TextIconData.class),
+                        EasyMock.eq(builder.getMenuUnderConstruction())))
+                .andAnswer(tiDataAnswer);
+        EasyMock.replay(builder.getActionManager());
+
+        PopupMenuBuilder subBuilder = builder.subMenuBuilder(actionData);
+        EasyMock.verify(builder.getActionManager());
+        EasyMock.reset(builder.getActionManager());
+        EasyMock.expect(
+                builder.getActionManager().createMenu(
+                        EasyMock.eq(builder.getActionBuilder()),
+                        EasyMock.eq(subMenu),
+                        EasyMock.anyObject(TextIconData.class),
+                        EasyMock.eq(builder.getMenuUnderConstruction())))
+                .andAnswer(tiDataAnswer);
+        EasyMock.replay(builder.getActionManager());
+
+        builder.addSubMenu(subBuilder.create());
+        EasyMock.verify(builder.getActionManager());
+    }
+
+    /**
+     * Tests that an exception on creating the sub menu builder is handled
+     * correctly.
+     */
+    @Test(expected = FormBuilderRuntimeException.class)
+    public void testSubMenuBuilderException() throws FormActionException
+    {
+        EasyMock.expect(
+                builder.getActionManager().createMenu(
+                        EasyMock.eq(builder.getActionBuilder()),
+                        EasyMock.eq(null),
+                        EasyMock.anyObject(TextIconData.class),
+                        EasyMock.eq(builder.getMenuUnderConstruction())))
+                .andThrow(new FormActionException("Test exception"));
+        EasyMock.replay(builder.getActionManager());
+
+        builder.subMenuBuilder(new ActionDataImpl());
+    }
+
+    /**
+     * Tests that an exception on creating the sub menu is handled correctly.
+     */
+    @Test(expected = FormBuilderRuntimeException.class)
+    public void testSubMenuCreationException() throws FormActionException
+    {
+        EasyMock.expect(
+                builder.getActionManager().createMenu(
+                        EasyMock.eq(builder.getActionBuilder()),
+                        EasyMock.eq(null),
+                        EasyMock.anyObject(TextIconData.class),
+                        EasyMock.eq(builder.getMenuUnderConstruction())))
+                .andReturn(new Object());
+        EasyMock.expect(
+                builder.getActionManager().createMenu(
+                        EasyMock.eq(builder.getActionBuilder()),
+                        EasyMock.anyObject(),
+                        EasyMock.anyObject(TextIconData.class),
+                        EasyMock.eq(builder.getMenuUnderConstruction())))
+                .andThrow(new FormActionException("Test exception"));
+        EasyMock.replay(builder.getActionManager());
+
+        builder.subMenuBuilder(new ActionDataImpl()).create();
+    }
+
+    /**
      * A test implementation defining the required methods.
      */
     private static class PopupMenuBuilderTestImpl extends
@@ -154,11 +250,6 @@ public class TestAbstractPopupMenuBuilder
         protected Object getMenuUnderConstruction()
         {
             return PARENT_MENU;
-        }
-
-        public PopupMenuBuilder subMenuBuilder(ActionData menuDesc)
-        {
-            throw new UnsupportedOperationException("Unexpected method call!");
         }
 
         public Object create()

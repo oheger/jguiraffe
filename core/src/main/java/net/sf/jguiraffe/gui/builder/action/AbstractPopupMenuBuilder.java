@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.builder.action;
 
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
+import net.sf.jguiraffe.gui.builder.components.tags.TextIconData;
 
 /**
  * <p>
@@ -128,10 +129,48 @@ public abstract class AbstractPopupMenuBuilder implements PopupMenuBuilder
     }
 
     /**
+     * {@inheritDoc} This implementation creates a special builder
+     * implementation for defining a sub menu.
+     */
+    public PopupMenuBuilder subMenuBuilder(ActionData menuDesc)
+    {
+        try
+        {
+            TextIconData subMenuDescription =
+                    createSubMenuDescription(menuDesc);
+            Object subMenu =
+                    getActionManager().createMenu(getActionBuilder(), null,
+                            subMenuDescription, getMenuUnderConstruction());
+            return new SubMenuBuilder(getActionManager(), getActionBuilder(),
+                    getMenuUnderConstruction(), subMenu, subMenuDescription);
+        }
+        catch (FormActionException ex)
+        {
+            throw new FormBuilderRuntimeException(ex);
+        }
+    }
+
+    /**
      * Returns the menu which is currently under construction. This object is
      * passed to the {@code ActionManager} in order to add new elements to it.
      *
      * @return the menu to be constructed
      */
     protected abstract Object getMenuUnderConstruction();
+
+    /**
+     * Creates a {@code TextIconData} object describing a sub menu from the
+     * passed in {@code ActionData} object.
+     *
+     * @param actionData the {@code ActionData}
+     * @return the newly created {@code TextIconData}
+     */
+    private static TextIconData createSubMenuDescription(ActionData actionData)
+    {
+        TextIconData tiData = new TextIconData(null);
+        tiData.setText(actionData.getText());
+        tiData.setIcon(actionData.getIcon());
+        tiData.setMnemonicKey(String.valueOf((char) actionData.getMnemonicKey()));
+        return tiData;
+    }
 }
