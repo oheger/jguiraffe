@@ -16,18 +16,19 @@
 package net.sf.jguiraffe.gui.platform.swing.builder.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import javax.swing.JLabel;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JLabel;
-
+import net.sf.jguiraffe.gui.builder.action.ActionBuilder;
+import net.sf.jguiraffe.gui.builder.action.ActionManager;
 import net.sf.jguiraffe.gui.builder.action.FormActionException;
 import net.sf.jguiraffe.gui.builder.action.PopupMenuBuilder;
 import net.sf.jguiraffe.gui.builder.action.PopupMenuHandler;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
-
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +55,12 @@ public class TestSwingPopupListener
     /** Stores the component builder data object. */
     private ComponentBuilderData compData;
 
+    /** A mock for the action manager. */
+    private ActionManager actionManager;
+
+    /** A mock for the action builder. */
+    private ActionBuilder actionBuilder;
+
     /** The listener to be tested. */
     private SwingPopupListenerTestImpl listener;
 
@@ -62,7 +69,11 @@ public class TestSwingPopupListener
     {
         handler = EasyMock.createMock(PopupMenuHandler.class);
         compData = new ComponentBuilderData();
-        listener = new SwingPopupListenerTestImpl(handler, compData);
+        actionManager = EasyMock.createMock(ActionManager.class);
+        actionBuilder = EasyMock.createMock(ActionBuilder.class);
+        listener =
+                new SwingPopupListenerTestImpl(handler, compData,
+                        actionManager, actionBuilder);
     }
 
     /**
@@ -72,7 +83,7 @@ public class TestSwingPopupListener
     @Test(expected = IllegalArgumentException.class)
     public void testInitNoHandler()
     {
-        new SwingPopupListener(null, compData);
+        new SwingPopupListener(null, compData, null, null);
     }
 
     /**
@@ -82,7 +93,7 @@ public class TestSwingPopupListener
     @Test(expected = IllegalArgumentException.class)
     public void testInitNoCompData()
     {
-        new SwingPopupListener(handler, null);
+        new SwingPopupListener(handler, null, null, null);
     }
 
     /**
@@ -95,6 +106,8 @@ public class TestSwingPopupListener
                 .createMenuBuilder(EVENT_TRIGGER);
         assertEquals("Wrong triggering event", EVENT_TRIGGER, builder
                 .getTriggeringEvent());
+        assertSame("Wrong action builder", actionBuilder, builder.getActionBuilder());
+        assertSame("Wrong action manager", actionManager, builder.getActionManager());
     }
 
     /**
@@ -186,9 +199,10 @@ public class TestSwingPopupListener
         PopupMenuBuilder builder;
 
         public SwingPopupListenerTestImpl(PopupMenuHandler handler,
-                ComponentBuilderData compData)
+                ComponentBuilderData compData, ActionManager actMan,
+                ActionBuilder builder)
         {
-            super(handler, compData);
+            super(handler, compData, actMan, builder);
         }
 
         /**

@@ -18,6 +18,8 @@ package net.sf.jguiraffe.gui.platform.swing.builder.action;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import net.sf.jguiraffe.gui.builder.action.ActionBuilder;
+import net.sf.jguiraffe.gui.builder.action.ActionManager;
 import net.sf.jguiraffe.gui.builder.action.FormActionException;
 import net.sf.jguiraffe.gui.builder.action.PopupMenuBuilder;
 import net.sf.jguiraffe.gui.builder.action.PopupMenuHandler;
@@ -31,12 +33,12 @@ import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
  * </p>
  * <p>
  * An instance of this class is used by the
- * <code>registerPopupMenuHandler()</code> method of
- * <code>{@link SwingActionManager}</code>. It is initialized with the
- * <code>{@link PopupMenuHandler}</code> object responsible for this menu.
+ * {@code registerPopupMenuHandler()} method of
+ * {@link SwingActionManager}. It is initialized with the
+ * {@link PopupMenuHandler} object responsible for this menu.
  * Whenever an event is detected which triggers a popup menu a Swing-specific
- * <code>{@link PopupMenuBuilder}</code> is created and passed to the
- * <code>{@link PopupMenuHandler}</code>. Using this object the handler can
+ * {@link PopupMenuBuilder} is created and passed to the
+ * {@link PopupMenuHandler}. Using this object the handler can
  * define and display the menu.
  * </p>
  *
@@ -51,17 +53,26 @@ class SwingPopupListener extends MouseAdapter
     /** Stores a reference to the component builder data. */
     private final ComponentBuilderData componentBuilderData;
 
+    /** Stores the current action manager. */
+    private final ActionManager actionManager;
+
+    /** Stores the action builder data object. */
+    private final ActionBuilder actionBuilder;
+
     /**
-     * Creates a new instance of <code>SwingPopupListener</code> and initializes
-     * it with the handler for constructing the menu.
+     * Creates a new instance of {@code SwingPopupListener} and initializes it
+     * with the handler for constructing the menu.
      *
      * @param handler the menu handler (must not be <b>null</b>)
      * @param compData the component builder data object (must not be
      *        <b>null</b>)
+     * @param actMan the current {@code ActionManager}
+     * @param builder the {@code ActionBuilder}
      * @throws IllegalArgumentException if a required parameter is <b>null</b>
      */
     public SwingPopupListener(PopupMenuHandler handler,
-            ComponentBuilderData compData)
+            ComponentBuilderData compData, ActionManager actMan,
+            ActionBuilder builder)
     {
         if (handler == null)
         {
@@ -75,6 +86,8 @@ class SwingPopupListener extends MouseAdapter
 
         menuHandler = handler;
         componentBuilderData = compData;
+        actionManager = actMan;
+        actionBuilder = builder;
     }
 
     /**
@@ -88,10 +101,10 @@ class SwingPopupListener extends MouseAdapter
     }
 
     /**
-     * Returns the <code>ComponentBuilderData</code> object. This object will be
+     * Returns the {@code ComponentBuilderData} object. This object will be
      * passed to the menu handler.
      *
-     * @return the <code>ComponentBuilderData</code>
+     * @return the {@code ComponentBuilderData}
      */
     public ComponentBuilderData getComponentBuilderData()
     {
@@ -99,8 +112,28 @@ class SwingPopupListener extends MouseAdapter
     }
 
     /**
+     * Returns the current {@code ActionManager}.
+     *
+     * @return the {@code ActionManager}
+     */
+    public ActionManager getActionManager()
+    {
+        return actionManager;
+    }
+
+    /**
+     * Returns the {@code ActionBuilder}.
+     *
+     * @return the {@code ActionBuilder}
+     */
+    public ActionBuilder getActionBuilder()
+    {
+        return actionBuilder;
+    }
+
+    /**
      * A mouse button was pressed. This implementation delegates to
-     * <code>maybeShowPopup()</code>.
+     * {@code maybeShowPopup()}.
      *
      * @param event the mouse event
      */
@@ -112,7 +145,7 @@ class SwingPopupListener extends MouseAdapter
 
     /**
      * A mouse button was released. This implementation delegates to
-     * <code>maybeShowPopup()</code>.
+     * {@code maybeShowPopup()}.
      *
      * @param event the mouse event
      */
@@ -149,17 +182,18 @@ class SwingPopupListener extends MouseAdapter
     }
 
     /**
-     * Creates a <code>PopupMenuBuilder</code> for defining a menu. This method
+     * Creates a {@code PopupMenuBuilder} for defining a menu. This method
      * is called when an event is detected that triggers a context menu. The
      * builder created by this method is passed to the
-     * <code>PopupMenuHandler</code>.
+     * {@code PopupMenuHandler}.
      *
      * @param event the mouse event
-     * @return the <code>PopupMenuBuilder</code> to be used for constructing the
+     * @return the {@code PopupMenuBuilder} to be used for constructing the
      *         menu
      */
     protected PopupMenuBuilder createMenuBuilder(MouseEvent event)
     {
-        return new SwingPopupMenuBuilder(null, null, event);
+        return new SwingPopupMenuBuilder(getActionManager(),
+                getActionBuilder(), event);
     }
 }

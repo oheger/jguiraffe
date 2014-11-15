@@ -332,7 +332,7 @@ public class SwingActionManager implements ActionManager
         }
 
         ((Component) component).addMouseListener(new SwingPopupListener(
-                handler, compData));
+                handler, compData, null, null));
     }
 
     /**
