@@ -21,12 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseListener;
-import java.util.EnumSet;
-import java.util.Locale;
-
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -35,12 +29,19 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.util.EnumSet;
+import java.util.Locale;
 
+import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.gui.builder.action.Accelerator;
 import net.sf.jguiraffe.gui.builder.action.ActionBuilder;
 import net.sf.jguiraffe.gui.builder.action.ActionDataImpl;
@@ -57,7 +58,6 @@ import net.sf.jguiraffe.gui.forms.BindingStrategy;
 import net.sf.jguiraffe.gui.platform.swing.builder.components.SwingButtonHandler;
 import net.sf.jguiraffe.resources.ResourceManager;
 import net.sf.jguiraffe.transform.TransformerContext;
-
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
 import org.easymock.EasyMock;
@@ -405,9 +405,14 @@ public class TestSwingActionManager
     public void testRegisterPopupMenuHandler() throws FormActionException
     {
         JComponent comp = new JTextArea();
-        PopupMenuHandler handler = EasyMock
-                .createNiceMock(PopupMenuHandler.class);
+        PopupMenuHandler handler = EasyMock.createMock(PopupMenuHandler.class);
+        BeanContext context = EasyMock.createMock(BeanContext.class);
+        EasyMock.expect(context.getBean(ActionBuilder.KEY_ACTION_BUILDER))
+                .andReturn(actionBuilder);
+        EasyMock.replay(handler, context);
         ComponentBuilderData compData = new ComponentBuilderData();
+        compData.setBeanContext(context);
+
         actionManager.registerPopupMenuHandler(comp, handler, compData);
         int count = 0;
         for (MouseListener ml : comp.getMouseListeners())
@@ -417,11 +422,30 @@ public class TestSwingActionManager
                 count++;
                 SwingPopupListener spl = (SwingPopupListener) ml;
                 assertEquals("Wrong handler", handler, spl.getMenuHandler());
-                assertEquals("Wrong builder data", compData, spl
-                        .getComponentBuilderData());
+                assertEquals("Wrong builder data", compData,
+                        spl.getComponentBuilderData());
+                assertEquals("Wrong action manager", actionManager,
+                        spl.getActionManager());
+                assertEquals("Wrong action builder", actionBuilder,
+                        spl.getActionBuilder());
             }
         }
         assertEquals("Wrong number of listeners", 1, count);
+    }
+
+    /**
+     * Tests whether popup menus are supported as parents, too.
+     */
+    @Test
+    public void testAddToMenuPopup()
+    {
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem item = new JMenuItem("an item");
+
+        actionManager.addToMenu(popup, item);
+        assertEquals("Wrong number of sub elements", 1,
+                popup.getSubElements().length);
+        assertEquals("Wrong item", item, popup.getSubElements()[0]);
     }
 
     /**

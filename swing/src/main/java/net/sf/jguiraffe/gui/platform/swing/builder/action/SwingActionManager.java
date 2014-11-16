@@ -15,9 +15,6 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.action;
 
-import java.awt.Component;
-import java.util.Set;
-
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -26,9 +23,12 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import java.awt.Component;
+import java.util.Set;
 
 import net.sf.jguiraffe.gui.builder.action.Accelerator;
 import net.sf.jguiraffe.gui.builder.action.ActionBuilder;
@@ -46,11 +46,11 @@ import net.sf.jguiraffe.gui.platform.swing.builder.event.SwingEventConstantMappe
 
 /**
  * <p>
- * The Swing specific implementation of the <code>ActionManager</code>
+ * The Swing specific implementation of the {@code ActionManager}
  * interface.
  * </p>
  * <p>
- * This class implements the <code>ActionManager</code> methods in a way that
+ * This class implements the {@code ActionManager} methods in a way that
  * correctly initialized Swing objects (like Actions and JMenus) are created.
  * </p>
  *
@@ -61,7 +61,7 @@ public class SwingActionManager implements ActionManager
 {
     /**
      * Creates an action object. The returned object will also implement Swing's
-     * <code>Action</code> interface.
+     * {@code Action} interface.
      *
      * @param actionBuilder the action builder
      * @param actionData the properties of the new action
@@ -89,15 +89,15 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a menu item based on the given action. Depending on the
-     * <code>checked</code> argument either a <code>JMenuItem</code> or a
-     * <code>JCheckBoxMenuItem</code> object will be returned.
+     * {@code checked} argument either a {@code JMenuItem} or a
+     * {@code JCheckBoxMenuItem} object will be returned.
      *
      * @param actionBuilder the action builder
      * @param formAction the action to associate with the menu item; this object
-     * must implement Swing's <code>Action</code> interface
+     * must implement Swing's {@code Action} interface
      * @param checked the checked flag
      * @param parent the parent menu; this must be an instance of
-     * <code>JMenu</code>
+     * {@code JMenu}
      * @return the new menu item
      * @throws FormActionException if an error occurs
      */
@@ -120,14 +120,14 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a menu item based on the passed in data object. Depending on the
-     * <code>checked</code> argument either a <code>JMenuItem</code> or a
-     * <code>JCheckBoxMenuItem</code> object will be returned.
+     * {@code checked} argument either a {@code JMenuItem} or a
+     * {@code JCheckBoxMenuItem} object will be returned.
      *
      * @param actionBuilder the action builder
      * @param actionData the action data object
      * @param checked the checked flag
      * @param parent the parent menu; this must be an instance of
-     * <code>JMenu</code>
+     * {@code JMenu}
      * @return the new menu item
      * @throws FormActionException if an error occurs
      *
@@ -145,7 +145,7 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a menu bar. This implementation will return a new
-     * <code>JMenuBar</code> object.
+     * {@code JMenuBar} object.
      *
      * @param actionBuilder the action builder
      * @return the new menu bar
@@ -159,11 +159,11 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a menu based on the given data. The return value will be a
-     * <code>JMenu</code> object.
+     * {@code JMenu} object.
      *
      * @param actionBuilder the action builder
      * @param menu the menu object (<b>null</b> in the creation phase, a not
-     * <b>null</b> <code>JMenu</code> instance in the initialization phase)
+     * <b>null</b> {@code JMenu} instance in the initialization phase)
      * @param data the data for the new menu
      * @param parent the menu's parent (a menu bar or a menu)
      * @return the new menu
@@ -195,7 +195,7 @@ public class SwingActionManager implements ActionManager
                 }
                 else
                 {
-                    ((JMenu) parent).add(men);
+                    addToMenu(parent, men);
                 }
             }
             else
@@ -209,7 +209,7 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a tool bar object. This implementation returns a
-     * <code>JToolBar</code> object.
+     * {@code JToolBar} object.
      *
      * @param actionBuilder the action builder
      * @return the new tool bar
@@ -223,15 +223,15 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a toolbar button based on the given action. Depending on the
-     * <code>checked</code> argument either a <code>JButton</code> or a
-     * <code>JToggleButton</code> object will be returned.
+     * {@code checked} argument either a {@code JButton} or a
+     * {@code JToggleButton} object will be returned.
      *
      * @param actionBuilder the action builder
      * @param formAction the action to associate with the menu item; this object
-     * must implement Swing's <code>Action</code> interface
+     * must implement Swing's {@code Action} interface
      * @param checked the checked flag
      * @param parent the parent toolbar; this must be an instance of
-     * <code>JToolBar</code>
+     * {@code JToolBar}
      * @return the new tool button
      * @throws FormActionException if an error occurs
      */
@@ -240,7 +240,7 @@ public class SwingActionManager implements ActionManager
             throws FormActionException
     {
         Action action = (Action) formAction;
-        AbstractButton btn = checked ? (AbstractButton) new JToggleButton(
+        AbstractButton btn = checked ? new JToggleButton(
                 action) : (AbstractButton) new JButton(action);
         if (!actionBuilder.isToolbarText())
         {
@@ -254,8 +254,8 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Creates a toolbar button based on the passed in action data object and
-     * returns a component handler for it. Depending on the <code>checked</code>
-     * argument either a <code>JButton</code> or a <code>JToggleButton</code>
+     * returns a component handler for it. Depending on the {@code checked}
+     * argument either a {@code JButton} or a {@code JToggleButton}
      * object will be created.
      *
      * @param actionBuilder the action builder
@@ -263,7 +263,7 @@ public class SwingActionManager implements ActionManager
      * button
      * @param checked the checked flag
      * @param parent the parent toolbar; this must be an instance of
-     * <code>JToolBar</code>
+     * {@code JToolBar}
      * @return a component handler for the new tool button
      * @throws FormActionException if an error occurs
      */
@@ -271,7 +271,7 @@ public class SwingActionManager implements ActionManager
             ActionData data, boolean checked, Object parent)
             throws FormActionException
     {
-        AbstractButton btn = checked ? (AbstractButton) new JToggleButton()
+        AbstractButton btn = checked ? new JToggleButton()
                 : (AbstractButton) new JButton();
         initFromActionData(btn, data);
         addToToolbar(parent, btn);
@@ -280,7 +280,7 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Adds a separator to the given menu. The passed in menu must be an
-     * instance of <code>JMenu</code>.
+     * instance of {@code JMenu}.
      *
      * @param actionBuilder the action builder
      * @param menu the menu
@@ -294,7 +294,7 @@ public class SwingActionManager implements ActionManager
 
     /**
      * Adds a separator to the given tool bar. The passed in object must be an
-     * instance of <code>JToolBar</code>.
+     * instance of {@code JToolBar}.
      *
      * @param actionBuilder the action builder
      * @param toolBar the tool bar
@@ -307,11 +307,11 @@ public class SwingActionManager implements ActionManager
     }
 
     /**
-     * Associates a <code>PopupMenuHandler</code> with a UI component. This
+     * Associates a {@code PopupMenuHandler} with a UI component. This
      * implementation expects that the passed in object is derived from
-     * <code>java.awt.Component</code>. It registers a special mouse listener at
+     * {@code java.awt.Component}. It registers a special mouse listener at
      * this component that is looking for gestures triggering a popup menu. When
-     * such a gesture is detected the <code>PopupMenuHandler</code> object is
+     * such a gesture is detected the {@code PopupMenuHandler} object is
      * invoked.
      *
      * @param component the component
@@ -332,24 +332,31 @@ public class SwingActionManager implements ActionManager
         }
 
         ((Component) component).addMouseListener(new SwingPopupListener(
-                handler, compData, null, null));
+                handler, compData, this, fetchActionBuilder(compData)));
     }
 
     /**
      * Adds a menu item to a parent menu. The menu must be an instance of
-     * <code>JMenu</code>.
+     * {@code JMenu} or {@code JPopupMenu}.
      *
      * @param parent the parent menu
      * @param item the item to add
      */
     protected void addToMenu(Object parent, JMenuItem item)
     {
-        ((JMenu) parent).add(item);
+        if (parent instanceof JPopupMenu)
+        {
+            ((JPopupMenu) parent).add(item);
+        }
+        else
+        {
+            ((JMenu) parent).add(item);
+        }
     }
 
     /**
      * Adds a tool button to the parent bar. The bar must be an instance of
-     * <code>JToolBar</code>.
+     * {@code JToolBar}.
      *
      * @param parent the parent tool bar
      * @param button the button to add
@@ -431,5 +438,19 @@ public class SwingActionManager implements ActionManager
     {
         Set<Modifiers> mods = acc.getModifiers();
         return SwingEventConstantMapper.convertStandardModifiers(mods);
+    }
+
+    /**
+     * Obtains the {@code ActionBuilder} object from the bean context of the
+     * passed in {@code ComponentBuilderData}.
+     *
+     * @param compData the {@code ComponentBuilderData}
+     * @return the current {@code ActionBuilder}
+     */
+    private static ActionBuilder fetchActionBuilder(
+            ComponentBuilderData compData)
+    {
+        return (ActionBuilder) compData.getBeanContext().getBean(
+                ActionBuilder.KEY_ACTION_BUILDER);
     }
 }
