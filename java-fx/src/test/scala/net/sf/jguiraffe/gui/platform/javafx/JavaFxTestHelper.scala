@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -15,10 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx
 
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{SynchronousQueue, CountDownLatch, TimeUnit}
 
-import org.junit.Assert.fail
+import org.junit.Assert._
 
 import javafx.application.Platform
 import javafx.beans.property.ReadOnlyProperty
@@ -74,6 +73,26 @@ object JavaFxTestHelper {
       }
     })
     await(latch)
+  }
+
+  /**
+   * Executes the passed in function in the Java FX thread, waits for its
+   * execution (with a timeout), and returns the result. This method can be
+   * used instead of ''runInFxThread()'' if results are produced.
+   * @param f the function to be executed
+   * @tparam T the return type of the function
+   * @return the value returned by the function
+   */
+  def invokeInFxThread[T](f: Unit => T): T = {
+    val syncQueue = new SynchronousQueue[T]
+    Platform runLater new Runnable {
+      override def run(): Unit = {
+        syncQueue put f()
+      }
+    }
+    val result = syncQueue.poll(Timeout, TimeUnit.MILLISECONDS)
+    assertNotNull("No value retrieved", result)
+    result
   }
 
   /**
