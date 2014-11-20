@@ -16,12 +16,15 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.action
 
 import javafx.event.EventType
+import javafx.scene.Node
 import javafx.scene.control.{ContextMenu, Label}
 import javafx.scene.input.{MouseButton, MouseEvent}
 
-import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionManager}
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionManager, PopupMenuHandler}
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
+import net.sf.jguiraffe.gui.platform.javafx.{FetchAnswer, JavaFxTestHelper}
 import org.easymock.EasyMock
+import org.easymock.EasyMock.{eq => argEq}
 import org.junit.Assert._
 import org.junit.runner.RunWith
 import org.junit.{BeforeClass, Test}
@@ -123,6 +126,50 @@ class TestPopupMenuHandling extends JUnitSuite {
 
     assertSame("Wrong menu", menuBuilder.mockMenu, menuBuilder.create())
     PowerMock.verify(menuBuilder.mockMenu)
+  }
+
+  /**
+   * Tests that the menu event listener ignores click events with the wrong
+   * mouse button.
+   */
+  @Test def testMenuEventListenerWrongButton(): Unit = {
+    val actionManager = PowerMock.createMock(classOf[ActionManager])
+    val actionBuilder = PowerMock.createMock(classOf[ActionBuilder])
+    val handler = PowerMock.createMock(classOf[PopupMenuHandler])
+    val compData = PowerMock.createMock(classOf[ComponentBuilderData])
+    PowerMock.replayAll()
+
+    val listener = new ContextMenuEventListener(actionManager, actionBuilder, handler, compData,
+      null)
+    listener handle createEvent(btn = MouseButton.PRIMARY)
+  }
+
+  /**
+   * Tests that the mouse listener triggers the display of the context menu if
+   * the correct mouse button is clicked.
+   */
+  @Test def testMenuEventListenerCorrectButton(): Unit = {
+    val actionManager = PowerMock.createMock(classOf[ActionManager])
+    val actionBuilder = PowerMock.createMock(classOf[ActionBuilder])
+    val handler = PowerMock.createMock(classOf[PopupMenuHandler])
+    val compData = PowerMock.createMock(classOf[ComponentBuilderData])
+    val node = PowerMock.createMock(classOf[Node])
+    val answer = new FetchAnswer[Unit, JavaFxPopupMenuBuilder]
+    handler.constructPopup(EasyMock.anyObject(classOf[JavaFxPopupMenuBuilder]), argEq(compData))
+    EasyMock.expectLastCall() andAnswer answer
+    val event = createEvent(btn = MouseButton.SECONDARY)
+    PowerMock.replayAll()
+
+    val listener = new ContextMenuEventListener(actionManager, actionBuilder, handler, compData,
+      node)
+    listener handle event
+    PowerMock.verify(handler)
+
+    val builder = answer.get
+    assertEquals("Wrong action manager", actionManager, builder.getActionManager)
+    assertEquals("Wrong action builder", actionBuilder, builder.getActionBuilder)
+    assertEquals("Wrong node", node, builder.node)
+    assertEquals("Wrong event", event, builder.event)
   }
 }
 
