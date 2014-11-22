@@ -21,6 +21,7 @@ import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.control._
 import javafx.scene.image.ImageView
+import javafx.scene.input.MouseEvent
 
 import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionData, ActionManager, FormAction, PopupMenuHandler}
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
@@ -153,10 +154,20 @@ ToolTipCreationSupport {
     addItemToToolbar(toolBar, new Separator(Orientation.VERTICAL))
   }
 
+  /**
+   * @inheritdoc This implementation registers a specialized mouse event listener
+   *             at the passed in component (which has to be a ''Node'') which
+   *             triggers the creation of a context menu when the correct mouse
+   *             button is pressed.
+   */
   def registerPopupMenuHandler(component: Object, handler: PopupMenuHandler,
-                               compData: ComponentBuilderData) {
-    //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+                               compData: ComponentBuilderData): Unit = {
+    val actionBuilder = (compData.getBeanContext getBean ActionBuilder.KEY_ACTION_BUILDER)
+      .asInstanceOf[ActionBuilder]
+    val node = as[Node](component)
+    val listener = new ContextMenuEventListener(actionManager = this, actionBuilder = actionBuilder,
+      handler = handler, compData = compData, component = node)
+    node.addEventHandler(MouseEvent.MOUSE_CLICKED, listener)
   }
 
   /**

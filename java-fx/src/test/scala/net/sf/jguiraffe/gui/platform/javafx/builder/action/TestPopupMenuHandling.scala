@@ -20,8 +20,10 @@ import javafx.scene.Node
 import javafx.scene.control.{ContextMenu, Label}
 import javafx.scene.input.{MouseButton, MouseEvent}
 
+import net.sf.jguiraffe.di.BeanContext
 import net.sf.jguiraffe.gui.builder.action.{ActionBuilder, ActionManager, PopupMenuHandler}
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
+import net.sf.jguiraffe.gui.platform.javafx.common.ButtonHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.{FetchAnswer, JavaFxTestHelper}
 import org.easymock.EasyMock
 import org.easymock.EasyMock.{eq => argEq}
@@ -73,7 +75,7 @@ object TestPopupMenuHandling {
  * API. Therefore, these tests were extracted into their own test class.
  */
 @RunWith(classOf[PowerMockRunner])
-@PrepareForTest(Array(classOf[MouseEvent]))
+@PrepareForTest(Array(classOf[MouseEvent], classOf[Node]))
 class TestPopupMenuHandling extends JUnitSuite {
 
   import net.sf.jguiraffe.gui.platform.javafx.builder.action.TestPopupMenuHandling._
@@ -170,6 +172,35 @@ class TestPopupMenuHandling extends JUnitSuite {
     assertEquals("Wrong action builder", actionBuilder, builder.getActionBuilder)
     assertEquals("Wrong node", node, builder.node)
     assertEquals("Wrong event", event, builder.event)
+  }
+
+  /**
+   * Tests whether a popup menu handler can be registered for a node.
+   */
+  @Test def testRegisterPopupMenuHandler(): Unit = {
+    val node = PowerMock.createMock(classOf[Node])
+    val actionBuilder = PowerMock.createMock(classOf[ActionBuilder])
+    val handler = PowerMock.createMock(classOf[PopupMenuHandler])
+    val beanContext = PowerMock.createMock(classOf[BeanContext])
+    val compData = new ComponentBuilderData
+    EasyMock.expect(beanContext.getBean(ActionBuilder.KEY_ACTION_BUILDER)).andReturn(actionBuilder)
+    val answer = new FetchAnswer[Unit, ContextMenuEventListener](argIdx = 1)
+    node.addEventHandler(argEq(MouseEvent.MOUSE_CLICKED), EasyMock.anyObject
+      (classOf[ContextMenuEventListener]))
+    EasyMock.expectLastCall() andAnswer answer
+    PowerMock.replayAll()
+    compData setBeanContext beanContext
+
+    val actionManager = new JavaFxActionManager(PowerMock.createMock(classOf[ButtonHandlerFactory]))
+    actionManager.registerPopupMenuHandler(node, handler, compData)
+    PowerMock.verify(node)
+
+    val listener = answer.get
+    assertEquals("Wrong action manager", actionManager, listener.actionManager)
+    assertEquals("Wrong action builder", actionBuilder, listener.actionBuilder)
+    assertEquals("Wrong component", node, listener.component)
+    assertEquals("Wrong component builder data", compData, listener.compData)
+    assertEquals("Wrong handler", handler, listener.handler)
   }
 }
 
