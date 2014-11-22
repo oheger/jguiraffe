@@ -261,31 +261,38 @@ ToolTipCreationSupport {
    * @param parent the parent
    * @param fxMenu the menu to be appended
    * @return the appended menu item
+   * @throws FormBuilderException if the parent is not supported
    */
   private def appendMenu(parent: Object, fxMenu: Menu): Menu = {
     parent match {
       case bar: MenuBar =>
         bar.getMenus add fxMenu
 
-      case m: Menu =>
-        m.getItems add fxMenu
-
       case _ =>
-        throw new FormBuilderException("Unsupported parent for menu: " + parent)
+        addItemToMenu(parent, fxMenu)
     }
 
     fxMenu
   }
 
   /**
-   * Adds a menu item to its parent menu. The parent object must be a JavaFX
-   * menu.
+   * Adds a menu item to its parent menu. The parent object must either be a JavaFX
+   * menu or context menu.
    * @param parent the parent menu
    * @param item the item to be added
    * @return the menu item
+   * @throws FormBuilderException if the parent is not supported
    */
   private def addItemToMenu(parent: Object, item: MenuItem): MenuItem = {
-    as[Menu](parent).getItems add item
+    val items = parent match {
+      case m: Menu =>
+        m.getItems
+      case c: ContextMenu =>
+        c.getItems
+      case other =>
+        throw new FormBuilderException("Unsupported parent menu: " + other)
+    }
+    items add item
     item
   }
 

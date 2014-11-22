@@ -26,7 +26,7 @@ import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.builder.components.tags.TextIconData
 import net.sf.jguiraffe.gui.builder.event.{FormActionEvent, Keys, Modifiers}
 import net.sf.jguiraffe.gui.forms.ComponentHandler
-import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
+import net.sf.jguiraffe.gui.platform.javafx.{JavaFxTestHelper, FetchAnswer}
 import net.sf.jguiraffe.gui.platform.javafx.common.{ButtonHandlerFactory, DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
 import org.apache.commons.jelly.JellyContext
 import org.apache.commons.lang.StringUtils
@@ -64,6 +64,7 @@ object TestJavaFxActionManager {
   private var keyCombination: KeyCombination = _
 
   @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
     image = new Image(classOf[TestJavaFxActionManager].getResource("/icon.jpg").toExternalForm)
     icon = new ImageWrapper(image)
     keyCombination = KeyCombination valueOf "CTRL+F3"
@@ -98,6 +99,13 @@ object TestJavaFxActionManager {
    */
   private def createAction(): JavaFxAction =
     new JavaFxAction(createActionData())
+
+  /**
+   * Creates a JavaFX context menu. This has to be done in the event dispatch thread.
+   * @return the newly created context menu
+   */
+  private def createContextMenu(): ContextMenu =
+    JavaFxTestHelper.invokeInFxThread(f => new ContextMenu)
 
   /**
    * Determines the expected text for an action based on the presence of a mnemonic.
@@ -586,6 +594,38 @@ class TestJavaFxActionManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong number of items", 1, toolBar.getItems.size)
     val separator = toolBar.getItems.get(0).asInstanceOf[Separator]
     assertEquals("Wrong orientation", Orientation.VERTICAL, separator.getOrientation)
+  }
+
+  /**
+   * Tests that the action manager supports context menus when adding items.
+   */
+  @Test def testAddItemToContextMenu(): Unit = {
+    val parent = createContextMenu()
+    val item = manager.createMenuItem(actionBuilder, createAction(), checked = false, parent)
+
+    assertEquals("Wrong number of items", 1, parent.getItems.size)
+    assertEquals("Wrong menu item", item, parent.getItems.get(0))
+  }
+
+  /**
+   * Tests whether a menu can be added to a context menu.
+   */
+  @Test def testAddMenuToContextMenu(): Unit = {
+    val parent = createContextMenu()
+    val menu = new Menu
+    val tiData = new TextIconData(null)
+    tiData setText ActionText
+    manager.createMenu(actionBuilder, menu, tiData, parent)
+
+    assertEquals("Wrong number of items", 1, parent.getItems.size)
+    assertEquals("Wrong item", menu, parent.getItems.get(0))
+  }
+
+  /**
+   * Tests that an unsupported parent menu is handled correctly.
+   */
+  @Test(expected = classOf[FormBuilderException]) def testAddItemToUnsupportedParent(): Unit = {
+    manager.createMenuItem(actionBuilder, createAction(), checked = false, this)
   }
 }
 
