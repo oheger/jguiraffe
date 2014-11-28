@@ -22,19 +22,15 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sf.jguiraffe</groupId>
-  <artifactId>jguiraffe-parent</artifactId>
+  <artifactId>jguiraffe-bom</artifactId>
   <packaging>pom</packaging>
   <version>1.3-SNAPSHOT</version>
 
   <modules>
-    <module>test-helper</module>
-    <module>core</module>
-    <module>examples</module>
-    <module>swing</module>
-    <module>java-fx</module>
+    <module>parent</module>
   </modules>
 
-  <name>JGUIraffe Parent</name>
+  <name>JGUIraffe BOM</name>
   <url>http://jguiraffe.sourceforge.net/</url>
   <organization>
     <name>The JGUIraffe Team</name>
@@ -59,12 +55,6 @@
     </mailingList>
   </mailingLists>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.scala>2.10.3</version.scala>
-    <powermock.version>1.5</powermock.version>
-  </properties>
-
   <developers>
     <developer>
       <id>oheger</id>
@@ -83,7 +73,6 @@
   <dependencyManagement>
     <dependencies>
 
-      <!-- Inter project dependencies -->
       <dependency>
         <groupId>net.sf.jguiraffe</groupId>
         <artifactId>jguiraffe</artifactId>
@@ -108,271 +97,15 @@
         <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
-
-      <!-- Common dependencies -->
-      <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>1.1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-library</artifactId>
-        <version>${version.scala}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.8</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.11</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>3.1</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.10</artifactId>
-        <version>1.9.1</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.powermock</groupId>
-        <artifactId>powermock-module-junit4</artifactId>
-        <version>${powermock.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.powermock</groupId>
-        <artifactId>powermock-api-easymock</artifactId>
-        <version>${powermock.version}</version>
-        <scope>test</scope>
-      </dependency>  
     </dependencies>
   </dependencyManagement>
 
   <build>
-    <resources>
-      <resource>
-        <directory>${project.basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.14</version>
-          <configuration>
-            <argLine>-enableassertions</argLine>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.5.1</version>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.5.1</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>clean</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <phase>package</phase>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <Built-By>${maven.user}</Built-By>
-              </manifestEntries>
-            </archive>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.8.1</version>
-          <executions>
-            <execution>
-              <id>attach-javadocs</id>
-              <phase>package</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <Built-By>${maven.user}</Built-By>
-              </manifestEntries>
-            </archive>
-          </configuration>
-        </plugin>
-
-        <!--
-            A configuration of the antrun plugin which copies the license files
-            into the generated Javadocs jar.
-        -->
-        <plugin>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.7</version>
-          <executions>
-            <execution>
-              <id>javadoc.resources</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>run</goal>
-              </goals>
-              <configuration>
-                <tasks>
-                  <copy todir="target/apidocs/META-INF">
-                    <fileset dir="../">
-                      <include name="LICENSE.txt"/>
-                      <include name="NOTICE.txt"/>
-                    </fileset>
-                  </copy>
-                </tasks>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.3.7</version>
-          <inherited>true</inherited>
-          <executions>
-            <execution>
-              <id>bundle-manifest</id>
-              <phase>process-classes</phase>
-              <goals>
-                <goal>manifest</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <instructions>
-              <_nouses>true</_nouses>
-              <_versionpolicy>
-                [$(version;==;$(@)), $(version;+;$(@)))
-              </_versionpolicy>
-              <Built-By>${maven.user}</Built-By>
-              <Implementation-Version>${project.version}</Implementation-Version>
-            </instructions>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>com.mycila.maven-license-plugin</groupId>
-          <artifactId>maven-license-plugin</artifactId>
-          <version>1.9.0</version>
-          <configuration>
-            <header>../conf/License-Header.txt</header>
-            <includes>
-              <include>src/**</include>
-              <include>pom.xml</include>
-              <include>../conf/*.xml</include>
-            </includes>
-            <mapping>
-              <java>SLASHSTAR_STYLE</java>
-              <jelly>XML_STYLE</jelly>
-            </mapping>
-            <properties>
-              <year>2014</year>
-            </properties>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>3.0</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Built-By>${maven.user}</Built-By>
-              <Implementation-Version>${project.version}</Implementation-Version>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
