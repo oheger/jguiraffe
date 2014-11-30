@@ -35,17 +35,25 @@
     of the following parts:
     <ul>
       <li>
-      <a href="jguiraffe/index.html">The JGUIraffe library documentation</a> is
-      the reference documentation of <em>JGUIraffe</em>. It includes an overview,
-      user's guide, Javadocs, and development reports. When learning the library
-      this is the place to start.
+      The <em>JGUIraffe</em> reference documentation inlcuding a short
+      <a href="introduction.html">introduction</a> or a
+      <a href="userguide/user_guide.html">user's guide</a>. Aggregated
+      <a href="apidocs/index.html">Javadocs</a> are available as well. Use the
+      links on the left hand side menu to navigate to these documents. When 
+      learning the library this is the place to start.
       </li>
       <li>
-      <a href="jguiraffe-examples/index.html">The JGUIraffe examples
+      <a href="jguiraffe-parent/jguiraffe-examples/index.html">The JGUIraffe examples
       documentation</a> deals with the examples shipped with the library. This
       includes a description of the <em>JGUIraffe tutorial application</em> - an
       application which demonstrates many concepts of the library combined to a
       real world example.
+      </li>
+      <li>
+      The <em>JGUIraffe</em> library consists of several sub modules. These can
+      be accessed from the <em>Modules</em> menu. Here you find additional
+      information specific to these modules like several types of development
+      reports.
       </li>
     </ul>
   </p>

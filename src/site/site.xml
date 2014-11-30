@@ -40,10 +40,15 @@
       <item name="Overview"                     href="/overview.html"/>
       <item name="User's Guide"                 href="/userguide/user_guide.html"/>
       <item name="Javadoc (latest)"             href="/apidocs/index.html"/>
-      <item name="JGUIraffe Core"               href="/jguiraffe/index.html"/>
-      <item name="JGUIraffe Examples"           href="/jguiraffe-examples/index.html"/>
+      <item name="JGUIraffe Examples"           href="/jguiraffe-parent/jguiraffe-examples/index.html"/>
       <item name="SVN"                          href="http://jguiraffe.svn.sourceforge.net/viewvc/jguiraffe/"/>
       <item name="Building from SVN"            href="/building.html"/>
+    </menu>
+
+    <menu name="Modules">
+      <item name="JGUIraffe Core"               href="/jguiraffe-parent/jguiraffe/index.html"/>
+      <item name="JGUIraffe Swing integration"  href="/jguiraffe-parent/jguiraffe-swing/index.html"/>
+      <item name="JGUIraffe JavaFX integration" href="/jguiraffe-parent/jguiraffe-java-fx/index.html"/>
     </menu>
   </body>
 </project>
