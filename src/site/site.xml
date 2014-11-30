@@ -34,8 +34,12 @@
       <item name="SourceForge" href="http://sourceforge.net/projects/jguiraffe/"/>
     </links>
 
-	<menu name="JGuiraffe">
+    <menu name="JGuiraffe">
       <item name="Home"                         href="/index.html"/>
+      <item name="Introduction"                 href="/introduction.html"/>
+      <item name="Overview"                     href="/overview.html"/>
+      <item name="User's Guide"                 href="/userguide/user_guide.html"/>
+      <item name="Javadoc (latest)"             href="/apidocs/index.html"/>
       <item name="JGUIraffe Core"               href="/jguiraffe/index.html"/>
       <item name="JGUIraffe Examples"           href="/jguiraffe-examples/index.html"/>
       <item name="SVN"                          href="http://jguiraffe.svn.sourceforge.net/viewvc/jguiraffe/"/>

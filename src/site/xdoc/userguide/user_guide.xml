@@ -42,9 +42,9 @@
     </p>
     <p>
       In addition to this guide <em>JGUIraffe</em> ships with a tutorial
-      application. The associated <a href="../tutorialapp.html">documentation</a>
+      application. The associated <a href="../jguiraffe-parent/jguiraffe-examples/tutorialapp.html">documentation</a>
       is a good extension of the documentation provided here. Especially the
-      <a href="../tutorialapp.html#Quick_start">Quick start</a> sub section is a
+      <a href="../jguiraffe-parent/jguiraffe-examples/tutorialapp.html#Quick_start">Quick start</a> sub section is a
       good starting point for the impatient readers. It describes the minimum
       artifacts required to get a <em>JGUIraffe</em> application up and running.
     </p>
