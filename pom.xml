@@ -208,6 +208,13 @@
               <report>aggregate</report>
             </reports>
           </reportSet>
+          <reportSet>
+            <id>moduleSpecific</id>
+            <reports>
+              <report>javadoc</report>
+              <report>test-javadoc</report>
+            </reports>
+          </reportSet>
         </reportSets>
       </plugin>
     </plugins>
