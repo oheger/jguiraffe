@@ -95,11 +95,20 @@
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
 
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>2.14.1</version>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
         <executions>
           <execution>
             <goals>
@@ -108,6 +117,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <scalaVersion>${version.scala}</scalaVersion>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -167,6 +179,15 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <!--
