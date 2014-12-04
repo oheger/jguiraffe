@@ -19,13 +19,15 @@
 <!-- $Id: site.xml 214 2012-11-13 21:19:44Z oheger $ -->
 <project name="JGUIraffe">
   <body>
-	<menu name="JGuiraffe">
+    <menu name="JGuiraffe">
       <item name="Home"                         href="/index.html"/>
       <item name="Tutorial application"         href="/tutorialapp.html"/>
       <item name="Javadoc (latest)"             href="/apidocs/index.html"/>
     </menu>
 
     <menu ref="reports"/>
-    <menu ref="parent"/>
+    <menu name="Parent Project">
+      <item name="JGUIraffe"                    href="../../index.html"/>
+    </menu>
   </body>
 </project>
