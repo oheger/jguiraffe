@@ -37,6 +37,7 @@
     <module>examples</module>
     <module>swing</module>
     <module>java-fx</module>
+    <module>distribution</module>
   </modules>
 
   <name>JGUIraffe Parent</name>

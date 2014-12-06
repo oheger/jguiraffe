@@ -101,6 +101,31 @@
   </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.5.2</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <finalName>jguiraffe-${project.version}</finalName>
+            <descriptors>
+              <descriptor>src/assembly/bin.xml</descriptor>
+              <descriptor>src/assembly/src.xml</descriptor>
+            </descriptors>
+            <tarLongFileMode>gnu</tarLongFileMode>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -258,10 +283,12 @@
 
   <!--
     The following profiles are used to create the artifacts required for a
-    release. The required commands are as follows:
+    release. The required command is as follows:
 
     mvn clean install site:site -P release,sign -Dmaven.user=user
-    mvn install -N -P dist,sign
+    
+    The signed distribution artifacts are then available in the target directory
+    of the distribution module.
   -->
     <profile>
       <id>release</id>
@@ -359,38 +386,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>dist</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-5</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <finalName>jguiraffe-${project.version}</finalName>
-              <descriptors>
-                <descriptor>src/assembly/bin.xml</descriptor>
-                <descriptor>src/assembly/src.xml</descriptor>
-              </descriptors>
-              <tarLongFileMode>gnu</tarLongFileMode>
-            </configuration>
           </plugin>
         </plugins>
       </build>

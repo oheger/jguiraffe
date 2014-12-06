@@ -25,20 +25,38 @@
     <format>tar.gz</format>
     <format>zip</format>
   </formats>
+
   <fileSets>
     <fileSet>
+      <directory>../../</directory>
       <includes>
         <include>LICENSE.txt</include>
         <include>NOTICE.txt</include>
         <include>RELEASE-NOTES.txt</include>
       </includes>
     </fileSet>
+
     <fileSet>
-      <directory>core/target/apidocs</directory>
+      <directory>../../target/site/apidocs</directory>
       <outputDirectory>apidocs</outputDirectory>
     </fileSet>
+
     <fileSet>
-      <directory>core/target/</directory>
+      <directory>../core/target</directory>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>../swing/target</directory>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>../java-fx/target</directory>
       <outputDirectory>lib</outputDirectory>
       <includes>
         <include>*.jar</include>
