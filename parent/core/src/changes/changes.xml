@@ -50,6 +50,9 @@
       <action dev="oheger" type="fix" issue="3">
         Editable combo boxes no longer throw an exception in Swing.
       </action>
+      <action dev="oheger" type="add" issue="feature-requests/6">
+        Added the tag di:resource to resolve resources on the class path.
+      </action>
       <action dev="oheger" type="add">
         Colors now support a logic representation. This is useful for instance
         when dealing with style sheets. The serialization format and the
