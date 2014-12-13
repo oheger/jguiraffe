@@ -50,7 +50,7 @@
     </p>
     </section>
 
-	<section name="Table of contents">
+    <section name="Table of contents">
     <ul>
       <li><a href="application.html">The central Application class</a></li>
       <ul>
@@ -137,6 +137,7 @@
           <li><a href="dibuilder.html#Singleton_nonsingleton_dependencies">Dependencies between singleton and non-singleton beans</a></li>
           <li><a href="dibuilder.html#Bean_creation_listeners">Bean creation listeners</a></li>
           <li><a href="dibuilder.html#Class_loader_issues">Class loader issues</a></li>
+          <li><a href="dibuilder.html#Access_to_class_path_resources">Access to class path resources</a></li>
           <li><a href="dibuilder.html#Releasing_resources">Releasing resources</a></li>
           <li><a href="dibuilder.html#matching_and_conversions">Parameter matching and data type conversions</a></li>
           <li><a href="dibuilder.html#type_converters">Data type converters</a></li>

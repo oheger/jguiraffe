@@ -1534,6 +1534,86 @@ Line 3]]&gt;&lt;/di:value&gt;
     loader &quot;ClassLoader&quot; attributes have to be specified accordingly.
   </p>
   <p>
+    <a name="Access_to_class_path_resources"/><strong>Access to class path resources</strong>
+  </p>
+  <p>
+    Beans declared for an application sometimes need access to resources defined
+    in the class path. As an example, think about a properties file shipped in
+    the application's jar that should be read by one of the service beans
+    defined in a builder script.
+  </p>
+  <p>
+    Under normal conditions, access to such a file located on the class path is
+    not that complicated: A corresponding URL can be resolved using a class
+    loader. However, as described in the previous sub section, class loader
+    structures can become complicated in special environments. Therefore, the
+    <em>dependency builder library</em> provides a specialized tag for resolving
+    a resource on the class path. The idea is as follows:
+  </p>
+  <p>
+    The tag is passed the name of the resource file to be resolved and the name
+    of a variable in the Jelly context which takes the result of this operation.
+    Optionally, a class loader name can be specified. The tag then uses the
+    specified class loader (or the default class loader if none was provided)
+    to obtain a URL pointing to the desired resource file. If this succeeds,
+    the URL is converted to a string and written in the target variable. This
+    variable can then be referenced in a bean declaration, for instance as a
+    property value or a constructor argument. It is also possible to store the
+    results of multiple resolve operations in a single variable. This can be
+    achieved by specifying a delimiter string. The tag then checks whether the
+    target variable already has a non-empty string value. If this is the case,
+    the delimiter value is added followed by the result of the current operation.
+    Otherwise, the variable is created or overridden with the current result.
+  </p>
+  <p>
+    The tag offering the described functionality is named
+    <code>&lt;di:resource&gt;</code> and implemented by the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/di/tags/ResourceTag.html">
+    ResourceTag</a></code> tag handler class. We will provide a little example
+    showing its usage. This example assumes that there is a service bean that
+    has to read multiple properties file from the class path. It expects a
+    comma-separated string with the URLs to be loaded passed to the constructor.
+    This class could roughly look as follows:
+  </p>
+    <source><![CDATA[
+public class PropertiesService
+{
+    /** String URLs of the files to be loaded. */
+    private final String[] fileURLs;
+    
+    public PropertiesService(String files)
+    {
+        fileURLs = files.split(",");
+    }
+    ...
+}
+    ]]></source>
+  <p>
+    In the builder script the files to be loaded are declared in form of
+    multiple instances of the <code>&lt;di:resource&gt;</code> tag and
+    collected to a single string variable. This variable is then referenced in
+    the bean declaration of the properties service bean:
+  </p>
+    <source><![CDATA[
+<!-- Properties files to be loaded. -->
+<di:resource resource="standard.properties" var="propertyFiles"/>
+<di:resource resource="production.properties" var="propertyFiles" delimiter=","/>
+<di:resource resource="special.properties" var="propertyFiles" delimiter=","/>
+
+<!-- Declaration of the properties service bean -->
+<di:bean beanClassName="com.mypackage.PropertiesService">
+  <di:constructor>
+    <di:param value="${propertyFiles}"/>
+  </di:constructor>
+</di:bean>
+    ]]></source>
+  <p>
+    Note how the <em>delimiter</em> attribute is used to specify that all
+    resolved resource files (except for the first one) should be concatenated
+    to the same target variable. In the bean declaration the variable is
+    referenced using the <code>${varName}</code> notation used within Jelly.
+  </p>
+  <p>
     <a name="Releasing_resources"/><strong>Releasing resources</strong>
   </p>
   <p>
