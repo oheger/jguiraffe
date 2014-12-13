@@ -26,7 +26,7 @@ import org.apache.commons.jelly.TagLibrary;
 public class DITagLibrary extends TagLibrary
 {
     /**
-     * Creates a new instance of <code>DITagLibrary</code> and registers the
+     * Creates a new instance of {@code DITagLibrary} and registers the
      * supported tags.
      */
     public DITagLibrary()
@@ -51,5 +51,6 @@ public class DITagLibrary extends TagLibrary
         registerTag("shutdown", ShutdownHandlerTag.class);
         registerTag("store", BeanStoreTag.class);
         registerTag("value", ValueTag.class);
+        registerTag("resource", ResourceTag.class);
     }
 }
