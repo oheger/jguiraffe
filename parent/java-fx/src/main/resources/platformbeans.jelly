@@ -51,9 +51,24 @@
   </di:bean>
 
   <!--
+    The style sheet provider. This default instance does not add any custom
+    style sheets except for the internal one shipped with JGUIraffe.
+  -->
+  <di:bean name="jguiraffe.styleSheetProvider"
+    beanClassName="net.sf.jguiraffe.gui.platform.javafx.builder.window.StyleSheetProvider">
+    <di:constructor>
+      <di:param value=""/>
+    </di:constructor>
+  </di:bean>
+
+  <!--
     The window manager.
   -->
   <di:bean name="jguiraffe.windowManager"
-    beanClassName="net.sf.jguiraffe.gui.platform.javafx.builder.window.JavaFxWindowManager"/>
+    beanClassName="net.sf.jguiraffe.gui.platform.javafx.builder.window.JavaFxWindowManager">
+    <di:constructor>
+      <di:param refName="jguiraffe.styleSheetProvider"/>
+    </di:constructor>
+  </di:bean>
 
 </j:jelly>
