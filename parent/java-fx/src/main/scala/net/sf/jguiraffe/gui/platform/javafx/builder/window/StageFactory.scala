@@ -16,7 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
 import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.{AtomicReference, AtomicInteger}
 
 import org.apache.commons.logging.LogFactory
 
@@ -56,7 +56,7 @@ private class StageFactory(primaryStage: Stage) {
    * @return the newly created ''Stage'' object
    */
   def createStage(): Stage = {
-    if (stageCount.getAndIncrement() == 0) primaryStage
+    if (stageCount.getAndIncrement == 0) primaryStage
     else {
       JavaFxGUISynchronizer.syncJavaFxInvocation {() =>
         val stage = new Stage
@@ -79,13 +79,23 @@ private object StageFactory {
   private val StageQueue = new ArrayBlockingQueue[Stage](3)
 
   /**
+   * Stores the ''StyleSheetProvider''. This field is accessed from multiple
+   * threads, so it has to be thread-safe.
+   */
+  private val refStyleSheetProvider = new AtomicReference[StyleSheetProvider]
+
+  /**
    * Creates a new ''StageFactory'' instance. This method must be called
    * exactly once. It launches a fake Java FX application and retrieves the
    * primary stage. With this primary stage a new ''StageFactory'' instance is
    * created and returned.
+   * @param styleSheetProvider the ''StyleSheetProvider''; all style sheets
+   *                           defined by this object are added to newly
+   *                           created ''Scene'' objects
    * @return the newly created ''StageFactory'' instance
    */
-  def apply(): StageFactory = {
+  def apply(styleSheetProvider: StyleSheetProvider): StageFactory = {
+    refStyleSheetProvider set styleSheetProvider
     val setupThread = new Thread {
       override def run() {
         Application.launch(classOf[SetupApplication])
@@ -102,7 +112,19 @@ private object StageFactory {
    * @param stage the stage
    */
   private def initScene(stage: Stage) {
-    stage.setScene(new Scene(new Group))
+    stage.setScene(createScene())
+  }
+
+  /**
+   * Creates a new ''Scene'' object and initializes it. This method also adds
+   * all style sheets defined by the associated ''StyleSheetProvider'' to the
+   * new scene.
+   * @return the new ''Scene''
+   */
+  private def createScene(): Scene = {
+    val scene = new Scene(new Group)
+    refStyleSheetProvider.get.styleSheetURLs foreach scene.getStylesheets.add
+    scene
   }
 
   /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -33,10 +33,18 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
  * types of windows supported by the JGUIraffe library. Note that internal
  * frames are not really supported; they are simulated by regular stages which
  * are parents of the top-level stage.
+ *
+ * Because CSS style sheets are managed by ''Scene'' objects and these scenes
+ * are created together with stages, this class is also responsible for adding
+ * custom CSS style sheet URLs. For this purpose, an instance of
+ * [[StyleSheetProvider]] has to be passed to the constructor. All style sheet
+ * URLs defined by this instance are added to all newly created scenes.
+ *
+ * @param styleSheetProvider the ''StyleSheetProvider''
  */
-class JavaFxWindowManager extends WindowManager {
+class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider) extends WindowManager {
   /** The factory for new stages. */
-  private lazy val stageFactory = StageFactory()
+  private lazy val stageFactory = StageFactory(styleSheetProvider)
 
   /**
    * @inheritdoc This implementation creates a normal ''Stage'' object with no

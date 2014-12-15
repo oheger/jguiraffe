@@ -86,11 +86,16 @@ class TestJavaFxWindowManager extends JUnitSuite {
     val windowData = new WindowDataImpl
     val wndNew = manager.createFrame(builderData, windowData, null)
       .asInstanceOf[JavaFxWindow]
-    assertTrue("Wrong scene root", wndNew.stage.getScene.getRoot.isInstanceOf[Group])
+    val scene = wndNew.stage.getScene
+    assertTrue("Wrong scene root", scene.getRoot.isInstanceOf[Group])
     val rootContainer = wndNew.getRootContainer
     rootContainer.addComponent(new Text("Hello"), null)
     val pane = rootContainer.createContainer()
     assertEquals("Container not populated", 1, pane.getChildren.size())
+    assertEquals("Wrong number of style sheets", TestJavaFxWindowManager.StyleSheets.size, scene
+      .getStylesheets.size)
+    assertTrue("Wrong style sheets", TestJavaFxWindowManager.StyleSheets forall scene
+      .getStylesheets.contains)
   }
 
   /**
@@ -267,6 +272,9 @@ class TestJavaFxWindowManager extends JUnitSuite {
 }
 
 object TestJavaFxWindowManager {
+  /** A set with style sheet URLs to be added to newly created Scene objects. */
+  val StyleSheets = Set("style1.css", "otherStyle.css")
+
   /**
    * The test instance. It has to be created once because it initializes the
    * Java FX platform. If multiple instances are created, exceptions are thrown.
@@ -274,6 +282,7 @@ object TestJavaFxWindowManager {
   private var initializedManager: JavaFxWindowManager = _
 
   @BeforeClass def setUpBeforeClass() {
-    initializedManager = new JavaFxWindowManager
+    val provider = new StyleSheetProvider(StyleSheets mkString ",", null)
+    initializedManager = new JavaFxWindowManager(provider)
   }
 }
