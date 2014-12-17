@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2014 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- $Id$ -->
+<document>
+
+  <properties>
+    <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+    <title>Custom style sheets in JGuiraffe JavaFX applications</title>
+  </properties>
+
+<body>
+  <section name="Using Custom Style Sheets">
+  <p>
+    JavaFX's support for Cascading Style Sheets (CSS) enables flexible and
+    powerful styling capabilities for user interfaces. By providing custom
+    style sheet files that override some or all of the default style classes,
+    it is possible to adapt a whole application using special themes.
+  </p>
+  <p>
+    <em>JGUIraffe</em> supports the integration of an arbitrary number of
+    custom style sheet files. In JavaFX css files are added to
+    <code>Scene</code> objects. The component responsible for the creation of
+    <code>Scene</code> objects in <em>JGUIraffe</em> JavaFX applications is
+    <code><a href="scaladocs/net/sf/jguiraffe/gui/platform/javafx/builder/window/JavaFxWindowManager.html">
+    JavaFxWindowManager</a></code>, the JavaFX-specific implementation of the
+    <code><a href="../../apidocs/net/sf/jguiraffe/gui/builder/window/WindowManager.html">
+    WindowManager</a></code> interface. So this is the starting point for
+    customizing style sheets.
+  </p>
+  <p>
+    <code>JavaFxWindowManager</code> expects an instance of the
+    <code><a href="scaladocs/net/sf/jguiraffe/gui/platform/javafx/builder/window/StyleSheetProvider.html">
+    StyleSheetProvider</a></code> class to be passed to its constructor. As the
+    name implies, this class is capable of managing style sheets - to be more
+    precise: a set of string URLs pointing to such files. This is exactly the
+    format accepted by a <code>Scene</code>. In order to make custom style
+    sheets available to JavaFX, an application has to create a
+    <code>StyleSheetProvider</code> object and initialize it accordingly.
+  </p>
+  <p>
+    As usual, the major part of the configuration of a <em>JGUIraffe</em>
+    application is done via the <a href="../../userguide/dibuilder.html">dependency
+    injection framework</a>. The default beans definition file shipped with the
+    JavaFX integration of <em>JGUIraffe</em> contains bean declarations for both
+    the window manager and the style sheet provider. An application can define
+    its own bean definition file in which it overrides beans of the framework.
+    For the purpose of adding specific style sheets the bean with the name
+    <em>jguiraffe.styleSheetProvider</em> has to be overridden. This can be
+    done by declaring a bean of class
+    <code>net.sf.jguiraffe.gui.platform.javafx.builder.window.StyleSheetProvider</code>
+    and passing a comma-separated list of string URLs for the style sheet files to
+    the constructor.
+  </p>
+  <p>
+    Situation is a bit more complicated because these URLs have to be generated
+    first. Typically, custom style sheets are shipped as resources on the
+    class path of an application. To make sure that they are correctly found by
+    JavaFX, they have to be transformed into URLs. Fortunately, the dependency
+    injection tag library offers a tag for exactly this purpose:
+    <a href="../../userguide/dibuilder.html#Access_to_class_path_resources">&lt;resource&gt;</a>.
+    Using this tag, a number of resource names representing css files can be
+    resolved to string URLs, concatenated, and assigned to a Jelly variable.
+    This variable can then be referenced in the declaration of the style sheet
+    provider bean. This is demonstrated in the following example. We assume that
+    two style sheet files, <em>standard.css</em>, and <em>special.css</em> are
+    to be added:
+  </p>
+<source><![CDATA[
+<j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder" xmlns:f="formBuilder"
+  xmlns:a="actionBuilder" xmlns:w="windowBuilder">
+  <di:resource resource="standard.css" var="styleSheets"/>
+  <di:resource resource="special.css" var="styleSheets" delimiter=","/>
+
+  <di:bean name="jguiraffe.styleSheetProvider"
+    beanClassName="net.sf.jguiraffe.gui.platform.javafx.builder.window.StyleSheetProvider">
+    <di:constructor>
+      <di:param value="${styleSheets}"/>
+    </di:constructor>
+  </di:bean>
+</j:jelly>]]></source>
+  <p>
+    This bean definition file (let's assume it is called
+    <code>applicationbeans.jelly</code>) can be executed automatically at
+    application start up as described in the sub section
+    <a href="../../userguide/application.html#Hooks">Hooks</a>. Basically, it
+    has to be listed in the <em>&lt;beandefinitions&gt;</em> section of the
+    application's main configuration file <code>framework-config.xml</code>:
+  </p>
+<source><![CDATA[
+<config>
+  <framework>
+    <builder>
+      <mainScript>main.jelly</mainScript>
+      <beandefinitions>
+        <beandefinition>classpath:applicationbeans.jelly</beandefinition>
+      </beandefinitions>
+      ...
+    </builder>
+    ...
+]]></source>
+  <p>
+    That's it! The style sheet classes defined in the two css files are now
+    available.
+  </p>
+  </section>
+</body>
+</document>

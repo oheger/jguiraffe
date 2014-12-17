@@ -21,6 +21,7 @@
   <body>
     <menu name="JGuiraffe JavaFX">
       <item name="Home"                         href="/index.html"/>
+      <item name="Using custom style sheets"    href="/stylesheets.html"/>
     </menu>
 
     <menu ref="reports"/>
