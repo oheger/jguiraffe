@@ -28,9 +28,7 @@ import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
 import javafx.scene.Node
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.FlowPane
-import javafx.scene.layout.Pane
+import javafx.scene.layout.{StackPane, BorderPane, FlowPane, Pane}
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
@@ -224,5 +222,26 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
 
     val components = wrapper.getComponents
     assertEquals("Wrong components", List(node1, node2), components)
+  }
+
+  /**
+   * Tests whether a transformer function is called with the created pane.
+   */
+  @Test def testPaneTransformer(): Unit = {
+    val f: ContainerWrapper.PaneTransformer = p => {
+      val pane = new StackPane
+      pane.getChildren add p
+      pane
+    }
+
+    wrapper = new ContainerWrapper(paneTransformer = Some(f))
+    val node = new Label("test")
+    wrapper.addComponent(node, null)
+
+    val resultPane = wrapper.createContainer()
+    assertTrue("Wrong result pane", resultPane.isInstanceOf[StackPane])
+    assertEquals("Wrong number of children", 1, resultPane.getChildren.size)
+    val containerPane = resultPane.getChildren.get(0).asInstanceOf[Pane]
+    checkChildren(containerPane, node)
   }
 }

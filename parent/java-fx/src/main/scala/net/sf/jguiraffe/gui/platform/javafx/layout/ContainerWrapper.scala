@@ -50,14 +50,23 @@ import net.sf.jguiraffe.gui.layout.UnitSizeHandler
  * caller has access to a shared ''UnitSizeHandler'' instance.) If no size
  * handler is provided, a new default instance is created if necessary.
  *
+ * Sometimes some additional decorations have to be added to a pane, or the
+ * pane has to be wrapped inside another container. This can be achieved by
+ * passing a transformer function to the constructor. When creating the
+ * represented pane this function is called with the object created by this
+ * ''ContainerWrapper''; the function can then perform an arbitrary
+ * transformation.
+ *
  * Note: This class is not thread-safe. However, for the default usage
  * scenario - creating and initializing an instance by a builder in a
  * background thread and then using it in the Java FX thread - this should
  * not be a problem.
  *
  * @param sizeHandler an optional ''UnitSizeHandler''
+ * @param paneTransformer an optional function for transforming the resulting pane
  */
-class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
+class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
+                       val paneTransformer: Option[ContainerWrapper.PaneTransformer] = None) {
   /**
    * The font to be used for the components of this container. If here a
    * value is set during the building process, all child components created
@@ -106,7 +115,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
     val compData = components.toArray
     val pane = createLayoutPane(compData)
     appendChildren(pane, compData)
-    pane
+    paneTransformer.getOrElse(identity[Pane] _)(pane)
   }
 
   /**
@@ -170,6 +179,12 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None) {
  * The companion object for ''ContainerWrapper''.
  */
 object ContainerWrapper {
+  /**
+   * Type declaration for a function that transforms the panel created by a
+   * ''ContainerWrapper'' before it is passed to the caller.
+   */
+  type PaneTransformer = Pane => Pane
+
   /**
    * Convenience method for converting a plain object to an instance of
    * ''ContainerWrapper''. Because of the generic nature of the JGUIraffe
