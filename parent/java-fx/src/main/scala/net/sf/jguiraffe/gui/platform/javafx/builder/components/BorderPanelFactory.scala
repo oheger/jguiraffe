@@ -21,6 +21,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.{Pane, StackPane}
 
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
+import net.sf.jguiraffe.gui.platform.javafx.builder.NodeProperties
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 
 /**
@@ -100,8 +101,20 @@ private class BorderPanelFactory {
    * @param tag the tag defining the panel
    */
   private def addTitleLabel(pane: StackPane, tag: PanelTag) {
-    val title = new Label(s" ${tag.getTextData.getCaption} ")
+    val title = createTitleLabel(tag)
     pane.getChildren add addStyle(title, StylePanelTitle)
     StackPane.setAlignment(title, Pos.TOP_CENTER)
+  }
+
+  /**
+   * Creates the label control to be used as title for a panel.
+   * @param tag the tag defining the panel
+   * @return the title label
+   */
+  private def createTitleLabel(tag: PanelTag): Node = {
+    val title = new Label(s" ${tag.getTextData.getCaption} ")
+    val properties = NodeProperties(foreground = tag.getColor, font = tag.getTitleFont,
+      background = null)
+    initNodeProperties(title, properties)
   }
 }

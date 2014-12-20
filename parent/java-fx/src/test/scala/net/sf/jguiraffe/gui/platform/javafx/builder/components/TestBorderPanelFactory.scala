@@ -20,7 +20,9 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.{FlowPane, Pane, StackPane}
 
+import net.sf.jguiraffe.gui.builder.components.ColorHelper
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.JavaFxFont
 import org.junit.Assert._
 import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
@@ -165,5 +167,34 @@ class TestBorderPanelFactory extends JUnitSuite {
     tag setText Title
 
     checkDecoratedPaneTransformer(tag, "bordered-panel-no-border")
+  }
+
+  /**
+   * Tests that a title label does not have any styles if the tag does not
+   * define corresponding attributes.
+   */
+  @Test def testTitleLabelNoStyle(): Unit = {
+    val tag = new PanelTag
+    tag setText Title
+
+    val pane = factory.createBorderPanel(tag, new FlowPane)
+    val label = pane.getChildren.get(0)
+    assertTrue("Got styles", label.getStyle.isEmpty)
+  }
+
+  /**
+   * Tests that the label acting as panel title is styled correctly.
+   */
+  @Test def testStylesOfTitleLabel(): Unit = {
+    val tag = new PanelTag {
+      override val getColor = ColorHelper.NamedColor.BLUE.getColor
+    }
+    tag setTitleFont new JavaFxFont(family = Some("TestFont"))
+    tag setText Title
+
+    val pane = factory.createBorderPanel(tag, new FlowPane)
+    val label = pane.getChildren.get(0)
+    assertTrue("No style for color", label.getStyle contains "-fx-text-fill")
+    assertTrue("No style for font: " + label.getStyle, label.getStyle contains "-fx-font-family")
   }
 }
