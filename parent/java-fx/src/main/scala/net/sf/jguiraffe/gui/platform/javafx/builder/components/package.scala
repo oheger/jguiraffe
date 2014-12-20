@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -16,10 +16,13 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder
 
 import javafx.geometry.Side
+import javafx.scene.Node
 import javafx.scene.control.ContentDisplay
-import net.sf.jguiraffe.gui.builder.components.Orientation
+import net.sf.jguiraffe.gui.builder.components.{Color, Orientation}
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
 import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont,
+JavaFxStylesHandler}
 
 package object components {
   /**
@@ -77,4 +80,42 @@ package object components {
   def convertOrientation(or: Orientation): javafx.geometry.Orientation =
     if (Orientation.VERTICAL == or) javafx.geometry.Orientation.VERTICAL
     else javafx.geometry.Orientation.HORIZONTAL
+
+  /**
+   * Initializes the specified node with the properties defined by the passed
+   * in properties object.
+   * @param node the node to be initialized
+   * @param properties the properties to be set
+   * @return the modified node object
+   */
+  def initNodeProperties(node: Node, properties: NodeProperties): Node = {
+    val stylesHandler = new JavaFxStylesHandler
+    if (properties.background != null) {
+      stylesHandler setBackgroundColor properties.background
+    }
+    if (properties.foreground != null) {
+      stylesHandler setForegroundColor properties.foreground
+    }
+
+    properties.font match {
+      case f: JavaFxFont =>
+        stylesHandler setFont f
+      case _ => // ignore
+    }
+
+    val styleDef = stylesHandler.styles.toExternalForm()
+    if (!styleDef.isEmpty) {
+      node setStyle styleDef
+    }
+    node
+  }
 }
+
+/**
+ * A data class representing the properties defined by UI component tags that
+ * can be applied to all kinds of nodes.
+ * @param background the background color
+ * @param foreground the foreground color
+ * @param font the font
+ */
+private case class NodeProperties(background: Color, foreground: Color, font: AnyRef)

@@ -32,7 +32,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
  * @param fontDef a kind of meta attribute for a font definition in a single
  * style (this corresponds to the Java FX `fx-font` attribute)
  */
-private[components] case class JavaFxFont(family: Option[String] = None,
+case class JavaFxFont(family: Option[String] = None,
   size: Option[String] = None,
   style: Option[String] = None,
   weight: Option[String] = None,

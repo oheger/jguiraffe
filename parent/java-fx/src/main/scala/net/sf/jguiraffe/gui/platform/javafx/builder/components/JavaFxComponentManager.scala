@@ -27,6 +27,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayo
 import net.sf.jguiraffe.gui.builder.event.PlatformEventManager
 import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.NodeProperties
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget._
@@ -620,34 +621,9 @@ object JavaFxComponentManager {
       node.setId(tag.getName)
     }
 
-    val styleDef = createStylesForTag(tag).toExternalForm()
-    if (!styleDef.isEmpty) {
-      node.setStyle(styleDef)
-    }
-  }
-
-  /**
-   * Creates a ''Styles'' object which is initialized from the attributes of
-   * the given component tag.
-   * @param tag the component tag
-   * @return the initialized ''Styles'' object
-   */
-  private def createStylesForTag(tag: ComponentBaseTag): Styles = {
-    val stylesHandler = new JavaFxStylesHandler
-    if (tag.getBackgroundColor() != null) {
-      stylesHandler setBackgroundColor (tag.getBackgroundColor())
-    }
-    if (tag.getForegroundColor() != null) {
-      stylesHandler setForegroundColor (tag.getForegroundColor())
-    }
-
-    tag.getFont match {
-      case f: JavaFxFont =>
-        stylesHandler setFont f
-      case _ => // ignore
-    }
-
-    stylesHandler.styles
+    val properties = NodeProperties(background = tag.getBackgroundColor, foreground = tag
+      .getForegroundColor, font = tag.getFont)
+    initNodeProperties(node, properties)
   }
 
   /**
