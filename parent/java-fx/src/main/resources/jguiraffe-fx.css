@@ -18,3 +18,26 @@
  A CSS file with some style definitions used internally by the JavaFX
  integration of JGUIraffe.
 */
+
+/*
+ Style definitions for the panel implementation allowing a border and a title.
+*/
+.bordered-panel-title {
+  -fx-translate-y: -16;
+}
+
+.bordered-panel-border {
+  -fx-content-display: top;
+  -fx-border-insets: 20 15 15 15;
+  -fx-border-color: black;
+  -fx-border-width: 2;
+}
+
+.bordered-panel-no-border {
+  -fx-content-display: top;
+  -fx-border-insets: 20 15 15 15;
+}
+
+.bordered-panel-content {
+  -fx-padding: 26 10 10 10;
+}
