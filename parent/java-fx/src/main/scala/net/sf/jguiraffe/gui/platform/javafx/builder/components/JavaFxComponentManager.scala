@@ -47,10 +47,12 @@ import org.apache.commons.lang.StringUtils
  * @param tableHandlerFactory the factory for creating table handlers
  * @param splitPaneFactory the factory for creating split panes
  */
-class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
-  val treeHandlerFactory: TreeHandlerFactory,
-  val tableHandlerFactory: TableHandlerFactory,
-  val splitPaneFactory: SplitPaneFactory)
+class JavaFxComponentManager private[components](override val toolTipFactory: ToolTipFactory,
+                                                 val treeHandlerFactory: TreeHandlerFactory,
+                                                 val tableHandlerFactory: TableHandlerFactory,
+                                                 val splitPaneFactory: SplitPaneFactory,
+                                                 private[components] val borderPanelFactory:
+                                                 BorderPanelFactory)
   extends ComponentManager with FormContextListener with ToolTipCreationSupport
   with ButtonHandlerFactory {
   /**
@@ -58,7 +60,7 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
    * with a default tool tip factory.
    */
   def this() = this(new DefaultToolTipFactory, new TreeHandlerFactory,
-    new TableHandlerFactory, new SplitPaneFactoryImpl)
+    new TableHandlerFactory, new SplitPaneFactoryImpl, new BorderPanelFactory)
 
   /**
    * @inheritdoc This implementation expects that the container is a
@@ -178,8 +180,8 @@ class JavaFxComponentManager(override val toolTipFactory: ToolTipFactory,
   def createPanel(tag: PanelTag, create: Boolean): Object = {
     if (create) null
     else {
-      //TODO deal with the tag's attributes
-      new ContainerWrapper(Some(JavaFxComponentManager.fetchSizeHandler(tag)))
+      new ContainerWrapper(sizeHandler = Some(JavaFxComponentManager.fetchSizeHandler(tag)),
+        paneTransformer = borderPanelFactory getPaneTransformer tag)
     }
   }
 

@@ -705,10 +705,35 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+   * Tests whether a correct border panel factory is created.
+   */
+  @Test def testDefaultBorderPanelFactory(): Unit = {
+    assertNotNull("No border panel factory", manager.borderPanelFactory)
+  }
+
+  /**
    * Tests the creation of a panel if the create flag is true.
    */
   @Test def testCreatePanelCreate() {
-    assertNull("Got a panel", manager.createPanel(new PanelTag, true))
+    assertNull("Got a panel", manager.createPanel(new PanelTag, create = true))
+  }
+
+  /**
+   * Creates a mock for a ''BorderPanelFactory'' that is prepared to return the
+   * specified transformer function option.
+   * @param tag the panel tag
+   * @param transformer the option for the transformer function
+   * @return the component manager with the mock factory installed
+   */
+  private def createAndInstallBorderPanelFactory(tag: PanelTag, transformer:
+  Option[ContainerWrapper.PaneTransformer] = None): JavaFxComponentManager = {
+    val factory = mock[BorderPanelFactory]
+    EasyMock.expect(factory getPaneTransformer tag).andReturn(transformer)
+    EasyMock replay factory
+    manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
+      treeHandlerFactory = null, tableHandlerFactory = null, splitPaneFactory = null,
+      borderPanelFactory = factory)
+    manager
   }
 
   /**
@@ -720,10 +745,28 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val context = new JellyContext
     tag setContext context
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+    manager = createAndInstallBorderPanelFactory(tag)
 
-    val wrapper = manager.createPanel(tag, false).asInstanceOf[ContainerWrapper]
+    val wrapper = manager.createPanel(tag, create = false).asInstanceOf[ContainerWrapper]
     assertSame("Size handler not initialized", sizeHandler,
       wrapper.sizeHandler.get)
+  }
+
+  /**
+   * Tests whether the panel border factory is correctly invoked when creating a
+   * panel.
+   */
+  @Test def testCreatePanelWithBorderFactory(): Unit = {
+    val transformerFunc = mock[ContainerWrapper.PaneTransformer]
+    val sizeHandler = mock[UnitSizeHandler]
+    val tag = new PanelTag
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+    manager = createAndInstallBorderPanelFactory(tag, Some(transformerFunc))
+
+    val wrapper = manager.createPanel(tag, create = false).asInstanceOf[ContainerWrapper]
+    assertSame("Wrong transformer function", transformerFunc, wrapper.paneTransformer.get)
   }
 
   /**
@@ -892,7 +935,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
 
     whenExecuting(handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
-        treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null)
+        treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null,
+        borderPanelFactory = null)
       assertSame("Wrong handler", handler, manager.createTree(tag, false))
     }
     checkDefaultSize(treeView)
@@ -916,7 +960,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
 
     whenExecuting(handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
-        treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null)
+        treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null,
+        borderPanelFactory = null)
       assertSame("Wrong handler", handler, manager.createTree(tag, false))
     }
     assertEquals("Wrong scroll width", tag.xScrollSize, treeView.getPrefWidth.toInt)
@@ -956,7 +1001,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
 
     whenExecuting(handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
-        tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null)
+        tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null,
+        borderPanelFactory = null)
       assertSame("Wrong handler", handler, manager.createTable(tag, create = false))
     }
     checkDefaultSize(tableView)
@@ -980,7 +1026,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
 
     whenExecuting(handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
-        tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null)
+        tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null,
+        borderPanelFactory = null)
       assertSame("Wrong handler", handler, manager.createTable(tag, create = false))
     }
     assertEquals("Wrong scroll width", tag.xScrollSize, tableView.getPrefWidth.toInt)
@@ -1123,7 +1170,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateSplitter() {
     val factory = mock[SplitPaneFactory]
     val manager = new JavaFxComponentManager(toolTipFactory = null, treeHandlerFactory = null,
-      tableHandlerFactory = null, splitPaneFactory = factory)
+      tableHandlerFactory = null, splitPaneFactory = factory, borderPanelFactory = null)
     val tag = new SplitterTag
     tag setName "MySplitter"
     val split = new SplitPane
