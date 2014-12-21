@@ -20,6 +20,7 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.{Pane, StackPane}
 
+import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
 import net.sf.jguiraffe.gui.platform.javafx.builder.NodeProperties
 import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
@@ -40,6 +41,9 @@ private object BorderPanelFactory {
   /** CSS style class for the label representing the title of the panel. */
   val StylePanelTitle = "bordered-panel-title"
 
+  /** The default background color for title labels. */
+  val DefaultBackgroundColor = Color.newLogicInstance("-fx-control-inner-background")
+
   /**
    * Adds the given style sheet class to the given node.
    * @param node the node
@@ -50,6 +54,40 @@ private object BorderPanelFactory {
     node.getStyleClass add styleClass
     node
   }
+
+  /**
+   * Adds a label for the title of the panel.
+   * @param pane the panel
+   * @param tag the tag defining the panel
+   */
+  private def addTitleLabel(pane: StackPane, tag: PanelTag) {
+    val title = createTitleLabel(tag)
+    pane.getChildren add addStyle(title, StylePanelTitle)
+    StackPane.setAlignment(title, Pos.TOP_CENTER)
+  }
+
+  /**
+   * Creates the label control to be used as title for a panel.
+   * @param tag the tag defining the panel
+   * @return the title label
+   */
+  private def createTitleLabel(tag: PanelTag): Node = {
+    val title = new Label(s" ${tag.getTextData.getCaption} ")
+    val properties = NodeProperties(foreground = tag.getColor, font = tag.getTitleFont,
+      background = titleLabelBackgroundColor(tag))
+    initNodeProperties(title, properties)
+  }
+
+  /**
+   * Determines the background color for the title label. If a color for the
+   * owning panel is defined, this one is used. Otherwise, the default background
+   * color is used.
+   * @param tag the tag defining the panel
+   * @return the color to be used as background for the title label
+   */
+  def titleLabelBackgroundColor(tag: PanelTag): Color =
+    if (tag.getBackgroundColor != null) tag.getBackgroundColor
+    else DefaultBackgroundColor
 }
 
 /**
@@ -94,27 +132,4 @@ private class BorderPanelFactory {
   def getPaneTransformer(tag: PanelTag): Option[ContainerWrapper.PaneTransformer] =
     if (tag.isBorder || tag.getTextData.isDefined) Some(createBorderPanel(tag, _))
     else None
-
-  /**
-   * Adds a label for the title of the panel.
-   * @param pane the panel
-   * @param tag the tag defining the panel
-   */
-  private def addTitleLabel(pane: StackPane, tag: PanelTag) {
-    val title = createTitleLabel(tag)
-    pane.getChildren add addStyle(title, StylePanelTitle)
-    StackPane.setAlignment(title, Pos.TOP_CENTER)
-  }
-
-  /**
-   * Creates the label control to be used as title for a panel.
-   * @param tag the tag defining the panel
-   * @return the title label
-   */
-  private def createTitleLabel(tag: PanelTag): Node = {
-    val title = new Label(s" ${tag.getTextData.getCaption} ")
-    val properties = NodeProperties(foreground = tag.getColor, font = tag.getTitleFont,
-      background = null)
-    initNodeProperties(title, properties)
-  }
 }
