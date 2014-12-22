@@ -50,7 +50,8 @@
 
     <dependency>
       <groupId>net.sf.jguiraffe</groupId>
-      <artifactId>jguiraffe-swing</artifactId>
+      <!--<artifactId>jguiraffe-swing</artifactId>-->
+      <artifactId>jguiraffe-java-fx</artifactId>
     </dependency>
 
     <dependency>
