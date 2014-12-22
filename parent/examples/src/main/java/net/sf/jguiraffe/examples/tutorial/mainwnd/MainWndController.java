@@ -305,10 +305,10 @@ public class MainWndController
         List<Object> model = getTable().getModel();
         int size = model.size();
         model.clear();
-        table.rowsDeleted(0, size);
+        table.rowsDeleted(0, size - 1);
 
         model.addAll(dirData.getContent());
-        getTable().rowsInserted(0, dirData.getContent().size());
+        getTable().rowsInserted(0, dirData.getContent().size() - 1);
         if (!dirData.getContent().isEmpty())
         {
             getTable().setSelectedIndex(0);
