@@ -15,30 +15,22 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.collection.mutable.Set
+import javafx.beans.property.{DoubleProperty, ReadOnlyDoubleProperty, SimpleDoubleProperty}
+import javafx.geometry.Orientation
+import javafx.scene.control.{Label, SplitPane, TextField}
+import javafx.scene.layout.Pane
 
+import net.sf.jguiraffe.gui.builder.components.tags.SplitterTag
+import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, Orientation => JGOrientation}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.Assert.{assertEquals, assertSame, assertTrue}
+import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyDoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.geometry.Orientation
-import javafx.scene.control.Label
-import javafx.scene.control.SplitPane
-import javafx.scene.control.TextField
-import javafx.scene.layout.Pane
-import net.sf.jguiraffe.gui.builder.components.{Orientation => JGOrientation}
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.gui.builder.components.tags.SplitterTag
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
-import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import scala.collection.mutable
 
 /**
  * Companion object for ''TestSplitPaneFactoryImpl''.
@@ -94,7 +86,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * @param prop the property to be returned by the function
    * @return the test function
    */
-  private def createPosFunction(panes: Set[SplitPane],
+  private def createPosFunction(panes: mutable.Set[SplitPane],
     prop: DoubleProperty): SplitPane => DoubleProperty = {
     p =>
       panes += p
@@ -109,7 +101,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * @param prop the property to be returned by the function
    * @return the test function
    */
-  private def createSizeFunction(panes: Set[SplitPane], expOrient: Orientation,
+  private def createSizeFunction(panes: mutable.Set[SplitPane], expOrient: Orientation,
     prop: ReadOnlyDoubleProperty): SplitPane => ReadOnlyDoubleProperty = {
     p =>
       panes += p
@@ -197,7 +189,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    */
   private def checkSplitPaneOrientation(expOrient: Orientation,
     tagOrient: JGOrientation) {
-    val splitPanes = Set.empty[SplitPane]
+    val splitPanes = mutable.Set.empty[SplitPane]
     val factory = new SplitPaneFactoryImpl(
       funcSizeProp = createSizeFunction(splitPanes, expOrient, createProperty()))
     val split = factory.createSplitPane(createTag(tagOrient))
@@ -209,7 +201,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * is vertical.
    */
   @Test def testSplitPaneOrientationVertical() {
-    checkSplitPaneOrientation(Orientation.VERTICAL, JGOrientation.HORIZONTAL)
+    checkSplitPaneOrientation(Orientation.VERTICAL, JGOrientation.VERTICAL)
   }
 
   /**
@@ -217,7 +209,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * is horizontal.
    */
   @Test def testSplitPaneOrientationHorizontal() {
-    checkSplitPaneOrientation(Orientation.HORIZONTAL, JGOrientation.VERTICAL)
+    checkSplitPaneOrientation(Orientation.HORIZONTAL, JGOrientation.HORIZONTAL)
   }
 
   /**
@@ -225,9 +217,9 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * extraction functions.
    */
   @Test def testSplitPanePassedToPropertyFunctions() {
-    val splitPanes = Set.empty[SplitPane]
+    val splitPanes = mutable.Set.empty[SplitPane]
     val factory = new SplitPaneFactoryImpl(
-      funcSizeProp = createSizeFunction(splitPanes, Orientation.HORIZONTAL, createProperty()),
+      funcSizeProp = createSizeFunction(splitPanes, Orientation.VERTICAL, createProperty()),
       funcPosProp = createPosFunction(splitPanes, createProperty()))
     splitPanes += factory.createSplitPane(createTag(JGOrientation.VERTICAL))
     assertEquals("Multiple split panes", 1, splitPanes.size)
@@ -238,13 +230,13 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * position.
    */
   @Test def testSizeHandlerPosition() {
-    val splitPanes = Set.empty[SplitPane]
+    val splitPanes = mutable.Set.empty[SplitPane]
     val propPos = createProperty()
     val propSize = createProperty()
     val tag = createTag(JGOrientation.VERTICAL)
     tag setPos 100
     val factory = new SplitPaneFactoryImpl(
-      funcSizeProp = createSizeFunction(splitPanes, Orientation.HORIZONTAL, propSize),
+      funcSizeProp = createSizeFunction(splitPanes, Orientation.VERTICAL, propSize),
       funcPosProp = createPosFunction(splitPanes, propPos))
 
     factory.createSplitPane(tag)
@@ -257,13 +249,13 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether a size handler is installed with the correct resize weight.
    */
   @Test def testSizeHandlerResizeWeight() {
-    val splitPanes = Set.empty[SplitPane]
+    val splitPanes = mutable.Set.empty[SplitPane]
     val propPos = createProperty()
     val propSize = createProperty()
     val tag = createTag(JGOrientation.VERTICAL)
     tag setResizeWeight 1
     val factory = new SplitPaneFactoryImpl(
-      funcSizeProp = createSizeFunction(splitPanes, Orientation.HORIZONTAL, propSize),
+      funcSizeProp = createSizeFunction(splitPanes, Orientation.VERTICAL, propSize),
       funcPosProp = createPosFunction(splitPanes, propPos))
 
     factory.createSplitPane(tag)

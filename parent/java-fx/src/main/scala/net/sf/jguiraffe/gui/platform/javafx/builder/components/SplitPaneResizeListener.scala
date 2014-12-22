@@ -171,8 +171,8 @@ private object SplitPaneFactoryImpl {
  * @param funcPosProp a function for obtaining the position property form a pane
  */
 private class SplitPaneFactoryImpl(
-  val funcSizeProp: SplitPane => ReadOnlyDoubleProperty = SplitPaneFactoryImpl.fetchSizeProperty _,
-  val funcPosProp: SplitPane => DoubleProperty = SplitPaneFactoryImpl.fetchPosProperty _)
+  val funcSizeProp: SplitPane => ReadOnlyDoubleProperty = SplitPaneFactoryImpl.fetchSizeProperty,
+  val funcPosProp: SplitPane => DoubleProperty = SplitPaneFactoryImpl.fetchPosProperty)
   extends SplitPaneFactory {
   def createSplitPane(tag: SplitterTag): SplitPane = {
     val split = createAndInitSplitPane(tag)
@@ -195,18 +195,13 @@ private class SplitPaneFactoryImpl(
   }
 
   /**
-   * Determines the orientation for the split pane. Note that the opposite
-   * orientation as returned by ''convertOrientation()'' has to be used!
-   * This is because JavaFX expects the orientation of the panel while
-   * JGUIraffe thinks in terms of the divider.
+   * Determines the orientation for the split pane. This method maps the
+   * logic constants used by JGUIraffe to JavaFX-specific values.
    * @param tag the splitter tag
    * @return the orientation of the split pane
    */
-  private def determineOrientation(tag: SplitterTag): Orientation = {
-    val orDiv = convertOrientation(tag.getSplitterOrientation)
-    if(Orientation.HORIZONTAL == orDiv) Orientation.VERTICAL
-    else Orientation.HORIZONTAL
-  }
+  private def determineOrientation(tag: SplitterTag): Orientation =
+    convertOrientation(tag.getSplitterOrientation)
 
   /**
    * Converts a child component for the split pane to a Node. This requires a
