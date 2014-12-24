@@ -15,22 +15,16 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.mutable.Map
+import javafx.scene.Node
 
-import org.apache.commons.configuration.tree.ConfigurationNode
-import org.apache.commons.configuration.tree.DefaultConfigurationNode
+import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigurationNode}
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotSame
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertSame, assertTrue}
+import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
 
-import javafx.scene.Node
+import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.mutable
 
 /**
  * The companion object for ''ConfigTreeItem''.
@@ -90,13 +84,13 @@ object TestConfigTreeItem {
  * Test class for ''ConfigTreeItem''.
  */
 class TestConfigTreeItem extends JUnitSuite {
-  import TestConfigTreeItem._
+  import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TestConfigTreeItem._
 
   /** The map storing all tree items. */
-  private var itemMap: Map[ConfigurationNode, ConfigTreeItem] = _
+  private var itemMap: mutable.Map[ConfigurationNode, ConfigTreeItem] = _
 
   @Before def setUp() {
-    itemMap = Map.empty
+    itemMap = mutable.Map.empty
   }
 
   /**
@@ -114,7 +108,7 @@ class TestConfigTreeItem extends JUnitSuite {
    */
   @Test def testGraphicLeaf() {
     val item = new ConfigTreeItem(createNode(), GraphicsHandler, itemMap)
-    checkGraphic(item, false, true)
+    checkGraphic(item, expanded = false, leaf = true)
   }
 
   /**
@@ -122,7 +116,7 @@ class TestConfigTreeItem extends JUnitSuite {
    */
   @Test def testGraphicNoLeaf() {
     val item = new ConfigTreeItem(createNodeWithChildren(), GraphicsHandler, itemMap)
-    checkGraphic(item, false, false)
+    checkGraphic(item, expanded = false, leaf = false)
   }
 
   /**
@@ -142,14 +136,17 @@ class TestConfigTreeItem extends JUnitSuite {
   }
 
   /**
-   * Tests whether the leaf flag is cached after its initialization.
+   * Tests that the leaf flag is reset when the node is synchronized with a changed
+   * underlying structure.
    */
-  @Test def testIsLeafCached() {
+  @Test def testIsLeafRecalculatedAfterSync(): Unit = {
     val node = createNode()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     assertTrue("Not a leaf", item.isLeaf)
+
     addChildNodes(node)
-    assertTrue("No longer a leaf", item.isLeaf)
+    item.resync()
+    assertFalse("Still a leaf", item.isLeaf)
   }
 
   /**
@@ -184,7 +181,7 @@ class TestConfigTreeItem extends JUnitSuite {
    */
   @Test def testResyncUninitialized() {
     val node = new DefaultConfigurationNode(NodeName) {
-      override def getChildren() = {
+      override def getChildren = {
         throw new UnsupportedOperationException("Unexpected method call!")
       }
     }
@@ -213,7 +210,7 @@ class TestConfigTreeItem extends JUnitSuite {
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     addChildNodes(node)
     item.resync()
-    checkGraphic(item, false, false)
+    checkGraphic(item, expanded = false, leaf = false)
   }
 
   /**
@@ -299,11 +296,11 @@ class TestConfigTreeItem extends JUnitSuite {
  * graphics were set.
  */
 class NodeGraphicsHandlerTestImpl extends NodeGraphicsHandler {
-  private var graphics = Map.empty[ConfigurationNode, Array[Node]]
+  private var graphics = mutable.Map.empty[ConfigurationNode, Array[Node]]
 
   def graphicsFor(node: ConfigurationNode, expanded: Boolean, leaf: Boolean): Node = {
     if (!graphics.contains(node)) {
-      graphics += node -> (new Array[Node](4))
+      graphics += node -> new Array[Node](4)
     }
     val mockNodes = graphics(node)
     val idx = stateIndex(expanded, leaf)

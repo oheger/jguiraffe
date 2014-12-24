@@ -15,15 +15,13 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.JavaConversions.asScalaSet
-import scala.collection.mutable.Map
+import javafx.collections.{FXCollections, ObservableList}
+import javafx.scene.control.TreeItem
 
 import org.apache.commons.configuration.tree.ConfigurationNode
 
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
-import javafx.scene.control.TreeItem
+import scala.collection.JavaConversions.{asScalaBuffer, asScalaSet}
+import scala.collection.mutable
 
 /**
  * A specialized ''TreeItem'' implementation for managing tree nodes which are
@@ -45,33 +43,25 @@ import javafx.scene.control.TreeItem
  */
 private class ConfigTreeItem(val node: ConfigurationNode,
   val graphicsHandler: NodeGraphicsHandler,
-  itemMap: Map[ConfigurationNode, ConfigTreeItem])
+  itemMap: mutable.Map[ConfigurationNode, ConfigTreeItem])
   extends TreeItem[ConfigNodeData](ConfigNodeData(node)) {
-  /** A flag whether the leaf flag has already been initialized. */
-  private var leafInitialized = false
-
   /** A flag whether the children have been initialized. */
   private var childrenInitialized = false
-
-  /** The actual leaf flag. */
-  private var leafFlag = false
 
   // Add this instance to the global map of tree items
   itemMap += node -> this
   updateGraphic()
 
   /**
-   * @inheritdoc This implementation determines on first access whether the
-   * associated ''ConfigurationNode'' has children or not. Then this
-   * information is cached.
+   * @inheritdoc The purpose of this implementation is to determine the leaf
+   *             status even if the children have not yet been initialized.
+   *             In this case, the underlying ''ConfigurationNode'' is accessed.
+   *             If the children have already been resolved, we can safely
+   *             delegate to the inherited method.
    */
   override def isLeaf: Boolean = {
-    if (!leafInitialized) {
-      leafInitialized = true
-      leafFlag = node.getChildrenCount <= 0
-    }
-
-    leafFlag
+    if (!childrenInitialized) node.getChildrenCount <= 0
+    else super.isLeaf
   }
 
   /**
@@ -175,6 +165,6 @@ private class ConfigTreeItem(val node: ConfigurationNode,
    */
   private def updateGraphic() {
     setGraphic(graphicsHandler.graphicsFor(node, isExpanded,
-      node.getChildrenCount() == 0))
+      node.getChildrenCount == 0))
   }
 }
