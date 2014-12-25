@@ -15,7 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import javafx.beans.value.ChangeListener
+import javafx.beans.value.{ObservableValue, ChangeListener}
 import javafx.scene.control.{SelectionMode, TreeItem, TreeView}
 
 import net.sf.jguiraffe.gui.builder.components.model.{TreeExpandVetoException, TreeExpansionEvent, TreeExpansionListener, TreeHandler, TreeNodePath, TreePreExpansionListener}
@@ -136,6 +136,20 @@ object TestJavaFxTreeHandler {
     new TreeNodePath(getNode(handler, cls))
 
   /**
+   * Obtains a ''TreeNodePath'' object for a specific key in the model
+   * configuration and ensures that the corresponding tree node gets
+   * initialized.
+   * @param handler the tree handler
+   * @param cls the target class for constructing the key
+   * @return the ''TreeNodePath'' for this class
+   */
+  private def getPathAndInitializeNode(handler: JavaFxTreeHandler, cls: Class[_]): TreeNodePath = {
+    val path = getPath(handler, cls)
+    handler expand path
+    path
+  }
+
+  /**
    * Creates a path to a target node which is not part of the test tree's
    * model.
    * @return the invalid path
@@ -238,19 +252,22 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests that the tree selection does not change when new nodes are added in
+   * Helper method for checking that the tree selection is restored after a
    * resync() operation.
+   * @param handler the handler for the test
+   * @param selection the selection before the operation
+   * @return the handler used within this test
    */
-  @Test def testTreeSelectionNotChangedWhenInResync(): Unit = {
+  private def checkTreeSelectionRestoredAfterResync(handler: JavaFxTreeHandler, selection:
+  TreeNodePath): JavaFxTreeHandler = {
     val item = mock[ConfigTreeItem]
-    val handler = createInitializedHandler()
     val tree = getTree(handler)
-    val updatedPath = getPath(handler, Keys(2))
-    handler expand updatedPath
+    val updatedPath = getPathAndInitializeNode(handler, Keys(2))
     val addedItem = handler.itemMap(updatedPath.getTargetNode)
-    val orgPath = getPath(handler, Keys(0))
     handler.clearSelection()
-    handler addSelectedPath orgPath
+    if (selection != null) {
+      handler addSelectedPath selection
+    }
     item.resync()
     EasyMock.expectLastCall().andAnswer(new IAnswer[Void] {
       override def answer(): Void = {
@@ -266,8 +283,75 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
       handler.itemMap += node -> item
       handler treeModelChanged node
     }
-    assertEquals("Tree selection not reset", orgPath.getTargetNode, tree.getSelectionModel
+    handler
+  }
+
+  /**
+   * Tests that the tree selection does not change when new nodes are added in
+   * resync() operation.
+   */
+  @Test def testTreeSelectionNotChangedWhenInResync(): Unit = {
+    val handler = createInitializedHandler()
+    val orgPath = getPath(handler, Keys(0))
+
+    checkTreeSelectionRestoredAfterResync(handler, orgPath)
+    assertEquals("Tree selection not reset", orgPath.getTargetNode, getTree(handler)
+      .getSelectionModel
       .getSelectedItem.getValue.node)
+  }
+
+  /**
+   * Tests that a null tree selection does not cause any problems when an
+   * update of the model is processed.
+   */
+  @Test def testTreeSelectionNullNotChangedByResync(): Unit = {
+    val handler = createInitializedHandler()
+
+    checkTreeSelectionRestoredAfterResync(handler, null)
+    assertNull("Got a selection", getTree(handler).getSelectionModel.getSelectedItem)
+  }
+
+  /**
+   * Tests a special case of the selection handling after a resync operation:
+   * If the currently selected node is removed, the selection cannot be restored
+   * in the normal way.
+   */
+  @Test def testTreeSelectionHandlingWhenNodeRemovedInResync(): Unit = {
+    val item = mock[ConfigTreeItem]
+    val handler = createInitializedHandler()
+    val tree = getTree(handler)
+    val path1 = getPathAndInitializeNode(handler, Keys(0))
+    val path2 = getPathAndInitializeNode(handler, Keys(1))
+    var valueChanges = List.empty[TreeItem[ConfigNodeData]]
+
+    handler.clearSelection()
+    handler addSelectedPath path1
+    item.resync()
+    EasyMock.expectLastCall().andAnswer(new IAnswer[Void] {
+      override def answer(): Void = {
+        handler.itemMap -= path1.getTargetNode
+        tree.getSelectionModel.clearSelection()
+        tree.getSelectionModel select handler.itemMap(path2.getTargetNode)
+        null
+      }
+    })
+    val changeListener = new ChangeListener[TreeItem[ConfigNodeData]] {
+      override def changed(observableValue: ObservableValue[_ <: TreeItem[ConfigNodeData]],
+                           oldValue:
+      TreeItem[ConfigNodeData], newValue: TreeItem[ConfigNodeData]): Unit = {
+        valueChanges = newValue :: valueChanges
+      }
+    }
+    handler.observableValue addListener changeListener
+
+    whenExecuting(item) {
+      val node = getNode(handler, Keys(2))
+      handler.itemMap += node -> item
+      handler treeModelChanged node
+    }
+    assertEquals("Wrong number of change events", 1, valueChanges.size)
+    assertEquals("Wrong selected value", handler.itemMap(path2.getTargetNode), valueChanges.head)
+    assertEquals("Wrong tree selection", valueChanges.head, tree.getSelectionModel.getSelectedItem)
   }
 
   /**
@@ -416,7 +500,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     handler setSelectedPaths paths
     val data = handler.getData.asInstanceOf[Array[TreeNodePath]]
     assertEquals("Wrong number of selected paths", paths.size, data.size)
-    assertTrue("No all paths found", data forall (paths contains))
+    assertTrue("No all paths found", data forall (paths contains _))
   }
 
   /**

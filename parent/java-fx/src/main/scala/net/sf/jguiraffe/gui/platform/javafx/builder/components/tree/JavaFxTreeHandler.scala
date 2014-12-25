@@ -17,28 +17,17 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
 import javafx.beans.property.{ReadOnlyObjectProperty, SimpleObjectProperty}
 import javafx.beans.value.{ChangeListener, ObservableValue}
+import javafx.event.EventHandler
+import javafx.scene.control.{SelectionMode, TreeItem, TreeView}
 
-import scala.beans.BeanProperty
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.mutable.Map
-
+import net.sf.jguiraffe.gui.builder.components.model.{TreeExpandVetoException, TreeExpansionEvent, TreeExpansionListener, TreeHandler, TreeModelChangeListener, TreeNodePath, TreePreExpansionListener}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.{ChangeEventSource, EventListenerList}
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.ConfigurationNode
 
-import javafx.event.EventHandler
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
-import net.sf.jguiraffe.gui.builder.components.model.TreeExpandVetoException
-import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionEvent
-import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionListener
-import net.sf.jguiraffe.gui.builder.components.model.TreeHandler
-import net.sf.jguiraffe.gui.builder.components.model.TreeModelChangeListener
-import net.sf.jguiraffe.gui.builder.components.model.TreeNodePath
-import net.sf.jguiraffe.gui.builder.components.model.TreePreExpansionListener
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
+import scala.beans.BeanProperty
+import scala.collection.mutable
 
 /**
  * A specialized ''ComponentHandler'' implementation for JavaFX tree view
@@ -57,7 +46,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.EventListenerList
 private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   val name: String, @BeanProperty val model: HierarchicalConfiguration,
   val graphicHandler: NodeGraphicsHandler,
-  val itemMap: Map[ConfigurationNode, ConfigTreeItem])
+  val itemMap: mutable.Map[ConfigurationNode, ConfigTreeItem])
   extends JavaFxComponentHandler[Object](tree)
   with TreeModelChangeListener with TreeHandler with ChangeEventSource {
   /** Flag whether multiple selection is supported. */
@@ -170,7 +159,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * into a (potential empty) array of ''TreeNodePath'' objects.
    */
   def getSelectedPaths: Array[TreeNodePath] = {
-    import collection.JavaConversions._
+    import scala.collection.JavaConversions._
     val paths = for (item <- tree.getSelectionModel.getSelectedItems)
       yield new TreeNodePath(item.getValue.node)
     paths.toArray
@@ -219,7 +208,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * the passed in target node gets expanded.
    */
   def expand(path: TreeNodePath) {
-    ensureInitialized(path.getTargetNode) foreach (expandPath)
+    ensureInitialized(path.getTargetNode) foreach expandPath
   }
 
   /**
@@ -328,7 +317,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   private def ensureInitialized(node: ConfigurationNode): Option[ConfigTreeItem] = {
     if (node == null) None
     else {
-      itemMap.get(node) orElse (ininitializeParentPath(node))
+      itemMap.get(node) orElse ininitializeParentPath(node)
     }
   }
 
@@ -359,13 +348,21 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   /**
    * Restores the selection of the tree after the model has changed. During
    * model updates the tree's selection obviously changes for each newly added
-   * node. To prevent this, the no selection change events are generated in
-   * this phase, and the selection is restored afterwards if possible.
+   * node. To prevent this, no selection change events are generated in
+   * this phase, and the selection is restored afterwards if possible. Note
+   * that it might not be possible to restore the selection if the node
+   * selected before the operation was removed. In this case, we stick with
+   * the tree's current selection.
    */
   private def restoreTreeSelection() {
     if (tree.getSelectionModel.getSelectedItem != selectionChangedProperty.get) {
-      tree.getSelectionModel.clearSelection()
-      tree.getSelectionModel select selectionChangedProperty.get
+      if (selectionChangedProperty.get() == null || itemMap.contains(selectionChangedProperty.get
+        .getValue.node)) {
+        tree.getSelectionModel.clearSelection()
+        tree.getSelectionModel select selectionChangedProperty.get
+      } else {
+        selectionChangedProperty set tree.getSelectionModel.getSelectedItem
+      }
     }
   }
 
