@@ -15,6 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
+import javafx.beans.property.{ReadOnlyObjectProperty, SimpleObjectProperty}
+import javafx.beans.value.{ChangeListener, ObservableValue}
+
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.mutable.Map
@@ -65,7 +68,16 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   @BeanProperty val `type` = if (multiSelection) classOf[Array[TreeNodePath]]
   else classOf[TreeNodePath]
 
-  override val observableValue = tree.getSelectionModel.selectedItemProperty
+  /** The property for change listener support. */
+  private val selectionChangedProperty = new SimpleObjectProperty[TreeItem[ConfigNodeData]]
+  installSelectionChangeListener()
+
+  /**
+   * Implementation property for ''ChangeEventSource''. Note that we do not use
+   * the tree's selection property directly because during updates of the tree
+   * model uncontrolled selection changes occur that are to be suppressed.
+   */
+  override val observableValue: ReadOnlyObjectProperty[TreeItem[ConfigNodeData]] = selectionChangedProperty
 
   /** Stores the expansion listeners. */
   private val expansionListeners =
@@ -80,6 +92,9 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
 
   /** A flag whether an expansion event is currently processed. */
   private var expansionEventProcessing = false
+
+  /** A flag whether a sync operation is currently performed. */
+  private var syncInProgress = false
 
   /**
    * @inheritdoc This implementation, depending on the selection mode, either
@@ -122,10 +137,16 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * the FX event thread! So there must be an external component ensuring this.
    */
   def treeModelChanged(node: ConfigurationNode) {
-    if (currentRootNode ne model.getRootNode()) {
+    if (currentRootNode ne model.getRootNode) {
       setUpTreeItemStructure()
     } else {
-      itemMap.get(node) foreach (_.resync())
+      syncInProgress = true
+      try {
+        itemMap.get(node) foreach (_.resync())
+      } finally {
+        restoreTreeSelection()
+        syncInProgress = false
+      }
     }
   }
 
@@ -332,6 +353,35 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
     if (item != null) {
       item setExpanded true
       expandPath(item.getParent)
+    }
+  }
+
+  /**
+   * Restores the selection of the tree after the model has changed. During
+   * model updates the tree's selection obviously changes for each newly added
+   * node. To prevent this, the no selection change events are generated in
+   * this phase, and the selection is restored afterwards if possible.
+   */
+  private def restoreTreeSelection() {
+    if (tree.getSelectionModel.getSelectedItem != selectionChangedProperty.get) {
+      tree.getSelectionModel.clearSelection()
+      tree.getSelectionModel select selectionChangedProperty.get
+    }
+  }
+
+  /**
+   * Installs a change listener at the managed tree's selection property. This
+   * listener updates the property for the ''ChangeEventSource'' if the
+   * selection change is allowed.
+   */
+  private def installSelectionChangeListener(): Unit = {
+    tree.getSelectionModel.selectedItemProperty addListener new ChangeListener[TreeItem[ConfigNodeData]] {
+      override def changed(observableValue: ObservableValue[_ <: TreeItem[ConfigNodeData]], oldValue:
+      TreeItem[ConfigNodeData], newValue: TreeItem[ConfigNodeData]): Unit = {
+        if(!syncInProgress) {
+          selectionChangedProperty set newValue
+        }
+      }
     }
   }
 }

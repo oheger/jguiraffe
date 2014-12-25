@@ -15,32 +15,19 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import scala.collection.mutable.Map
+import javafx.beans.value.ChangeListener
+import javafx.scene.control.{SelectionMode, TreeItem, TreeView}
 
+import net.sf.jguiraffe.gui.builder.components.model.{TreeExpandVetoException, TreeExpansionEvent, TreeExpansionListener, TreeHandler, TreeNodePath, TreePreExpansionListener}
 import org.apache.commons.configuration.HierarchicalConfiguration
-import org.apache.commons.configuration.tree.ConfigurationNode
-import org.apache.commons.configuration.tree.DefaultConfigurationNode
-import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotSame
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
-import org.junit.Test
+import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigurationNode}
+import org.easymock.{EasyMock, IAnswer}
+import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertNull, assertSame, assertTrue}
+import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
-import net.sf.jguiraffe.gui.builder.components.model.TreeExpandVetoException
-import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionEvent
-import net.sf.jguiraffe.gui.builder.components.model.TreeExpansionListener
-import net.sf.jguiraffe.gui.builder.components.model.TreeHandler
-import net.sf.jguiraffe.gui.builder.components.model.TreeNodePath
-import net.sf.jguiraffe.gui.builder.components.model.TreePreExpansionListener
+import scala.collection.mutable
 
 /**
  * The companion object for ''JavaFxTreeHandler''.
@@ -96,7 +83,7 @@ object TestJavaFxTreeHandler {
    */
   private def createHandler(multiSelect: Boolean = false): JavaFxTreeHandler =
     new JavaFxTreeHandler(createTree(multiSelect), Name, createConfiguration(),
-      GraphicsHandler, Map.empty)
+      GraphicsHandler, mutable.Map.empty)
 
   /**
    * Creates a test handler instance and initializes its root node.
@@ -179,7 +166,7 @@ object TestJavaFxTreeHandler {
  * Test class for ''JavaFxTreeHandler''.
  */
 class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
-  import TestJavaFxTreeHandler._
+  import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TestJavaFxTreeHandler._
 
   /**
    * Tests the handler's type if only single selection is active.
@@ -193,7 +180,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests the handler's type if multiple selection is enabled.
    */
   @Test def testGetTypeMultiSelection() {
-    val handler = createHandler(true)
+    val handler = createHandler(multiSelect = true)
     assertEquals("Wrong type", classOf[Array[TreeNodePath]], handler.getType)
   }
 
@@ -251,6 +238,39 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+   * Tests that the tree selection does not change when new nodes are added in
+   * resync() operation.
+   */
+  @Test def testTreeSelectionNotChangedWhenInResync(): Unit = {
+    val item = mock[ConfigTreeItem]
+    val handler = createInitializedHandler()
+    val tree = getTree(handler)
+    val updatedPath = getPath(handler, Keys(2))
+    handler expand updatedPath
+    val addedItem = handler.itemMap(updatedPath.getTargetNode)
+    val orgPath = getPath(handler, Keys(0))
+    handler.clearSelection()
+    handler addSelectedPath orgPath
+    item.resync()
+    EasyMock.expectLastCall().andAnswer(new IAnswer[Void] {
+      override def answer(): Void = {
+        tree.getSelectionModel select addedItem
+        null
+      }
+    })
+    val changeListener = mock[ChangeListener[TreeItem[ConfigNodeData]]]
+    handler.observableValue addListener changeListener
+
+    whenExecuting(item, changeListener) {
+      val node = getNode(handler, Keys(1))
+      handler.itemMap += node -> item
+      handler treeModelChanged node
+    }
+    assertEquals("Tree selection not reset", orgPath.getTargetNode, tree.getSelectionModel
+      .getSelectedItem.getValue.node)
+  }
+
+  /**
    * Tests whether a single path can be selected.
    */
   @Test def testSetSelectedPath() {
@@ -264,7 +284,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether multiple paths can be selected.
    */
   @Test def testSetSelectedPaths() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     val paths = (1 to 3) map { idx => getPath(handler, Keys(idx)) }
     handler setSelectedPaths paths.toArray
     checkSelection(handler, paths: _*)
@@ -274,7 +294,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether the old selection is cleared when setting a new one.
    */
   @Test def testSetSelectionClearsOldSelection() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     val path1 = getPath(handler, Keys(1))
     val path2 = getPath(handler, Keys(Keys.length - 1))
     handler setSelectedPath path1
@@ -286,7 +306,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether a path can be added to an existing selection.
    */
   @Test def testAddSelectedPath() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     val path1 = getPath(handler, Keys(1))
     val path2 = getPath(handler, Keys(Keys.length - 1))
     handler setSelectedPath path1
@@ -316,7 +336,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether all selected paths can be queried.
    */
   @Test def testGetSelectedPaths() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     val path1 = getPath(handler, Keys(0))
     val path2 = getPath(handler, Keys(2))
     handler setSelectedPath path1
@@ -330,7 +350,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests querying the selected paths if there is no selection.
    */
   @Test def testGetSelectedPathsNoSelection() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     assertTrue("Got selected paths", handler.getSelectedPaths.isEmpty)
   }
 
@@ -338,7 +358,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether the tree's selection can be cleared.
    */
   @Test def testClearSelection() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     handler setSelectedPath getPath(handler, Keys(1))
     handler addSelectedPath getPath(handler, Keys(3))
     handler.clearSelection()
@@ -373,7 +393,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * if there is no selection.
    */
   @Test def testGetDataMultiNoSelection() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     assertNull("Got data", handler.getData)
   }
 
@@ -391,7 +411,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests getData() if multiple selections are allowed.
    */
   @Test def testGetDataMultiSelection() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     val paths = Array(getPath(handler, Keys(0)), getPath(handler, Keys(3)))
     handler setSelectedPaths paths
     val data = handler.getData.asInstanceOf[Array[TreeNodePath]]
@@ -414,7 +434,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether multiple selected paths can be set using setData().
    */
   @Test def testSetDataMultiplePaths() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     handler setSelectedPath getPath(handler, Keys(0))
     val paths = Array(getPath(handler, Keys(1)), getPath(handler, Keys(2)))
     handler setData paths
@@ -425,7 +445,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests that all other input to setData() just clears the selection.
    */
   @Test def testSetDataOther() {
-    val handler = createInitializedHandler(true)
+    val handler = createInitializedHandler(multiSelect = true)
     handler setSelectedPath getPath(handler, Keys(0))
     handler setData null
     checkSelection(handler)
@@ -615,13 +635,26 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether the correct property for supporting change events is exposed.
+   * Tests that the change event source property contains the root node after
+   * an initial initialization.
+   */
+  @Test def testChangeEventSourceAfterInitialization(): Unit = {
+    val handler = createInitializedHandler()
+    assertNull("Got initial selection", handler.observableValue.get)
+  }
+
+  /**
+   * Tests whether change events in the tree selection are propagated.
    */
   @Test def testChangeEventSource() {
-    val handler = createHandler()
+    val handler = createInitializedHandler()
     val tree = getTree(handler)
-    assertSame("Wrong change event property",
-        tree.getSelectionModel.selectedItemProperty, handler.observableValue)
+    val path = getPath(handler, Keys(1))
+    handler expand path
+
+    tree.getSelectionModel select handler.itemMap(path.getTargetNode)
+    assertEquals("Wrong selected value", path.getTargetNode,
+        handler.observableValue.get.getValue.node)
   }
 }
 
