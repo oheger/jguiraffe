@@ -185,7 +185,6 @@
 
   <!-- The main window -->
   <w:frame titleres="main_title" menu="mainMenu" autoClose="false">
-    <f:panel>
       <f:borderlayout/>
       <!-- A tool bar at the top of the window's content -->
       <a:toolbar>
@@ -255,7 +254,6 @@
           </f:table>
         </f:panel>
       </f:splitter>
-    </f:panel>
 
     <!-- An event listener that delegates the window closing event to the
          application exit action.
@@ -347,7 +345,7 @@
   </di:bean>
 
   <!-- File open action task -->
-  <di:bean name="fileOpenTask" 
+  <di:bean name="fileOpenTask"
     beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.OpenDesktopTask">
     <di:constructor>
       <di:param refName="windowController"/>
@@ -355,7 +353,7 @@
   </di:bean>
 
   <!-- File edit action task -->
-  <di:bean name="fileEditTask" 
+  <di:bean name="fileEditTask"
     beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.EditDesktopTask">
     <di:constructor>
       <di:param refName="windowController"/>
@@ -363,7 +361,7 @@
   </di:bean>
 
   <!-- File print action task -->
-  <di:bean name="filePrintTask" 
+  <di:bean name="filePrintTask"
     beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.PrintDesktopTask">
     <di:constructor>
       <di:param refName="windowController"/>
