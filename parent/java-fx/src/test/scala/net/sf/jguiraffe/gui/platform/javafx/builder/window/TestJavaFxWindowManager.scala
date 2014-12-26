@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2006-2014 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -134,6 +134,31 @@ class TestJavaFxWindowManager extends JUnitSuite {
     assertEquals("Wrong yPos", windowData.yPos, wnd.getYPos)
     assertEquals("Wrong width", windowData.width, wnd.getWidth)
     assertEquals("Wrong height", windowData.height, wnd.getHeight)
+  }
+
+  /**
+   * Helper method for testing that the auto close flag is set correctly.
+   * @param autoClose the auto close flag to be set
+   */
+  private def checkAutoCloseFlag(autoClose: Boolean): Unit = {
+    val builderData = createWindowBuilderData()
+    val windowData = new WindowDataImpl(autoClose = autoClose)
+    val wnd = manager.createFrame(builderData, windowData, null).asInstanceOf[JavaFxWindow]
+    assertEquals("Wrong autoClose flag", autoClose, wnd.autoClose)
+  }
+
+  /**
+   * Tests whether an autoClose flag set to true is handled correctly.
+   */
+  @Test def testAutoCloseTrue(): Unit = {
+    checkAutoCloseFlag(autoClose = true)
+  }
+
+  /**
+   * Tests whether an autoClose flag set to false is handled correctly.
+   */
+  @Test def testAutoCloseFalse(): Unit = {
+    checkAutoCloseFlag(autoClose = false)
   }
 
   /**

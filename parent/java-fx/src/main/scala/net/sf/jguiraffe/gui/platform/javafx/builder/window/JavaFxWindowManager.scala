@@ -55,7 +55,7 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider) extends Wi
   def createFrame(builderData: WindowBuilderData, data: WindowData,
     wnd: Window): Window = {
     if (wnd == null) {
-      createWindow(builderData)
+      createWindow(builderData, data)
     } else {
       initWindowProperties(data, wnd)
       wnd
@@ -89,12 +89,13 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider) extends Wi
    * obtained from the ''StageFactory''. If an owner is specified, it is
    * set.
    * @param builderData the builder data object
+   * @param data the data object with the window's properties
    * @return the newly created ''Window'' object
    */
-  private def createWindow(builderData: WindowBuilderData): Window = {
+  private def createWindow(builderData: WindowBuilderData, data: WindowData): Window = {
     val stage = stageFactory.createStage()
     val sizeHandler = JavaFxUnitSizeHandler.fromContext(builderData.getContext)
-    val wnd = JavaFxWindow(stage, sizeHandler = Some(sizeHandler))
+    val wnd = JavaFxWindow(stage, sizeHandler = Some(sizeHandler), autoClose = data.isAutoClose)
     if (builderData.getParentWindow != null) {
       stage.initOwner(extractStage(builderData.getParentWindow))
       wnd.parentWindow = builderData.getParentWindow
