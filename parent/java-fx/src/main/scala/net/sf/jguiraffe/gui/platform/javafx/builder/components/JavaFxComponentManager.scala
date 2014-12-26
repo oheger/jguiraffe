@@ -563,6 +563,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
     data: TextIconData) {
     label.setText(ComponentUtils.mnemonicText(data.getCaption,
       data.getMnemonic))
+    label setMnemonicParsing true
     if (data.getIcon != null) {
       label.setGraphic(data.getIcon.asInstanceOf[ImageView])
     }

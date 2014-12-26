@@ -161,6 +161,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong text", "Test _Label", label.getText)
     assertEquals("Wrong alignment", ContentDisplay.RIGHT, label.getContentDisplay)
     assertEquals("Name not set", "componentName", label.getId)
+    assertTrue("Mnemonic parsing not enabled", label.isMnemonicParsing)
   }
 
   /**
