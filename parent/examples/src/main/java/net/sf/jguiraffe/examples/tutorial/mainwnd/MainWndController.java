@@ -199,9 +199,9 @@ public class MainWndController
         List<File> files = new ArrayList<File>(indices.length);
         List<Object> model = getTable().getModel();
 
-        for (int i = 0; i < indices.length; i++)
+        for (int idx : indices)
         {
-            FileData data = (FileData) model.get(indices[i]);
+            FileData data = (FileData) model.get(idx);
             files.add(data.getFile());
         }
 
@@ -226,7 +226,6 @@ public class MainWndController
      * the tree view. This method is called whenever the selection of the tree
      * view changes to a directory that has not yet been scanned.
      *
-     * @param dir the directory
      * @param path the path in the tree model
      */
     void readDirectory(TreeNodePath path)
@@ -304,8 +303,11 @@ public class MainWndController
         getTable().clearSelection();
         List<Object> model = getTable().getModel();
         int size = model.size();
-        model.clear();
-        table.rowsDeleted(0, size - 1);
+        if (size > 0)
+        {
+            model.clear();
+            table.rowsDeleted(0, size - 1);
+        }
 
         model.addAll(dirData.getContent());
         getTable().rowsInserted(0, dirData.getContent().size() - 1);
