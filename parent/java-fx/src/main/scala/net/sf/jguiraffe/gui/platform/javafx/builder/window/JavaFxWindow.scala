@@ -46,11 +46,12 @@ import scala.beans.BeanProperty
  * @param windowListeners the object for registering window listeners
  * @param mouseListeners the object for registering mouse listeners
  * @param rootContainer the root container for this window
+ * @param autoClose a flag whether this window should react on the close button
  */
 private class JavaFxWindow private[window] (val stage: Stage,
   windowListeners: EventListenerList[WindowEvent, WindowListener],
   mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener],
-  @BeanProperty val rootContainer: WindowRootContainerWrapper)
+  @BeanProperty val rootContainer: WindowRootContainerWrapper, val autoClose: Boolean)
   extends Window with WindowWrapper {
   /** The underlying wrapped window. */
   override val getWrappedWindow = stage
@@ -158,6 +159,44 @@ private class JavaFxWindow private[window] (val stage: Stage,
   def removeMouseListener(l: FormMouseListener) {
     mouseListeners -= l
   }
+
+  /**
+   * Registers a window closing listener which monitors the window's closing
+   * process. Closing is only possible if permitted by the closing strategy.
+   * The ''autoClose'' flag is taken into account, too. Because the regular
+   * closing event may be consumed it has to be propagated explicitly to
+   * registered window listeners.
+   */
+  private def registerClosingListener() {
+    stage.addEventFilter(javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST,
+      new EventHandler[javafx.stage.WindowEvent] {
+        def handle(e: javafx.stage.WindowEvent) {
+          if (!closingPermitted) {
+            if(!autoClose) {
+              fireClosingEvent(e)
+              e.consume()
+            } else {
+              if(!getWindowClosingStrategy.canClose(JavaFxWindow.this)) {
+                e.consume()
+              } else {
+                fireClosingEvent(e)
+              }
+            }
+          }
+        }
+      })
+  }
+
+  /**
+   * Creates a window closing event and passes it to all registered event
+   * listeners.
+   * @param source the source event
+   */
+  private def fireClosingEvent(source: javafx.stage.WindowEvent) {
+    windowListeners.fire(new WindowEvent(source, JavaFxWindow.this, WindowEvent.Type
+      .WINDOW_CLOSING),
+      _.windowClosing(_))
+  }
 }
 
 /**
@@ -169,36 +208,23 @@ private object JavaFxWindow {
    * ''Stage'' object. Optionally, a size handler can be provided which is then
    * passed to the window's root container.
    * @param stage the ''Stage'' to be wrapped
+   * @param autoClose flag whether the window should close itself when the user clicks the close
+   *                  icon
+   * @param sizeHandler an optional size handler object
    * @return the fully initialized ''JavaFxWindow'' object
    */
-  def apply(stage: Stage, sizeHandler: Option[UnitSizeHandler] = None): JavaFxWindow = {
+  def apply(stage: Stage, autoClose: Boolean = false, sizeHandler: Option[UnitSizeHandler] =
+  None): JavaFxWindow = {
     val wndListeners = new EventListenerList[WindowEvent, WindowListener]
     val mouseListeners = new EventListenerList[FormMouseEvent, FormMouseListener]
     val root = new WindowRootContainerWrapper(sizeHandler)
-    val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners, root)
+    val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners, root, autoClose)
 
     WindowEventAdapter(stage, wnd, wndListeners)
     val mouseAdapter = MouseEventAdapter(mouseListeners)
     stage.addEventHandler(MouseEvent.ANY, mouseAdapter)
-    registerClosingListener(stage, wnd)
+    wnd.registerClosingListener()
 
     wnd
-  }
-
-  /**
-   * Registers a window closing listener which monitors the window's closing
-   * process. Closing is only possible if permitted by the closing strategy.
-   * @param stage the stage
-   * @param wnd the window wrapper
-   */
-  private def registerClosingListener(stage: Stage, wnd: JavaFxWindow) {
-    stage.addEventFilter(javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST,
-      new EventHandler[javafx.stage.WindowEvent] {
-        def handle(e: javafx.stage.WindowEvent) {
-          if (!wnd.closingPermitted) {
-            e.consume()
-          }
-        }
-      })
   }
 }

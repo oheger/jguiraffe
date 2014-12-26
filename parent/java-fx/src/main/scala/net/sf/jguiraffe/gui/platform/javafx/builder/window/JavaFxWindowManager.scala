@@ -94,7 +94,7 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider) extends Wi
   private def createWindow(builderData: WindowBuilderData): Window = {
     val stage = stageFactory.createStage()
     val sizeHandler = JavaFxUnitSizeHandler.fromContext(builderData.getContext)
-    val wnd = JavaFxWindow(stage, Some(sizeHandler))
+    val wnd = JavaFxWindow(stage, sizeHandler = Some(sizeHandler))
     if (builderData.getParentWindow != null) {
       stage.initOwner(extractStage(builderData.getParentWindow))
       wnd.parentWindow = builderData.getParentWindow
