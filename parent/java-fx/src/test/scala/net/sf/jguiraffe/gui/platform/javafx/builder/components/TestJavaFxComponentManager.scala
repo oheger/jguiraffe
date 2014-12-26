@@ -131,7 +131,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests createLabel() if the create flag is true.
    */
   @Test def testCreateLabelCreate() {
-    assertNull("Wrong result", manager.createLabel(new LabelTag, true))
+    assertNull("Wrong result", manager.createLabel(new LabelTag, create = true))
   }
 
   /**
@@ -141,7 +141,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new LabelTag
     val icon = new ImageView(new Image("icon.jpg"))
     tag.setIcon(icon)
-    val label = manager.createLabel(tag, false).asInstanceOf[Label]
+    val label = manager.createLabel(tag, create = false).asInstanceOf[Label]
     assertTrue("Got a text", StringUtils.isEmpty(label.getText))
     assertEquals("Wrong icon", icon, label.getGraphic)
     assertEquals("Wrong alignment", ContentDisplay.LEFT, label.getContentDisplay)
@@ -156,7 +156,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag.setMnemonic("L")
     tag.setAlignment("right")
     tag.setName("componentName")
-    val label = manager.createLabel(tag, false).asInstanceOf[Label]
+    val label = manager.createLabel(tag, create = false).asInstanceOf[Label]
     assertNull("Got a graphics", label.getGraphic)
     assertEquals("Wrong text", "Test _Label", label.getText)
     assertEquals("Wrong alignment", ContentDisplay.RIGHT, label.getContentDisplay)
@@ -193,7 +193,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreatePercentLayout() {
     val tag = mock[PercentLayoutTag]
     val layout = mock[PercentLayoutBase]
-    EasyMock.expect(tag.getPercentLayout()).andReturn(layout)
+    EasyMock.expect(tag.getPercentLayout).andReturn(layout)
     whenExecuting(tag, layout) {
       assertSame("Wrong layout", layout, manager.createPercentLayout(tag))
     }
@@ -205,7 +205,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateButtonLayout() {
     val tag = mock[ButtonLayoutTag]
     val layout = mock[ButtonLayout]
-    EasyMock.expect(tag.getButtonLayout()).andReturn(layout)
+    EasyMock.expect(tag.getButtonLayout).andReturn(layout)
     whenExecuting(tag, layout) {
       assertSame("Wrong layout", layout, manager.createButtonLayout(tag))
     }
@@ -217,7 +217,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateBorderLayout() {
     val tag = mock[BorderLayoutTag]
     val layout = mock[BorderLayout]
-    EasyMock.expect(tag.getBorderLayout()).andReturn(layout)
+    EasyMock.expect(tag.getBorderLayout).andReturn(layout)
     whenExecuting(tag, layout) {
       assertSame("Wrong layout", layout, manager.createBorderLayout(tag))
     }
@@ -246,7 +246,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag.setBold(true)
     tag.setItalic(true)
     val font = manager.createFont(tag).asInstanceOf[JavaFxFont]
-    assertEquals("Wrong family", '"' + tag.getName() + '"', font.family.get)
+    assertEquals("Wrong family", '"' + tag.getName + '"', font.family.get)
     assertEquals("Wrong size", "42px", font.size.get)
     assertEquals("Wrong weight", "bold", font.weight.get)
     assertEquals("Wrong style", "italic", font.style.get)
@@ -262,8 +262,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       override def getBackgroundColor: Color = Color.newRGBInstance(0x80, 0xff, 0x80)
     }
     tag.setText("Test Label")
-    val ctrl = manager.createLabel(tag, false).asInstanceOf[Label]
-    val style = ctrl.getStyle()
+    val ctrl = manager.createLabel(tag, create = false).asInstanceOf[Label]
+    val style = ctrl.getStyle
     assertTrue("Background color not set: " + style,
       style.contains("-fx-background-color: #80ff80"))
   }
@@ -277,8 +277,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       override def getForegroundColor: Color = Color.newRGBInstance(0x40, 0xff, 0x80)
     }
     tag.setText("Test Label")
-    val ctrl = manager.createLabel(tag, false).asInstanceOf[Label]
-    val style = ctrl.getStyle()
+    val ctrl = manager.createLabel(tag, create = false).asInstanceOf[Label]
+    val style = ctrl.getStyle
     assertTrue("Foreground color not set: " + style,
       style.contains("-fx-text-fill: #40ff80"))
   }
@@ -290,8 +290,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new LabelTag
     val font = JavaFxFont(size = Some("20"))
     tag setFont font
-    val ctrl = manager.createLabel(tag, false).asInstanceOf[Label]
-    val style = ctrl.getStyle()
+    val ctrl = manager.createLabel(tag, create = false).asInstanceOf[Label]
+    val style = ctrl.getStyle
     assertTrue("Font style not set: " + style, style.contains("-fx-font-size"))
   }
 
@@ -373,7 +373,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests createTextField() if the create flag is set.
    */
   @Test def testCreateTextFieldCreateFlag() {
-    assertNull("Got a result", manager.createTextField(new TextFieldTag, true))
+    assertNull("Got a result", manager.createTextField(new TextFieldTag, create = true))
   }
 
   /**
@@ -394,7 +394,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateTextFieldComponentAttributes() {
     val tag = new TextFieldTag
     tag setName ComponentName
-    val handler = manager.createTextField(tag, false).asInstanceOf[JavaFxTextHandler]
+    val handler = manager.createTextField(tag, create = false).asInstanceOf[JavaFxTextHandler]
     val txtCtrl = handler.component.asInstanceOf[TextField]
     assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
     checkMaxTextLength(txtCtrl, 0)
@@ -408,7 +408,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new TextFieldTag
     tag setColumns 20
     tag setMaxlength 30
-    val handler = manager.createTextField(tag, false)
+    val handler = manager.createTextField(tag, create = false)
     val txtCtrl = handler.getComponent.asInstanceOf[TextField]
     assertEquals("Wrong preferred column count", tag.getColumns,
       txtCtrl.getPrefColumnCount)
@@ -419,7 +419,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests createTextArea() if the create flag is set.
    */
   @Test def testCreateTextAreaCreateFlag() {
-    assertNull("Got a result", manager.createTextArea(new TextAreaTag, true))
+    assertNull("Got a result", manager.createTextArea(new TextAreaTag, create = true))
   }
 
   /**
@@ -433,7 +433,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setContext context
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     tag setName ComponentName
-    val handler = manager.createTextArea(tag, false).asInstanceOf[JavaFxTextHandler]
+    val handler = manager.createTextArea(tag, create = false).asInstanceOf[JavaFxTextHandler]
     val txtCtrl = handler.component.asInstanceOf[TextArea]
     assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
     assertFalse("Wrap flag is set", txtCtrl.isWrapText)
@@ -456,7 +456,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setRows 25
     tag setWrap true
     tag setMaxlength 1000
-    val handler = manager.createTextArea(tag, false)
+    val handler = manager.createTextArea(tag, create = false)
     val txtCtrl = handler.getComponent.asInstanceOf[TextArea]
     assertEquals("Preferred columns not set", tag.getColumns,
       txtCtrl.getPrefColumnCount)
@@ -475,7 +475,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new PasswordFieldTag
     tag setColumns 10
     tag setMaxlength 20
-    val handler = manager.createPasswordField(tag, false)
+    val handler = manager.createPasswordField(tag, create = false)
     val txtCtrl = handler.getComponent.asInstanceOf[PasswordField]
     assertEquals("Preferred columns not set", tag.getColumns,
       txtCtrl.getPrefColumnCount)
@@ -487,7 +487,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateStaticTextCreate() {
     assertNull("Got a static text", manager.createStaticText(new StaticTextTag,
-      true))
+      create = true))
   }
 
   /**
@@ -497,7 +497,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val Text = "TestStaticText"
     val tag = new StaticTextTag
     tag setText Text
-    val handler = manager.createStaticText(tag, false)
+    val handler = manager.createStaticText(tag, create = false)
       .asInstanceOf[JavaFxStaticTextHandler]
     assertEquals("Label not initialized", Text, handler.getText)
   }
@@ -506,14 +506,14 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a button component if the create flag is set.
    */
   @Test def testCreateButtonCreate() {
-    assertNull("Got a button", manager.createButton(new ButtonTag, true))
+    assertNull("Got a button", manager.createButton(new ButtonTag, create = true))
   }
 
   /**
    * Tests whether a button can be created if no properties are provided.
    */
   @Test def testCreateButtonNoProperties() {
-    val btnHandler = manager.createButton(new ButtonTag, false)
+    val btnHandler = manager.createButton(new ButtonTag, create = false)
       .asInstanceOf[JavaFxButtonHandler]
     val button = btnHandler.component.asInstanceOf[Button]
     assertTrue("Got text", StringUtils.isEmpty(button.getText))
@@ -532,7 +532,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setText Text
     tag setDefault true
     tag setCommand Command
-    val btnHandler = manager.createButton(tag, false)
+    val btnHandler = manager.createButton(tag, create = false)
       .asInstanceOf[JavaFxButtonHandler]
     val button = btnHandler.component.asInstanceOf[Button]
     assertEquals("Wrong text", Text, button.getText)
@@ -568,7 +568,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a check box if the create flag is set.
    */
   @Test def testCreateCheckboxCreate() {
-    assertNull("Got a check box", manager.createCheckbox(new CheckboxTag, true))
+    assertNull("Got a check box", manager.createCheckbox(new CheckboxTag, create = true))
   }
 
   /**
@@ -578,7 +578,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val Text = "TestCheckBox"
     val tag = new CheckboxTag
     tag setText Text
-    val handler = manager.createCheckbox(tag, false).asInstanceOf[JavaFxCheckBoxHandler]
+    val handler = manager.createCheckbox(tag, create = false).asInstanceOf[JavaFxCheckBoxHandler]
     val checkBox = handler.component.asInstanceOf[CheckBox]
     assertEquals("Text not set", Text, checkBox.getText)
     assertFalse("Already selected", handler.getData)
@@ -589,7 +589,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateToggleButtonCreate() {
     assertNull("Got a toggle button",
-      manager.createToggleButton(new ToggleButtonTag, true))
+      manager.createToggleButton(new ToggleButtonTag, create = true))
   }
 
   /**
@@ -601,7 +601,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new ToggleButtonTag
     tag setText Text
     tag setCommand Command
-    val handler = manager.createToggleButton(tag, false)
+    val handler = manager.createToggleButton(tag, create = false)
       .asInstanceOf[JavaFxToggleButtonHandler]
     val button = handler.component.asInstanceOf[ToggleButton]
     assertEquals("Text not set", Text, button.getText)
@@ -615,7 +615,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateRadioButtonCreate() {
     assertNull("Got a radio button",
-      manager.createRadioButton(new RadioButtonTag, true))
+      manager.createRadioButton(new RadioButtonTag, create = true))
   }
 
   /**
@@ -625,7 +625,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val Text = "TestRadioButton"
     val tag = new RadioButtonTag
     tag setText Text
-    val handler = manager.createRadioButton(tag, false)
+    val handler = manager.createRadioButton(tag, create = false)
       .asInstanceOf[JavaFxToggleButtonHandler]
     val radio = handler.component.asInstanceOf[RadioButton]
     assertEquals("Text not set", Text, radio.getText)
@@ -650,7 +650,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a tab pane if the create flag is set.
    */
   @Test def testCreateTabbedPaneCreate() {
-    assertNull("Got a tab pane", manager.createTabbedPane(new TabbedPaneTag, true))
+    assertNull("Got a tab pane", manager.createTabbedPane(new TabbedPaneTag, create = true))
   }
 
   /**
@@ -701,7 +701,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tabData = new TabbedPaneTag.TabData
     tabData setComponent this
     tag.getTabs add tabData
-    manager.createTabbedPane(tag, false)
+    manager.createTabbedPane(tag, create = false)
   }
 
   /**
@@ -773,7 +773,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a combo box if the create flag is true.
    */
   @Test def testCreateComboBoxCreate() {
-    assertNull("Got a control", manager.createComboBox(new ComboBoxTag, true))
+    assertNull("Got a control", manager.createComboBox(new ComboBoxTag, create = true))
   }
 
   /**
@@ -785,7 +785,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new ComboBoxTag
     tag setEditable editable
     tag setListModel model
-    val handler = manager.createComboBox(tag, false).asInstanceOf[JavaFxComboBoxHandler]
+    val handler = manager.createComboBox(tag, create = false).asInstanceOf[JavaFxComboBoxHandler]
     val combo = handler.component.asInstanceOf[ComboBox[Object]]
     assertEquals("Wrong editable flag", editable, combo.isEditable)
     val listModel = handler.getListModel
@@ -797,21 +797,21 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests whether a non editable combo box can be created.
    */
   @Test def testCreateComboBoxNonEditable() {
-    checkCreateComboBox(false)
+    checkCreateComboBox(editable = false)
   }
 
   /**
    * Tests whether an editable combo box can be created.
    */
   @Test def testCreateComboBoxEditable() {
-    checkCreateComboBox(true)
+    checkCreateComboBox(editable = true)
   }
 
   /**
    * Tests the creation of a list box if the create flag is true.
    */
   @Test def testCreateListBoxCreate() {
-    assertNull("Got a control", manager.createListBox(new ListBoxTag, true))
+    assertNull("Got a control", manager.createListBox(new ListBoxTag, create = true))
   }
 
   /**
@@ -830,7 +830,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setListModel model
     tag setMulti multi
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
-    val handler = manager.createListBox(tag, false)
+    val handler = manager.createListBox(tag, create = false)
     val modelSupport = handler.asInstanceOf[ListModelSupport]
     assertEquals("Wrong handler", expHandlerClass, handler.getClass)
     assertTrue("Wrong model: " + modelSupport.getListModel,
@@ -848,7 +848,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests whether a list box with single selection can be created.
    */
   @Test def testCreateListBoxSingleSelection() {
-    checkCreateListBox(false, classOf[JavaFxListViewHandler],
+    checkCreateListBox(multi = false, classOf[JavaFxListViewHandler],
       SelectionMode.SINGLE)
   }
 
@@ -856,7 +856,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests whether a list box with multiple selection can be created.
    */
   @Test def testCreateListBoxMultiSelection() {
-    checkCreateListBox(true, classOf[JavaFxMultiSelectionListHandler],
+    checkCreateListBox(multi = true, classOf[JavaFxMultiSelectionListHandler],
       SelectionMode.MULTIPLE)
   }
 
@@ -872,7 +872,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setContext context
     tag setListModel model
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
-    val handler = manager.createListBox(tag, false)
+    val handler = manager.createListBox(tag, create = false)
     val list = handler.getComponent.asInstanceOf[ListView[Object]]
     assertEquals("Wrong scroll width", tag.xScrollSize, list.getPrefWidth.toInt)
     assertEquals("Wrong scroll height", tag.yScrollSize, list.getPrefHeight.toInt)
@@ -915,7 +915,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a tree view if the create flag is set.
    */
   @Test def testCreateTreeCreate() {
-    assertNull("Got a component", manager.createTree(new TreeTag, true))
+    assertNull("Got a component", manager.createTree(new TreeTag, create = true))
   }
 
   /**
@@ -937,7 +937,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
         treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null,
         borderPanelFactory = null)
-      assertSame("Wrong handler", handler, manager.createTree(tag, false))
+      assertSame("Wrong handler", handler, manager.createTree(tag, create = false))
     }
     checkDefaultSize(treeView)
   }
@@ -962,7 +962,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
         treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null,
         borderPanelFactory = null)
-      assertSame("Wrong handler", handler, manager.createTree(tag, false))
+      assertSame("Wrong handler", handler, manager.createTree(tag, create = false))
     }
     assertEquals("Wrong scroll width", tag.xScrollSize, treeView.getPrefWidth.toInt)
     assertEquals("Wrong scroll height", tag.yScrollSize, treeView.getPrefHeight.toInt)
@@ -1039,7 +1039,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a progress bar if the create flag is set.
    */
   @Test def testCreateProgressBarCreate() {
-    assertNull("Got a handler", manager.createProgressBar(new ProgressBarTag, true))
+    assertNull("Got a handler", manager.createProgressBar(new ProgressBarTag, create = true))
   }
 
   /**
@@ -1050,7 +1050,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setMin 5
     tag setMax 80
     tag setValue 20
-    val handler = manager.createProgressBar(tag, false).asInstanceOf[JavaFxProgressBarHandler]
+    val handler = manager.createProgressBar(tag, create = false).asInstanceOf[JavaFxProgressBarHandler]
     assertEquals("Wrong minimum", tag.getMin, handler.min)
     assertEquals("Wrong maximum", tag.getMax, handler.max)
     assertEquals("Wrong value", tag.getValue, handler.getValue)
@@ -1060,7 +1060,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a progress bar if no initial value was specified.
    */
   @Test def testCreateProgressBarNoValue() {
-    val handler = manager.createProgressBar(new ProgressBarTag, false)
+    val handler = manager.createProgressBar(new ProgressBarTag, create = false)
     val bar = handler.getComponent.asInstanceOf[ProgressBar]
     assertEquals("Got a progress value", 0, bar.getProgress, .001)
   }
@@ -1069,7 +1069,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a slider component if the create flag is set.
    */
   @Test def testCreateSliderCreate() {
-    assertNull("Got a handler", manager.createSlider(new SliderTag, true))
+    assertNull("Got a handler", manager.createSlider(new SliderTag, create = true))
   }
 
   /**
@@ -1092,7 +1092,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     expSliderOr: javafx.geometry.Orientation) {
     val tag = sliderTag(or)
     tag setMax 100
-    val handler = manager.createSlider(tag, false)
+    val handler = manager.createSlider(tag, create = false)
     val slider = handler.getComponent.asInstanceOf[Slider]
     assertEquals("Wrong orientation", expSliderOr, slider.getOrientation)
   }
@@ -1124,7 +1124,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setMajorTicks 10
     tag setShowLabels true
     tag setShowTicks true
-    val handler = manager.createSlider(tag, false)
+    val handler = manager.createSlider(tag, create = false)
     val slider = handler.getComponent.asInstanceOf[Slider]
     assertEquals("Wrong minimum", tag.getMin, slider.getMin.toInt)
     assertEquals("Wrong maximum", tag.getMax, slider.getMax.toInt)
@@ -1141,7 +1141,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = sliderTag(Orientation.HORIZONTAL)
     tag setMin 10
     tag setMax 50
-    val handler = manager.createSlider(tag, false)
+    val handler = manager.createSlider(tag, create = false)
     val slider = handler.getComponent.asInstanceOf[Slider]
     assertFalse("Labels shown", slider.isShowTickLabels)
     assertFalse("Marks shown", slider.isShowTickMarks)
@@ -1161,7 +1161,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests the creation of a splitter component if the create flag is true.
    */
   @Test def testCreateSplitterNull() {
-    assertNull("Got a component", manager.createSplitter(new SplitterTag, true))
+    assertNull("Got a component", manager.createSplitter(new SplitterTag, create = true))
   }
 
   /**
@@ -1177,7 +1177,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(factory.createSplitPane(tag)).andReturn(split)
 
     whenExecuting(factory) {
-      assertSame("Wrong split pane", split, manager.createSplitter(tag, false))
+      assertSame("Wrong split pane", split, manager.createSplitter(tag, create = false))
       assertEquals("Not initialized", tag.getName, split.getId)
     }
   }
