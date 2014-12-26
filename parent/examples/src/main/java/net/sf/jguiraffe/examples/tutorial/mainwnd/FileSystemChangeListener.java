@@ -39,9 +39,6 @@ public class FileSystemChangeListener implements FormChangeListener
     /** The controller of the main window. */
     private final MainWndController controller;
 
-    /** The combobox. */
-    private final ListComponentHandler handler;
-
     /**
      * Creates a new instance of {@code FileSystemChangeListener} and
      * initializes it.
@@ -53,22 +50,33 @@ public class FileSystemChangeListener implements FormChangeListener
             ListComponentHandler comboHandler)
     {
         controller = ctrl;
-        handler = comboHandler;
 
         // initially select the first file system
-        if (handler.getListModel().size() > 0)
+        if (comboHandler.getListModel().size() > 0)
         {
-            controller.fileSystemChanged((File) handler.getListModel()
-                    .getValueObject(0));
+            Object data = comboHandler.getListModel().getValueObject(0);
+            comboHandler.setData(data);
+            notifyControllerAboutChange(data);
         }
     }
 
     /**
-     * The selection of the combobox has changed.
+     * The selection of the combo box has changed.
      */
     @Override
     public void elementChanged(FormChangeEvent e)
     {
-        controller.fileSystemChanged((File) e.getHandler().getData());
+        notifyControllerAboutChange(e.getHandler().getData());
+    }
+
+    /**
+     * Notifies the main controller about a change in the selection of the file
+     * system combo box.
+     *
+     * @param selection the currently selected object (a File)
+     */
+    private void notifyControllerAboutChange(Object selection)
+    {
+        controller.fileSystemChanged((File) selection);
     }
 }
