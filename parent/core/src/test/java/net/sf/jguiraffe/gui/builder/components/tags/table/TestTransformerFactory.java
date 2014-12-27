@@ -24,7 +24,9 @@ import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.forms.ComponentHandlerImpl;
@@ -39,6 +41,7 @@ import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
 import net.sf.jguiraffe.transform.DateTransformer;
 import net.sf.jguiraffe.transform.DoubleTransformer;
+import net.sf.jguiraffe.transform.DummyTransformer;
 import net.sf.jguiraffe.transform.LongTransformer;
 import net.sf.jguiraffe.transform.ToStringTransformer;
 import net.sf.jguiraffe.transform.Transformer;
@@ -265,12 +268,12 @@ public class TestTransformerFactory
     }
 
     /**
-     * Helper method for testing a column type for which no transformer is
+     * Helper method for testing a column type for which no read transformer is
      * supported.
      *
      * @param columnClass the column class
      */
-    private void checkDummyTransformer(ColumnClass columnClass)
+    private void checkDummyReadTransformer(ColumnClass columnClass)
     {
         assertSame("Wrong transformer", DummyWrapper.INSTANCE,
                 factory.getReadTransformer(tag, columnClass));
@@ -294,7 +297,7 @@ public class TestTransformerFactory
     @Test
     public void testGetTransformerBoolean()
     {
-        checkDummyTransformer(ColumnClass.BOOLEAN);
+        checkDummyReadTransformer(ColumnClass.BOOLEAN);
     }
 
     /**
@@ -312,7 +315,7 @@ public class TestTransformerFactory
     @Test
     public void testGetTransformerIcon()
     {
-        checkDummyTransformer(ColumnClass.ICON);
+        checkDummyReadTransformer(ColumnClass.ICON);
     }
 
     /**
@@ -343,13 +346,53 @@ public class TestTransformerFactory
     }
 
     /**
-     * Tests whether the correct write transformer is returned.
+     * Tests whether the correct write transformer is returned for the default
+     * column classes.
      */
     @Test
-    public void testGetWriteTransformer()
+    public void testGetWriteTransformerForDefaultColumnClasses()
     {
-        checkAndExtractTransformer(ToStringTransformer.class,
-                factory.getWriteTransformer(tag));
+        Set<ColumnClass> colClasses =
+                EnumSet.of(ColumnClass.DATE, ColumnClass.FLOAT,
+                        ColumnClass.NUMBER, ColumnClass.STRING);
+        for (ColumnClass columnClass : colClasses)
+        {
+            checkAndExtractTransformer(ToStringTransformer.class,
+                    factory.getWriteTransformer(tag, columnClass));
+        }
+    }
+
+    /**
+     * Helper method for testing whether a dummy write transformer is created
+     * for a given column class.
+     *
+     * @param columnClass the column class
+     */
+    private void checkDummyWriteTransformer(ColumnClass columnClass)
+    {
+        assertSame(
+                "Wrong write transformer",
+                DummyTransformer.getInstance(),
+                checkAndExtractTransformer(DummyTransformer.class,
+                        factory.getWriteTransformer(tag, columnClass)));
+    }
+
+    /**
+     * Tests the write transformer returned for column class ICON.
+     */
+    @Test
+    public void testGetWriteTransformerIcon()
+    {
+        checkDummyReadTransformer(ColumnClass.ICON);
+    }
+
+    /**
+     * Tests the write transformer returned for column class BOOLEAN.
+     */
+    @Test
+    public void testGetWriteTransformerBoolean()
+    {
+        checkDummyWriteTransformer(ColumnClass.BOOLEAN);
     }
 
     /**
@@ -358,9 +401,20 @@ public class TestTransformerFactory
     @Test
     public void testGetWriteTransformerCached()
     {
-        TransformerWrapper transformer = factory.getWriteTransformer(tag);
+        TransformerWrapper transformer = factory.getWriteTransformer(tag, ColumnClass.STRING);
         assertSame("Multiple write transformers", transformer,
-                factory.getWriteTransformer(tag));
+                factory.getWriteTransformer(tag, ColumnClass.DATE));
+    }
+
+    /**
+     * Tests that the dummy write transformer is cached.
+     */
+    @Test
+    public void testGetDummyWriteTransformerCached()
+    {
+        TransformerWrapper transformer = factory.getWriteTransformer(tag, ColumnClass.BOOLEAN);
+        assertSame("Multiple write transformers", transformer,
+                factory.getWriteTransformer(tag, ColumnClass.ICON));
     }
 
     /**
@@ -382,7 +436,7 @@ public class TestTransformerFactory
         DefaultFieldHandler fieldHandler = new DefaultFieldHandler();
         fieldHandler.setReadTransformer(factory.getReadTransformer(tag,
                 columnClass));
-        fieldHandler.setWriteTransformer(factory.getWriteTransformer(tag));
+        fieldHandler.setWriteTransformer(factory.getWriteTransformer(tag, columnClass));
         fieldHandler.setSyntaxValidator(factory.getValidator(tag, columnClass));
         fieldHandler.setComponentHandler(new ComponentHandlerImpl());
         form.addField("value", fieldHandler);

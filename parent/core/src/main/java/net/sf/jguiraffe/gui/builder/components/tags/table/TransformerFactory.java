@@ -27,6 +27,7 @@ import net.sf.jguiraffe.gui.forms.TransformerWrapper;
 import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
 import net.sf.jguiraffe.transform.DateTransformer;
 import net.sf.jguiraffe.transform.DoubleTransformer;
+import net.sf.jguiraffe.transform.DummyTransformer;
 import net.sf.jguiraffe.transform.LongTransformer;
 import net.sf.jguiraffe.transform.ToStringTransformer;
 import net.sf.jguiraffe.transform.Transformer;
@@ -64,8 +65,11 @@ class TransformerFactory
     /** A map acting as cache for validators. */
     private final Map<ColumnClass, ValidatorWrapper> validatorCache;
 
-    /** The write transformer. */
-    private TransformerWrapper writeTransformer;
+    /** The write to-string transformer. */
+    private TransformerWrapper writeStringTransformer;
+
+    /** The write dummy transformer. */
+    private TransformerWrapper writeDummyTransformer;
 
     /**
      * Creates a new instance of {@code TransformerFactory}.
@@ -101,20 +105,36 @@ class TransformerFactory
     /**
      * Returns a {@code TransformerWrapper} object for writing data into an
      * input field. This implementation returns a plain
-     * {@link ToStringTransformer}; basically, the original object value has to
-     * be transformed to a string to be displayed in the text input field.
+     * {@link ToStringTransformer} for most column classes; basically, the
+     * original object value has to be transformed to a string to be displayed
+     * in the text input field. Some column classes forbid a to-string
+     * conversion; here the object has to be passed without modifications.
      *
      * @param tag the current tag (for obtaining context information)
+     * @param columnClass the {@code ColumnClass}
      * @return the default write {@code TransformerWrapper}
      */
-    public TransformerWrapper getWriteTransformer(Tag tag)
+    public TransformerWrapper getWriteTransformer(Tag tag,
+            ColumnClass columnClass)
     {
-        if (writeTransformer == null)
+        switch (columnClass)
         {
-            writeTransformer =
-                    createTransformer(tag, new ToStringTransformer());
+        case ICON:
+        case BOOLEAN:
+            if (writeDummyTransformer == null)
+            {
+                writeDummyTransformer =
+                        createTransformer(tag, DummyTransformer.getInstance());
+            }
+            return writeDummyTransformer;
+        default:
+            if (writeStringTransformer == null)
+            {
+                writeStringTransformer =
+                        createTransformer(tag, new ToStringTransformer());
+            }
+            return writeStringTransformer;
         }
-        return writeTransformer;
     }
 
     /**

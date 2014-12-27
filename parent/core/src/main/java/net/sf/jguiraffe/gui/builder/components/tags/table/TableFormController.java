@@ -483,7 +483,7 @@ public class TableFormController
                                 getTableTag(), columnClass);
                 TransformerWrapper writeTransformer =
                         getTransformerFactory().getWriteTransformer(
-                                getTableTag());
+                                getTableTag(), columnClass);
                 ValidatorWrapper validator =
                         getTransformerFactory().getValidator(getTableTag(),
                                 columnClass);

@@ -1091,7 +1091,7 @@ public class TestTableFormController
         EasyMock.expect(
                 transformerFactory.getReadTransformer(tableTag, columnClass))
                 .andReturn(readWrapper);
-        EasyMock.expect(transformerFactory.getWriteTransformer(tableTag))
+        EasyMock.expect(transformerFactory.getWriteTransformer(tableTag, columnClass))
                 .andReturn(writeWrapper);
         EasyMock.expect(transformerFactory.getValidator(tableTag, columnClass))
                 .andReturn(validatorWrapper);
