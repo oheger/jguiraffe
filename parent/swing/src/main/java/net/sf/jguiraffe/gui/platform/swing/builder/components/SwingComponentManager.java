@@ -1221,26 +1221,19 @@ public class SwingComponentManager implements ComponentManager
     protected void initTableColumnWidths(TableTag tag, JTable table)
             throws FormBuilderException
     {
+        TableFormController tableFormController = tag.getTableFormController();
         TableColumnWidthController widthCtrl = tag.getColumnWidthController();
-        SwingSizeHandler sizeHandler = null;
-        Object container = null;
-        int totalWidth = 0;
+        int totalWidth =
+                tableFormController.calculateFixedColumnWidths(
+                        fetchSizeHandler(tag), tag.findContainer()
+                                .getContainer());
 
         for (int i = 0; i < tag.getColumnCount(); i++)
         {
             if (!widthCtrl.isPercentWidth(i))
             {
-                if (sizeHandler == null)
-                {
-                    sizeHandler = fetchSizeHandler(tag);
-                    container = tag.findContainer().getContainer();
-                }
-
-                int width = widthCtrl.getOriginalFixedWidth(i).toPixel(
-                        sizeHandler, container, false);
-                table.getColumnModel().getColumn(i).setPreferredWidth(width);
-                widthCtrl.setFixedWidth(i, width);
-                totalWidth += width;
+                table.getColumnModel().getColumn(i)
+                        .setPreferredWidth(widthCtrl.getFixedWidth(i));
             }
         }
 
