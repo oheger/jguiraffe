@@ -28,6 +28,8 @@ import net.sf.jguiraffe.gui.forms.FieldHandler;
 import net.sf.jguiraffe.gui.forms.FormValidatorResults;
 import net.sf.jguiraffe.gui.forms.TransformerWrapper;
 import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
+import net.sf.jguiraffe.gui.layout.NumberWithUnit;
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler;
 
 /**
  * <p>
@@ -500,6 +502,37 @@ public class TableFormController
         }
 
         return false;
+    }
+
+    /**
+     * Determines the fixed size columns of the represented table and
+     * initializes their widths in the {@code TableColumnWidthController} of the
+     * current table.
+     *
+     * @param sizeHandler the {@code UnitSizeHandler}
+     * @param container the enclosing container object
+     * @return the total width of all columns with a fixed column width
+     * @throws FormBuilderException if an error occurs
+     */
+    public int calculateFixedColumnWidths(UnitSizeHandler sizeHandler,
+            Object container) throws FormBuilderException
+    {
+        TableColumnWidthController widthController =
+                getTableTag().getColumnWidthController();
+        int totalWidth = 0;
+
+        for (int i = 0; i < getColumnCount(); i++)
+        {
+            NumberWithUnit columnWidth = getColumn(i).getColumnWidth();
+            if (columnWidth != null)
+            {
+                int width = columnWidth.toPixel(sizeHandler, container, false);
+                widthController.setFixedWidth(i, width);
+                totalWidth += width;
+            }
+        }
+
+        return totalWidth;
     }
 
     /**

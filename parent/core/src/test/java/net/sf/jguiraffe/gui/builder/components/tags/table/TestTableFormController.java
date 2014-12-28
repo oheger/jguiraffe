@@ -39,11 +39,12 @@ import net.sf.jguiraffe.gui.forms.DummyWrapper;
 import net.sf.jguiraffe.gui.forms.FieldHandler;
 import net.sf.jguiraffe.gui.forms.Form;
 import net.sf.jguiraffe.gui.forms.FormValidatorResults;
-
 import net.sf.jguiraffe.gui.forms.TransformerWrapper;
 import net.sf.jguiraffe.gui.forms.ValidatorWrapper;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -1119,6 +1120,48 @@ public class TestTableFormController
     }
 
     /**
+     * Prepares a test for accessing the column width controller and allows
+     * setting the column widths to be used.
+     *
+     * @param refWidthController the reference to the width controller
+     * @param colWidths an array with column widths; elements can be null; in
+     *        that case, a percent width is assumed
+     * @return the test form controller
+     * @throws FormBuilderException if an error occurs
+     */
+    private TableFormController prepareWidthControllerTest(
+            final AtomicReference<TableColumnWidthController> refWidthController,
+            NumberWithUnit[] colWidths) throws FormBuilderException
+    {
+        TableColumnTag[] columns = createColumns();
+        assertEquals("Wrong number of column widths", columns.length,
+                colWidths.length);
+        for (int i = 0; i < columns.length; i++)
+        {
+            EasyMock.expect(columns[i].getPercentWidth())
+                    .andReturn((colWidths[i] == null) ? 10 + i : 0).anyTimes();
+            EasyMock.expect(columns[i].getColumnWidth())
+                    .andReturn(colWidths[i]).anyTimes();
+        }
+        EasyMock.replay(columns);
+        EasyMock.expect(tableTag.getColumnWidthController())
+                .andAnswer(new IAnswer<TableColumnWidthController>()
+                {
+                    public TableColumnWidthController answer() throws Throwable
+                    {
+                        if (refWidthController.get() == null)
+                        {
+                            refWidthController.set(TableColumnWidthController
+                                    .newInstance(tableTag));
+                        }
+                        return refWidthController.get();
+                    }
+                }).anyTimes();
+
+        return prepareControllerWithModel();
+    }
+
+    /**
      * Prepares a test for accessing the column width controller.
      *
      * @param refWidthController the reference to the width controller
@@ -1129,25 +1172,12 @@ public class TestTableFormController
             AtomicReference<TableColumnWidthController> refWidthController)
             throws FormBuilderException
     {
-        TableColumnTag[] columns = createColumns();
-        for (int i = 0; i < columns.length; i++)
+        NumberWithUnit[] colWidths = new NumberWithUnit[COLUMN_NAMES.length];
+        for (int i = 0; i < colWidths.length; i++)
         {
-            EasyMock.expect(columns[i].getPercentWidth()).andReturn(0)
-                    .anyTimes();
-            EasyMock.expect(columns[i].getColumnWidth())
-                    .andReturn(new NumberWithUnit((i + 1) * 10)).anyTimes();
+            colWidths[i] = new NumberWithUnit((i + 1) * 10);
         }
-        EasyMock.replay(columns);
-        TableFormController controller = prepareControllerWithModel();
-        TableColumnWidthController widthController =
-                TableColumnWidthController.newInstance(tableTag);
-        EasyMock.reset(tableTag);
-        EasyMock.expect(tableTag.getColumnWidthController()).andReturn(
-                widthController);
-        EasyMock.replay(tableTag);
-
-        refWidthController.set(widthController);
-        return controller;
+        return prepareWidthControllerTest(refWidthController, colWidths);
     }
 
     /**
@@ -1160,8 +1190,10 @@ public class TestTableFormController
                 new AtomicReference<TableColumnWidthController>();
         TableFormController controller =
                 prepareWidthControllerTest(refWidthController);
+        TableColumnWidthController widthController =
+                controller.getColumnWidthController();
         assertEquals("Wrong width controller", refWidthController.get(),
-                controller.getColumnWidthController());
+                widthController);
     }
 
     /**
@@ -1174,8 +1206,10 @@ public class TestTableFormController
                 new AtomicReference<TableColumnWidthController>();
         TableFormController controller =
                 prepareWidthControllerTest(refWidthController);
+        TableColumnRecalibrator recalibrator =
+                controller.getColumnRecalibrator();
         assertEquals("Wrong recalibrator", refWidthController.get(),
-                controller.getColumnRecalibrator());
+                recalibrator);
     }
 
     /**
@@ -1188,7 +1222,52 @@ public class TestTableFormController
                 new AtomicReference<TableColumnWidthController>();
         TableFormController controller =
                 prepareWidthControllerTest(refWidthController);
+        TableColumnWidthCalculator widthCalculator =
+                controller.getColumnWidthCalculator();
         assertEquals("Wrong width calculator", refWidthController.get(),
-                controller.getColumnWidthCalculator());
+                widthCalculator);
+    }
+
+    /**
+     * Tests whether the column width controller is correctly initialized.
+     */
+    @Test
+    public void testInitWidthController() throws FormBuilderException
+    {
+        int[] widths = {
+                10, 20, 0, 30
+        };
+        NumberWithUnit[] colWidths = new NumberWithUnit[widths.length];
+        UnitSizeHandler sizeHandler =
+                EasyMock.createMock(UnitSizeHandler.class);
+        Object container = new Object();
+        for (int i = 0; i < widths.length; i++)
+        {
+            if (widths[i] > 0)
+            {
+                NumberWithUnit nwu = EasyMock.createMock(NumberWithUnit.class);
+                EasyMock.expect(nwu.toPixel(sizeHandler, container, false))
+                        .andReturn(widths[i]);
+                EasyMock.replay(nwu);
+                colWidths[i] = nwu;
+            }
+            else
+            {
+                colWidths[i] = null;
+            }
+        }
+
+        AtomicReference<TableColumnWidthController> refWidthController =
+                new AtomicReference<TableColumnWidthController>();
+        TableFormController controller =
+                prepareWidthControllerTest(refWidthController, colWidths);
+        assertEquals("Wrong total width", 60,
+                controller.calculateFixedColumnWidths(sizeHandler, container));
+        TableColumnWidthController widthController = refWidthController.get();
+        for (int i = 0; i < widths.length; i++)
+        {
+            assertEquals("Wrong width for column " + i, widths[i],
+                    widthController.getFixedWidth(i));
+        }
     }
 }
