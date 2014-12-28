@@ -996,7 +996,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tableView = new TableView[AnyRef]
     val context = new JellyContext
     tag setContext context
-    EasyMock.expect(factory.createTableHandler(controller)).andReturn(handler)
+    EasyMock.expect(factory.createTableHandler(controller, null, null)).andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
@@ -1021,7 +1021,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tableView = new TableView[AnyRef]
     val context = new JellyContext
     tag setContext context
-    EasyMock.expect(factory.createTableHandler(controller)).andReturn(handler)
+    EasyMock.expect(factory.createTableHandler(controller, null, null)).andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 

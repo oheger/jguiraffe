@@ -20,6 +20,8 @@ import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.scene.control.{TableColumn, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{TableColumnRecalibrator, TableColumnWidthCalculator, TableFormController}
+
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
@@ -102,18 +104,22 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
    * @param editable flag whether the table should be editable
    */
   private def checkCreateTableHandler(editable: Boolean): Unit = {
-    val controller: TableFormController = createFormController(editable)
+    val controller = createFormController(editable)
+    val sizeHandler = mock[UnitSizeHandler]
+    val container = new Object
     val columns = createColumns()
     prepareColumnFactory(controller, columns)
-    val styleProperty = prepareRowFactory()
+    prepareRowFactory()
     prepareWidthListener()
+    EasyMock.expect(controller.calculateFixedColumnWidths(sizeHandler, container)).andReturn(42)
 
     val componentFactory = new MockTableComponentFactory
     val factory = new TableHandlerFactory(componentFactory)
 
     whenExecuting(mockColumnFactory, mockRowFactory, mockTableWidthListener, mockResizePolicy,
       mockWidthCalculator, mockRecalibrator, mockWidthObservable, controller) {
-      val handler = factory.createTableHandler(controller).asInstanceOf[JavaFxTableHandler]
+      val handler = factory.createTableHandler(controller, sizeHandler, container)
+        .asInstanceOf[JavaFxTableHandler]
       val table = handler.getComponent.asInstanceOf[TableView[AnyRef]]
 
       assertEquals("Wrong editable flag", editable, table.isEditable)

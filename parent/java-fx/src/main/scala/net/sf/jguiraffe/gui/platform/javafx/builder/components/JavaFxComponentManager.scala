@@ -460,7 +460,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
   def createTable(tag: TableTag, create: Boolean): ComponentHandler[Object] = {
     if (create) null
     else {
-      val handler = tableHandlerFactory createTableHandler tag.getTableFormController
+      val handler = tableHandlerFactory.createTableHandler(tag.getTableFormController, null, null)
       val ctrl = as[Control](handler.getComponent)
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)

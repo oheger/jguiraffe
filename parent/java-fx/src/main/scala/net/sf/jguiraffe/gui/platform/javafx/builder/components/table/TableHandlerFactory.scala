@@ -19,6 +19,7 @@ import javafx.scene.control.TableView
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 /**
  * A factory for table handlers.
@@ -45,9 +46,12 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
    * Creates a ''ComponentHandler'' for a table view based on the data provided
    * by the given ''TableFormController''.
    * @param controller the ''TableFormController''
+   * @param sizeHandler the ''UnitSizeHandler''
+   * @param container the enclosing container
    * @return the handler for the table view
    */
-  def createTableHandler(controller: TableFormController): ComponentHandler[Object] = {
+  def createTableHandler(controller: TableFormController, sizeHandler: UnitSizeHandler,
+                         container: AnyRef): ComponentHandler[Object] = {
     val tableView = new TableView[AnyRef]
     val resizePolicy = componentFactory createColumnResizePolicy controller.getColumnRecalibrator
     val rowFactory = componentFactory.createRowFactory()
@@ -57,6 +61,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
     tableView setRowFactory rowFactory
     tableView setEditable controller.isTableEditable
     installTableWidthListener(controller, tableView)
+    controller.calculateFixedColumnWidths(sizeHandler, container)
 
     val handler = new JavaFxTableHandler(tableView, controller.getDataModel,
       rowFactory.styleProperty)
