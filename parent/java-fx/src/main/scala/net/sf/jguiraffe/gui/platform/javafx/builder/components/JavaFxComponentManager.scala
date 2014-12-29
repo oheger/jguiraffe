@@ -133,7 +133,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
   @throws(classOf[FormBuilderException])
   def createIcon(locator: Locator): Object = {
     try {
-      val image = new Image(locator.getURL().toExternalForm)
+      val image = new Image(locator.getURL.toExternalForm)
       ImageWrapper(image)
     } catch {
       case lex: LocatorException =>
@@ -187,7 +187,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
 
   def createDesktopPanel(tag: DesktopPanelTag, create: Boolean): Object = {
     //TODO implementation
-    throw new UnsupportedOperationException("Not yet implemented!");
+    throw new UnsupportedOperationException("Not yet implemented!")
   }
 
   /**
@@ -446,7 +446,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
       }
       slider setShowTickLabels tag.isShowLabels
       slider setShowTickMarks tag.isShowTicks
-      slider setOrientation (convertOrientation(tag.getSliderOrientation))
+      slider setOrientation convertOrientation(tag.getSliderOrientation)
 
       new JavaFxSliderHandler(slider)
     }
@@ -460,7 +460,8 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
   def createTable(tag: TableTag, create: Boolean): ComponentHandler[Object] = {
     if (create) null
     else {
-      val handler = tableHandlerFactory.createTableHandler(tag.getTableFormController, null, null)
+      val handler = tableHandlerFactory.createTableHandler(tag.getTableFormController,
+        JavaFxComponentManager fetchSizeHandler tag, JavaFxComponentManager currentContainer tag)
       val ctrl = as[Control](handler.getComponent)
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)
@@ -583,7 +584,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
     JavaFxComponentManager.initNode(tag, control)
 
     if (tag.getToolTipData.isDefined) {
-      initToolTip(tag, control.tooltipProperty, tag.getToolTipData.getCaption())
+      initToolTip(tag, control.tooltipProperty, tag.getToolTipData.getCaption)
     }
   }
 
@@ -706,9 +707,8 @@ object JavaFxComponentManager {
    */
   private def initScrollSize(tag: FormBaseTag with ScrollSizeSupport, ctrl: Control) {
     val sizeHandler = fetchSizeHandler(tag)
-    val container = tag.findContainer.getContainer
-    val scrollWidth = tag.getPreferredScrollWidth
-    val xSize = scrollWidth.toPixel(sizeHandler, container, false)
+    val container = currentContainer(tag)
+    val xSize = tag.getPreferredScrollWidth.toPixel(sizeHandler, container, false)
     val ySize = tag.getPreferredScrollHeight.toPixel(sizeHandler, container, true)
 
     if (xSize > 0) {
@@ -718,4 +718,12 @@ object JavaFxComponentManager {
       ctrl setPrefHeight ySize
     }
   }
+
+  /**
+   * Obtains the current container object in the hierarchy of processed tags.
+   * @param tag the current tag
+   * @return the current container object
+   */
+  private def currentContainer(tag: FormBaseTag): AnyRef =
+    tag.findContainer.getContainer
 }

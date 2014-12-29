@@ -44,14 +44,14 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   /** The preferred scroll size in Y direction (as pixels). */
   val yScrollSize: Int
 
+  /** A mock for the container. */
+  val container = new Object
+
   /** The answer for the X scroll size. */
   private var xAnswer: SizeAnswer = _
 
   /** The answer for the Y scroll size. */
   private var yAnswer: SizeAnswer = _
-
-  /** A mock for the container. */
-  private val container = new Object
 
   /** The mock for the Composite wrapping the container. */
   private val composite = createComposite()
@@ -65,7 +65,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   /**
    * Verifies that the mocks for the scroll size have been used in the
    * expected way.
-   * @param exSizeHandler the expected size handler
+   * @param expSizeHandler the expected size handler
    */
   def verify(expSizeHandler: UnitSizeHandler) {
     assertNotNull("X scroll size not queried", scrollWidth)
@@ -86,7 +86,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   override def getPreferredScrollWidth = {
     if (scrollWidth == null) {
       xAnswer = new SizeAnswer(xScrollSize)
-      scrollWidth = createScrollSizeMock(xAnswer, false)
+      scrollWidth = createScrollSizeMock(xAnswer, y = false)
     }
     scrollWidth
   }
@@ -97,7 +97,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   override def getPreferredScrollHeight = {
     if (scrollHeight == null) {
       yAnswer = new SizeAnswer(yScrollSize)
-      scrollHeight = createScrollSizeMock(yAnswer, true)
+      scrollHeight = createScrollSizeMock(yAnswer, y = true)
     }
     scrollHeight
   }

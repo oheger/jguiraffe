@@ -228,7 +228,7 @@
           <f:table name="table" model="tableModel" multiSelection="true"
             scrollWidth="500">
             <f:borderconstr name="CENTER"/>
-            <f:column name="icon" width="20px" columnClass="Icon"/>
+            <f:column name="icon" width="25px" columnClass="Icon"/>
             <f:column name="name" percentWidth="50" headerres="main_tcol_name"
               columnClass="String"/>
             <f:column name="lastModified" percentWidth="30"
