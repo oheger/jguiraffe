@@ -782,12 +782,12 @@ public class TestPercentLayout
      * @param sizes the sizes
      * @return the sum
      */
-    private static final int sum(int[] sizes)
+    private static int sum(int[] sizes)
     {
         int sum = 0;
-        for (int i = 0; i < sizes.length; i++)
+        for (int size : sizes)
         {
-            sum += sizes[i];
+            sum += size;
         }
         return sum;
     }
@@ -1008,7 +1008,6 @@ public class TestPercentLayout
      * layout object.
      *
      * @param layout the test layout
-     * @param align
      * @param align the alignment
      * @param x the expected x position
      * @param y the expected y position
