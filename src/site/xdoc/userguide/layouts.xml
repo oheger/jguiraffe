@@ -215,8 +215,8 @@
   </p>
   <p>
     The percent layout manager provides a boolean flag that determines its
-    behavior in this case: <code>canShrink</code>. If this flag is <b>false</b>
-    - which is the default value -, the cells cannot become smaller than the
+    behavior in this case: <code>canShrink</code>. If this flag is set to <b>false</b>
+    (the default value is <b>true</b>), the cells cannot become smaller than the
     size calculated based on the preferred sizes. If the user decreases the
     container's size more and more, parts of the UI are cut. This is shown in
     the following figure. As can be seen, parts of the lower right become
