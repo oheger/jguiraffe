@@ -872,7 +872,7 @@ public class TestPercentLayout
     public void testCalcMinimumLayoutSizeNoShrink()
     {
         checkCalcMinimumLayoutSize(COL_SIZES, ROW_SIZES, false, false, false,
-                null);
+                Boolean.FALSE);
     }
 
     /**
@@ -1217,6 +1217,7 @@ public class TestPercentLayout
     public void testCalcSizesLessSpaceNoShrink()
     {
         PercentLayout layout = setupTestLayout(false, false);
+        layout.setCanShrink(false);
         addComponents(layout);
         int[] sizes = layout.calcSizes(layout.getAllRowConstraints(), layout
                 .getColumnCount(), layout.getRowGroups(), this,
@@ -1233,7 +1234,6 @@ public class TestPercentLayout
     public void testCalcSizesLessSpaceShrink()
     {
         PercentLayout layout = setupTestLayout(false, false);
-        layout.setCanShrink(true);
         addComponents(layout);
         int[] sizes = layout.calcSizes(layout.getAllRowConstraints(), layout
                 .getColumnCount(), layout.getRowGroups(), this,

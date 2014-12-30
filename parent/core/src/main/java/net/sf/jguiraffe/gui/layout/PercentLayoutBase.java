@@ -118,7 +118,7 @@ public abstract class PercentLayoutBase implements Serializable
     private volatile boolean inInit;
 
     /** A flag whether this layout can shrink below its preferred size. */
-    private boolean canShrink;
+    private boolean canShrink = true;
 
     /**
      * Creates a new, uninitialized instance of <code>PercentLayoutBase</code>.

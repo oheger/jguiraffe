@@ -94,8 +94,6 @@ public class TestBorderLayout
 
     /**
      * Tests whether the layout has the expected margins.
-     *
-     * @param layout the layout to test
      */
     private void checkMargins()
     {
@@ -149,6 +147,7 @@ public class TestBorderLayout
      */
     private void initLayout(boolean gap)
     {
+        layout.setCanShrink(false);
         layout.setBottomMargin(BOTTOM);
         layout.setTopMargin(TOP);
         layout.setLeftMargin(LEFT);
@@ -211,9 +210,9 @@ public class TestBorderLayout
     private static int sum(int[] ar)
     {
         int sum = 0;
-        for (int i = 0; i < ar.length; i++)
+        for (int value : ar)
         {
-            sum += ar[i];
+            sum += value;
         }
         return sum;
     }
