@@ -205,8 +205,7 @@
         -->
         <f:panel>
           <f:percentlayout columns="4dlu end/preferred 3dlu full/preferred(10dlu)/100 4dlu"
-            rows="4dlu preferred 3dlu full/preferred(10dlu)/100 4dlu"
-            canShrink="true"/>
+            rows="4dlu preferred 3dlu full/preferred(10dlu)/100 4dlu"/>
           <f:label textres="main_lab_fs" mnemonicres="main_lab_fs_mnemo"
             componentref="comboFS" fontRef="labelFont">
             <f:percentconstr col="1" row="1"/>
@@ -224,7 +223,7 @@
              directory.
         -->
         <f:panel>
-          <f:borderlayout canShrink="true"/>
+          <f:borderlayout/>
           <f:table name="table" model="tableModel" multiSelection="true"
             scrollWidth="500">
             <f:borderconstr name="CENTER"/>
