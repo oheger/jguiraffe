@@ -410,6 +410,11 @@
     a percent layout - and adds the corresponding UI elements to it. Here are a
     few remarks:
     <ul>
+      <li>The layout used by the implicit panel associated with the window has
+      to be defined. In this case, a <a href="layouts.html#BorderLayout">BorderLayout</a>
+      is used. Note how layout constraint tags are used to arrange the single
+      components comprising the window's content (the main panel in the center,
+      and the button bar in the south).</li>
       <li>The validator definitions are complex in this example, especially for
       the text field for the file name. Here three different validators are set.
       Two of them have been defined in the section

@@ -323,6 +323,33 @@ Window = wbd.getWindow("msgbox");
     about window event listeners later in this document.
   </p>
   <p>
+    In order to define the window's content, tags from the
+    <a href="formbuilder.html#The_tags_of_the_component_builder_tag_library">component
+    builder tag library</a> can be placed inside the body of window tags. Each
+    window defines an implicit panel acting as a container for arbitrary
+    components. Make sure that the correct layout is set, so that the
+    components are correctly arranged. For instance, a typical application main
+    frame window might use a <a href="layouts.html#BorderLayout">BorderLayout</a>
+    with a tool bar in the north and a panel with the actual content in center.
+    A skeleton declaration for such a window could look like this:
+  </p>
+    <source><![CDATA[
+<w:frame titleres="main_title" menu="mainMenu" autoClose="false">
+  <f:borderlayout/>
+  <!-- A tool bar at the top of the window's content -->
+  <a:toolbar>
+    <f:borderconstr name="NORTH"/>
+    <!-- Content of tool bar omitted -->
+  </a:toolbar>
+
+  <!-- The main panel -->
+  <f:tabbedpane name="tabs">
+    <f:borderconstr name="CENTER"/>
+    <!-- Content of main panel omitted -->
+  </f:tabbedpane>
+</w:frame>
+    ]]></source>
+  <p>
     The definition of a dialog window looks very similar. Here is an example:
   </p>
     <source><![CDATA[
