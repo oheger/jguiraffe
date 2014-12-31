@@ -19,9 +19,12 @@ import javafx.beans.property.StringProperty
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.scene.control.{TableColumn, TableView}
 
+import net.sf.jguiraffe.gui.builder.components.{Composite, ComponentBuilderCallBack,
+ComponentBuilderData}
 import net.sf.jguiraffe.gui.builder.components.tags.table.{TableColumnRecalibrator, TableColumnWidthCalculator, TableFormController}
 
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
@@ -105,20 +108,23 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
    */
   private def checkCreateTableHandler(editable: Boolean): Unit = {
     val controller = createFormController(editable)
+    val builderData = mock[ComponentBuilderData]
     val sizeHandler = mock[UnitSizeHandler]
-    val container = new Object
+    val composite = mock[Composite]
     val columns = createColumns()
     prepareColumnFactory(controller, columns)
     prepareRowFactory()
     prepareWidthListener()
-    EasyMock.expect(controller.calculateFixedColumnWidths(sizeHandler, container)).andReturn(42)
+    val callBackAnswer = new FetchAnswer[Void, ComponentBuilderCallBack]
+    builderData.addCallBack(EasyMock.anyObject(classOf[ComponentBuilderCallBack]), EasyMock.eq(null))
+    EasyMock.expectLastCall().andAnswer(callBackAnswer)
 
     val componentFactory = new MockTableComponentFactory
     val factory = new TableHandlerFactory(componentFactory)
 
     whenExecuting(mockColumnFactory, mockRowFactory, mockTableWidthListener, mockResizePolicy,
-      mockWidthCalculator, mockRecalibrator, mockWidthObservable, controller) {
-      val handler = factory.createTableHandler(controller, sizeHandler, container)
+      mockWidthCalculator, mockRecalibrator, mockWidthObservable, controller, builderData) {
+      val handler = factory.createTableHandler(controller, sizeHandler, composite, builderData)
         .asInstanceOf[JavaFxTableHandler]
       val table = handler.getComponent.asInstanceOf[TableView[AnyRef]]
 
@@ -133,6 +139,14 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
       assertSame("Wrong resize policy", mockResizePolicy, table.getColumnResizePolicy)
       assertSame("Wrong row factory", mockRowFactory, table.getRowFactory)
       assertSame("Wrong style property", mockRowFactory.styleProperty, handler.selectionStyles)
+    }
+
+    EasyMock.reset(controller, composite)
+    val container = new Object
+    EasyMock.expect(composite.getContainer).andReturn(container)
+    EasyMock.expect(controller.calculateFixedColumnWidths(sizeHandler, container)).andReturn(42)
+    whenExecuting(controller, composite) {
+      callBackAnswer.get.callBack(builderData, null)
     }
   }
 

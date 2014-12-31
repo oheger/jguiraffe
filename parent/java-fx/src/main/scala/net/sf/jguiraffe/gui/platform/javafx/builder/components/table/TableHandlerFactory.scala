@@ -17,6 +17,8 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import javafx.scene.control.TableView
 
+import net.sf.jguiraffe.gui.builder.components.{Composite, ComponentBuilderCallBack,
+ComponentBuilderData}
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
@@ -47,11 +49,13 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
    * by the given ''TableFormController''.
    * @param controller the ''TableFormController''
    * @param sizeHandler the ''UnitSizeHandler''
-   * @param container the enclosing container
+   * @param composite the enclosing container
+   * @param builderData the ''ComponentBuilderData'' object
    * @return the handler for the table view
    */
   def createTableHandler(controller: TableFormController, sizeHandler: UnitSizeHandler,
-                         container: AnyRef): ComponentHandler[Object] = {
+                         composite: Composite, builderData: ComponentBuilderData):
+  ComponentHandler[Object] = {
     val tableView = new TableView[AnyRef]
     val resizePolicy = componentFactory createColumnResizePolicy controller.getColumnRecalibrator
     val rowFactory = componentFactory.createRowFactory()
@@ -61,7 +65,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
     tableView setRowFactory rowFactory
     tableView setEditable controller.isTableEditable
     installTableWidthListener(controller, tableView)
-    controller.calculateFixedColumnWidths(sizeHandler, container)
+    initializeFixedColumnWidths(controller, sizeHandler, composite, builderData)
 
     val handler = new JavaFxTableHandler(tableView, controller.getDataModel,
       rowFactory.styleProperty)
@@ -89,9 +93,29 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
    * @param controller the ''TableFormController''
    * @param tableView the table view
    */
-  def installTableWidthListener(controller: TableFormController, tableView: TableView[AnyRef]) {
+  private def installTableWidthListener(controller: TableFormController, tableView: TableView[AnyRef]) {
     val widthListener = componentFactory.createTableWidthListener(controller
       .getColumnWidthCalculator, tableView)
     componentFactory.tableWidthProperty(tableView) addListener widthListener
+  }
+
+  /**
+   * Initializes table columns with a fixed width. This is normally done by the
+   * ''TableFormController''. However, the enclosing container required for
+   * certain size calculations may not be available at present. Therefore, the
+   * initialization is deferred and handled by a callback object.
+   * @param controller the ''TableFormController''
+   * @param sizeHandler the current ''UnitSizeHandler''
+   * @param composite the enclosing container tag
+   * @param builderData the ''ComponentBuilderData''
+   */
+  private def initializeFixedColumnWidths(controller: TableFormController, sizeHandler:
+  UnitSizeHandler, composite: Composite,
+                                          builderData: ComponentBuilderData) {
+    builderData.addCallBack(new ComponentBuilderCallBack {
+      override def callBack(builderData: ComponentBuilderData, params: scala.Any): Unit = {
+        controller.calculateFixedColumnWidths(sizeHandler, composite.getContainer)
+      }
+    }, null)
   }
 }

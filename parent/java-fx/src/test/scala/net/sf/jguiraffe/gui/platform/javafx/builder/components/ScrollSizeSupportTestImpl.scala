@@ -47,14 +47,14 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   /** A mock for the container. */
   val container = new Object
 
+  /** The mock for the Composite wrapping the container. */
+  val composite = createComposite()
+
   /** The answer for the X scroll size. */
   private var xAnswer: SizeAnswer = _
 
   /** The answer for the Y scroll size. */
   private var yAnswer: SizeAnswer = _
-
-  /** The mock for the Composite wrapping the container. */
-  private val composite = createComposite()
 
   /** A mock for the scroll size in X direction. */
   private var scrollWidth: NumberWithUnit = _
