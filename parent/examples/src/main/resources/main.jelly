@@ -225,7 +225,7 @@
         <f:panel>
           <f:borderlayout/>
           <f:table name="table" model="tableModel" multiSelection="true"
-            scrollWidth="500">
+            scrollWidth="250dlu">
             <f:borderconstr name="CENTER"/>
             <f:column name="icon" width="25px" columnClass="Icon"/>
             <f:column name="name" percentWidth="50" headerres="main_tcol_name"

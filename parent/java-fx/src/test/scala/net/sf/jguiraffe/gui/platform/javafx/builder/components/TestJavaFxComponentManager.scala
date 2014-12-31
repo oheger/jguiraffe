@@ -79,28 +79,56 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     .asInstanceOf[MockToolTipCreationSupport]
 
   /**
-   * Creates a ''JellyContext'' and installs it in the given tag.
+   * Creates a ''JellyContext'' and installs it in the given tag. If the tag
+   * already has a context, it is directly returned.
    * @param tag the tag
    * @return the ''JellyContext''
    */
   private def createAndInstallContext(tag: Tag): JellyContext = {
-    val context = new JellyContext
-    tag setContext context
-    context
+    if(tag.getContext == null) {
+      val context = new JellyContext
+      tag setContext context
+    }
+    tag.getContext
   }
 
   /**
    * Creates a ''ComponentBuilderData'' object and installs it in the context
-   * managed by the given tag. The context is also created.
+   * managed by the given tag. The context is also created if necessary. If
+   * there is already a ''ComponentBuilderData'' object in the tag's context,
+   * it is directly returned.
    * @param tag the tag
    * @return the ''ComponentBuilderData'' object
    */
   private def createAndInstallBuilderData(tag: Tag): ComponentBuilderData = {
     val context = createAndInstallContext(tag)
-    val builderData = new ComponentBuilderData
-    builderData put context
-    builderData.initializeForm(mock[TransformerContext], new BeanBindingStrategy)
-    builderData
+    val existingData = ComponentBuilderData get context
+    if(existingData != null) existingData
+    else {
+      val builderData = new ComponentBuilderData
+      builderData put context
+      builderData.initializeForm(mock[TransformerContext], new BeanBindingStrategy)
+      builderData
+    }
+  }
+
+  /**
+   * Executes a test which requires a ''ComponentBuilderData'' object. This
+   * method creates a ''ComponentBuilderData'' object if necessary and installs
+   * it in the context of the tag. It then delegates to ''whenExecuting()''
+   * passing in the mocks and the function. Finally, the callbacks are
+   * executed (note that this happens after verification of mock objects).
+   * @param tag the tag
+   * @param mocks the list with mocks
+   * @param f the function to be executed for the test
+   */
+  private def whenExecutingBuild(tag: Tag, mocks: AnyRef*)(f: => Unit): Unit = {
+    val builderData = createAndInstallBuilderData(tag)
+    // Need at least one mock for whenExecuting()
+    val actualMocks = if(mocks.isEmpty) Array(mock[Runnable])
+    else mocks.toArray
+    whenExecuting(actualMocks: _*)(f)
+    builderData.invokeCallBacks()
   }
 
   /**
@@ -450,8 +478,12 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setContext context
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     tag setName ComponentName
-    val handler = manager.createTextArea(tag, create = false).asInstanceOf[JavaFxTextHandler]
-    val txtCtrl = handler.component.asInstanceOf[TextArea]
+    var txtCtrl: TextArea = null
+
+    whenExecutingBuild(tag) {
+      val handler = manager.createTextArea(tag, create = false).asInstanceOf[JavaFxTextHandler]
+      txtCtrl = handler.component.asInstanceOf[TextArea]
+    }
     assertEquals("Control not initialized", ComponentName, txtCtrl.getId)
     assertFalse("Wrap flag is set", txtCtrl.isWrapText)
     checkMaxTextLength(txtCtrl, 0)
@@ -473,8 +505,12 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setRows 25
     tag setWrap true
     tag setMaxlength 1000
-    val handler = manager.createTextArea(tag, create = false)
-    val txtCtrl = handler.getComponent.asInstanceOf[TextArea]
+    var txtCtrl: TextArea = null
+
+    whenExecutingBuild(tag) {
+      val handler = manager.createTextArea(tag, create = false)
+      txtCtrl = handler.getComponent.asInstanceOf[TextArea]
+    }
     assertEquals("Preferred columns not set", tag.getColumns,
       txtCtrl.getPrefColumnCount)
     assertEquals("Preferred rows not set", tag.getRows, txtCtrl.getPrefRowCount)
@@ -847,16 +883,20 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setListModel model
     tag setMulti multi
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
-    val handler = manager.createListBox(tag, create = false)
-    val modelSupport = handler.asInstanceOf[ListModelSupport]
-    assertEquals("Wrong handler", expHandlerClass, handler.getClass)
-    assertTrue("Wrong model: " + modelSupport.getListModel,
-      modelSupport.getListModel.isInstanceOf[JavaFxListModel])
-    assertEquals("List model not initialized", model.size,
-      modelSupport.getListModel.size)
-    val list = handler.getComponent.asInstanceOf[ListView[Object]]
-    assertEquals("Wrong selection mode", expSelMode,
-      list.getSelectionModel.getSelectionMode)
+    var list: ListView[Object] = null
+
+    whenExecutingBuild(tag) {
+      val handler = manager.createListBox(tag, create = false)
+      val modelSupport = handler.asInstanceOf[ListModelSupport]
+      assertEquals("Wrong handler", expHandlerClass, handler.getClass)
+      assertTrue("Wrong model: " + modelSupport.getListModel,
+        modelSupport.getListModel.isInstanceOf[JavaFxListModel])
+      assertEquals("List model not initialized", model.size,
+        modelSupport.getListModel.size)
+      list = handler.getComponent.asInstanceOf[ListView[Object]]
+      assertEquals("Wrong selection mode", expSelMode,
+        list.getSelectionModel.getSelectionMode)
+    }
     checkDefaultSize(list)
     tag.verify(sizeHandler)
   }
@@ -889,8 +929,12 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     tag setContext context
     tag setListModel model
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
-    val handler = manager.createListBox(tag, create = false)
-    val list = handler.getComponent.asInstanceOf[ListView[Object]]
+    var list: ListView[Object] = null
+
+    whenExecutingBuild(tag) {
+      val handler = manager.createListBox(tag, create = false)
+      list = handler.getComponent.asInstanceOf[ListView[Object]]
+    }
     assertEquals("Wrong scroll width", tag.xScrollSize, list.getPrefWidth.toInt)
     assertEquals("Wrong scroll height", tag.yScrollSize, list.getPrefHeight.toInt)
     tag.verify(sizeHandler)
@@ -950,7 +994,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(handler.getComponent).andReturn(treeView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
-    whenExecuting(handler, factory) {
+    whenExecutingBuild(tag, handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
         treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null,
         borderPanelFactory = null)
@@ -975,7 +1019,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(handler.getComponent).andReturn(treeView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
-    whenExecuting(handler, factory) {
+    whenExecutingBuild(tag, handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
         treeHandlerFactory = factory, tableHandlerFactory = null, splitPaneFactory = null,
         borderPanelFactory = null)
@@ -1016,7 +1060,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
 
-    whenExecuting(handler, factory) {
+    whenExecutingBuild(tag, handler, factory) {
       manager = new JavaFxComponentManager(toolTipFactory = new DefaultToolTipFactory,
         tableHandlerFactory = factory, treeHandlerFactory = null, splitPaneFactory = null,
         borderPanelFactory = null)
@@ -1047,6 +1091,9 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
         borderPanelFactory = null)
       assertSame("Wrong handler", handler, manager.createTable(tag, create = false))
     }
+
+    checkDefaultSize(tableView)
+    builderData.invokeCallBacks()
     assertEquals("Wrong scroll width", tag.xScrollSize, tableView.getPrefWidth.toInt)
     assertEquals("Wrong scroll height", tag.yScrollSize, tableView.getPrefHeight.toInt)
     tag.verify(sizeHandler)

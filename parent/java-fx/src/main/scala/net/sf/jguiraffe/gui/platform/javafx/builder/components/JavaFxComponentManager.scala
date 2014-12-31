@@ -36,7 +36,7 @@ import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
-import org.apache.commons.jelly.TagSupport
+import org.apache.commons.jelly.{Tag, TagSupport}
 import org.apache.commons.lang.StringUtils
 
 /**
@@ -462,7 +462,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
     else {
       val handler = tableHandlerFactory.createTableHandler(tag.getTableFormController,
         JavaFxComponentManager fetchSizeHandler tag, tag.findContainer(),
-        ComponentBuilderData get tag.getContext)
+        JavaFxComponentManager fetchBuilderData tag)
       val ctrl = as[Control](handler.getComponent)
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)
@@ -510,7 +510,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
   override def formContextClosed(form: Form, source: scala.Any): Unit = {
     source match {
       case tag: ColumnComponentTag =>
-        val builderData = ComponentBuilderData get tag.getContext
+        val builderData = JavaFxComponentManager fetchBuilderData tag
         builderData setComponentManager this
       case _ => // ignore others
     }
@@ -699,32 +699,48 @@ object JavaFxComponentManager {
     Some(if (tag.isBold) FontWeightBold else FontStyleNormal)
 
   /**
+   * Obtains the current ''ComponentBuilderData'' object from the given tag.
+   * @param tag the tag
+   * @return the current ''ComponentBuilderData'' object
+   */
+  private def fetchBuilderData(tag: Tag): ComponentBuilderData =
+    ComponentBuilderData get tag.getContext
+
+  /**
    * Initializes the given control's preferred size based on the scroll size
    * defined by the passed in ''ScrollSizeSupport'' tag. This method determines
    * the preferred scroll size using the current ''UnitSizeHandler''. If it is
-   * defined, the control's preferred width or height are set.
+   * defined, the control's preferred width or height are set. Note that this
+   * has to be done by a callback because the current container object (which
+   * is required for size calculations) is not yet available.
    * @param tag the current tag
    * @param ctrl the control to be initialized
    */
   private def initScrollSize(tag: FormBaseTag with ScrollSizeSupport, ctrl: Control) {
     val sizeHandler = fetchSizeHandler(tag)
-    val container = currentContainer(tag)
-    val xSize = tag.getPreferredScrollWidth.toPixel(sizeHandler, container, false)
-    val ySize = tag.getPreferredScrollHeight.toPixel(sizeHandler, container, true)
+    val composite = currentContainerTag(tag)
 
-    if (xSize > 0) {
-      ctrl setPrefWidth xSize
-    }
-    if (ySize > 0) {
-      ctrl setPrefHeight ySize
-    }
+    fetchBuilderData(tag).addCallBack(new ComponentBuilderCallBack {
+      override def callBack(builderData: ComponentBuilderData, params: scala.Any): Unit = {
+        val container = composite.getContainer
+        val xSize = tag.getPreferredScrollWidth.toPixel(sizeHandler, container, false)
+        val ySize = tag.getPreferredScrollHeight.toPixel(sizeHandler, container, true)
+
+        if (xSize > 0) {
+          ctrl setPrefWidth xSize
+        }
+        if (ySize > 0) {
+          ctrl setPrefHeight ySize
+        }
+      }
+    }, null)
   }
 
   /**
-   * Obtains the current container object in the hierarchy of processed tags.
+   * Obtains the enclosing container tag in the hierarchy of processed tags.
    * @param tag the current tag
-   * @return the current container object
+   * @return the current container tag
    */
-  private def currentContainer(tag: FormBaseTag): AnyRef =
-    tag.findContainer.getContainer
+  private def currentContainerTag(tag: FormBaseTag): Composite =
+    tag.findContainer
 }
