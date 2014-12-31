@@ -25,6 +25,7 @@ import javafx.scene.text.Text
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnRendererTag, TableFormController, TableTag}
 import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
 import net.sf.jguiraffe.gui.builder.components._
+import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy
 import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
@@ -35,6 +36,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.ClassPathLocator
+import net.sf.jguiraffe.transform.TransformerContext
 import org.apache.commons.jelly.{JellyContext, Tag}
 import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
@@ -85,6 +87,20 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val context = new JellyContext
     tag setContext context
     context
+  }
+
+  /**
+   * Creates a ''ComponentBuilderData'' object and installs it in the context
+   * managed by the given tag. The context is also created.
+   * @param tag the tag
+   * @return the ''ComponentBuilderData'' object
+   */
+  private def createAndInstallBuilderData(tag: Tag): ComponentBuilderData = {
+    val context = createAndInstallContext(tag)
+    val builderData = new ComponentBuilderData
+    builderData put context
+    builderData.initializeForm(mock[TransformerContext], new BeanBindingStrategy)
+    builderData
   }
 
   /**
@@ -994,9 +1010,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val controller = mock[TableFormController]
     val tag = new TableTagTestImpl(controller) with ScrollSizeSupportUndefined
     val tableView = new TableView[AnyRef]
-    val context = new JellyContext
-    tag setContext context
-    EasyMock.expect(factory.createTableHandler(controller, sizeHandler, tag.composite, null))
+    val builderData = createAndInstallBuilderData(tag)
+    EasyMock.expect(factory.createTableHandler(controller, sizeHandler, tag.composite, builderData))
       .andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
@@ -1020,9 +1035,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val controller = mock[TableFormController]
     val tag = new TableTagTestImpl(controller) with ScrollSizeSupportSpecific
     val tableView = new TableView[AnyRef]
-    val context = new JellyContext
-    tag setContext context
-    EasyMock.expect(factory.createTableHandler(controller, sizeHandler, tag.composite, null))
+    val builderData = createAndInstallBuilderData(tag)
+    EasyMock.expect(factory.createTableHandler(controller, sizeHandler, tag.composite, builderData))
       .andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
@@ -1202,10 +1216,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testFormContextCreatedForColumnComponent() {
     val form = mock[Form]
     val tag = new ColumnRendererTag
-    val context = new JellyContext
-    val builderData = new ComponentBuilderData
-    tag setContext context
-    builderData put context
+    val builderData = createAndInstallBuilderData(tag)
 
     manager.formContextCreated(form, tag)
     val proxyManager = builderData.getComponentManager
@@ -1231,10 +1242,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testFormContextClosedForColumnComponent() {
     val form = mock[Form]
     val tag = new ColumnRendererTag
-    val context = new JellyContext
-    val builderData = new ComponentBuilderData
-    tag setContext context
-    builderData put context
+    val builderData = createAndInstallBuilderData(tag)
 
     manager.formContextClosed(form, tag)
     assertSame("Component manager not reset", manager, builderData.getComponentManager)

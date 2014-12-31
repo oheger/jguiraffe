@@ -461,8 +461,8 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
     if (create) null
     else {
       val handler = tableHandlerFactory.createTableHandler(tag.getTableFormController,
-        JavaFxComponentManager fetchSizeHandler tag, null,
-        null)
+        JavaFxComponentManager fetchSizeHandler tag, tag.findContainer(),
+        ComponentBuilderData get tag.getContext)
       val ctrl = as[Control](handler.getComponent)
       initControl(tag, ctrl)
       JavaFxComponentManager.initScrollSize(tag, ctrl)
