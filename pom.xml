@@ -1,6 +1,6 @@
 <!--
 
-    Copyright 2006-2014 The JGUIraffe Team.
+    Copyright 2006-2015 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
     limitations under the License.
 
 -->
-
 <!-- ===================================================================== -->
 <!-- $Id: pom.xml 217 2012-11-14 20:58:20Z oheger $ -->
 <!-- ===================================================================== -->
@@ -148,7 +147,7 @@
               <jelly>XML_STYLE</jelly>
             </mapping>
             <properties>
-              <year>2014</year>
+              <year>2015</year>
             </properties>
           </configuration>
           <executions>
