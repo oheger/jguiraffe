@@ -38,14 +38,21 @@
   <p>
     In order to deploy an application into an OSGi framework, it has to be
     packaged in so-called <em>bundles</em> - jar archives containing special
-    meta data. From version 1.2 on the <em>JGUIraffe</em> jar is a valid OSGi
-    bundle. It contains the necessary meta data and thus can be directly
-    deployed into your OSGi container of choice.
+    meta data. From version 1.2 on, the <em>JGUIraffe</em> jar is a valid OSGi
+    bundle. This is also true for the integration jars for the supported target
+    platforms. They all contain the necessary meta data and thus can be directly
+    deployed into your OSGi container of choice - you have to deploy the main
+    jar plus the correct integration jar for the selected target platform.
   </p>
   <p>
-    Unfortunately, this is not true for all the libraries <em>JGUIraffe</em>
-    depends on (see <a href="../dependencies.html">Dependencies</a>). Newer releases of the
-    <a href="http://commons.apache.org">Apache Commons</a> components
+    The <em>JGUIraffe</em> modules have some dependencies to other libraries
+    (details can be found on the <a href="../dependencies.html">Dependencies</a>
+    page). For a successful deployment into an OSGi container, all these
+    dependencies have to be available as well. Unfortunately, not all of them
+    support OSGi out of the box.
+  </p>
+  <p>
+    Newer releases of the <a href="http://commons.apache.org">Apache Commons</a> components
     referenced by <em>JGUIraffe</em> already contain OSGi meta data, but some of
     the older releases do not. Especially the Commons Jelly jar is (at the time of this writing) not provided
     as an OSGi bundle. Because these dependencies have to be satisfied when
