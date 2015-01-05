@@ -52,6 +52,11 @@
 
     <section name="Table of contents">
     <ul>
+      <li><a href="platforms.html">Project setup</a></li>
+      <ul>
+        <li><a href="platforms.html#Multiple_platform_support">Multiple platform support</a></li>
+        <li><a href="platforms.html#Maven_setup">Maven setup</a></li>
+      </ul>
       <li><a href="application.html">The central Application class</a></li>
       <ul>
         <li><a href="application.html#Initializations_at_startup">Initializations at startup</a></li>
