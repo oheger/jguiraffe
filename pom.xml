@@ -172,6 +172,18 @@
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.3</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -180,6 +192,11 @@
       <id>website</id>
       <url>scp://shell.sourceforge.net/home/project-web/jguiraffe/htdocs</url>
     </site>
+
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <reporting>
