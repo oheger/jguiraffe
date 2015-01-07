@@ -136,7 +136,8 @@ public class SwingPopupMenuBuilder extends AbstractPopupMenuBuilder
     }
 
     @Override
-    protected Object getMenuUnderConstruction() {
+    protected Object getMenuUnderConstruction()
+    {
         return getMenu();
     }
 }

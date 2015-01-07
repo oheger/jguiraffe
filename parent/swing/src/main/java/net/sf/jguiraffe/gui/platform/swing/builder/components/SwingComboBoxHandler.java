@@ -15,10 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
+import javax.swing.JComboBox;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
 
 import net.sf.jguiraffe.gui.builder.components.model.EditableComboBoxModel;
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
@@ -98,13 +97,13 @@ class SwingComboBoxHandler extends SwingListModelHandler implements
     public Object getData()
     {
         Object selectedItem = getComboBox().getSelectedItem();
-        if(selectedItem == null)
+        if (selectedItem == null)
         {
             return null;
         }
 
         int index = ListModelUtils.getDisplayIndex(getListModel(), selectedItem);
-        if(index != ListModelUtils.IDX_UNDEFINED)
+        if (index != ListModelUtils.IDX_UNDEFINED)
         {
             return ListModelUtils.getValue(getListModel(), index);
         }

@@ -17,12 +17,11 @@ package net.sf.jguiraffe.gui.platform.swing.builder.components.table;
 
 import net.sf.jguiraffe.gui.app.ApplicationClient;
 import net.sf.jguiraffe.gui.builder.components.tags.table.DefaultTableEditorValidationHandler;
-import net.sf.jguiraffe.gui.builder.components.tags.table.TableEditorValidationHandler;
 
 /**
  * <p>
  * A Swing-specific default implementation of the
- * <code>{@link TableEditorValidationHandler}</code> interface.
+ * {@code TableEditorValidationHandler} interface.
  * </p>
  *
  * @deprecated The functionality provided by this class was not Swing-specific,
@@ -31,8 +30,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableEditorValidationH
  *             {@link DefaultTableEditorValidationHandler} class; this class
  *             should be used instead.
  * @author Oliver Heger
- * @version $Id: SwingTableEditorValidationHandler.java 205 2012-01-29 18:29:57Z
- *          oheger $
+ * @version $Id: SwingTableEditorValidationHandler.java 205 2012-01-29 18:29:57Z oheger $
  */
 public class SwingTableEditorValidationHandler extends
         DefaultTableEditorValidationHandler implements ApplicationClient
