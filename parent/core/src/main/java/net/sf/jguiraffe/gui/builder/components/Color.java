@@ -42,8 +42,15 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Color implements Serializable
 {
-    /** Constant for an undefined color component. */
-    static final int COMPONENT_UNDEFINED = -1;
+    /**
+     * Constant for an undefined color component. This value is returned by the
+     * access methods for the single color components ({@code getRed()},
+     * {@code getGreen()}, or {@code getBlue()} to indicate that this component
+     * is undefined - which is the case for logic colors.
+     *
+     * @since 1.3
+     */
+    public static final int COMPONENT_UNDEFINED = -1;
 
     /**
      * Constant for an undefined color. This constant defines a special instance
