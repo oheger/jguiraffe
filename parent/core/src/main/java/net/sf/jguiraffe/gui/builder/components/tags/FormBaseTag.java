@@ -19,12 +19,10 @@ import java.util.MissingResourceException;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.Composite;
-import net.sf.jguiraffe.gui.builder.components.ContainerSelector;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
 import net.sf.jguiraffe.transform.TransformerContext;
-
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.TagSupport;
@@ -322,9 +320,10 @@ public abstract class FormBaseTag extends TagSupport implements ConditionalTag
      * This implementation first looks for an enclosing {@code <container>} tag
      * (i.e. a tag implementing the {@link Composite} interface. If this is
      * found, the container object defined there is used (determined by the
-     * current {@link ContainerSelector}). Otherwise the method assumes that the
-     * new component should be added to the top level container, which can be
-     * obtained from the builder data object.
+     * current {@link net.sf.jguiraffe.gui.builder.components.ContainerSelector}
+     * ). Otherwise the method assumes that the new component should be added to
+     * the top level container, which can be obtained from the builder data
+     * object.
      *
      * @return the container object
      */
