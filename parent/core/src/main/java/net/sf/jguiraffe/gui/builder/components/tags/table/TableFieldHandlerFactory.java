@@ -20,7 +20,6 @@ import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.FieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
-import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 import net.sf.jguiraffe.gui.builder.components.tags.InputComponentTag;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 import net.sf.jguiraffe.gui.forms.FieldHandler;
@@ -133,8 +132,8 @@ class TableFieldHandlerFactory implements FieldHandlerFactory
      *
      * @param handler the {@code FieldHandler}
      * @return the {@code TransformerReference} for the read transformer
-     * @throws FormBuilderRuntimeException if the field handler cannot be
-     *         resolved
+     * @throws net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException
+     *         if the field handler cannot be resolved
      */
     public TransformerReference getReadTransformerReference(FieldHandler handler)
     {
@@ -147,8 +146,8 @@ class TableFieldHandlerFactory implements FieldHandlerFactory
      *
      * @param handler the {@code FieldHandler}
      * @return the {@code TransformerReference} for the write transformer
-     * @throws FormBuilderRuntimeException if the field handler cannot be
-     *         resolved
+     * @throws net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException
+     *         if the field handler cannot be resolved
      */
     public TransformerReference getWriteTransformerReference(
             FieldHandler handler)
@@ -162,8 +161,8 @@ class TableFieldHandlerFactory implements FieldHandlerFactory
      *
      * @param handler the {@code FieldHandler}
      * @return the {@code ValidatorReference} for this field handler
-     * @throws FormBuilderRuntimeException if the field handler cannot be
-     *         resolved
+     * @throws net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException
+     *         if the field handler cannot be resolved
      */
     public ValidatorReference getValidatorReference(FieldHandler handler)
     {
@@ -176,8 +175,10 @@ class TableFieldHandlerFactory implements FieldHandlerFactory
      *
      * @param ref the reference to be checked
      * @param fieldHandler the {@code FieldHandler} that has been resolved
+     * @param <T> the type of the reference
      * @return the reference again if it is valid
-     * @throws FormBuilderRuntimeException if the reference is <b>null</b>
+     * @throws net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException
+     *         if the reference is <b>null</b>
      */
     private static <T> T checkReference(T ref, FieldHandler fieldHandler)
     {
