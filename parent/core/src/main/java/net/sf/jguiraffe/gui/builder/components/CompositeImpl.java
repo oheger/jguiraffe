@@ -44,6 +44,11 @@ public class CompositeImpl implements AccessibleComposite
     /** The container. */
     private Object container;
 
+    /**
+     * {@inheritDoc} This implementation adds the specified component and
+     * constraints object to an internal collection. This information can be
+     * queried using the {@link #getComponents()} method.
+     */
     public void addComponent(Object comp, Object constraints)
     {
         components.add(new Object[] {
@@ -51,16 +56,28 @@ public class CompositeImpl implements AccessibleComposite
         });
     }
 
+    /**
+     * {@inheritDoc} This implementation returns the object which has been set
+     * using the {@link #setLayout(Object)} method.
+     */
     public Object getLayout()
     {
         return layout;
     }
 
+    /**
+     * {@inheritDoc} This implementation stores the passed in layout object in
+     * an internal field.
+     */
     public void setLayout(Object layout)
     {
         this.layout = layout;
     }
 
+    /**
+     * {@inheritDoc} This implementation returns the container object set by the
+     * {@link #setContainer(Object)} method.
+     */
     public Object getContainer()
     {
         return container;
@@ -77,6 +94,10 @@ public class CompositeImpl implements AccessibleComposite
         this.container = container;
     }
 
+    /**
+     * {@inheritDoc} This implementation returns a collection with the data set
+     * by all previous {@link #addComponent(Object, Object)} calls.
+     */
     public Collection<Object[]> getComponents()
     {
         return Collections.unmodifiableCollection(components);
