@@ -213,6 +213,10 @@ public final class TableColumnWidthController implements
         return numberOfColumnsWithPercentWidth;
     }
 
+    /**
+     * {@inheritDoc} This implementation evaluates the current widths of columns
+     * with fixed or percent widths.
+     */
     public int[] calculateWidths(int totalSize)
     {
         int[] widths = new int[getColumnCount()];
@@ -244,6 +248,11 @@ public final class TableColumnWidthController implements
         return widths;
     }
 
+    /**
+     * {@inheritDoc} This implementation adjusts the current width values for
+     * columns with a fixed width and recalculates the percent values for the
+     * other columns.
+     */
     public void recalibrate(int[] columnSizes)
     {
         if (columnSizes == null)
