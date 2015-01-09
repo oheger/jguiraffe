@@ -161,7 +161,8 @@ class TransformerFactory
      *
      * @param tag the current tag (for obtaining context information)
      * @param columnClass the {@code ColumnClass}
-     * @throws FormRuntimeException if the {@code ColumnClass} is <b>null</b>
+     * @throws FormRuntimeException if the {@code ColumnClass} is <b>null</b> or
+     *         unknown
      */
     private void initializeObjectsForClass(Tag tag, ColumnClass columnClass)
     {
@@ -173,33 +174,72 @@ class TransformerFactory
         switch (columnClass)
         {
         case NUMBER:
-        {
-            LongTransformer transformer = new LongTransformer();
-            putTransformer(tag, columnClass, transformer);
-            putValidator(tag, columnClass, transformer);
+            initNumberTransformer(tag, columnClass);
             break;
-        }
         case FLOAT:
-        {
-            DoubleTransformer transformer = new DoubleTransformer();
-            putTransformer(tag, columnClass, transformer);
-            putValidator(tag, columnClass, transformer);
+            initFloatTransformer(tag, columnClass);
             break;
-        }
         case STRING:
-        {
-            putTransformer(tag, columnClass, new ToStringTransformer());
-            validatorCache.put(columnClass, DummyWrapper.INSTANCE);
+            initStringTransformer(tag, columnClass);
             break;
-        }
         case DATE:
-        {
-            DateTransformer transformer = new DateTransformer();
-            putTransformer(tag, columnClass, transformer);
-            putValidator(tag, columnClass, transformer);
+            initDateTransformer(tag, columnClass);
             break;
+        default:
+            // should not happen
+            throw new FormRuntimeException("Unsupported column class: " + columnClass);
         }
-        }
+    }
+
+    /**
+     * Initializes the transformer for the column class {@code NUMBER}.
+     *
+     * @param tag the current tag (for obtaining context information)
+     * @param columnClass the {@code ColumnClass}
+     */
+    private void initNumberTransformer(Tag tag, ColumnClass columnClass)
+    {
+        LongTransformer transformer = new LongTransformer();
+        putTransformer(tag, columnClass, transformer);
+        putValidator(tag, columnClass, transformer);
+    }
+
+    /**
+     * Initializes the transformer for the column class {@code FLOAT}.
+     *
+     * @param tag the current tag (for obtaining context information)
+     * @param columnClass the {@code ColumnClass}
+     */
+    private void initFloatTransformer(Tag tag, ColumnClass columnClass)
+    {
+        DoubleTransformer transformer = new DoubleTransformer();
+        putTransformer(tag, columnClass, transformer);
+        putValidator(tag, columnClass, transformer);
+    }
+
+    /**
+     * Initializes the transformer for the column class {@code STRING}.
+     *
+     * @param tag the current tag (for obtaining context information)
+     * @param columnClass the {@code ColumnClass}
+     */
+    private void initStringTransformer(Tag tag, ColumnClass columnClass)
+    {
+        putTransformer(tag, columnClass, new ToStringTransformer());
+        validatorCache.put(columnClass, DummyWrapper.INSTANCE);
+    }
+
+    /**
+     * Initializes the transformer for the column class {@code DATE}.
+     *
+     * @param tag the current tag (for obtaining context information)
+     * @param columnClass the {@code ColumnClass}
+     */
+    private void initDateTransformer(Tag tag, ColumnClass columnClass)
+    {
+        DateTransformer transformer = new DateTransformer();
+        putTransformer(tag, columnClass, transformer);
+        putValidator(tag, columnClass, transformer);
     }
 
     /**
