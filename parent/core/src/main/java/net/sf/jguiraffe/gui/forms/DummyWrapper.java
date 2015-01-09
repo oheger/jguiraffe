@@ -42,11 +42,19 @@ public enum DummyWrapper implements TransformerWrapper, ValidatorWrapper
     /** The single instance of this class. */
     INSTANCE
     {
+        /**
+         * {@inheritDoc} This implementation returns the passed in object
+         * without changes.
+         */
         public Object transform(Object o)
         {
             return o;
         }
 
+        /**
+         * {@inheritDoc} This implementation always returns a valid result
+         * object.
+         */
         public ValidationResult isValid(Object o)
         {
             return DefaultValidationResult.VALID;
