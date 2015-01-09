@@ -58,6 +58,30 @@
     </dependency>
     ...
 ]]></source>
+
+  <subsection name="Limitations">
+  <p>
+    With Swing being the most popular UI platform for Java, the programming
+    model of <em>JGUIraffe</em> has been mainly inspired by this library.
+    JavaFX is in principle similar to Swing; therefore, in most cases, it was
+    not too dificult to implement the abstractions of <em>JGUIraffe</em> on top
+    of JavaFX. There is only one feature which is not available on JavaFX:
+    desktop panes. A desktop pane was used in Swing to simulate application-level
+    windows which could be dragged only within the limits of the application's
+    desktop. JavaFX does not have a corresponding concept. Therefore, the method
+    <code>createDesktopPane()</code> of the JavaFX-specific implementation of
+    <code>ComponentManager</code> only throws an <code>UnsupportedOperationException</code>
+    exception. Note that it is still possible to create internal frames; they
+    are represented by plain JavaFX <code>Stage</code> objects.
+  </p>
+  <p>
+    JavaFX has rich support for special graphical effects. These are currently
+    not supported by <em>JGUIraffe</em>. (They are special to JavaFX, and
+    <em>JGUIraffe</em> aims to be a common denominator for UI platforms.)
+    However, it is intended that later versions will provide specialized tags
+    allowing to add effects to JavaFX UI elements in a declarative way.
+  </p>
+  </subsection>
   </section>
 </body>
 </document>
