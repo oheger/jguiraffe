@@ -21,26 +21,30 @@
 
   <properties>
     <author email="oheger@users.sourceforge.net">Oliver Heger</author>
-    <title>Building from SVN</title>
+    <title>Building from VCS</title>
   </properties>
 
 <body>
-  <section name="Building from Subversion">
+  <section name="Checking out and building JGUIraffe">
   <p>
-    <em>JGUIraffe</em> uses <a href="http://maven.apache.org">Apache Maven</a>
-    as its build tool. The build should be compatible with both Maven 2 and
-    Maven 3. When you check out the source code from
-    <a href="http://subversion.apache.org/">Subversion</a> using the command
+    <em>JGUIraffe</em> uses <a href="http://maven.apache.org">Apache Maven 3</a>
+    as its build tool and <a href="http://git-scm.com/">git</a> as version
+    control system (VCS). The source code repository can be cloned using the
+    command
   </p>
     <source><![CDATA[
-svn co https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe/trunk jguiraffe
+git clone git://git.code.sf.net/p/jguiraffe/git jguiraffe-git
     ]]></source>
   <p>
-    you get a maven aggregator project with the following modules:
+    This command produces a maven aggregator project with a couple of modules.
+    The most important ones are the following:
     <ul>
-      <li><code>core</code> is the actual library. The jar file created when
-      building this project is the one which needs to be present in the class
-      path of your application.</li>
+      <li><code>core</code> is the main library defining the <em>JGUIraffe</em>
+      abstractions for different UI platforms.</li>
+      <li><code>swing</code> is the integration jar for Swing. This jar needs
+      to be in the class path for applications running on Swing.</li>
+      <li><code>java-fx</code> contains the JavaFX integration jar. It is needed
+      for JavaFX applications.</li>
       <li><code>examples</code> contains some sample code and also the complete
       tutorial application.</li>
     </ul>
@@ -55,11 +59,12 @@ mvn clean install
     ]]></source>
   <p>
     This requires a JDK 1.6 because the <code>examples</code> module uses some
-    1.6 features. The <code>core</code> is compatible with JDK 1.5. It can be
-    built with a 1.5 compiler by issuing the same command in the <code>core</code>
-    subdirectory. The resulting jar file containing all classes of the
-    <em>JGUIraffe</em> library can be found in the <code>core/target</code>
-    folder.
+    1.6 features. The <code>core</code> module and the integration jars for
+    specific UI platforms are compatible with JDK 1.5. They can be
+    built with a 1.5 compiler by issuing the same command in the corresponding
+    subdirectories. The resulting jar files containing all classes of the
+    <em>JGUIraffe</em> library can be found in the <code>target</code>
+    folders of the modules.
   </p>
   <p>
     <em>Note:</em> If you get an <code>OutOfMemoryError</code>, you have to
@@ -69,12 +74,16 @@ mvn clean install
     to 256 M.
   </p>
   <p>
+    <em>Note:</em> The build executes all unit tests. Some test cases test
+    error conditions which cause exceptions to be logged to the console. This
+    is expected and does not indicate a problem with the build.
+  </p>
+  <p>
     The pom defines a profile named <em>release</em> which creates some
     additional artifacts. If it is activated, jars with Javadocs and the
     project's sources are produced. These jars can be integrated in typical IDEs.
     To activate this profile and generate the additional artifacts enter the
-    following command (either in the top-level or in the <code>core</code>
-    directory):
+    following command (in the top-level directory):
   </p>
     <source><![CDATA[
 mvn clean install -P release
