@@ -28,6 +28,9 @@
   <body>
     <release version="1.3" date="TBD"
       description="TBD">
+      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/7">
+        JavaFX is now supported as target platform.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/9">
         The default value of the canShrink property of PercentLayoutBase was
         changed from false to true. This is appropriate for the majority of
