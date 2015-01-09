@@ -44,8 +44,8 @@
     <url>https://sourceforge.net/tracker/?func=add&amp;group_id=162864&amp;atid=825469</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe</connection>
-    <url>http://jguiraffe.svn.sourceforge.net/viewvc/jguiraffe/</url>
+    <connection>scm:git:http://git.code.sf.net/p/jguiraffe/git</connection>
+    <url>http://git.code.sf.net/p/jguiraffe/git</url>
   </scm>
   <mailingLists>
     <mailingList>
