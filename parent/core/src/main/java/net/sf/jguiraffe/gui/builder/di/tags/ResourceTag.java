@@ -46,25 +46,30 @@ import org.apache.commons.lang.StringUtils;
  * </p>
  * <p>
  * In its most simple form this tag is passed a resource name and the name of
- * the target variable: <code>
- *     &lt;di:resource resource=&quot;myResource&quot; var=&quot;url&quot;/&gt;
- * </code>
+ * the target variable:
+ * <pre>
+ * &lt;di:resource resource=&quot;myResource&quot; var=&quot;url&quot;/&gt;
+ * </pre>
  * </p>
  * <p>
  * It is also possible to specify the class loader to be used for the resolving
- * operation by its name: <code>
- *     &lt;di:resource resource=&quot;myResource&quot; classLoader=&quot;myLoader&quot;
- *       var=&quot;url&quot; /&gt;
- * </code>
+ * operation by its name:
+ * <pre>
+ * &lt;di:resource resource=&quot;myResource&quot; classLoader=&quot;myLoader&quot;
+ *     var=&quot;url&quot; /&gt;
+ * </pre>
  * </p>
  * <p>
  * A single variable can be used as target for multiple resolve operations. In
  * this case, the URL strings are concatenated with a configurable delimiter
  * string. The example below shows how two resources a resolved resulting in a
- * string with their corresponding URLs using a comma as delimiter: <code>
- *     &lt;di:resource resource=&quot;myResource1&quot; var=&quot;url&quot; delimiter=&quot;,&quot;/&gt;
- *     &lt;di:resource resource=&quot;myResource2&quot; var=&quot;url&quot; delimiter=&quot;,&quot;/&gt;
- * </code>
+ * string with their corresponding URLs using a comma as delimiter:
+ * <pre>
+ * &lt;di:resource resource=&quot;myResource1&quot; var=&quot;url&quot;
+ *   delimiter=&quot;,&quot;/&gt;
+ * &lt;di:resource resource=&quot;myResource2&quot; var=&quot;url&quot;
+ *   delimiter=&quot;,&quot;/&gt;
+ * </pre>
  * </p>
  * <p>
  * The following attributes are supported:
@@ -114,7 +119,11 @@ public class ResourceTag extends TagSupport
 
     /** The name of the target variable. */
     private String var;
+
+    /** The name of the class loader to be used. */
     private String classLoader;
+
+    /** The delimiter character. */
     private String delimiter;
 
     /**
@@ -199,6 +208,9 @@ public class ResourceTag extends TagSupport
         return delimiter;
     }
 
+    /**
+     * {@inheritDoc} This implementation contains the actual logic of this tag.
+     */
     public void doTag(XMLOutput output) throws JellyTagException
     {
         if (getResource() == null)
