@@ -40,8 +40,8 @@
     The parent pom of the JGUIraffe project.
   </description>
   <issueManagement>
-    <system>SourceForge</system>
-    <url>https://sourceforge.net/tracker/?func=add&amp;group_id=162864&amp;atid=825469</url>
+    <system>SourceForge2</system>
+    <url>http://sourceforge.net/p/jguiraffe/</url>
   </issueManagement>
   <scm>
     <connection>scm:git:http://git.code.sf.net/p/jguiraffe/git</connection>
