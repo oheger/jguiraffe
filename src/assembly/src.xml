@@ -35,6 +35,7 @@
         <include>**/pom.xml</include>
         <include>RELEASE-NOTES.txt</include>
         <include>conf/**</include>
+        <include>src/**</include>
         <include>parent/*/src/**</include>
       </includes>
     </fileSet>
