@@ -26,6 +26,10 @@
     <author email="oheger@sourceforge.net">Oliver Heger</author>
   </properties>
   <body>
+    <release version="1.4" date="TBD"
+      description="TBD">
+    </release>
+
     <release version="1.3" date="2015-01-18"
       description="Support for JavaFX">
       <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/7">
