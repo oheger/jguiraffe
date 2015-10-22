@@ -55,14 +55,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.oracle</groupId>
-      <artifactId>javafx</artifactId>
-      <version>${javafx.version}</version>
-      <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
-      <scope>system</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
@@ -220,6 +212,32 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <!--
+      Profile for building with JDK 1.7. In this version, JavaFX has to be
+      explicitly included as a system dependency. From version 1.8 on,
+      JavaFX is part of the JDK.
+    -->
+    <profile>
+      <id>JDK-1.7</id>
+      <activation>
+        <jdk>1.7</jdk>
+      </activation>
+
+      <properties>
+        <javafx.version>2.2</javafx.version>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>com.oracle</groupId>
+          <artifactId>javafx</artifactId>
+          <version>${javafx.version}</version>
+          <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
+          <scope>system</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>
