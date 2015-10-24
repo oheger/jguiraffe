@@ -66,8 +66,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
     pane = new PercentLayoutPane(layout, container) {
       setWidth(Size.width)
       setHeight(Size.height)
-
-      override def getInsets() = Insets
+      setPadding(Insets)  // fully defines insets
     }
   }
 

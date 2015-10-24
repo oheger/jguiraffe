@@ -65,10 +65,8 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * @param ctrl the control to be checked
    */
   private def checkDefaultSize(ctrl: Control) {
-    assertEquals("Got a preferred width", Control.USE_COMPUTED_SIZE,
-      ctrl.getPrefWidth, .001)
-    assertEquals("Got a preferred height", Control.USE_COMPUTED_SIZE,
-      ctrl.getPrefHeight, .001)
+    assertEquals("Got a preferred width", -1, ctrl.getPrefWidth, .001)
+    assertEquals("Got a preferred height", -1, ctrl.getPrefHeight, .001)
   }
 
   /**
