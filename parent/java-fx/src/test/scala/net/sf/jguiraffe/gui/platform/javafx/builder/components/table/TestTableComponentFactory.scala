@@ -18,10 +18,18 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 import javafx.scene.control.TableView
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{TableColumnRecalibrator, TableColumnWidthCalculator}
+
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
+object TestTableComponentFactory {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''TableComponentFactory''.

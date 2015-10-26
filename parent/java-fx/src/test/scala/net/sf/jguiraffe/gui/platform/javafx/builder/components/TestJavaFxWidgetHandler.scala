@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont, Styles,
 JavaFxStylesHandler}
 import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
@@ -24,8 +25,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -35,6 +35,12 @@ import javafx.scene.Node
 import javafx.scene.control.Control
 import javafx.scene.control.Tooltip
 import net.sf.jguiraffe.gui.builder.components.Color
+
+object TestJavaFxWidgetHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxWidgetHandler''.

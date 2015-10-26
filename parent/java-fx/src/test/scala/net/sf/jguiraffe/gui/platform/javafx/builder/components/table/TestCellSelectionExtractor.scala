@@ -17,8 +17,15 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import javafx.scene.control.TableRow
 
-import org.junit.{Before, Test}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
+
+object TestCellSelectionExtractor {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''CellSelectionExtractor''.

@@ -15,8 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import org.junit.Before
-import org.junit.Test
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import org.junit.{BeforeClass, Before, Test}
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -28,6 +28,12 @@ import javafx.event.EventHandler
 import javafx.scene.control.Label
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ActionEventSource
+
+object TestControlActionEventSource {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''ControlActionEventSource''.

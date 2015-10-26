@@ -28,6 +28,7 @@ import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy
 import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{MenuItemWidgetHandler,
@@ -41,9 +42,15 @@ import org.apache.commons.jelly.{JellyContext, Tag}
 import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull, assertSame, assertTrue}
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
+object TestJavaFxComponentManager {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxComponentManager''.

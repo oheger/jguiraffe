@@ -21,11 +21,12 @@ import javafx.scene.control.{SelectionMode, TreeView}
 import net.sf.jguiraffe.gui.builder.components.model.TreeConfigurationChangeHandler
 import net.sf.jguiraffe.gui.builder.components.tags.{TreeIconHandler, TreeTag}
 import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.ConfigurationNode
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
@@ -38,6 +39,10 @@ object TestTreeHandlerFactory {
 
   /** Constant for an icon name. */
   private val IconName = "icon1"
+
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
 
   /**
    * Helper method for obtaining the JavaFX tree view from the given component

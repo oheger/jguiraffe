@@ -19,9 +19,10 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.Color
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.junit.Assert._
-import org.junit.Test
+import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 
 import scala.beans.BeanProperty
@@ -41,6 +42,10 @@ object TestJavaFxTableHandler {
 
   /** Constant for a test background color. */
   private val BackgroundColor = Color.newLogicInstance("#AA99FF")
+
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
 
   /**
    * Creates the table view control and sets the correct selection mode.

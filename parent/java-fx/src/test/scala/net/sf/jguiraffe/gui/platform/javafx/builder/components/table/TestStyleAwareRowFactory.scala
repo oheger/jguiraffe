@@ -18,9 +18,16 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 import javafx.beans.property.{BooleanProperty, ReadOnlyBooleanProperty, SimpleBooleanProperty}
 import javafx.scene.control.{Cell, TableRow, TableView}
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
+
+object TestStyleAwareRowFactory {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''StyleAwareRowFactory''.

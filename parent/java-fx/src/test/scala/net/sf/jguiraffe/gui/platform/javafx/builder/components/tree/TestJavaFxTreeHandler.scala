@@ -19,6 +19,8 @@ import javafx.beans.value.{ObservableValue, ChangeListener}
 import javafx.scene.control.{SelectionMode, TreeItem, TreeView}
 
 import net.sf.jguiraffe.gui.builder.components.model.{TreeExpandVetoException, TreeExpansionEvent, TreeExpansionListener, TreeHandler, TreeNodePath, TreePreExpansionListener}
+
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigurationNode}
 import org.easymock.{EasyMock, IAnswer}
@@ -46,6 +48,7 @@ object TestJavaFxTreeHandler {
   private var GraphicsHandler: NodeGraphicsHandler = _
 
   @BeforeClass def setUpOnce() {
+    JavaFxTestHelper.initPlatform()
     GraphicsHandler = EasyMock.createNiceMock(classOf[NodeGraphicsHandler])
     EasyMock.expect(GraphicsHandler.graphicsFor(
       EasyMock.anyObject(classOf[ConfigurationNode]),

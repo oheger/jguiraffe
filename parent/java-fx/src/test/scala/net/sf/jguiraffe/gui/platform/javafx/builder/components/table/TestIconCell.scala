@@ -19,12 +19,19 @@ import javafx.scene.control.ContentDisplay
 import javafx.scene.image.{Image, ImageView}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
+object TestIconCell {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''IconCell''.

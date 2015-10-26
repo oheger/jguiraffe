@@ -22,9 +22,10 @@ import javafx.scene.layout.{FlowPane, Pane, StackPane}
 
 import net.sf.jguiraffe.gui.builder.components.ColorHelper
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.JavaFxFont
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 
 /**
@@ -33,6 +34,10 @@ import org.scalatest.junit.JUnitSuite
 object TestBorderPanelFactory {
   /** Constant for a test title. */
   private val Title = "Test title"
+
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
 
   /**
    * Checks whether the given node has been assigned the specified CSS class.

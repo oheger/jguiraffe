@@ -18,14 +18,21 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.control.TableView
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.runner.RunWith
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
+
+object TestTableWidthExtractor {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''TableWidthExtractor''.

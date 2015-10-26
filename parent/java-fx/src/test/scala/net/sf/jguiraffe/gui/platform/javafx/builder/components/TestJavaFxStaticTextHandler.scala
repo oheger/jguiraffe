@@ -15,13 +15,13 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.apache.commons.lang.StringUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 
 import javafx.scene.control.ContentDisplay
@@ -31,6 +31,12 @@ import javafx.scene.image.ImageView
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
 import net.sf.jguiraffe.gui.builder.components.tags.StaticTextDataImpl
+
+object TestJavaFxStaticTextHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxStaticTextHandler''.

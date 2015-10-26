@@ -17,20 +17,27 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import java.util.Arrays
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+
 import scala.Array.canBuildFrom
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
 import net.sf.jguiraffe.gui.builder.components.model.ListModel
+
+object TestJavaFxMultiSelectionListHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxMultiSelectionListHandler''.

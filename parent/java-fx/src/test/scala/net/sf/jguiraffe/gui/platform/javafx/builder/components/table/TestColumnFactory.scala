@@ -19,15 +19,20 @@ import javafx.scene.control.TableColumn
 import javafx.scene.control.TableColumn.CellDataFeatures
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnClass, TableFormController}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
 object TestColumnFactory {
   /** Constant for a column name. */
   private val ColumnName = "MyTestColumn"
+
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
 
   /**
    * Checks basic properties of a newly created column.

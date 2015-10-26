@@ -19,11 +19,18 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.control.{TableColumn, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
+object TestBooleanCell {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''BooleanCell''.

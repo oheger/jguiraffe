@@ -15,14 +15,20 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 
 import javafx.scene.control.CheckBox
+
+object TestJavaFxCheckBoxHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxCheckBoxHandler''.

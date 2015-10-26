@@ -15,14 +15,20 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 
 import javafx.scene.control.ComboBox
 import net.sf.jguiraffe.gui.builder.components.model.EditableComboBoxModel
+
+object TestJavaFxComboBoxHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxComboBoxHandler''. This class also tests functionality

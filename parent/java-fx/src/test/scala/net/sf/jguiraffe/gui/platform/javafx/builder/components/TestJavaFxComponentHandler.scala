@@ -15,12 +15,12 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -28,6 +28,12 @@ import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
 
 import javafx.scene.control.Control
+
+object TestJavaFxComponentHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxComponentHandler''.

@@ -19,12 +19,13 @@ import java.util.Locale
 import javafx.scene.control.Button
 
 import net.sf.jguiraffe.gui.app.ApplicationContext
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.resources.ResourceManager
 import net.sf.jguiraffe.resources.impl.ResourceManagerImpl
 import net.sf.jguiraffe.resources.impl.bundle.BundleResourceLoader
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
@@ -37,6 +38,10 @@ object TestMessageOutputButtonProvider {
 
   /** Constant for a test button title. */
   private val BTN_TITLE = "TestButtonTitle"
+
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
 }
 
 /**

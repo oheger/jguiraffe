@@ -15,12 +15,18 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
-import org.junit.Before
-import org.junit.Test
+import org.junit.{BeforeClass, Before, Test}
 
 import javafx.scene.control.ProgressBar
+
+object TestJavaFxProgressBarHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxProgressBarHandler''.

@@ -24,10 +24,10 @@ ComponentBuilderData}
 import net.sf.jguiraffe.gui.builder.components.tags.table.{TableColumnRecalibrator, TableColumnWidthCalculator, TableFormController}
 
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
-import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
+import net.sf.jguiraffe.gui.platform.javafx.{JavaFxTestHelper, FetchAnswer}
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.{Before, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
@@ -37,6 +37,10 @@ object TestTableHandlerFactory {
 
   /** The content of the data model for the test handler. */
   private val ModelData = Array[AnyRef]("Item1", "Item2", "Other Item", "Another item")
+
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
 
   /**
    * Returns an array with test columns for the table.

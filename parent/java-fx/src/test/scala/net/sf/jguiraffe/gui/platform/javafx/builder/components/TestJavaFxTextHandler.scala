@@ -15,19 +15,20 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.powermock.core.classloader.annotations.PrepareForTest
+import javafx.scene.control.{TextField, TextInputControl}
+
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
+import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
+import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
-import javafx.scene.control.TextField
-import javafx.scene.control.TextInputControl
-import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
+object TestJavaFxTextHandler {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''JavaFxTextHandler''.

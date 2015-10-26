@@ -18,11 +18,18 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 import javafx.scene.control.{TableColumn, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnWidthCalculator
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.Test
+import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
+
+object TestTableViewWidthChangeListener {
+  @BeforeClass def setUpOnce(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''TableViewWidthChangeListener''.

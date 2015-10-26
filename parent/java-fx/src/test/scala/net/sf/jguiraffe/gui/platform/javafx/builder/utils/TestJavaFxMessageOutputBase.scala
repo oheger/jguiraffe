@@ -30,7 +30,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.layout.PercentLayoutPane
 import org.easymock.EasyMock
 import org.junit.Assert._
-import org.junit.{Before, BeforeClass, Test}
+import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
@@ -45,15 +45,18 @@ object TestJavaFxMessageOutputBase {
   private val Title = "A test title"
 
   /** Constant for a test icon. */
-  private val Icon = new Image(classOf[TestJavaFxMessageOutputBase].getResource("/icon.jpg")
-    .toExternalForm)
+  private var testIcon: Image = _
 
   /** Constant for the maximum text width. */
   private val TextWidth = 333.0
 
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
+    testIcon = new Image(classOf[TestJavaFxMessageOutputBase].getResource("/icon.jpg")
+      .toExternalForm)
   }
+
+  def Icon: Image = testIcon
 }
 
 /**
@@ -79,8 +82,8 @@ class TestJavaFxMessageOutputBase extends JUnitSuite with EasyMockSugar {
     EasyMock.replay(beanContext)
 
     JavaFxTestHelper.runInFxThread { () =>
-      output = new JavaFxMessageOutputBase(TextWidth) with StageProviderTestImpl with
-        ButtonProviderTestImpl with IconProviderTestImpl
+        output = new JavaFxMessageOutputBase(TextWidth) with StageProviderTestImpl with
+          ButtonProviderTestImpl with IconProviderTestImpl
     }
     output setBeanContext beanContext
   }
