@@ -62,8 +62,10 @@ with FormControllerCell[S, T] {
   override def updateItem(item: T, empty: Boolean) {
     super.updateItem(item, empty)
     val value = if (empty) false else readBooleanCellValue
-    changeListener.ignoreChange()
-    property set value
+    if (value != property.get()) {
+      changeListener.ignoreChange()
+      property set value
+    }
   }
 
   /**
