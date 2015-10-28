@@ -429,7 +429,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     handler setSelectedPath path1
     handler addSelectedPath path2
     val sel = handler.getSelectedPaths
-    assertEquals("Wrong number of selected paths", 2, sel.size)
+    assertEquals("Wrong number of selected paths", 2, sel.length)
     assertTrue("Wrong selection", List(path1, path2) forall (sel.contains(_)))
   }
 
@@ -502,7 +502,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     val paths = Array(getPath(handler, Keys(0)), getPath(handler, Keys(3)))
     handler setSelectedPaths paths
     val data = handler.getData.asInstanceOf[Array[TreeNodePath]]
-    assertEquals("Wrong number of selected paths", paths.size, data.size)
+    assertEquals("Wrong number of selected paths", paths.length, data.length)
     assertTrue("No all paths found", data forall (paths contains _))
   }
 
@@ -602,9 +602,10 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     handler expand path
     val listener = new TestExpansionListener
     handler addExpansionListener listener
-    val item = handler.itemMap(path.getTargetNode)
+    val testPath = path.parentPath()
+    val item = handler.itemMap(testPath.getTargetNode)
     item setExpanded false
-    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_COLLAPSE, item)
+    listener.verify(handler, testPath, TreeExpansionEvent.Type.NODE_COLLAPSE, item)
   }
 
   /**
@@ -614,12 +615,13 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(1))
     handler expand path
-    val item = handler.itemMap(path.getTargetNode)
+    val testPath = path.parentPath()
+    val item = handler.itemMap(testPath.getTargetNode)
     item setExpanded false
     val listener = new TestExpansionListener
     handler addExpansionListener listener
     item setExpanded true
-    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_EXPAND, item)
+    listener.verify(handler, testPath, TreeExpansionEvent.Type.NODE_EXPAND, item)
   }
 
   /**
@@ -642,11 +644,12 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(3))
     handler expand path
-    val item = handler.itemMap(path.getTargetNode)
+    val testPath = path.parentPath()
+    val item = handler.itemMap(testPath.getTargetNode)
     val listener = new TestPreExpansionListener
     handler addPreExpansionListener listener
     item setExpanded false
-    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_COLLAPSE, item)
+    listener.verify(handler, testPath, TreeExpansionEvent.Type.NODE_COLLAPSE, item)
   }
 
   /**
@@ -656,12 +659,13 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(3))
     handler expand path
-    val item = handler.itemMap(path.getTargetNode)
+    val testPath = path.parentPath()
+    val item = handler.itemMap(testPath.getTargetNode)
     item setExpanded false
     val listener = new TestPreExpansionListener
     handler addPreExpansionListener listener
     item setExpanded true
-    listener.verify(handler, path, TreeExpansionEvent.Type.NODE_EXPAND, item)
+    listener.verify(handler, testPath, TreeExpansionEvent.Type.NODE_EXPAND, item)
   }
 
   /**
@@ -693,7 +697,8 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
       val handler = createInitializedHandler()
       val path = getPath(handler, Keys(Keys.length - 1))
       handler expand path
-      val item = handler.itemMap(path.getTargetNode)
+      val testPath = path.parentPath()
+      val item = handler.itemMap(testPath.getTargetNode)
       // Listeners are registered in reverse order!
       handler addPreExpansionListener pl3
       handler addPreExpansionListener pl2
