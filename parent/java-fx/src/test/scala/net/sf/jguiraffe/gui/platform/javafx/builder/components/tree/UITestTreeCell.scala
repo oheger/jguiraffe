@@ -173,7 +173,9 @@ class UITestTreeCell extends GuiTest {
   /**
    * Tests whether a focus lost event is handled during an edit operation.
    */
-  @Test def testEditWithFocusLost() {
+  // TODO This test currently fails due to Java bug
+  // https://bugs.openjdk.java.net/browse/JDK-8089514
+  @Test @Ignore def testEditWithFocusLost() {
     expandTree()
     startEdit(Setting)
     val newContent = "x"
