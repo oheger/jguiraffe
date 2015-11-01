@@ -28,6 +28,10 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/12">
+        JavaFX labels can now be assigned an icon. The ClassCastException that
+        occurred in this case has been fixed.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/11">
         The JavaFX application is now correctly set up so that the primary stage
         can be created successfully in JavaFX 8.
