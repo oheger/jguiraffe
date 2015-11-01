@@ -18,7 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 import javafx.beans.property.ObjectProperty
 import javafx.scene.Node
 import javafx.scene.control._
-import javafx.scene.image.{Image, ImageView}
+import javafx.scene.image.Image
 
 import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
@@ -567,7 +567,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
       data.getMnemonic))
     label setMnemonicParsing true
     if (data.getIcon != null) {
-      label.setGraphic(data.getIcon.asInstanceOf[ImageView])
+      label.setGraphic(data.getIcon.asInstanceOf[ImageWrapper].newImageView())
     }
     label.setContentDisplay(convertAlignment(data.getAlignment))
 

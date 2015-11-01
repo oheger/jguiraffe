@@ -189,11 +189,15 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreateLabelIcon() {
     val tag = new LabelTag
     val icon = new ImageView(new Image("icon.jpg"))
-    tag.setIcon(icon)
-    val label = manager.createLabel(tag, create = false).asInstanceOf[Label]
-    assertTrue("Got a text", StringUtils.isEmpty(label.getText))
-    assertEquals("Wrong icon", icon, label.getGraphic)
-    assertEquals("Wrong alignment", ContentDisplay.LEFT, label.getContentDisplay)
+    val wrapper = mock[ImageWrapper]
+    EasyMock.expect(wrapper.newImageView()).andReturn(icon)
+    whenExecuting(wrapper) {
+      tag setIcon wrapper
+      val label = manager.createLabel(tag, create = false).asInstanceOf[Label]
+      assertTrue("Got a text", StringUtils.isEmpty(label.getText))
+      assertEquals("Wrong icon", icon, label.getGraphic)
+      assertEquals("Wrong alignment", ContentDisplay.LEFT, label.getContentDisplay)
+    }
   }
 
   /**
