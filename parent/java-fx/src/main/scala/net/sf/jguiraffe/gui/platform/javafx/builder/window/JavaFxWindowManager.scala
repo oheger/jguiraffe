@@ -44,7 +44,7 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
  */
 class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider) extends WindowManager {
   /** The factory for new stages. */
-  private lazy val stageFactory = StageFactory(styleSheetProvider)
+  private val stageFactory = StageFactory(styleSheetProvider)
 
   /**
    * @inheritdoc This implementation creates a normal ''Stage'' object with no
