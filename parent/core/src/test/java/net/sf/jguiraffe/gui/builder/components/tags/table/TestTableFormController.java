@@ -1270,4 +1270,17 @@ public class TestTableFormController
                     widthController.getFixedWidth(i));
         }
     }
+
+    /**
+     * Tests whether the multi-selection state can be queried.
+     */
+    @Test
+    public void testIsMultiSelection()
+    {
+        EasyMock.expect(tableTag.isMultiSelection()).andReturn(Boolean.TRUE);
+        TableFormController controller = prepareControllerWithModel();
+
+        assertTrue("Wrong result", controller.isMultiSelection());
+        EasyMock.verify(tableTag);
+    }
 }

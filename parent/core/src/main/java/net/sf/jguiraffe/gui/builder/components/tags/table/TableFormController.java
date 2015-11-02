@@ -536,6 +536,18 @@ public class TableFormController
     }
 
     /**
+     * Returns a flag whether multi-selection mode is enabled for the associated
+     * table.
+     *
+     * @return a flag whether multi-selection mode is enabled
+     * @since 1.3.1
+     */
+    public boolean isMultiSelection()
+    {
+        return getTableTag().isMultiSelection();
+    }
+
+    /**
      * Returns the {@code TableTag} wrapped by this controller.
      *
      * @return the underlying {@code TableTag}
