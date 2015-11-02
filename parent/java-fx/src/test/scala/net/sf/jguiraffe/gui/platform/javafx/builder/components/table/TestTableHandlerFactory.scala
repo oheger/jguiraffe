@@ -17,7 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import javafx.beans.property.StringProperty
 import javafx.beans.value.{ChangeListener, ObservableValue}
-import javafx.scene.control.{TableColumn, TableView}
+import javafx.scene.control.{SelectionMode, TableColumn, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.{Composite, ComponentBuilderCallBack,
 ComponentBuilderData}
@@ -109,9 +109,11 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Helper method for testing the creation of a table handler.
    * @param editable flag whether the table should be editable
+   * @param multiSelect the multi-selection flag
+   * @return the table view created by the factory
    */
-  private def checkCreateTableHandler(editable: Boolean): Unit = {
-    val controller = createFormController(editable)
+  private def checkCreateTableHandler(editable: Boolean, multiSelect: Boolean): TableView[AnyRef] = {
+    val controller = createFormController(editable, multiSelect)
     val builderData = mock[ComponentBuilderData]
     val sizeHandler = mock[UnitSizeHandler]
     val composite = mock[Composite]
@@ -125,18 +127,19 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
 
     val componentFactory = new MockTableComponentFactory
     val factory = new TableHandlerFactory(componentFactory)
+    var table: TableView[AnyRef] = null
 
     whenExecuting(mockColumnFactory, mockRowFactory, mockTableWidthListener, mockResizePolicy,
       mockWidthCalculator, mockRecalibrator, mockWidthObservable, controller, builderData) {
       val handler = factory.createTableHandler(controller, sizeHandler, composite, builderData)
         .asInstanceOf[JavaFxTableHandler]
-      val table = handler.getComponent.asInstanceOf[TableView[AnyRef]]
+      table = handler.getComponent.asInstanceOf[TableView[AnyRef]]
 
       assertEquals("Wrong editable flag", editable, table.isEditable)
       checkColumns(columns, table)
       assertEquals("Wrong data model", createModel(), handler.model)
       assertEquals("Wrong number of rows", ModelData.length, table.getItems.size)
-      for (i <- 0 until ModelData.length) {
+      for (i <- ModelData.indices) {
         assertEquals(s"Wrong item at $i", ModelData(i), table.getItems.get(i))
       }
       assertSame("Wrong passed table view", table, componentFactory.passedTableView)
@@ -152,34 +155,48 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
     whenExecuting(controller, composite) {
       callBackAnswer.get.callBack(builderData, null)
     }
+    table
   }
 
   /**
    * Tests whether a table handler can be created and is fully initialized.
    */
   @Test def testCreateTableHandler(): Unit = {
-    checkCreateTableHandler(editable = false)
+    checkCreateTableHandler(editable = false, multiSelect = false)
   }
 
   /**
    * Tests whether the editable flag for the table is correctly processed.
    */
   @Test def testCreateTableHandlerForEditableTable(): Unit = {
-    checkCreateTableHandler(editable = true)
+    val table = checkCreateTableHandler(editable = true, multiSelect = false)
+    assertEquals("Wrong multi-selection flag", SelectionMode.SINGLE, table.getSelectionModel
+      .getSelectionMode)
+  }
+
+  /**
+   * Tests whether the multi-selection flag for the table is correctly evaluated.
+   */
+  @Test def testCreateTableHandlerForMultiSelectionTable(): Unit = {
+    val table = checkCreateTableHandler(editable = false, multiSelect = true)
+    assertEquals("Wrong multi-selection flag", SelectionMode.MULTIPLE, table.getSelectionModel
+      .getSelectionMode)
   }
 
   /**
    * Creates a mock for the table form controller.
    * @param editable a flag whether the table is supposed to be editable
+   * @param multiSelect the multi-selection flag
    * @return the controller mock
    */
-  private def createFormController(editable: Boolean): TableFormController = {
+  private def createFormController(editable: Boolean, multiSelect: Boolean): TableFormController = {
     val controller = mock[TableFormController]
     EasyMock.expect(controller.getColumnWidthCalculator).andReturn(mockWidthCalculator).anyTimes()
     EasyMock.expect(controller.getColumnRecalibrator).andReturn(mockRecalibrator).anyTimes()
     EasyMock.expect(controller.getColumnCount).andReturn(ColumnCount).anyTimes()
     EasyMock.expect(controller.getDataModel).andReturn(createModel()).anyTimes()
     EasyMock.expect(controller.isTableEditable).andReturn(editable).anyTimes()
+    EasyMock.expect(controller.isMultiSelection).andReturn(multiSelect).anyTimes()
     controller
   }
 

@@ -15,7 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
-import javafx.scene.control.TableView
+import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.{Composite, ComponentBuilderCallBack,
 ComponentBuilderData}
@@ -64,6 +64,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
     tableView setColumnResizePolicy resizePolicy
     tableView setRowFactory rowFactory
     tableView setEditable controller.isTableEditable
+    tableView.getSelectionModel setSelectionMode fetchSelectionMode(controller)
     installTableWidthListener(controller, tableView)
     initializeFixedColumnWidths(controller, sizeHandler, composite, builderData)
 
@@ -118,4 +119,14 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
       }
     }, null)
   }
+
+  /**
+   * Determines the table selection mode based on the properties of the given
+   * controller.
+   * @param controller the controller
+   * @return the selection mode
+   */
+  private def fetchSelectionMode(controller: TableFormController): SelectionMode =
+    if (controller.isMultiSelection) SelectionMode.MULTIPLE
+    else SelectionMode.SINGLE
 }
