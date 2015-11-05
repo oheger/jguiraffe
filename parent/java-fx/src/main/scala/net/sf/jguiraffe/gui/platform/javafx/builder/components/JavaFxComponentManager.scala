@@ -34,7 +34,8 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget._
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
-import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper,
+JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
 import org.apache.commons.jelly.{Tag, TagSupport}
 import org.apache.commons.lang.StringUtils
@@ -626,8 +627,8 @@ object JavaFxComponentManager {
       node.setId(tag.getName)
     }
 
-    val properties = NodeProperties(background = tag.getBackgroundColor, foreground = tag
-      .getForegroundColor, font = tag.getFont)
+    val properties = NodeProperties(background = Option(tag.getBackgroundColor),
+      foreground = Option(tag.getForegroundColor), font = toFont(tag.getFont))
     initNodeProperties(node, properties)
   }
 

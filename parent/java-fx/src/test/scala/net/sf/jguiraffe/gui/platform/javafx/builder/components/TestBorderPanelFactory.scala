@@ -202,7 +202,7 @@ class TestBorderPanelFactory extends JUnitSuite {
 
     val pane = factory.createBorderPanel(tag, new FlowPane)
     val label = pane.getChildren.get(0)
-    assertTrue("No style for color", label.getStyle contains "-fx-text-fill")
+    assertTrue("No style for color: " + label.getStyle, label.getStyle contains "-fx-text-fill")
     assertTrue("No style for font: " + label.getStyle, label.getStyle contains "-fx-font-family")
     assertTrue("No style for background color: " + label.getStyle, label.getStyle contains
       "-fx-background-color: #404040;")

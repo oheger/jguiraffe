@@ -73,8 +73,8 @@ private object BorderPanelFactory {
    */
   private def createTitleLabel(tag: PanelTag): Node = {
     val title = new Label(s" ${tag.getTextData.getCaption} ")
-    val properties = NodeProperties(foreground = tag.getColor, font = tag.getTitleFont,
-      background = titleLabelBackgroundColor(tag))
+    val properties = NodeProperties(foreground = Option(tag.getColor),
+      font = toFont(tag.getTitleFont), background = Option(titleLabelBackgroundColor(tag)))
     initNodeProperties(title, properties)
   }
 

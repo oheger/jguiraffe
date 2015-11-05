@@ -18,11 +18,13 @@ package net.sf.jguiraffe.gui.platform.javafx.builder
 import javafx.geometry.Side
 import javafx.scene.Node
 import javafx.scene.control.ContentDisplay
-import net.sf.jguiraffe.gui.builder.components.{Color, Orientation}
+
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
-import net.sf.jguiraffe.gui.builder.components.tags.TabbedPaneTag
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont,
+import net.sf.jguiraffe.gui.builder.components.tags.{ComponentBaseTag, TabbedPaneTag}
+import net.sf.jguiraffe.gui.builder.components.{Color, Orientation}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{Styles, JavaFxFont,
 JavaFxStylesHandler}
+import org.apache.commons.lang.StringUtils
 
 package object components {
   /**
@@ -82,6 +84,19 @@ package object components {
     else javafx.geometry.Orientation.HORIZONTAL
 
   /**
+    * Tries to convert the specified object into a font.
+    * @param ft the object to be converted
+    * @return an option with the resulting ''JavaFxFont''
+    */
+  def toFont(ft: AnyRef): Option[JavaFxFont] =
+    Option(ft) flatMap { font =>
+      font match {
+        case f: JavaFxFont => Some(f)
+        case _ => None
+      }
+    }
+
+  /**
    * Initializes the specified node with the properties defined by the passed
    * in properties object.
    * @param node the node to be initialized
@@ -89,19 +104,12 @@ package object components {
    * @return the modified node object
    */
   def initNodeProperties(node: Node, properties: NodeProperties): Node = {
-    val stylesHandler = new JavaFxStylesHandler
-    if (properties.background != null) {
-      stylesHandler setBackgroundColor properties.background
-    }
-    if (properties.foreground != null) {
-      stylesHandler setForegroundColor properties.foreground
-    }
-
-    properties.font match {
-      case f: JavaFxFont =>
-        stylesHandler setFont f
-      case _ => // ignore
-    }
+    val styles = Styles(node.getStyle)
+    val stylesHandler = new JavaFxStylesHandler(styles)
+    properties.background foreach stylesHandler.setBackgroundColor
+    properties.foreground foreach stylesHandler.setForegroundColor
+    properties.font foreach stylesHandler.setFont
+    properties.id foreach node.setId
 
     val styleDef = stylesHandler.styles.toExternalForm()
     if (!styleDef.isEmpty) {
@@ -109,13 +117,40 @@ package object components {
     }
     node
   }
+
+  /**
+    * Creates a ''NodeProperties'' object from the data of the given tag.
+    * @param tag the tag
+    * @return the corresponding node properties
+    */
+  private [builder] def extractNodeProperties(tag: ComponentBaseTag): NodeProperties = {
+    NodeProperties(background = Option(tag.getBackgroundColor),
+      foreground = Option(tag.getForegroundColor), font = toFont(tag.getFont),
+      id = extractNodeID(tag))
+  }
+
+  /**
+    * Obtains the node ID from the given tag if it is defined.
+    * @param tag the tag
+    * @return an option for the node ID
+    */
+  private def extractNodeID(tag: ComponentBaseTag): Option[String] =
+    if (StringUtils.isEmpty(tag.getName)) None
+    else Some(tag.getName)
 }
 
+
 /**
- * A data class representing the properties defined by UI component tags that
- * can be applied to all kinds of nodes.
- * @param background the background color
- * @param foreground the foreground color
- * @param font the font
- */
-private case class NodeProperties(background: Color, foreground: Color, font: AnyRef)
+  * A data class representing the properties defined by UI component tags that
+  * can be applied to all kinds of nodes.
+  *
+  * All properties are optional.
+  *
+  * @param background the background color
+  * @param foreground the foreground color
+  * @param font the font
+  * @param id the node ID
+  */
+private case class NodeProperties(background: Option[Color], foreground: Option[Color], font:
+Option[JavaFxFont], id: Option[String] = None)
+
