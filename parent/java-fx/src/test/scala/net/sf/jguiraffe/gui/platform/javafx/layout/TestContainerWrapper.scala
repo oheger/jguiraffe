@@ -15,29 +15,50 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.layout
 
+import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.layout.{BorderPane, FlowPane, Pane, StackPane}
+import javafx.scene.text.{Font, Text}
 
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException
+import net.sf.jguiraffe.gui.layout.{PercentLayout, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.{BeforeClass, Before, Test}
+import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
+import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
-import javafx.scene.Node
-import javafx.scene.layout.{StackPane, BorderPane, FlowPane, Pane}
-import javafx.scene.text.Font
-import javafx.scene.text.Text
-import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.gui.layout.PercentLayout
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
 object TestContainerWrapper {
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
+  }
+
+  /**
+    * Creates a font initializer for the specified font.
+    * @param font the font
+    * @return the initializer for this font
+    */
+  private def fontInitializerFor(font: Font): ContainerWrapper.TextFontInitializer =
+    txt => {
+      txt setFont font
+      txt
+    }
+
+  /**
+    * Helper class for creating a parent reference.
+    */
+  private class ParentCreator {
+    /** The parent container.*/
+    val parent = new ContainerWrapper
+
+    /** A counter for calls to the creation method.*/
+    var createCount = 0
+
+    def createParent(): Option[ContainerWrapper] = {
+      createCount += 1
+      Some(parent)
+    }
   }
 }
 
@@ -45,6 +66,8 @@ object TestContainerWrapper {
  * Test class for ''ContainerWrapper''.
  */
 class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
+  import TestContainerWrapper._
+
   /** The wrapper to be tested. */
   private var wrapper: ContainerWrapper = _
 
@@ -249,5 +272,84 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong number of children", 1, resultPane.getChildren.size)
     val containerPane = resultPane.getChildren.get(0).asInstanceOf[Pane]
     checkChildren(containerPane, node)
+  }
+
+  /**
+    * Tests the default value of the parent property.
+    */
+  @Test def testParentNotSpecified(): Unit = {
+    assertFalse("Got a parent", wrapper.parent.isDefined)
+  }
+
+  /**
+    * Tests whether the parent of the container can be queried.
+    */
+  @Test def testParentSpecified(): Unit = {
+    val parent = new ContainerWrapper
+    wrapper = new ContainerWrapper(parentWrapper = Some(parent))
+
+    assertEquals("Wrong parent container", parent, wrapper.parent.get)
+  }
+
+  /**
+    * Tests that access to the parent is lazy.
+    */
+  @Test def testParentNonStrict(): Unit = {
+    val creator = new ParentCreator
+    wrapper = new ContainerWrapper(parentWrapper = creator.createParent())
+
+    assertEquals("Parent already created", 0, creator.createCount)
+    assertEquals("Wrong parent (1)", creator.parent, wrapper.parent.get)
+    assertEquals("Wrong parent (2)", creator.parent, wrapper.parent.get)
+    assertEquals("Parent created multiple times", 1, creator.createCount)
+  }
+
+  /**
+    * Checks whether the correct font initializer is returned.
+    * @param expFont the expected font to be initialized
+    */
+  private def checkFontInitializer(expFont: Font): Unit = {
+    val text = wrapper.getFontInitializer(new Text)
+    assertEquals("Wrong font", expFont, text.getFont)
+  }
+
+  /**
+    * Tests whether a font initializer can be set directly.
+    */
+  @Test def testFontInitializerExplicitlySet(): Unit = {
+    val font = Font.font(42)
+    wrapper.fontInitializer = Some(fontInitializerFor(font))
+
+    checkFontInitializer(font)
+  }
+
+  /**
+    * Tests whether a font initializer is created from a defined font.
+    */
+  @Test def testFontInitializerFromFont(): Unit = {
+    val font = Font.font(22)
+    wrapper.font = Some(font)
+
+    checkFontInitializer(font)
+  }
+
+  /**
+    * Tests whether a font initializer can be queried from the parent.
+    */
+  @Test def testFontInitializerFromParent(): Unit = {
+    val font = Font.font(33)
+    val parent = new ContainerWrapper
+    parent.fontInitializer = Some(fontInitializerFor(font))
+    wrapper = new ContainerWrapper(parentWrapper = Some(parent))
+
+    checkFontInitializer(font)
+  }
+
+  /**
+    * Tests whether a default font initializer is returned if no font can be
+    * obtained.
+    */
+  @Test def testDefaultFontInitializer(): Unit = {
+    checkFontInitializer(Font.getDefault)
   }
 }

@@ -15,14 +15,14 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.layout
 
-import scala.collection.mutable.ArrayBuffer
 import javafx.scene.Node
-import javafx.scene.layout.FlowPane
-import javafx.scene.layout.Pane
-import javafx.scene.text.Font
+import javafx.scene.layout.{FlowPane, Pane}
+import javafx.scene.text.{Font, Text}
+
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException
-import net.sf.jguiraffe.gui.layout.PercentLayoutBase
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import net.sf.jguiraffe.gui.layout.{PercentLayoutBase, UnitSizeHandler}
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * A helper class which manages panels as containers for other components.
@@ -64,15 +64,46 @@ import net.sf.jguiraffe.gui.layout.UnitSizeHandler
  *
  * @param sizeHandler an optional ''UnitSizeHandler''
  * @param paneTransformer an optional function for transforming the resulting pane
+ * @param parentWrapper an optional parent reference; containers may be
+ *                      organized in a hierarchy; if defined, this points to
+ *                      the parent container
  */
 class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
-                       val paneTransformer: Option[ContainerWrapper.PaneTransformer] = None) {
+                       val paneTransformer: Option[ContainerWrapper.PaneTransformer] = None,
+                       parentWrapper: => Option[ContainerWrapper] = None) {
+  import ContainerWrapper._
+
   /**
-   * The font to be used for the components of this container. If here a
-   * value is set during the building process, all child components created
-   * during the build are also assigned this font.
-   */
+    * Creates a new instance of ''ContainerWrapper'' with a size handler and a
+    * pane transformer. This constructor mainly exists for reasons of backwards
+    * compatibility.
+    * @param sizeHandler an optional ''UnitSizeHandler''
+    * @param paneTransformer an optional function for transforming the resulting pane
+    * @return the new instance
+    */
+  def this(sizeHandler: Option[UnitSizeHandler], paneTransformer: Option[ContainerWrapper
+  .PaneTransformer]) =
+    this(sizeHandler, paneTransformer, None)
+
+  /**
+    * An optional reference to the parent container.
+    */
+  lazy val parent = parentWrapper
+
+  /**
+    * Stores an optional font of this container. If defined, this font is used
+    * for size calculations. Note: This field mainly exists for backwards
+    * compatibility reasons.
+    */
   var font: Option[Font] = None
+
+  /**
+    * An optional font initializer. This field is typically set during the
+    * build process with a function that can apply the current font for this
+    * container.
+    * @since 1.3.1
+    */
+  var fontInitializer: Option[TextFontInitializer] = None
 
   /** A buffer for storing the managed components. */
   private val components = ArrayBuffer.empty[ComponentData]
@@ -133,6 +164,37 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
   def getContainerFont: Font = font.getOrElse(Font.getDefault)
 
   /**
+    * Returns a ''TextFontInitializer'' for this container. This is used to
+    * obtain information (typically size information) about the font used by
+    * this container. If a ''TextFontInitializer'' has been assigned
+    * explicitly, it is returned. Otherwise, if a font has been set, an
+    * initializer for this font is returned. If this is not the case and a
+    * parent wrapper exists, the initializer is queried from this parent. As a
+    * last resource, an initializer for the default font is returned.
+    * @return a ''TextFontInitializer'' for this container
+    * @since 1.3.1
+    */
+  def getFontInitializer: TextFontInitializer =
+    fontInitializer.getOrElse(initializerForFont.getOrElse(parentFontInitializer.getOrElse
+    (DefaultFontInitializer)))
+
+  /**
+    * Tries to obtain a font initializer for an explicitly set font.
+    * @return the font initializer for the container font
+    */
+  private def initializerForFont: Option[TextFontInitializer] = {
+    font.map(createFontInitializer)
+  }
+
+  /**
+    * Tries to obtain a font initializer from the parent container if defined.
+    * @return an option for the parent font initializer
+    */
+  private def parentFontInitializer: Option[TextFontInitializer] = {
+    parent.map(_.getFontInitializer)
+  }
+
+  /**
    * Creates the correct ''Pane'' implementation for the current layout. If no
    * layout is set, a default Java FX ''FlowPane'' is created.
    * @param compData an array with data about the container's components
@@ -186,6 +248,17 @@ object ContainerWrapper {
   type PaneTransformer = Pane => Pane
 
   /**
+    * Type declaration for a function that can initialize a text node with a
+    * font. This function is used to determine the font size of this container.
+    * The way how the container's font is initialized is irrelevant for this
+    * object; by using this type, this logic can be extracted.
+    */
+  type TextFontInitializer = Text => Text
+
+  /** A font initializer for the default font. */
+  private lazy val DefaultFontInitializer = createFontInitializer(Font.getDefault)
+
+  /**
    * Convenience method for converting a plain object to an instance of
    * ''ContainerWrapper''. Because of the generic nature of the JGUIraffe
    * library containers are often passed around as objects. When dealing with
@@ -224,4 +297,15 @@ object ContainerWrapper {
         throw new FormBuilderException("Cannot extract node from: " + other)
     }
   }
+
+  /**
+    * Creates an initializer for the specified font.
+    * @param font the font
+    * @return the initializer for this font
+    */
+  private def createFontInitializer(font: Font): TextFontInitializer =
+    txt => {
+      txt setFont font
+      txt
+    }
 }
