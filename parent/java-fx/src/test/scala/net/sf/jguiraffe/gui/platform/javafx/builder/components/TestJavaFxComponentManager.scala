@@ -29,6 +29,7 @@ import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy
 import net.sf.jguiraffe.gui.forms.{ComponentHandler, Form}
 import net.sf.jguiraffe.gui.layout.{BorderLayout, ButtonLayout, PercentLayoutBase, UnitSizeHandler}
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import net.sf.jguiraffe.gui.platform.javafx.builder.NodeProperties
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{MenuItemWidgetHandler,
@@ -47,8 +48,73 @@ import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
 
 object TestJavaFxComponentManager {
+  /** A test background color. */
+  private val BackgroundColor = Color.newRGBInstance(0x80, 0xff, 0x80)
+
+  /** A test foreground color. */
+  private val ForegroundColor = Color.newRGBInstance(0x40, 0xff, 0x80)
+
+  /** A test font. */
+  private val Font = JavaFxFont(size = Some("20"))
+
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
+  }
+
+  /**
+    * Tests whether a node has a specific style.
+    * @param node the node to be checked
+    * @param expStyle the expected style
+    * @return the node
+    */
+  private def checkStyle(node: Node, expStyle: String): Node = {
+    val style = node.getStyle
+    assertTrue(s"Style $expStyle not found in $style", style contains expStyle)
+    node
+  }
+
+  /**
+    * Tests whether the given node has the test background color.
+    * @param node the node to be tested
+    * @return the node
+    */
+  private def checkBackgroundColor(node: Node): Node = {
+    checkStyle(node, "-fx-background-color: #80ff80")
+  }
+
+  /**
+    * Tests whether the given node has the test foreground color.
+    * @param node the node to be tested
+    * @return the node
+    */
+  private def checkForegroundColor(node: Node): Node = {
+    checkStyle(node, "-fx-text-fill: #40ff80")
+  }
+
+  /**
+    * Tests whether the given node has the test font.
+    * @param node the node to be tested
+    * @return the node
+    */
+  private def checkFont(node: Node): Node = {
+    checkStyle(node, "-fx-font-size: 20")
+  }
+
+  /**
+    * Creates a panel tag that returns the specified colors.
+    * @param background the background color
+    * @param foreground the foreground color
+    * @return  the initialized tag
+    */
+  private def createPanelTagWithColors(background: Color = BackgroundColor, foreground: Color =
+  ForegroundColor): PanelTag = {
+    val tag = new PanelTag {
+      override def getForegroundColor: Color = foreground
+
+      override def getBackgroundColor: Color = background
+    }
+    tag setFont Font
+    tag
   }
 }
 
@@ -56,6 +122,8 @@ object TestJavaFxComponentManager {
  * Test class for ''JavaFxComponentManager''.
  */
 class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
+  import TestJavaFxComponentManager._
+
   /** Constant for a component name. */
   private val ComponentName = "TestComponent"
 
@@ -313,13 +381,11 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testInitControlBackgroundColor() {
     val tag = new LabelTag {
-      override def getBackgroundColor: Color = Color.newRGBInstance(0x80, 0xff, 0x80)
+      override def getBackgroundColor: Color = BackgroundColor
     }
     tag.setText("Test Label")
     val ctrl = manager.createLabel(tag, create = false).asInstanceOf[Label]
-    val style = ctrl.getStyle
-    assertTrue("Background color not set: " + style,
-      style.contains("-fx-background-color: #80ff80"))
+    checkBackgroundColor(ctrl)
   }
 
   /**
@@ -328,13 +394,11 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testInitControlForegroundColor() {
     val tag = new LabelTag {
-      override def getForegroundColor: Color = Color.newRGBInstance(0x40, 0xff, 0x80)
+      override def getForegroundColor: Color = ForegroundColor
     }
     tag.setText("Test Label")
     val ctrl = manager.createLabel(tag, create = false).asInstanceOf[Label]
-    val style = ctrl.getStyle
-    assertTrue("Foreground color not set: " + style,
-      style.contains("-fx-text-fill: #40ff80"))
+    checkForegroundColor(ctrl)
   }
 
   /**
@@ -342,11 +406,9 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testInitControlFont() {
     val tag = new LabelTag
-    val font = JavaFxFont(size = Some("20"))
-    tag setFont font
+    tag setFont Font
     val ctrl = manager.createLabel(tag, create = false).asInstanceOf[Label]
-    val style = ctrl.getStyle
-    assertTrue("Font style not set: " + style, style.contains("-fx-font-size"))
+    checkFont(ctrl)
   }
 
   /**
@@ -799,6 +861,17 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Checks whether a panel's basic properties are correctly initialized.
+    * @param wrapper the container wrapper
+    * @return the same container wrapper
+    */
+  private def checkPanelProperties(wrapper: ContainerWrapper): ContainerWrapper = {
+    val pane = wrapper.paneTransformer.get(new FlowPane)
+    checkBackgroundColor(checkForegroundColor(pane))
+    wrapper
+  }
+
+  /**
    * Tests whether a panel can be created.
    */
   @Test def testCreatePanelCreateFalse() {
@@ -809,9 +882,28 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     manager = createAndInstallBorderPanelFactory(tag)
 
-    val wrapper = manager.createPanel(tag, create = false).asInstanceOf[ContainerWrapper]
+    val wrapper = manager.createPanel(tag, create = false)
+      .asInstanceOf[ContainerWrapper]
     assertSame("Size handler not initialized", sizeHandler,
       wrapper.sizeHandler.get)
+    assertFalse("Got a font initializer", wrapper.fontInitializer.isDefined)
+    val containerMapping = ContainerMapping fromContext context
+    assertEquals("Mapping not updated", wrapper, containerMapping.getContainerFromComposite(tag).get)
+  }
+
+  /**
+    * Tests whether basic properties assigned to the panel tag are taken into
+    * account.
+    */
+  @Test def testCreatePanelWithProperties(): Unit = {
+    val tag = createPanelTagWithColors()
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, mock[UnitSizeHandler])
+    manager = createAndInstallBorderPanelFactory(tag)
+
+    checkPanelProperties(manager.createPanel(tag, create = false)
+      .asInstanceOf[ContainerWrapper])
   }
 
   /**
@@ -819,16 +911,36 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * panel.
    */
   @Test def testCreatePanelWithBorderFactory(): Unit = {
-    val transformerFunc = mock[ContainerWrapper.PaneTransformer]
+    val transformerFunc: ContainerWrapper.PaneTransformer = { pane =>
+      val properties = NodeProperties(background = Some(BackgroundColor), foreground = None, font
+        = None)
+      initNodeProperties(pane, properties)
+      pane
+    }
     val sizeHandler = mock[UnitSizeHandler]
-    val tag = new PanelTag
+    val tag = createPanelTagWithColors(background = Color.newRGBInstance(0, 0, 0))
     val context = new JellyContext
     tag setContext context
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     manager = createAndInstallBorderPanelFactory(tag, Some(transformerFunc))
 
+    val wrapper = checkPanelProperties(manager.createPanel(tag, create = false)
+      .asInstanceOf[ContainerWrapper])
+  }
+
+  /**
+    * Tests that the panel's font is taken into account.
+    */
+  @Test def testCreatePanelFontInitializer(): Unit = {
+    val tag = createPanelTagWithColors()
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, mock[UnitSizeHandler])
+    manager = createAndInstallBorderPanelFactory(tag)
+
     val wrapper = manager.createPanel(tag, create = false).asInstanceOf[ContainerWrapper]
-    assertSame("Wrong transformer function", transformerFunc, wrapper.paneTransformer.get)
+    val text = wrapper.fontInitializer.get(new Text)
+    checkFont(text)
   }
 
   /**

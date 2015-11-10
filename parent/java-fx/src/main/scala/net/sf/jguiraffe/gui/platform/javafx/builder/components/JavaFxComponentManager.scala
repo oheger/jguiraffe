@@ -19,6 +19,7 @@ import javafx.beans.property.ObjectProperty
 import javafx.scene.Node
 import javafx.scene.control._
 import javafx.scene.image.Image
+import javafx.scene.layout.Pane
 
 import net.sf.jguiraffe.gui.builder.components._
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
@@ -34,8 +35,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget._
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
-import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper,
-JavaFxUnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
 import org.apache.commons.jelly.{Tag, TagSupport}
 import org.apache.commons.lang.StringUtils
@@ -181,8 +181,17 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
   def createPanel(tag: PanelTag, create: Boolean): Object = {
     if (create) null
     else {
-      new ContainerWrapper(sizeHandler = Some(JavaFxComponentManager.fetchSizeHandler(tag)),
-        paneTransformer = borderPanelFactory getPaneTransformer tag)
+      val properties = extractNodeProperties(tag)
+      val borderTransformer = borderPanelFactory.getPaneTransformer(tag).getOrElse(identity[Pane] _)
+      val transformer: ContainerWrapper.PaneTransformer = pane => {
+        initNodeProperties(pane, properties)
+        pane
+      }
+      val wrapper = new ContainerWrapper(sizeHandler = Some(JavaFxComponentManager.fetchSizeHandler(tag)),
+        paneTransformer = Some(transformer andThen borderTransformer))
+      wrapper.fontInitializer = properties.font.map(JavaFxComponentManager.createFontInitializer)
+      ContainerMapping.fromContext(tag.getContext).add(tag, wrapper)
+      wrapper
     }
   }
 
@@ -623,13 +632,7 @@ object JavaFxComponentManager {
    * @param node the node to be initialized
    */
   private def initNode(tag: ComponentBaseTag, node: Node) {
-    if (StringUtils.isNotEmpty(tag.getName)) {
-      node.setId(tag.getName)
-    }
-
-    val properties = NodeProperties(background = Option(tag.getBackgroundColor),
-      foreground = Option(tag.getForegroundColor), font = toFont(tag.getFont))
-    initNodeProperties(node, properties)
+    initNodeProperties(node, extractNodeProperties(tag))
   }
 
   /**
@@ -744,4 +747,16 @@ object JavaFxComponentManager {
    */
   private def currentContainerTag(tag: FormBaseTag): Composite =
     tag.findContainer
+
+  /**
+    * Creates a ''TextFontInitializer'' for the specified font.
+    * @param font the font
+    * @return the initializer for this font
+    */
+  private def createFontInitializer(font: JavaFxFont): ContainerWrapper.TextFontInitializer =
+    text => {
+      initNodeProperties(text, NodeProperties(font = Some(font), background = None, foreground =
+        None))
+      text
+    }
 }
