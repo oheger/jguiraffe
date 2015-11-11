@@ -55,8 +55,8 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
    * @return a tuple with the font's width and height
    */
   private def queryFontSize(container: ContainerWrapper) = {
-    val width = handler.getFontSize(container, false)
-    val height = handler.getFontSize(container, true)
+    val width = handler.getFontSize(container, y = false)
+    val height = handler.getFontSize(container, y = true)
     (width, height)
   }
 
@@ -78,8 +78,8 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
       thread
     }
 
-    container1.font = Some(Font.getDefault())
-    container2.font = Some(new Font(32))
+    container1.fontInitializer = Some(TestJavaFxUnitSizeHandler.createFontInitializer(Font.getDefault))
+    container2.fontInitializer = Some(TestJavaFxUnitSizeHandler.createFontInitializer(new Font(32)))
     val threads =
       for (i <- 0 until ThreadCount) yield createAndStartThread(i)
 
@@ -107,7 +107,7 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
    */
   private class QueryFontSizeThread(val container: ContainerWrapper,
     latch: CountDownLatch) extends Thread {
-    @volatile var fontSize: Tuple2[Double, Double] = _
+    @volatile var fontSize: (Double, Double) = _
 
     override def run() {
       latch.await()
@@ -118,6 +118,17 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
 
 object TestJavaFxUnitSizeHandler {
   @BeforeClass def setUpBeforeClass() {
-    JavaFxTestHelper.initPlatform
+    JavaFxTestHelper.initPlatform()
   }
+
+  /**
+    * Creates an initializer for the specified font.
+    * @param font the font
+    * @return the font initializer
+    */
+  private def createFontInitializer(font: Font): ContainerWrapper.TextFontInitializer =
+    text => {
+      text setFont font
+      text
+    }
 }

@@ -16,9 +16,9 @@
 package net.sf.jguiraffe.gui.platform.javafx.layout
 
 import java.util.concurrent.atomic.AtomicReference
-import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.stage.Screen
+
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
 import org.apache.commons.jelly.JellyContext
@@ -51,14 +51,14 @@ class JavaFxUnitSizeHandler extends UnitSizeHandler {
    */
   def getFontSize(component: Object, y: Boolean): Double = {
     val container = ContainerWrapper.fromObject(component)
-    val font = container.getContainerFont
+    val init = container.getFontInitializer
     val cache = JavaFxUnitSizeHandler.fontSizeCache.get
 
-    if (cache.contains(font)) {
-      JavaFxUnitSizeHandler.extractSize(cache(font), y)
+    if (cache.contains(init)) {
+      JavaFxUnitSizeHandler.extractSize(cache(init), y)
     } else {
-      val fontSize = JavaFxUnitSizeHandler.calculateFontSize(font)
-      JavaFxUnitSizeHandler.updateCache(cache, font, fontSize)
+      val fontSize = JavaFxUnitSizeHandler.calculateFontSize(init)
+      JavaFxUnitSizeHandler.updateCache(cache, init, fontSize)
       JavaFxUnitSizeHandler.extractSize(fontSize, y)
     }
   }
@@ -67,7 +67,7 @@ class JavaFxUnitSizeHandler extends UnitSizeHandler {
    * @inheritdoc This implementation obtains the resolution from the primary
    * screen.
    */
-  def getScreenResolution(): Int = Screen.getPrimary().getDpi().toInt
+  def getScreenResolution(): Int = Screen.getPrimary.getDpi.toInt
 }
 
 /**
@@ -87,9 +87,9 @@ object JavaFxUnitSizeHandler {
   /** Constant for the name of the size handler instance in the Jelly context. */
   private val SizeHandlerVariable = "jguiraffe.SizeHandler"
 
-  /** The shared cache with font sizes already queried. */
+  /** The shared cache with font initializer objects already handled. */
   private final val fontSizeCache =
-    new AtomicReference(Map.empty[Font, Tuple2[Double, Double]])
+    new AtomicReference(Map.empty[ContainerWrapper.TextFontInitializer, (Double, Double)])
 
   /**
    * Obtains a size handler instance from the passed in Jelly context. If
@@ -117,17 +117,17 @@ object JavaFxUnitSizeHandler {
   }
 
   /**
-   * Determines the width and height of the passed in font.
-   * @param ft the font in question
+   * Determines the width and height of the font represented by the given
+    * initializer.
+   * @param init the font initializer
    * @return a tuple with the average width and height of this font
    */
-  private def calculateFontSize(ft: Font): Tuple2[Double, Double] = {
-    var fontSize: Tuple2[Double, Double] = null
+  private def calculateFontSize(init: ContainerWrapper.TextFontInitializer): (Double, Double) = {
+    var fontSize: (Double, Double) = null
     JavaFxGUISynchronizer.syncJavaFxInvocation { () =>
-      val txt = new Text(WidthString)
-      txt setFont ft
+      val txt = init(new Text(WidthString))
       txt.snapshot(null, null)
-      val bounds = txt.getLayoutBounds()
+      val bounds = txt.getLayoutBounds
       fontSize = (bounds.getWidth / WidthStringLength, bounds.getHeight)
     }
     fontSize
@@ -135,20 +135,20 @@ object JavaFxUnitSizeHandler {
 
   /**
    * Updates the cache with the specified font size data.
-   * @param the current cache map
-   * @param font the font
+   * @param cacheMap the current cache map
+   * @param init the font initializer
    * @param value the font size
    */
-  private def updateCache(cacheMap: Map[Font, Tuple2[Double, Double]],
-    font: Font, value: Tuple2[Double, Double]) {
+  private def updateCache(cacheMap: Map[ContainerWrapper.TextFontInitializer, (Double, Double)],
+                          init: ContainerWrapper.TextFontInitializer, value: (Double, Double)) {
     var currentCache = cacheMap
     var done = false
     do {
-      val newMap = cacheMap + (font -> value)
+      val newMap = cacheMap + (init -> value)
       done = fontSizeCache.compareAndSet(currentCache, newMap)
       if (!done) {
         currentCache = fontSizeCache.get
-        done = currentCache.contains(font)
+        done = currentCache.contains(init)
       }
     } while (!done)
   }
@@ -159,7 +159,7 @@ object JavaFxUnitSizeHandler {
    * @param y flag for height or width
    * @return the desired size component
    */
-  private def extractSize(fontSize: Tuple2[Double, Double], y: Boolean): Double =
+  private def extractSize(fontSize: (Double, Double), y: Boolean): Double =
     if (y) fontSize._2
     else fontSize._1
 }
