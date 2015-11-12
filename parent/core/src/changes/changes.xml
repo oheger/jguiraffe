@@ -28,6 +28,9 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/14">
+        JavaFX panels can now be assigned basic attributes like color or font.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/13">
         JavaFX tables now correctly evaluate the multi-selection flag.
       </action>
