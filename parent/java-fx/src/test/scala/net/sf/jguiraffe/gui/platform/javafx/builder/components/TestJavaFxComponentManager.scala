@@ -1387,6 +1387,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val manager = new JavaFxComponentManager(toolTipFactory = null, treeHandlerFactory = null,
       tableHandlerFactory = null, splitPaneFactory = factory, borderPanelFactory = null)
     val tag = new SplitterTag
+    val context = createAndInstallContext(tag)
     tag setName "MySplitter"
     val split = new SplitPane
     EasyMock.expect(factory.createSplitPane(tag)).andReturn(split)
@@ -1395,6 +1396,31 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
       assertSame("Wrong split pane", split, manager.createSplitter(tag, create = false))
       assertEquals("Not initialized", tag.getName, split.getId)
     }
+    val wrapper = ContainerMapping.fromContext(context).getContainer(tag).get
+    assertFalse("Got a font initializer", wrapper.fontInitializer.isDefined)
+  }
+
+  /**
+    * Tests that the creation of a splitter causes a ContainerWrapper to be
+    * added to the mapping which is initialized with the font.
+    */
+  @Test def testCreateSplitterWithFontToBePassedToTheContainerWrapper(): Unit = {
+    val factory = mock[SplitPaneFactory]
+    val manager = new JavaFxComponentManager(toolTipFactory = null, treeHandlerFactory = null,
+      tableHandlerFactory = null, splitPaneFactory = factory, borderPanelFactory = null)
+    val tag = new SplitterTag
+    val context = createAndInstallContext(tag)
+    tag setFont Font
+    val split = new SplitPane
+    EasyMock.expect(factory.createSplitPane(tag)).andReturn(split)
+
+    whenExecuting(factory) {
+      manager.createSplitter(tag, create = false)
+      checkFont(split)
+    }
+    val wrapper = ContainerMapping.fromContext(context).getContainer(tag).get
+    val text = wrapper.fontInitializer.get(new Text)
+    checkFont(text)
   }
 
   /**

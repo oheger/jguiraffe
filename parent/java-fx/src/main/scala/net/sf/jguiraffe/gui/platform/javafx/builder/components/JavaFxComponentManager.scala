@@ -35,6 +35,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget._
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils.as
 import net.sf.jguiraffe.gui.platform.javafx.common._
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper.PaneTransformer
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import net.sf.jguiraffe.locators.{Locator, LocatorException}
 import org.apache.commons.jelly.{Tag, TagSupport}
@@ -183,15 +184,12 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
     else {
       val properties = extractNodeProperties(tag)
       val borderTransformer = borderPanelFactory.getPaneTransformer(tag).getOrElse(identity[Pane] _)
-      val transformer: ContainerWrapper.PaneTransformer = pane => {
+      val transformer: PaneTransformer = pane => {
         initNodeProperties(pane, properties)
         pane
       }
-      val wrapper = new ContainerWrapper(sizeHandler = Some(JavaFxComponentManager.fetchSizeHandler(tag)),
-        paneTransformer = Some(transformer andThen borderTransformer))
-      wrapper.fontInitializer = properties.font.map(JavaFxComponentManager.createFontInitializer)
-      ContainerMapping.fromContext(tag.getContext).add(tag, wrapper)
-      wrapper
+      JavaFxComponentManager.createAndRegisterContainerWithFontInitializer(tag,
+        properties, Some(transformer andThen borderTransformer))
     }
   }
 
@@ -209,7 +207,11 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
     if (create) null
     else {
       val split = splitPaneFactory.createSplitPane(tag)
-      initControl(tag, split)
+      val properties = initControl(tag, split)
+
+      // Register a wrapper for the split pane; this is necessary for certain
+      // size calculations of contained nodes
+      JavaFxComponentManager.createAndRegisterContainerWithFontInitializer(tag, properties, None)
       split
     }
   }
@@ -590,13 +592,13 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
    * base properties and then deals with additional properties for controls.
    * @param tag the component tag defining fundamental properties
    * @param control the control to be initialized
+   * @return the extracted properties
    */
-  private def initControl(tag: ComponentBaseTag, control: Control) {
-    JavaFxComponentManager.initNode(tag, control)
-
+  private def initControl(tag: ComponentBaseTag, control: Control): NodeProperties = {
     if (tag.getToolTipData.isDefined) {
       initToolTip(tag, control.tooltipProperty, tag.getToolTipData.getCaption)
     }
+    JavaFxComponentManager.initNode(tag, control)
   }
 
   /**
@@ -637,9 +639,12 @@ object JavaFxComponentManager {
    * Initializes standard properties of the given node from the specified tag.
    * @param tag the component tag
    * @param node the node to be initialized
+   * @return the extracted node properties
    */
-  private def initNode(tag: ComponentBaseTag, node: Node) {
-    initNodeProperties(node, extractNodeProperties(tag))
+  private def initNode(tag: ComponentBaseTag, node: Node): NodeProperties = {
+    val properties = extractNodeProperties(tag)
+    initNodeProperties(node, properties)
+    properties
   }
 
   /**
@@ -769,6 +774,24 @@ object JavaFxComponentManager {
    */
   private def currentContainerTag(tag: FormBaseTag): Composite =
     tag.findContainer
+
+  /**
+    * Creates a ''ContainerWrapper'' for the specified container tag,
+    * initializes its font initializer, and adds it to the current container
+    * mapping.
+    * @param tag the current container tag
+    * @param properties the properties extracted from the tag
+    * @param paneTransformer an optional pane transformer
+    * @return the new ''ContainerWrapper''
+    */
+  private def createAndRegisterContainerWithFontInitializer(tag: ComponentBaseTag, properties:
+  NodeProperties, paneTransformer: Option[ContainerWrapper.PaneTransformer]): ContainerWrapper = {
+    val wrapper = new ContainerWrapper(sizeHandler = Some(fetchSizeHandler(tag)),
+      paneTransformer = paneTransformer)
+    wrapper.fontInitializer = properties.font.map(createFontInitializer)
+    ContainerMapping.fromContext(tag.getContext).add(tag, wrapper)
+    wrapper
+  }
 
   /**
     * Creates a ''TextFontInitializer'' for the specified font.
