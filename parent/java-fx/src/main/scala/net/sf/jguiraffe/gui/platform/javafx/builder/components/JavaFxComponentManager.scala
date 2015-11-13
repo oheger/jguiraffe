@@ -617,6 +617,13 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
  * The companion object for ''JavaFxComponentManager''.
  */
 object JavaFxComponentManager {
+  /**
+    * A ''ContainerWrapper'' instance which is initialized with the default
+    * font. This instance is used if the current container tag cannot be
+    * resolved.
+    */
+  private [components] lazy val DefaultFontContainer = createDefaultFontContainer()
+
   /** Constant for the normal font weight and style. */
   private val FontStyleNormal = "normal"
 
@@ -657,6 +664,20 @@ object JavaFxComponentManager {
   private[components] def installSizeHandler(tag: TagSupport,
     handler: UnitSizeHandler): UnitSizeHandler =
     JavaFxUnitSizeHandler.storeSizeHandler(tag.getContext, handler)
+
+  /**
+    * Creates the default font container. Note: As ContainerWrapper is not
+    * immutable, it is not really safe to use a shared instance here. However,
+    * because the field is visible only in this package, the risk is probably
+    * acceptable (it simplifies testing that this instance can be accessed by
+    * the test class).
+    * @return the newly created default font container
+    */
+  private def createDefaultFontContainer(): ContainerWrapper = {
+    val container = new ContainerWrapper
+    container.fontInitializer = Some(ContainerWrapper.DefaultFontInitializer)
+    container
+  }
 
   /**
    * Converts the font name as specified in the given tag to a corresponding
@@ -722,11 +743,12 @@ object JavaFxComponentManager {
    */
   private def initScrollSize(tag: FormBaseTag with ScrollSizeSupport, ctrl: Control) {
     val sizeHandler = fetchSizeHandler(tag)
-    val composite = currentContainerTag(tag)
+    val containerMapping = ContainerMapping fromContext tag.getContext
+    val container = containerMapping.getContainerFromComposite(
+      currentContainerTag(tag)) getOrElse DefaultFontContainer
 
     fetchBuilderData(tag).addCallBack(new ComponentBuilderCallBack {
       override def callBack(builderData: ComponentBuilderData, params: scala.Any): Unit = {
-        val container = composite.getContainer
         val xSize = tag.getPreferredScrollWidth.toPixel(sizeHandler, container, false)
         val ySize = tag.getPreferredScrollHeight.toPixel(sizeHandler, container, true)
 

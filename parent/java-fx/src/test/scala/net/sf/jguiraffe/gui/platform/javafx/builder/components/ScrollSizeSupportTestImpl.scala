@@ -15,17 +15,13 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import org.easymock.EasyMock
+import net.sf.jguiraffe.gui.builder.components.tags.{ContainerTag, FormBaseTag, ScrollSizeSupport}
+import net.sf.jguiraffe.gui.layout.{NumberWithUnit, UnitSizeHandler}
+import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
+import org.apache.commons.jelly.JellyContext
 import org.easymock.EasyMock.{eq => eqObj}
-import org.easymock.IAnswer
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
-
-import net.sf.jguiraffe.gui.builder.components.Composite
-import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag
-import net.sf.jguiraffe.gui.builder.components.tags.ScrollSizeSupport
-import net.sf.jguiraffe.gui.layout.NumberWithUnit
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import org.easymock.{EasyMock, IAnswer}
+import org.junit.Assert.{assertNotNull, assertSame}
 
 /**
  * Definition of a trait which simplifies testing of tags with support for a
@@ -45,10 +41,16 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   val yScrollSize: Int
 
   /** A mock for the container. */
-  val container = new Object
+  val container = new ContainerWrapper
 
   /** The mock for the Composite wrapping the container. */
   val composite = createComposite()
+
+  /**
+    * Allows client code to explicitly set an expected container. This is used
+    * rather than the default container if defined.
+    */
+  var expectedContainer: Option[ContainerWrapper] = None
 
   /** The answer for the X scroll size. */
   private var xAnswer: SizeAnswer = _
@@ -63,6 +65,27 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   private var scrollHeight: NumberWithUnit = _
 
   /**
+    * Performs some initialization before the test. Sets the Jelly context and
+    * prepares the container mapping.
+    * @param context the jelly context
+    */
+  def initialize(context: JellyContext): Unit = {
+    setContext(context)
+    initContainerMapping()
+  }
+
+  /**
+    * Initializes a container mapping for this tag to the test container. This
+    * method must be called before the test to ensure that the correct
+    * container is installed.
+    * @return the container mapping
+    */
+  def initContainerMapping(): Unit = {
+    val mapping = ContainerMapping fromContext getContext
+    mapping.add(composite, container)
+  }
+
+  /**
    * Verifies that the mocks for the scroll size have been used in the
    * expected way.
    * @param expSizeHandler the expected size handler
@@ -71,8 +94,9 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
     assertNotNull("X scroll size not queried", scrollWidth)
     assertNotNull("Y scroll size not queried", scrollHeight)
     EasyMock.verify(scrollWidth, scrollHeight)
-    xAnswer.verify(expSizeHandler, container)
-    yAnswer.verify(expSizeHandler, container)
+    val expContainer = expectedContainer getOrElse container
+    xAnswer.verify(expSizeHandler, expContainer)
+    yAnswer.verify(expSizeHandler, expContainer)
   }
 
   /**
@@ -121,9 +145,8 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
    * Returns a mock ''Composite'' object wrapping the test container.
    * @return the mock ''Composite''
    */
-  private def createComposite(): Composite = {
-    val comp = EasyMock.createMock(classOf[Composite])
-    EasyMock.expect(comp.getContainer).andReturn(container).anyTimes()
+  private def createComposite(): ContainerTag = {
+    val comp = EasyMock.createMock(classOf[ContainerTag])
     EasyMock.replay(comp)
     comp
   }

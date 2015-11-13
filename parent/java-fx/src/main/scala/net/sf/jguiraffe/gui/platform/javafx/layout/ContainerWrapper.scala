@@ -256,7 +256,7 @@ object ContainerWrapper {
   type TextFontInitializer = Text => Text
 
   /** A font initializer for the default font. */
-  private lazy val DefaultFontInitializer = createFontInitializer(Font.getDefault)
+  lazy val DefaultFontInitializer = createFontInitializer(Font.getDefault)
 
   /**
    * Convenience method for converting a plain object to an instance of

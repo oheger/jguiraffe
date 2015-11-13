@@ -546,7 +546,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val sizeHandler = mock[UnitSizeHandler]
     val tag = new TextAreaTag with ScrollSizeSupportUndefined
     val context = new JellyContext
-    tag setContext context
+    tag initialize context
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     tag setName ComponentName
     var txtCtrl: TextArea = null
@@ -570,7 +570,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val sizeHandler = mock[UnitSizeHandler]
     val tag = new TextAreaTag with ScrollSizeSupportSpecific
     val context = new JellyContext
-    tag setContext context
+    tag initialize context
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     tag setColumns 50
     tag setRows 25
@@ -590,6 +590,34 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     assertEquals("Wrong preferred width", tag.xScrollSize, txtCtrl.getPrefWidth.toInt)
     assertEquals("Wrong preferred height", tag.yScrollSize, txtCtrl.getPrefHeight.toInt)
     tag.verify(sizeHandler)
+  }
+
+  /**
+    * Tests the initialization of a text area for the corner case that the
+    * hosting container tag cannot be resolved. This should normally not
+    * happen.
+    */
+  @Test def testTextAreaScrollSizeContainerTagNotResolved(): Unit = {
+    val sizeHandler = mock[UnitSizeHandler]
+    val tag = new TextAreaTag with ScrollSizeSupportSpecific
+    val context = new JellyContext
+    tag setContext context
+    JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
+    tag.expectedContainer = Some(JavaFxComponentManager.DefaultFontContainer)
+    var txtCtrl: TextArea = null
+
+    whenExecutingBuild(tag) {
+      val handler = manager.createTextArea(tag, create = false)
+      txtCtrl = handler.getComponent.asInstanceOf[TextArea]
+    }
+    tag.verify(sizeHandler)
+  }
+
+  /**
+    * Tests the font used by the default font container.
+    */
+  @Test def testDefaultFontContainer(): Unit = {
+    assertSame("Wrong font initializer", ContainerWrapper.DefaultFontInitializer, JavaFxComponentManager.DefaultFontContainer.fontInitializer.get)
   }
 
   /**
@@ -1000,7 +1028,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val model = new ListModelTestImpl
     val tag = new ListBoxTag with ScrollSizeSupportUndefined
     val context = new JellyContext
-    tag setContext context
+    tag initialize context
     tag setListModel model
     tag setMulti multi
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
@@ -1047,7 +1075,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val model = new ListModelTestImpl
     val tag = new ListBoxTag with ScrollSizeSupportSpecific
     val context = new JellyContext
-    tag setContext context
+    tag initialize context
     tag setListModel model
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     var list: ListView[Object] = null
@@ -1110,7 +1138,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new TreeTag with ScrollSizeSupportUndefined
     val treeView = new TreeView[String]
     val context = new JellyContext
-    tag setContext context
+    tag initialize context
     EasyMock.expect(factory.createTreeHandler(tag)).andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(treeView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
@@ -1135,7 +1163,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new TreeTag with ScrollSizeSupportSpecific
     val treeView = new TreeView[String]
     val context = new JellyContext
-    tag setContext context
+    tag initialize context
     EasyMock.expect(factory.createTreeHandler(tag)).andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(treeView).anyTimes()
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
@@ -1176,6 +1204,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new TableTagTestImpl(controller) with ScrollSizeSupportUndefined
     val tableView = new TableView[AnyRef]
     val builderData = createAndInstallBuilderData(tag)
+    tag.initContainerMapping()
     EasyMock.expect(factory.createTableHandler(controller, sizeHandler, tag.composite, builderData))
       .andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
@@ -1201,6 +1230,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     val tag = new TableTagTestImpl(controller) with ScrollSizeSupportSpecific
     val tableView = new TableView[AnyRef]
     val builderData = createAndInstallBuilderData(tag)
+    tag.initContainerMapping()
     EasyMock.expect(factory.createTableHandler(controller, sizeHandler, tag.composite, builderData))
       .andReturn(handler)
     EasyMock.expect(handler.getComponent).andReturn(tableView).anyTimes()
