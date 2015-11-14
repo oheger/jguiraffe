@@ -786,10 +786,12 @@ object JavaFxComponentManager {
     */
   private def createAndRegisterContainerWithFontInitializer(tag: ComponentBaseTag, properties:
   NodeProperties, paneTransformer: Option[ContainerWrapper.PaneTransformer]): ContainerWrapper = {
+    val containerMapping = ContainerMapping fromContext tag.getContext
+    val parentContainer = containerMapping getContainerFromComposite currentContainerTag(tag)
     val wrapper = new ContainerWrapper(sizeHandler = Some(fetchSizeHandler(tag)),
-      paneTransformer = paneTransformer)
+      paneTransformer = paneTransformer, parentWrapper = parentContainer)
     wrapper.fontInitializer = properties.font.map(createFontInitializer)
-    ContainerMapping.fromContext(tag.getContext).add(tag, wrapper)
+    containerMapping.add(tag, wrapper)
     wrapper
   }
 

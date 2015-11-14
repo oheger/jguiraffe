@@ -905,8 +905,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   @Test def testCreatePanelCreateFalse() {
     val sizeHandler = mock[UnitSizeHandler]
     val tag = new PanelTag
-    val context = new JellyContext
-    tag setContext context
+    val context = createAndInstallContext(tag)
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     manager = createAndInstallBorderPanelFactory(tag)
 
@@ -920,13 +919,34 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Tests whether the container wrapper representing the panel has the
+    * correct parent set.
+    */
+  @Test def testCreatePanelContainerWrapperParent(): Unit = {
+    val parentTag = new PanelTag
+    val parentWrapper = new ContainerWrapper
+    val tag = new PanelTag
+    val context = createAndInstallContext(tag)
+    parentTag setContext context
+    tag setParent parentTag
+    createAndInstallBuilderData(tag)
+    val containerMapping = ContainerMapping fromContext context
+    containerMapping.add(parentTag, parentWrapper)
+    JavaFxComponentManager.installSizeHandler(tag, mock[UnitSizeHandler])
+    manager = createAndInstallBorderPanelFactory(tag)
+
+    val wrapper = manager.createPanel(tag, create = false)
+      .asInstanceOf[ContainerWrapper]
+    assertSame("Wrong parent wrapper", parentWrapper, wrapper.parent.get)
+  }
+
+  /**
     * Tests whether basic properties assigned to the panel tag are taken into
     * account.
     */
   @Test def testCreatePanelWithProperties(): Unit = {
     val tag = createPanelTagWithColors()
-    val context = new JellyContext
-    tag setContext context
+    createAndInstallContext(tag)
     JavaFxComponentManager.installSizeHandler(tag, mock[UnitSizeHandler])
     manager = createAndInstallBorderPanelFactory(tag)
 
@@ -947,8 +967,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     }
     val sizeHandler = mock[UnitSizeHandler]
     val tag = createPanelTagWithColors(background = Color.newRGBInstance(0, 0, 0))
-    val context = new JellyContext
-    tag setContext context
+    createAndInstallContext(tag)
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     manager = createAndInstallBorderPanelFactory(tag, Some(transformerFunc))
 
@@ -961,8 +980,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     */
   @Test def testCreatePanelFontInitializer(): Unit = {
     val tag = createPanelTagWithColors()
-    val context = new JellyContext
-    tag setContext context
+    createAndInstallContext(tag)
     JavaFxComponentManager.installSizeHandler(tag, mock[UnitSizeHandler])
     manager = createAndInstallBorderPanelFactory(tag)
 
