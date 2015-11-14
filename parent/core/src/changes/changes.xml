@@ -28,6 +28,10 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/15">
+        Using the unit dlu in a JavaFX splitter component no longer causes an
+        exception.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/14">
         JavaFX panels can now be assigned basic attributes like color or font.
       </action>
