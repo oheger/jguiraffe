@@ -28,6 +28,10 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/16">
+        It is now possible to add custom beans created dynamically by an
+        application to the global bean context.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/15">
         Using the unit dlu in a JavaFX splitter component no longer causes an
         exception.
