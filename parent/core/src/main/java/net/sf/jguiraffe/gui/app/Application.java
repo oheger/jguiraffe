@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.app;
 
+import javax.swing.event.EventListenerList;
 import java.awt.Rectangle;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,8 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
-
-import javax.swing.event.EventListenerList;
 
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.di.ClassLoaderProvider;
@@ -48,7 +47,6 @@ import net.sf.jguiraffe.locators.ClassPathLocator;
 import net.sf.jguiraffe.locators.Locator;
 import net.sf.jguiraffe.locators.LocatorConverter;
 import net.sf.jguiraffe.locators.LocatorUtils;
-
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -373,6 +371,9 @@ public class Application
 
     /** Stores the bean builder factory. */
     private BeanBuilderFactory beanBuilderFactory;
+
+    /** The root bean store. */
+    private MutableBeanStore rootBeanStore;
 
     /** Stores a reference to the command queue. */
     private CommandQueue cmdQueue;
@@ -826,12 +827,12 @@ public class Application
     {
         // Initialize global bean context
         BeanContext context = new DefaultBeanContext();
-        MutableBeanStore rootStore = createRootStore(config);
-        addBean(rootStore, BEAN_GLOBAL_CONTEXT, context);
-        context.setDefaultBeanStore(rootStore);
+        rootBeanStore = createRootStore(config);
+        addBeanDuringApplicationStartup(BEAN_GLOBAL_CONTEXT, context);
+        context.setDefaultBeanStore(rootBeanStore);
 
         // Read default bean definitions
-        beanBuilderResults.add(readBeanDefinition(DEFAULT_BEANS, rootStore,
+        beanBuilderResults.add(readBeanDefinition(DEFAULT_BEANS, rootBeanStore,
                 null));
 
         // Initialize the class loader provider
@@ -841,7 +842,7 @@ public class Application
         if (clp != clpInit)
         {
             // the init method replaces the class loader provider
-            addBean(rootStore, BEAN_CLASS_LOADER_PROVIDER, clpInit);
+            addBeanDuringApplicationStartup(BEAN_CLASS_LOADER_PROVIDER, clpInit);
         }
 
         // Now process custom bean definitions
@@ -849,6 +850,29 @@ public class Application
                 clpInit);
 
         return context;
+    }
+
+    /**
+     * Adds a bean to the application's global root bean store while the
+     * application starts up. This method can be called by derived classes that
+     * need to create beans dynamically Sometimes it is not sufficient to define
+     * beans in additional definition scripts. For instance, objects may have to
+     * be looked up from different sources, or complex logic is required for
+     * creating the beans. In such cases, this method can be used to make the
+     * beans created by a derived application class globally available via the
+     * bean context. As the name implies, this method can be called only during
+     * application startup phase - after the invocation of
+     * {@link #initBeans(Configuration)} and before the global bean context is
+     * accessed. Calling this method to a later point of time is not guaranteed
+     * to have the desired effect!
+     *
+     * @param name the name of the bean
+     * @param bean the bean itself
+     * @since 1.3.1
+     */
+    protected void addBeanDuringApplicationStartup(String name, Object bean)
+    {
+        addBean(rootBeanStore, name, bean);
     }
 
     /**
