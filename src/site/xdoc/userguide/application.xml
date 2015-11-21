@@ -279,6 +279,20 @@
     <a href="dibuilder.html#standard_beans">Application standard beans</a>.
   </p>
   <p>
+    Sometimes, it may not be possible to define a bean in a bean definition
+    script. For instance, the bean may have to be looked up from an external
+    service dynamically, or complex logic is required for its construction.
+    In cases like that <code>Application</code> offers a method that can be used
+    to add already existing beans (created manually by the application) to the
+    global bean context: <code>addBeanDuringApplicationStartup()</code>. As the
+    name implies, this method can only be called during application startup. An
+    application typically overrides some of the hooks described in this section
+    and can then invoke this method passing in custom beans. The last possible
+    point in time is the initialization of the main window (see below). Here the
+    beans in the global context are accessed; therefore, all custom beans must
+    be in place.
+  </p>
+  <p>
     <strong>Setting up the <code>ApplicationContext</code></strong><br/>
     Each application is associated with a single instance of the
     <code><a href="../apidocs/net/sf/jguiraffe/gui/app/ApplicationContext.html">
