@@ -15,11 +15,10 @@
  */
 package net.sf.jguiraffe.gui.builder.window.ctrl;
 
+import javax.swing.event.EventListenerList;
 import java.util.EventListener;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.swing.event.EventListenerList;
 
 import net.sf.jguiraffe.gui.builder.BuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
@@ -599,6 +598,32 @@ public class FormController implements WindowListener, FormFocusListener,
     }
 
     /**
+     * Performs a validation of the associated form and displays validation
+     * messages if this is not successful. This method delegates to
+     * {@link #validate()}. If validation results indicate errors, a message
+     * window is displayed containing corresponding validation error messages.
+     * This method is intended to do a validation in reaction on a user action,
+     * e.g. when the user clicks an <em>apply</em> button.
+     *
+     * @return a data object with information about the result of the validation
+     * @since 1.3.1
+     */
+    public FormValidatorResults validateAndDisplayMessages()
+    {
+        markFieldsAsVisited();
+        FormValidatorResults results = validate();
+        if (!results.isValid())
+        {
+            String msg =
+                    fetchValidationMessageFormat().format(results, getForm());
+            fetchMessageOutput().show(getWindow(), msg,
+                    fetchValidationMessageBoxCaption(),
+                    MessageOutput.MESSAGE_ERROR, MessageOutput.BTN_OK);
+        }
+        return results;
+    }
+
+    /**
      * Returns the results of the last validation operation. The object returned
      * by this method is the same as was returned by the last
      * {@link #validate()} call. This is useful for instance to determine which
@@ -854,8 +879,8 @@ public class FormController implements WindowListener, FormFocusListener,
     /**
      * The OK button was clicked. This method performs a validation. If this is
      * successful, the form is closed. Otherwise an error message is created
-     * using the <code>{@link FormValidationMessageFormat}</code> object and
-     * displayed to the user via the current <code>{@link MessageOutput}</code>
+     * using the {@link FormValidationMessageFormat} object and
+     * displayed to the user via the current {@link MessageOutput}
      * object. When the user clicks OK, he or she indicates that all fields have
      * been properly filled in; so they are marked as visited.
      *
@@ -863,21 +888,12 @@ public class FormController implements WindowListener, FormFocusListener,
      */
     protected void okButtonClicked(FormActionEvent event)
     {
-        markFieldsAsVisited();
-        FormValidatorResults vres = validate();
+        FormValidatorResults vres = validateAndDisplayMessages();
 
         if (vres.isValid())
         {
             committed = true;
             closeForm();
-        }
-
-        else
-        {
-            String msg = fetchValidationMessageFormat().format(vres, getForm());
-            fetchMessageOutput().show(getWindow(), msg,
-                    fetchValidationMessageBoxCaption(),
-                    MessageOutput.MESSAGE_ERROR, MessageOutput.BTN_OK);
         }
     }
 

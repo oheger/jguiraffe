@@ -451,7 +451,6 @@ public class TestFormController
      * Prepares a test that involves an invocation of a validation listener.
      *
      * @param status the expected validation status
-     * @param replay a flag whether the listener mock is to be replayed
      */
     private void prepareValidationCheck(FieldValidationStatus status)
     {
@@ -778,6 +777,30 @@ public class TestFormController
     }
 
     /**
+     * Tests the validation method that displays error messages in case of
+     * validation failures.
+     */
+    @Test
+    public void testValidateWithErrorMessageDisplay()
+    {
+        setUpComponents();
+        controller.setBtnOkName(BTN_OK);
+        MessageOutput output = EasyMock.createMock(MessageOutput.class);
+        EasyMock.expect(
+                output.show(wndBuilderData.getResultWindow(), ERR_MSG,
+                        MSGBOX_CAPTION, MessageOutput.MESSAGE_ERROR,
+                        MessageOutput.BTN_OK)).andReturn(MessageOutput.RET_OK);
+        EasyMock.replay(output, wndBuilderData.getResultWindow());
+        setUpValidationMessageFormat();
+        validator.validFlag = false;
+        controller.setMessageOutput(output);
+        controller.setValidationMessageBoxCaption(MSGBOX_CAPTION);
+        assertFalse("Fields are valid", controller.validateAndDisplayMessages().isValid());
+        EasyMock.verify(output, wndBuilderData.getResultWindow());
+        assertTrue("Field not visited", controller.isFieldVisited(FIELD));
+    }
+
+    /**
      * Tests the actionPerformed() method when an unknown event is received.
      * This should be ignored.
      */
@@ -1044,7 +1067,7 @@ public class TestFormController
     public void testGetFormListeners()
     {
         final int count = 12;
-        Set<FormListenerTestImpl> listeners = new HashSet<FormListenerTestImpl>();
+        Set<FormControllerFormListener> listeners = new HashSet<FormControllerFormListener>();
         for (int i = 0; i < count; i++)
         {
             FormListenerTestImpl l = new FormListenerTestImpl(controller);
@@ -1358,7 +1381,7 @@ public class TestFormController
          */
         public void mockCommit(boolean committed)
         {
-            mockCommit = Boolean.valueOf(committed);
+            mockCommit = committed;
         }
 
         /**
@@ -1368,7 +1391,7 @@ public class TestFormController
         @Override
         protected boolean isCommitted()
         {
-            return (mockCommit != null) ? mockCommit.booleanValue() : super
+            return (mockCommit != null) ? mockCommit : super
                     .isCommitted();
         }
     }
