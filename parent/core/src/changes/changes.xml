@@ -28,6 +28,12 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/17">
+        FormController now offers a new method validateAndDisplayMessages()
+        which can be used to trigger a validation with user feedback at any
+        time. This is useful for instance for the implementation of an Apply
+        button.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/16">
         It is now possible to add custom beans created dynamically by an
         application to the global bean context.
