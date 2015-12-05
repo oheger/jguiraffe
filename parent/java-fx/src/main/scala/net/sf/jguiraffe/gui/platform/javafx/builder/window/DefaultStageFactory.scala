@@ -27,17 +27,25 @@ import javafx.stage.Stage
 import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
 
 /**
- * A class for creating ''Stage'' objects.
- *
- * This internal helper class implements the integration into the Java FX
- * application framework. It fires up a simple application just to obtain
- * the primary stage. This stage is stored and returned as the first stage
- * object queried by a client. Further invocations of the factory result in
- * newly created ''Stage'' objects.
- *
- * @param primaryStage the primary stage of this application
- */
-private class StageFactory(primaryStage: Stage) {
+  * The default ''StageFactory'' implementation.
+  *
+  * This class implements the creation of JavaFX ''Stage'' objects which can be
+  * assigned to JGUIraffe windows. It integrates window creation with the
+  * Java FX application framework: It fires up a simple application just to
+  * obtain the primary stage. This stage is stored and returned as the first
+  * stage object queried by a client. Further invocations of the factory result
+  * in newly created ''Stage'' objects.
+  *
+  * New instances can be created using the ''apply()'' method of the companion
+  * object. Here the dummy JavaFX application is started, and the primary stage
+  * is obtained. Alternatively, the primary stage can be obtained using a
+  * custom approach. Then instances can be created using the constructor and
+  * passing in the primary stage.
+  *
+  * @param primaryStage the primary stage of this application
+  * @since 1.3.1
+  */
+class DefaultStageFactory(primaryStage: Stage) {
   /** The logger. */
   private final val log = LogFactory.getLog(getClass)
 
@@ -59,19 +67,32 @@ private class StageFactory(primaryStage: Stage) {
     if (stageCount.getAndIncrement == 0) primaryStage
     else {
       JavaFxGUISynchronizer.syncJavaFxInvocation {() =>
-        val stage = new Stage
-        StageFactory.initScene(stage)
-        StageFactory.StageQueue.add(stage)
+        DefaultStageFactory.StageQueue.add(createSubStage())
       }
-      StageFactory.StageQueue.take()
+      DefaultStageFactory.StageQueue.take()
     }
+  }
+
+  /**
+    * Creates another ''Stage''. This method is called for further invocations
+    * of ''createStage()'' after the primary stage has been returned. It can be
+    * overridden by derived classes to adapt the stage creation process. This
+    * default implementation creates a new ''Stage'' object via its constructor
+    * and sets its scene to a new ''Scene'' object created by
+    * ''createScene()''.
+    * @return the new ''Stage''
+    */
+  protected def createSubStage(): Stage = {
+    val stage = new Stage
+    DefaultStageFactory.initScene(stage)
+    stage
   }
 }
 
 /**
  * The companion object of ''StageFactory''.
  */
-private object StageFactory {
+object DefaultStageFactory {
   /**
    * A queue for passing the primary stage from the setup application to the
    * thread creating the ''StageFactory''.
@@ -94,8 +115,17 @@ private object StageFactory {
    *                           created ''Scene'' objects
    * @return the newly created ''StageFactory'' instance
    */
-  def apply(styleSheetProvider: StyleSheetProvider): StageFactory = {
-    refStyleSheetProvider set styleSheetProvider
+  def apply(styleSheetProvider: StyleSheetProvider): DefaultStageFactory = {
+    initStyleSheetProvider(styleSheetProvider)
+    new DefaultStageFactory(createPrimaryStage())
+  }
+
+  /**
+    * Creates the primary ''Stage'' for this application. This is done by
+    * starting a dummy JavaFX application and obtaining the stage from it.
+    * @return the new primary stage
+    */
+  def createPrimaryStage(): Stage = {
     val setupThread = new Thread {
       override def run() {
         Application.launch(classOf[SetupApplication])
@@ -104,7 +134,17 @@ private object StageFactory {
     setupThread.start()
 
     val primaryStage = StageQueue.take()
-    new StageFactory(primaryStage)
+    primaryStage
+  }
+
+  /**
+    * Initializes the provider for stylesheets. This method is called by
+    * ''apply()''. If a ''DefaultStageFactory'' is created using a different
+    * approach, it has to be invoked manually.
+    * @param styleSheetProvider the style sheet provider
+    */
+  def initStyleSheetProvider(styleSheetProvider: StyleSheetProvider): Unit = {
+    refStyleSheetProvider set styleSheetProvider
   }
 
   /**
@@ -121,11 +161,19 @@ private object StageFactory {
    * new scene.
    * @return the new ''Scene''
    */
-  private def createScene(): Scene = {
+  def createScene(): Scene = {
     val scene = new Scene(new Group)
-    refStyleSheetProvider.get.styleSheetURLs foreach scene.getStylesheets.add
+    styleSheetURLs foreach scene.getStylesheets.add
     scene
   }
+
+  /**
+    * Returns a set with the style sheet URLs obtained from the
+    * ''StyleSheetProvider''.
+    * @return a set with the global style sheet URLs
+    */
+  def styleSheetURLs: Set[String] =
+    refStyleSheetProvider.get.styleSheetURLs
 
   /**
    * A specialized Java FX application whose job is to obtain this application's
@@ -136,7 +184,7 @@ private object StageFactory {
    */
   class SetupApplication extends Application {
     override def start(primaryStage: Stage) {
-      LogFactory.getLog(classOf[StageFactory])
+      LogFactory.getLog(classOf[DefaultStageFactory])
         .info("Java FX setup application starting up.")
       initScene(primaryStage)
       StageQueue.add(primaryStage)
