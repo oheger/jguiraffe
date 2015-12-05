@@ -15,27 +15,27 @@
  */
 package net.sf.jguiraffe.di.impl;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+
 import net.sf.jguiraffe.di.ClassLoaderProvider;
-import net.sf.jguiraffe.di.impl.ClassDescription;
 
 /**
  * <p>
- * A specialized mock implementation of <code>ClassDescription</code>.
+ * A specialized mock implementation of {@code ClassDescription}.
  * </p>
  * <p>
  * This class is useful for testing components that have to deal with class
  * descriptions that have to be dynamically resolved. Especially it can be
- * tested, whether <code>getTargetClass()</code> is called with an expected
- * <code>ClassLoaderProvider</code>.
+ * tested, whether {@code getTargetClass()} is called with an expected
+ * {@code ClassLoaderProvider}.
  * </p>
  * <p>
  * Usage of this class is as follows: Create a new instance and pass the target
- * class as constructor parameter. Call <code>expectClassLoaderProvider()</code>
- * and <code>expectResolveCount()</code> for setting the expected class loader
- * provider and the expected number of <code>getTargetClass()</code>
+ * class as constructor parameter. Call {@code expectClassLoaderProvider()}
+ * and {@code expectResolveCount()} for setting the expected class loader
+ * provider and the expected number of {@code getTargetClass()}
  * invocations (default for the latter is 1). Then the object can be passed to
- * the test class. Finally call <code>verify()</code> to check whether all
+ * the test class. Finally call {@code verify()} to check whether all
  * expectations are met.
  * </p>
  *
@@ -54,7 +54,7 @@ public class ClassDescriptionMock extends ClassDescription
     private int invocationCount;
 
     /**
-     * Creates a new instance of <code>ClassDescriptionMock</code> and sets
+     * Creates a new instance of {@code ClassDescriptionMock} and sets
      * the class.
      *
      * @param targetCls the class for this description (not <b>null</b>)
@@ -67,7 +67,7 @@ public class ClassDescriptionMock extends ClassDescription
 
     /**
      * Prepares this object to expect the specified class loader provider.
-     * <code>getTargetClass()</code> will check if this provider is passed in.
+     * {@code getTargetClass()} will check if this provider is passed in.
      *
      * @param clp the expected provider
      * @return a reference to this object for method chaining
@@ -81,7 +81,7 @@ public class ClassDescriptionMock extends ClassDescription
 
     /**
      * Prepares this object to expect the given number of
-     * <code>getTargetClass()</code> invocations.
+     * {@code getTargetClass()} invocations.
      *
      * @param cnt the expected number
      * @return a reference to this object for method chaining
@@ -98,7 +98,7 @@ public class ClassDescriptionMock extends ClassDescription
      */
     public void verify()
     {
-        Assert.assertEquals("Wrong number of getTargetClass() invocations",
+        assertEquals("Wrong number of getTargetClass() invocations",
                 expectedResolveCount, invocationCount);
     }
 
@@ -112,7 +112,7 @@ public class ClassDescriptionMock extends ClassDescription
     @Override
     public Class<?> getTargetClass(ClassLoaderProvider depProvider)
     {
-        Assert.assertEquals("Wrong class loader provider",
+        assertEquals("Wrong class loader provider",
                 expectedLoaderProvider, depProvider);
         invocationCount++;
         return super.getTargetClass(depProvider);

@@ -15,7 +15,6 @@
  */
 package net.sf.jguiraffe.di.impl.providers;
 
-import junit.framework.Assert;
 import net.sf.jguiraffe.di.BeanProvider;
 import net.sf.jguiraffe.di.Dependency;
 import net.sf.jguiraffe.di.DependencyProvider;
@@ -24,10 +23,11 @@ import net.sf.jguiraffe.di.ReflectionTestClass;
 import net.sf.jguiraffe.di.impl.ClassDescription;
 
 import org.easymock.EasyMock;
+import org.junit.Assert;
 
 /**
  * A helper class that provides some default functionality for testing simple
- * bean providers, especially providers that use <code>Invocation</code>
+ * bean providers, especially providers that use {@code Invocation}
  * objects for creating bean instances. This class defines some constants and
  * static utility methods that can be used by corresponding test classes.
  *
@@ -53,7 +53,7 @@ public class SimpleBeanProviderTestHelper
 
     /**
      * Returns an array with the dependencies for the typical invocation
-     * parameters. The values are defined by the <code>PARAM_VALUES</code>
+     * parameters. The values are defined by the {@code PARAM_VALUES}
      * array.
      *
      * @return an array with the dependencies for the invocation parameters
@@ -131,7 +131,7 @@ public class SimpleBeanProviderTestHelper
 
     /**
      * Tests a newly created bean instance. This method checks whether the
-     * passed in object is an instance of <code>ReflectionTestClass</code> and
+     * passed in object is an instance of {@code ReflectionTestClass} and
      * whether its properties are correctly set.
      *
      * @param o the object to check
