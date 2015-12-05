@@ -41,10 +41,23 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
  * URLs defined by this instance are added to all newly created scenes.
  *
  * @param styleSheetProvider the ''StyleSheetProvider''
+ * @param factory the ''StageFactory'' to be used
  */
-class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider) extends WindowManager {
-  /** The factory for new stages. */
-  private val stageFactory = DefaultStageFactory(styleSheetProvider)
+class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: StageFactory)
+  extends WindowManager {
+  /**
+    * Creates a new instance of ''JavaFxWindowManager'' with the given style
+    * sheet provider. A default stage factory is used.
+    * @param provider the ''StyleSheetProvider''
+    */
+  def this(provider: StyleSheetProvider) = this(provider, DefaultStageFactory(provider))
+
+  /**
+    * Returns the factory for creating new stages.
+    * @return the ''StageFactory''
+    * @since 1.3.1
+    */
+  def stageFactory: StageFactory = factory
 
   /**
    * @inheritdoc This implementation creates a normal ''Stage'' object with no

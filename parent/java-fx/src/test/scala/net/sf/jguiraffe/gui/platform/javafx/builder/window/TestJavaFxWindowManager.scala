@@ -18,22 +18,25 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 import javafx.scene.Group
 import javafx.scene.control.MenuBar
 import javafx.scene.text.Text
-import javafx.stage.Modality
+import javafx.stage.{Stage, Modality}
 
-import net.sf.jguiraffe.gui.builder.components.{FormBuilderException, ComponentBuilderData}
+import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderData, FormBuilderException}
 import net.sf.jguiraffe.gui.builder.window.{Window, WindowBuilderData, WindowData}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import org.apache.commons.jelly.JellyContext
+import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
+import org.scalatest.mock.EasyMockSugar
 
 import scala.beans.{BeanProperty, BooleanBeanProperty}
 
 /**
  * Test class for ''JavaFxWindowManager''.
  */
-class TestJavaFxWindowManager extends JUnitSuite {
+class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /** The manager to be tested. */
   private var manager: JavaFxWindowManager = _
 
@@ -274,6 +277,23 @@ class TestJavaFxWindowManager extends JUnitSuite {
   }
 
   /**
+    * Tests that a custom stage factory can be installed.
+    */
+  @Test def testCustomizeStageCreation(): Unit = {
+    val stageFactory = mock[StageFactory]
+    val stage = JavaFxTestHelper.invokeInFxThread[Stage] { _ => new Stage }
+    EasyMock.expect(stageFactory.createStage()).andReturn(stage)
+
+    whenExecuting(stageFactory) {
+      val manager = new JavaFxWindowManager(TestJavaFxWindowManager.createStyleSheetProvider(),
+        stageFactory)
+      val builderData = createWindowBuilderData()
+      val window = manager.createFrame(builderData, new WindowDataImpl, null)
+      assertSame("Wrong stage", stage, extractStage(window))
+    }
+  }
+
+  /**
    * A test implementation of the WindowData interface.
    */
   private case class WindowDataImpl(
@@ -307,7 +327,14 @@ object TestJavaFxWindowManager {
   private var initializedManager: JavaFxWindowManager = _
 
   @BeforeClass def setUpBeforeClass() {
-    val provider = new StyleSheetProvider(StyleSheets mkString ",", null)
+    val provider = createStyleSheetProvider()
     initializedManager = new JavaFxWindowManager(provider)
   }
+
+  /**
+    * Creates a new style sheet provider.
+    * @return the new provider
+    */
+  private def createStyleSheetProvider(): StyleSheetProvider =
+    new StyleSheetProvider(StyleSheets mkString ",", null)
 }
