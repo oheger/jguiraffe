@@ -45,7 +45,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
   * @param primaryStage the primary stage of this application
   * @since 1.3.1
   */
-class DefaultStageFactory(primaryStage: Stage) {
+class DefaultStageFactory(primaryStage: Stage) extends StageFactory {
   /** The logger. */
   private final val log = LogFactory.getLog(getClass)
 
