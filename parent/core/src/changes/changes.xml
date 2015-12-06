@@ -28,6 +28,12 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/18">
+        JavaFxWindowManager now supports customizing JavaFX stage creation. For
+        this purpose the new trait StageFactory was introduced. With
+        DefaultStageFactory there is a default implementation which can be
+        extended.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/17">
         FormController now offers a new method validateAndDisplayMessages()
         which can be used to trigger a validation with user feedback at any
