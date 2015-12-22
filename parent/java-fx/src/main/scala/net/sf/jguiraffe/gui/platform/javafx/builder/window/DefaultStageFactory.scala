@@ -42,20 +42,17 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.utils.JavaFxGUISynchronizer
   * custom approach. Then instances can be created using the constructor and
   * passing in the primary stage.
   *
-  * @param primaryStage the primary stage of this application
+  * @param primaryStage an option for the primary stage of this application
   * @since 1.3.1
   */
-class DefaultStageFactory(primaryStage: Stage) extends StageFactory {
-  /** The logger. */
-  private final val log = LogFactory.getLog(getClass)
-
+class DefaultStageFactory(primaryStage: Option[Stage]) extends StageFactory {
   /**
    * A counter for determining whether the primary stage is queried or a new
    * one has to be created.
    */
   private final val stageCount = new AtomicInteger
 
-  log.info("Instance of StageFactory created.")
+  DefaultStageFactory.log.info("Instance of StageFactory created.")
 
   /**
    * Creates a new ''Stage'' object. This method is called for each stage
@@ -64,12 +61,12 @@ class DefaultStageFactory(primaryStage: Stage) extends StageFactory {
    * @return the newly created ''Stage'' object
    */
   def createStage(): Stage = {
-    if (stageCount.getAndIncrement == 0) primaryStage
+    if (stageCount.getAndIncrement == 0 && primaryStage.isDefined) primaryStage.get
     else {
       JavaFxGUISynchronizer.syncJavaFxInvocation {() =>
-        DefaultStageFactory.StageQueue.add(createSubStage())
+        DefaultStageFactory.StageQueue.add(Some(createSubStage()))
       }
-      DefaultStageFactory.StageQueue.take()
+      DefaultStageFactory.StageQueue.take().get
     }
   }
 
@@ -93,11 +90,14 @@ class DefaultStageFactory(primaryStage: Stage) extends StageFactory {
  * The companion object of ''StageFactory''.
  */
 object DefaultStageFactory {
+  /** The logger. */
+  private final val log = LogFactory.getLog(getClass)
+
   /**
    * A queue for passing the primary stage from the setup application to the
    * thread creating the ''StageFactory''.
    */
-  private val StageQueue = new ArrayBlockingQueue[Stage](3)
+  private val StageQueue = new ArrayBlockingQueue[Option[Stage]](3)
 
   /**
    * Stores the ''StyleSheetProvider''. This field is accessed from multiple
@@ -123,18 +123,25 @@ object DefaultStageFactory {
   /**
     * Creates the primary ''Stage'' for this application. This is done by
     * starting a dummy JavaFX application and obtaining the stage from it.
-    * @return the new primary stage
+    * This may fail if the application has already been started; in this
+    * case, result is ''None''.
+    * @return an option for the new primary stage
     */
-  def createPrimaryStage(): Stage = {
+  def createPrimaryStage(): Option[Stage] = {
     val setupThread = new Thread {
       override def run() {
-        Application.launch(classOf[SetupApplication])
+        try {
+          Application.launch(classOf[SetupApplication])
+        } catch {
+          case e: IllegalStateException =>
+            log.warn("Multiple instances of DefaultStageFactory created!")
+            StageQueue.add(None)
+        }
       }
     }
     setupThread.start()
 
-    val primaryStage = StageQueue.take()
-    primaryStage
+    StageQueue.take()
   }
 
   /**
@@ -187,7 +194,7 @@ object DefaultStageFactory {
       LogFactory.getLog(classOf[DefaultStageFactory])
         .info("Java FX setup application starting up.")
       initScene(primaryStage)
-      StageQueue.add(primaryStage)
+      StageQueue.add(Some(primaryStage))
     }
   }
 }
