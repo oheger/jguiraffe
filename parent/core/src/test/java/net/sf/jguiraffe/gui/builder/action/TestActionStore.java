@@ -15,13 +15,22 @@
  */
 package net.sf.jguiraffe.gui.builder.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test class for ActionStore.
@@ -29,7 +38,7 @@ import junit.framework.TestCase;
  * @author Oliver Heger
  * @version $Id: TestActionStore.java 205 2012-01-29 18:29:57Z oheger $
  */
-public class TestActionStore extends TestCase
+public class TestActionStore
 {
     /** An array with the names of some test actions. */
     private static final String[] TEST_ACTIONS =
@@ -41,10 +50,9 @@ public class TestActionStore extends TestCase
     /** The action store to be tested. */
     private ActionStore store;
 
-    @Override
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
         store = new ActionStore();
         setUpActions(store);
     }
@@ -52,6 +60,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests creation of new action store objects.
      */
+    @Test
     public void testInitialize()
     {
         store = new ActionStore();
@@ -65,6 +74,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests fetching actions.
      */
+    @Test
     public void testGetAction()
     {
         checkFetchAction("FileOpen");
@@ -75,38 +85,25 @@ public class TestActionStore extends TestCase
     /**
      * Tests accessing an unknown action. This should cause an exception.
      */
+    @Test(expected = NoSuchElementException.class)
     public void testGetActionUnknown()
     {
-        try
-        {
-            store.getAction("SomeAction");
-            fail("Could access non existing action!");
-        }
-        catch (NoSuchElementException nex)
-        {
-            // ok
-        }
+        store.getAction("SomeAction");
     }
 
     /**
      * Tests accessing a null action. This should cause an exception.
      */
+    @Test(expected = NoSuchElementException.class)
     public void testGetActionNull()
     {
-        try
-        {
-            store.getAction(null);
-            fail("Could access null action!");
-        }
-        catch (NoSuchElementException nex)
-        {
-            // ok
-        }
+        store.getAction(null);
     }
 
     /**
      * Tests adding new actions.
      */
+    @Test
     public void testAddAction()
     {
         FormAction action = new FormActionImpl("TestAction");
@@ -117,38 +114,25 @@ public class TestActionStore extends TestCase
     /**
      * Tries adding an null exception. This should cause an exception.
      */
+    @Test(expected = IllegalArgumentException.class)
     public void testAddActionNull()
     {
-        try
-        {
-            store.addAction(null);
-            fail("Could add a null action!");
-        }
-        catch (IllegalArgumentException iex)
-        {
-            // ok
-        }
+        store.addAction(null);
     }
 
     /**
      * Tries adding an action without a name. This should cause an exception.
      */
+    @Test(expected = IllegalArgumentException.class)
     public void testAddActionNullName()
     {
-        try
-        {
-            store.addAction(new FormActionImpl());
-            fail("Could add action with null name!");
-        }
-        catch (IllegalArgumentException iex)
-        {
-            // ok
-        }
+        store.addAction(new FormActionImpl());
     }
 
     /**
      * Tests the hasAction() method.
      */
+    @Test
     public void testHasAction()
     {
         assertTrue("FileOpen not found", store.hasAction("FileOpen"));
@@ -161,6 +145,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests removing actions from the store.
      */
+    @Test
     public void testRemoveAction()
     {
         int cnt = store.getActionNames().size();
@@ -176,6 +161,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests whether removing an action affects the parent store.
      */
+    @Test
     public void testRemoveActionInParent()
     {
         assertNotNull("Wrong result when removing known action", store
@@ -192,6 +178,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests accessing the actions' names.
      */
+    @Test
     public void testGetActionNames()
     {
         checkActionNames();
@@ -204,6 +191,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests accessing actions.
      */
+    @Test
     public void testGetActions()
     {
         Collection<String> names = new ArrayList<String>();
@@ -225,6 +213,7 @@ public class TestActionStore extends TestCase
      * Tests obtaining actions from a null collection with names. Result should
      * be an empty list.
      */
+    @Test
     public void testGetActionsNull()
     {
         assertTrue(store.getActions(null).isEmpty());
@@ -234,25 +223,19 @@ public class TestActionStore extends TestCase
      * Tests obtaining actions when a name is unknown. This should cause an
      * exception.
      */
+    @Test(expected = NoSuchElementException.class)
     public void testGetActionsUnexisting()
     {
         Collection<String> names = new ArrayList<String>();
         names.add(TEST_ACTIONS[0]);
         names.add("unexistingAction");
-        try
-        {
-            store.getActions(names);
-            fail("Could fetch unexisting action!");
-        }
-        catch (NoSuchElementException nex)
-        {
-            // ok
-        }
+        store.getActions(names);
     }
 
     /**
      * Tests the behavior of some methods if a parent store is defined.
      */
+    @Test
     public void testParent()
     {
         ActionStore as = new ActionStore(store);
@@ -260,12 +243,12 @@ public class TestActionStore extends TestCase
         as.addAction(new FormActionImpl("EditPaste"));
 
         assertTrue("Action not found", as.hasAction("EditPaste"));
-        for (int i = 0; i < TEST_ACTIONS.length; i++)
+        for (String TEST_ACTION : TEST_ACTIONS)
         {
-            assertTrue("Parent action not found: " + TEST_ACTIONS[i], as
-                    .hasAction(TEST_ACTIONS[i]));
-            assertNotNull("Cannot access parent action: " + TEST_ACTIONS[i], as
-                    .getAction(TEST_ACTIONS[i]));
+            assertTrue("Parent action not found: " + TEST_ACTION,
+                    as.hasAction(TEST_ACTION));
+            assertNotNull("Cannot access parent action: " + TEST_ACTION,
+                    as.getAction(TEST_ACTION));
         }
 
         Collection<String> names = new ArrayList<String>();
@@ -291,6 +274,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests the getAllActionNames() method.
      */
+    @Test
     public void testGetAllActionNames()
     {
         assertEquals(TEST_ACTIONS.length, store.getAllActionNames().size());
@@ -307,10 +291,10 @@ public class TestActionStore extends TestCase
         Set<String> names = store.getAllActionNames();
         assertEquals("Wrong number of action names", TEST_ACTIONS.length + 2,
                 names.size());
-        for (int i = 0; i < TEST_ACTIONS.length; i++)
+        for (String TEST_ACTION : TEST_ACTIONS)
         {
-            assertTrue("Action not found: " + TEST_ACTIONS[i], names
-                    .contains(TEST_ACTIONS[i]));
+            assertTrue("Action not found: " + TEST_ACTION,
+                    names.contains(TEST_ACTION));
         }
         assertTrue("View action not found", names.contains("ViewRefresh"));
     }
@@ -318,6 +302,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests adding actions to groups.
      */
+    @Test
     public void testAddActionToGroup()
     {
         store.addActionToGroup(TEST_ACTIONS[0], FILE_GROUP);
@@ -334,39 +319,26 @@ public class TestActionStore extends TestCase
     /**
      * Tries creating a null group. This should cause an exception.
      */
+    @Test(expected = IllegalArgumentException.class)
     public void testAddActionToGroupNullGroup()
     {
-        try
-        {
-            store.addActionToGroup(TEST_ACTIONS[2], null);
-            fail("Could use null as group name!");
-        }
-        catch (IllegalArgumentException iex)
-        {
-            // ok
-        }
+        store.addActionToGroup(TEST_ACTIONS[2], null);
     }
 
     /**
      * Tries to add an unknown action to a group. This should cause an
      * exception.
      */
+    @Test(expected = NoSuchElementException.class)
     public void testAddActionToGroupUnknownAction()
     {
-        try
-        {
-            store.addActionToGroup("unknownAction", FILE_GROUP);
-            fail("Could assign unknown action to group!");
-        }
-        catch (NoSuchElementException nex)
-        {
-            // ok
-        }
+        store.addActionToGroup("unknownAction", FILE_GROUP);
     }
 
     /**
      * Tests whether an action is in the null group.
      */
+    @Test
     public void testIsActionInGroupNullGroup()
     {
         assertFalse("Found action in null group", store.isActionInGroup(
@@ -376,6 +348,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests whether an action is an unknown group.
      */
+    @Test
     public void testIsActionInGroupUnknownGroup()
     {
         assertFalse("Found action in unknown group", store.isActionInGroup(
@@ -385,6 +358,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests whether a null action is in a group.
      */
+    @Test
     public void testIsActionInGroupNullAction()
     {
         store.addActionToGroup(TEST_ACTIONS[0], FILE_GROUP);
@@ -395,6 +369,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests removing actions from groups.
      */
+    @Test
     public void testRemoveActionFromGroup()
     {
         store.addActionToGroup(TEST_ACTIONS[0], FILE_GROUP);
@@ -418,6 +393,7 @@ public class TestActionStore extends TestCase
      * Tests removing actions from groups when either the action or the group
      * does not exist.
      */
+    @Test
     public void testRemoveActionFromGroupNonExisting()
     {
         assertFalse("Can remove null action from null group", store
@@ -433,6 +409,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests removing a group.
      */
+    @Test
     public void testRemoveGroup()
     {
         store.addActionToGroup(TEST_ACTIONS[0], FILE_GROUP);
@@ -443,6 +420,7 @@ public class TestActionStore extends TestCase
     /**
      * Tries to remove the null group.
      */
+    @Test
     public void testRemoveGroupNull()
     {
         assertFalse("Could remove null group", store.removeGroup(null));
@@ -451,6 +429,7 @@ public class TestActionStore extends TestCase
     /**
      * Tries to remove an unknown group.
      */
+    @Test
     public void testRemoveGroupUnknown()
     {
         assertFalse("Could remove unknown group", store.removeGroup(FILE_GROUP));
@@ -459,11 +438,12 @@ public class TestActionStore extends TestCase
     /**
      * Tests accessing the names of the actions in a group.
      */
+    @Test
     public void testNamesInGroups()
     {
-        for (int i = 0; i < TEST_ACTIONS.length; i++)
+        for (String TEST_ACTION : TEST_ACTIONS)
         {
-            store.addActionToGroup(TEST_ACTIONS[i], FILE_GROUP);
+            store.addActionToGroup(TEST_ACTION, FILE_GROUP);
         }
         store.addAction(new FormActionImpl("EditCut"));
         store.addActionToGroup("EditCut", "EditGroup");
@@ -491,6 +471,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests the names in the null group.
      */
+    @Test
     public void testNamesInGroupsNullGroup()
     {
         assertTrue("Null group not empty", store.getActionNamesForGroup(null)
@@ -500,6 +481,7 @@ public class TestActionStore extends TestCase
     /**
      * Tests the names in an unknown group.
      */
+    @Test
     public void testNamesInGroupsUnknown()
     {
         assertTrue(store.getActionNamesForGroup(FILE_GROUP).isEmpty());
@@ -508,23 +490,24 @@ public class TestActionStore extends TestCase
     /**
      * Tests enabling or disabling the actions in a group.
      */
+    @Test
     public void testEnableActions()
     {
         store.enableGroup(null, true);
         store.enableGroup(FILE_GROUP, false);
 
-        for (int i = 0; i < TEST_ACTIONS.length; i++)
+        for (String TEST_ACTION : TEST_ACTIONS)
         {
-            assertFalse("Action already enabled: " + TEST_ACTIONS[i], store
-                    .getAction(TEST_ACTIONS[i]).isEnabled());
-            store.addActionToGroup(TEST_ACTIONS[i], FILE_GROUP);
+            assertFalse("Action already enabled: " + TEST_ACTION,
+                    store.getAction(TEST_ACTION).isEnabled());
+            store.addActionToGroup(TEST_ACTION, FILE_GROUP);
         }
 
         store.enableGroup(FILE_GROUP, true);
-        for (int i = 0; i < TEST_ACTIONS.length; i++)
+        for (String TEST_ACTION : TEST_ACTIONS)
         {
-            assertTrue("Action not enabled: " + TEST_ACTIONS[i], store
-                    .getAction(TEST_ACTIONS[i]).isEnabled());
+            assertTrue("Action not enabled: " + TEST_ACTION,
+                    store.getAction(TEST_ACTION).isEnabled());
         }
     }
 
@@ -547,10 +530,9 @@ public class TestActionStore extends TestCase
      */
     private void setUpActions(ActionStore as, String prefix)
     {
-        for (int i = 0; i < TEST_ACTIONS.length; i++)
+        for (String TEST_ACTION : TEST_ACTIONS)
         {
-            String name = (prefix == null) ? TEST_ACTIONS[i] : prefix
-                    + TEST_ACTIONS[i];
+            String name = (prefix == null) ? TEST_ACTION : prefix + TEST_ACTION;
             as.addAction(new FormActionImpl(name));
         }
     }
