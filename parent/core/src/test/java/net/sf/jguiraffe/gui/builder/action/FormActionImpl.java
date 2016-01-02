@@ -21,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>
- * An implementation of the <code>FormAction</code> interface used for
+ * An implementation of the {@code FormAction} interface used for
  * testing.
  * </p>
  * <p>
@@ -38,7 +38,7 @@ public class FormActionImpl implements FormAction
     private String name;
 
     /** Stores the enabled flag. */
-    private boolean enabled;
+    private boolean enabled = true;
 
     /** Stores the checked flag. */
     private boolean checked;
@@ -131,16 +131,8 @@ public class FormActionImpl implements FormAction
      */
     public String toString()
     {
-        StringBuffer buf = new StringBuffer("Action ");
+        StringBuilder buf = new StringBuilder("Action ");
         buf.append(getName()).append(" {");
-        if (isChecked())
-        {
-            buf.append(" CHECKED");
-        }
-        if (isEnabled())
-        {
-            buf.append(" ENABLED");
-        }
         if (StringUtils.isNotEmpty(getData()))
         {
             buf.append(' ').append(getData());

@@ -25,6 +25,7 @@ import net.sf.jguiraffe.di.impl.providers.ConstantBeanProvider;
 import net.sf.jguiraffe.gui.builder.action.Accelerator;
 import net.sf.jguiraffe.gui.builder.action.ActionData;
 import net.sf.jguiraffe.gui.builder.action.ActionStore;
+import net.sf.jguiraffe.gui.builder.action.FormAction;
 import net.sf.jguiraffe.gui.builder.event.Modifiers;
 
 /**
@@ -68,7 +69,7 @@ public class TestActionTag extends AbstractActionTagTest
     {
         executeScript(SCRIPT);
 
-        checkAction(
+        FormAction action1 = checkAction(
                 "Action Action1 {  TEXT = MyAction ICON = ICON [ "
                         + iconLocatorString()
                         + " ] TOOLTIP = An action MNEMO = M "
@@ -79,7 +80,7 @@ public class TestActionTag extends AbstractActionTagTest
                         + "MNEMO = o ACC = CONTROL o "
                         + "TASK = class net.sf.jguiraffe.gui.builder.action.tags.TestActionTag$MyActionTask }",
                 "FileOpen");
-        checkAction(
+        FormAction saveAction = checkAction(
                 "Action FileSave {  TEXT = File save TOOLTIP = Saves the "
                         + "current file MNEMO = s ACC = " + ACCELERATOR
                         + " TASK = class net.sf.jguiraffe.gui.builder.action.tags.TestActionTag$MyActionTask }",
@@ -88,6 +89,9 @@ public class TestActionTag extends AbstractActionTagTest
                 "Action FileClose {  TEXT = Close "
                         + "TASK = class net.sf.jguiraffe.gui.builder.action.tags.TestActionTag$MyActionTask }",
                 "FileClose");
+
+        assertTrue("Action not per default enabled", action1.isEnabled());
+        assertFalse("Action not disabled", saveAction.isEnabled());
     }
 
     /**

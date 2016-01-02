@@ -91,10 +91,10 @@ import org.apache.commons.jelly.JellyTagException;
  * <td valign="top">yes</td>
  * </tr>
  * <tr>
- * <td valign="top">acceleratorRef</code>
+ * <td valign="top">acceleratorRef
  * <td>With this attribute a reference to an {@link Accelerator} object can be
  * specified. This object is searched in the current bean context. The
- * attributes <code>acceleratorDef</code> and <code>acceleratorRef</code> are
+ * attributes {@code acceleratorDef} and {@code acceleratorRef} are
  * mutual exclusive.</td>
  * <td valign="top">yes</td>
  * </tr>
@@ -102,7 +102,7 @@ import org.apache.commons.jelly.JellyTagException;
  * </p>
  * <p>
  * Because this tag handler class also implements the {@link IconSupport}
- * interface an <code>&lt;icon&gt;</code> tag can occur in the body.
+ * interface an {@code <icon>} tag can occur in the body.
  * </p>
  *
  * @author Oliver Heger
@@ -130,7 +130,7 @@ public abstract class AbstractActionDataTag extends ActionBaseTag implements
     private String acceleratorRef;
 
     /**
-     * Creates a new instance of <code>ActionDataTag</code> and initializes
+     * Creates a new instance of {@code ActionDataTag} and initializes
      * it.
      */
     public AbstractActionDataTag()
@@ -295,7 +295,7 @@ public abstract class AbstractActionDataTag extends ActionBaseTag implements
     /**
      * Set method of the acceleratorDef attribute. Here the string
      * representation of an accelerator can be set. It will be used for
-     * obtaining a corresponding <code>{@link Accelerator}</code> instance.
+     * obtaining a corresponding {@link Accelerator} instance.
      *
      * @param acceleratorDef the accelerator definition as string
      * @see Accelerator#parse(String)
@@ -328,10 +328,10 @@ public abstract class AbstractActionDataTag extends ActionBaseTag implements
     }
 
     /**
-     * Returns the <code>Accelerator</code> associated with the represented
+     * Returns the {@code Accelerator} associated with the represented
      * action.
      *
-     * @return the <code>Accelerator</code<
+     * @return the {@code Accelerator}
      */
     public Accelerator getAccelerator()
     {
@@ -339,10 +339,10 @@ public abstract class AbstractActionDataTag extends ActionBaseTag implements
     }
 
     /**
-     * Allows setting an <code>Accelerator</code> for the represented action.
+     * Allows setting an {@code Accelerator} for the represented action.
      * This method may be called by tags in the body of this tag.
      *
-     * @param accelerator the <code>Accelerator</code> for this action
+     * @param accelerator the {@code Accelerator} for this action
      */
     public void setAccelerator(Accelerator accelerator)
     {
@@ -370,7 +370,7 @@ public abstract class AbstractActionDataTag extends ActionBaseTag implements
     /**
      * Performs processing before the body of this tag gets executed. This
      * implementation checks the accelerator specification. If one is defined,
-     * it is fetched and passed to the <code>setAccelerator()</code> method.
+     * it is fetched and passed to the {@code setAccelerator()} method.
      *
      * @throws JellyTagException if the tag is incorrectly used
      * @throws FormBuilderException if an error occurs

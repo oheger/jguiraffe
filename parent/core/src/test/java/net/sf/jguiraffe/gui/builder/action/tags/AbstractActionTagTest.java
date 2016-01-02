@@ -92,12 +92,14 @@ public abstract class AbstractActionTagTest extends AbstractTagTest
      *
      * @param expected the expected text
      * @param name the name of the action
+     * @return the action that has been checked
      */
-    protected void checkAction(String expected, String name)
+    protected FormAction checkAction(String expected, String name)
     {
         assertTrue(actionBuilder.getActionStore().hasAction(name));
         FormAction action = actionBuilder.getActionStore().getAction(name);
         assertNotNull(action);
         checkAction(expected, action);
+        return action;
     }
 }

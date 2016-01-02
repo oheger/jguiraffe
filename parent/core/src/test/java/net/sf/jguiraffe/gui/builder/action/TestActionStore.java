@@ -488,26 +488,54 @@ public class TestActionStore
     }
 
     /**
+     * Checks that enabling an action group does not affect other actions.
+     *
+     * @param groupName the name of the group to be enabled
+     */
+    private void checkEnableGroupUnknown(String groupName)
+    {
+        store.enableGroup(groupName, false);
+        for (String action : TEST_ACTIONS)
+        {
+            assertTrue("Action was disabled",
+                    store.getAction(action).isEnabled());
+        }
+    }
+
+    /**
+     * Tests that a null action group can be enabled without consequences.
+     */
+    @Test
+    public void testEnableGroupNull()
+    {
+        checkEnableGroupUnknown(null);
+    }
+
+    /**
+     * Tests that enableGroup() does not affect other actions.
+     */
+    @Test
+    public void testEnableGroupOtherActions()
+    {
+        checkEnableGroupUnknown(FILE_GROUP);
+    }
+
+    /**
      * Tests enabling or disabling the actions in a group.
      */
     @Test
     public void testEnableActions()
     {
-        store.enableGroup(null, true);
-        store.enableGroup(FILE_GROUP, false);
-
-        for (String TEST_ACTION : TEST_ACTIONS)
+        for (String actionName : TEST_ACTIONS)
         {
-            assertFalse("Action already enabled: " + TEST_ACTION,
-                    store.getAction(TEST_ACTION).isEnabled());
-            store.addActionToGroup(TEST_ACTION, FILE_GROUP);
+            store.addActionToGroup(actionName, FILE_GROUP);
         }
 
-        store.enableGroup(FILE_GROUP, true);
-        for (String TEST_ACTION : TEST_ACTIONS)
+        store.enableGroup(FILE_GROUP, false);
+        for (String actionName : TEST_ACTIONS)
         {
-            assertTrue("Action not enabled: " + TEST_ACTION,
-                    store.getAction(TEST_ACTION).isEnabled());
+            assertFalse("Action not disabled: " + actionName,
+                    store.getAction(actionName).isEnabled());
         }
     }
 
@@ -530,9 +558,9 @@ public class TestActionStore
      */
     private void setUpActions(ActionStore as, String prefix)
     {
-        for (String TEST_ACTION : TEST_ACTIONS)
+        for (String actionName : TEST_ACTIONS)
         {
-            String name = (prefix == null) ? TEST_ACTION : prefix + TEST_ACTION;
+            String name = (prefix == null) ? actionName : prefix + actionName;
             as.addAction(new FormActionImpl(name));
         }
     }

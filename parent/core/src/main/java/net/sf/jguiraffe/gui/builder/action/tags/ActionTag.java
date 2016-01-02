@@ -90,6 +90,14 @@ import org.apache.commons.lang.StringUtils;
  * further information about action groups.</td>
  * <td valign="top">yes</td>
  * </tr>
+ * <tr>
+ * <td valign="top">enabled</td>
+ * <td>A boolean attribute which can be used to set the initial enabled state
+ * of the action. Per default, actions are enabled after they have been
+ * created. With this attribute, actions can be initially disabled.
+ * </td>
+ * <td valign="top">yes</td>
+ * </tr>
  * </table>
  * </p>
  *
@@ -112,6 +120,9 @@ public class ActionTag extends AbstractActionDataTag
 
     /** The name of the group for the action. */
     private String group;
+
+    /** The enabled flag for this action. */
+    private boolean enabled = true;
 
     /**
      * Setter method for the taskBean attribute.
@@ -175,6 +186,28 @@ public class ActionTag extends AbstractActionDataTag
     }
 
     /**
+     * Returns the value of the enabled attribute.
+     *
+     * @return the attribute value
+     * @since 1.3.1
+     */
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    /**
+     * Setter method for the enabled attribute.
+     *
+     * @param enabled the attribute value
+     * @since 1.3.1
+     */
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
+    }
+
+    /**
      * Executes this task. Creates a new action object and stores it in the
      * current action store.
      *
@@ -198,6 +231,7 @@ public class ActionTag extends AbstractActionDataTag
 
         FormAction action = getActionManager().createAction(getActionBuilder(),
                 this);
+        action.setEnabled(isEnabled());
         getActionBuilder().getActionStore().addAction(action);
         if (group != null)
         {

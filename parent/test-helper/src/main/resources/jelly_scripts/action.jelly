@@ -33,7 +33,7 @@
   <a:action name="FileSave" textres="ACT_FILE_SAVE_TXT"
     mnemonicres="ACT_FILE_SAVE_MNEMO" tooltipres="ACT_FILE_SAVE_TIP"
     taskClass="net.sf.jguiraffe.gui.builder.action.tags.TestActionTag$MyActionTask"
-    acceleratorRef="varAccelerator" group="fileActions"/>
+    acceleratorRef="varAccelerator" group="fileActions" enabled="false"/>
   <a:action name="FileClose" text="Close">
     <a:task class="net.sf.jguiraffe.gui.builder.action.tags.TestActionTag$MyActionTask"/>
   </a:action>
@@ -79,7 +79,7 @@
     acceleratorDef="shift x" acceleratorRef="varAccelerator" ifName="ERR_ACC_BOTH"/>
 
   <!-- Tests for the ActionTask tag -->
-  
+
   <!-- A task tag that is not nested inside an action task -->
   <a:task class="net.sf.jguiraffe.gui.builder.action.tags.TestActionTag$MyActionTask"
     ifName="ERR_TASKTAG_NESTED"/>
