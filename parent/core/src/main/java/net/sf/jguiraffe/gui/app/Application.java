@@ -400,6 +400,9 @@ public class Application
     /** The current exit handler of this application. */
     private final AtomicReference<Runnable> exitHandler;
 
+    /** Stores the bean context of the main window. */
+    private BeanContext mainWindowBeanContext;
+
     /** The exit code of this application. */
     private int exitCode;
 
@@ -1106,13 +1109,14 @@ public class Application
             try
             {
                 Builder builder = appCtx.newBuilder();
-                Window mainWindow = builder.buildWindow(scriptLocator, appCtx
-                        .initBuilderData());
+                ApplicationBuilderData builderData = appCtx.initBuilderData();
+                Window mainWindow = builder.buildWindow(scriptLocator, builderData);
                 if (mainWindow != null)
                 {
                     appCtx.setMainWindow(mainWindow);
                     initMainWindow(mainWindow, config);
                 }
+                mainWindowBeanContext = builderData.getBuilderContext();
             }
             catch (BuilderException bex)
             {
@@ -1360,6 +1364,22 @@ public class Application
     public int getExitCode()
     {
         return exitCode;
+    }
+
+    /**
+     * Returns the {@code BeanContext} that was created when processing the
+     * builder script for the main window. This context may be useful because it
+     * contains some central objects defined by the builder script for the main
+     * window, e.g. global actions. If this application does not define a
+     * builder script for the main window, this method returns <b>null</b>.
+     *
+     * @return the {@code BeanContext} created when the main window was
+     *         constructed
+     * @since 1.3.1
+     */
+    public BeanContext getMainWindowBeanContext()
+    {
+        return mainWindowBeanContext;
     }
 
     /**

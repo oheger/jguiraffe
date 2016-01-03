@@ -73,6 +73,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -839,9 +840,10 @@ public class TestApplication
     {
         ApplicationContext mockCtx = EasyMock
                 .createMock(ApplicationContext.class);
-        Window mockWindow = EasyMock.createMock(Window.class);
+        final Window mockWindow = EasyMock.createMock(Window.class);
         Builder mockBuilder = EasyMock.createMock(Builder.class);
-        ApplicationBuilderData mockData = new ApplicationBuilderData();
+        final BeanContext windowContext = EasyMock.createMock(BeanContext.class);
+        final ApplicationBuilderData mockData = new ApplicationBuilderData();
         Configuration config = prepareInitWindowTest(mockWindow);
         config.addProperty(Application.PROP_BUILDER_MAIN_SCRIPT, SCRIPT);
         EasyMock.expect(mockCtx.getConfiguration()).andReturn(config);
@@ -849,10 +851,18 @@ public class TestApplication
         EasyMock.expect(mockCtx.initBuilderData()).andReturn(mockData);
         EasyMock.expect(
                 mockBuilder.buildWindow((Locator) EasyMock.anyObject(),
-                        EasyMock.same(mockData))).andReturn(mockWindow);
+                        EasyMock.same(mockData))).andAnswer(new IAnswer<Window>() {
+            public Window answer() throws Throwable {
+                mockData.setBuilderContext(windowContext);
+                return mockWindow;
+            }
+        });
         mockCtx.setMainWindow(mockWindow);
-        EasyMock.replay(mockCtx, mockWindow, mockBuilder);
+        EasyMock.replay(mockCtx, mockWindow, mockBuilder, windowContext);
+
         app.initGUI(mockCtx);
+        assertSame("Wrong main window bean context", windowContext,
+                app.getMainWindowBeanContext());
         EasyMock.verify(mockCtx, mockWindow, mockBuilder);
     }
 
@@ -922,6 +932,7 @@ public class TestApplication
         EasyMock.expect(mockCtx.getConfiguration()).andReturn(config);
         EasyMock.replay(mockCtx);
         app.initGUI(mockCtx);
+        assertNull("Got a main window bean context", app.getMainWindowBeanContext());
         EasyMock.verify(mockCtx);
     }
 
@@ -1298,9 +1309,9 @@ public class TestApplication
                 throws ApplicationException
         {
             super.processCommandLine(args);
-            for (int i = 0; i < args.length; i++)
+            for (String arg : args)
             {
-                if (TEST_PARAM.equalsIgnoreCase(args[i]))
+                if (TEST_PARAM.equalsIgnoreCase(arg))
                 {
                     paramFound = true;
                 }
