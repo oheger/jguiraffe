@@ -28,6 +28,10 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/20">
+        Application now offers a method for accessing the bean context that was
+        created when the main window was constructed.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/19">
         The action tag now supports a new enabled attribute. This can be used to
         disable actions after their creation.
