@@ -37,7 +37,7 @@ class JavaFxPercentLayoutAdapter(components: Array[Node],
   constraints: Array[Object], sizeHandler: Option[UnitSizeHandler] = None)
   extends PercentLayoutPlatformAdapter {
   /** The number of components managed by the associated container. */
-  val getComponentCount = constraints.size
+  val getComponentCount = constraints.length
 
   /** The size handler used for Java FX percent layouts. */
   val getSizeHandler = sizeHandler.getOrElse(new JavaFxUnitSizeHandler)
@@ -48,12 +48,14 @@ class JavaFxPercentLayoutAdapter(components: Array[Node],
 
   def getMinimumComponentSize(component: Object, vert: Boolean): Int = {
     val node = asNode(component)
-    getSize(node, vert, node.minWidth(_), node.minHeight(_))
+    getSize(node, vert, node.minWidth, node.minHeight)
   }
 
   def getPreferredComponentSize(component: Object, vert: Boolean): Int = {
     val node = asNode(component)
-    getSize(node, vert, node.prefWidth(_), node.prefHeight(_))
+    // Note: The preferred width seems to be slightly too small; therefore, it
+    // is increased by 1 pixel as a workaround. See BUG-21.
+    getSize(node, vert, node.prefWidth(_) + 1, node.prefHeight)
   }
 
   def setComponentBounds(component: Object, bounds: Rectangle) {

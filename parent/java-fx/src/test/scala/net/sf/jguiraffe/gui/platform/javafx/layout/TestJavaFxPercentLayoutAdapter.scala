@@ -21,19 +21,19 @@ import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{Before, BeforeClass, Test}
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.mock.EasyMockSugar
-
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.text.Text
+
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 
 /**
  * Test class for ''JavaFxPercentLayoutAdapter''.
@@ -112,7 +112,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     EasyMock.expect(node.prefWidth(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, false))
+      assertEquals("Wrong result", 101, adapter.getPreferredComponentSize(node, vert = false))
     }
   }
 
@@ -124,7 +124,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(null)
     EasyMock.expect(node.prefWidth(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, false))
+      assertEquals("Wrong result", 101, adapter.getPreferredComponentSize(node, vert = false))
     }
   }
 
@@ -138,7 +138,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(node.prefHeight(-1)).andReturn(height)
     EasyMock.expect(node.prefWidth(height)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, false))
+      assertEquals("Wrong result", 101, adapter.getPreferredComponentSize(node, vert = false))
     }
   }
 
@@ -150,7 +150,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(Orientation.VERTICAL)
     EasyMock.expect(node.prefHeight(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, true))
+      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, vert = true))
     }
   }
 
@@ -162,7 +162,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(null)
     EasyMock.expect(node.prefHeight(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, true))
+      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, vert = true))
     }
   }
 
@@ -174,9 +174,9 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     val width = 150.0
     EasyMock.expect(node.prefWidth(-1)).andReturn(width)
-    EasyMock.expect(node.prefHeight(width)).andReturn(100)
+    EasyMock.expect(node.prefHeight(width + 1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, true))
+      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, vert = true))
     }
   }
 
@@ -188,7 +188,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     EasyMock.expect(node.minWidth(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, false))
+      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, vert = false))
     }
   }
 
@@ -200,7 +200,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(null)
     EasyMock.expect(node.minWidth(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, false))
+      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, vert = false))
     }
   }
 
@@ -214,7 +214,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(node.minHeight(-1)).andReturn(height)
     EasyMock.expect(node.minWidth(height)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, false))
+      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, vert = false))
     }
   }
 
@@ -226,7 +226,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(Orientation.VERTICAL)
     EasyMock.expect(node.minHeight(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, true))
+      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, vert = true))
     }
   }
 
@@ -238,7 +238,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(null)
     EasyMock.expect(node.minHeight(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, true))
+      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, vert = true))
     }
   }
 
@@ -252,7 +252,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(node.minWidth(-1)).andReturn(width)
     EasyMock.expect(node.minHeight(width)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, true))
+      assertEquals("Wrong result", 100, adapter.getMinimumComponentSize(node, vert = true))
     }
   }
 
@@ -287,5 +287,11 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     adapter = new JavaFxPercentLayoutAdapter(components, constraints,
       Some(sizeHandler))
     assertSame("Wrong size handler", sizeHandler, adapter.getSizeHandler)
+  }
+}
+
+object TestJavaFxPercentLayoutAdapter {
+  @BeforeClass def setUpBeforeClass(): Unit = {
+    JavaFxTestHelper.initPlatform()
   }
 }
