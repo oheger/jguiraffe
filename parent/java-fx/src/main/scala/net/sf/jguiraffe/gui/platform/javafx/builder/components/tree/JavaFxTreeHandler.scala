@@ -174,7 +174,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
 
   /**
    * @inheritdoc This implementation ensures that the target node to be
-   * selected has already be initialized. Then the corresponding tree item is
+   * selected has already been initialized. Then the corresponding tree item is
    * added to the list of selected items.
    */
   def addSelectedPath(path: TreeNodePath) {
@@ -208,7 +208,8 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * the passed in target node gets expanded.
    */
   def expand(path: TreeNodePath) {
-    ensureInitialized(path.getTargetNode) foreach expandPath
+    // expansion is already done by ensureInitialized()
+    ensureInitialized(path.getTargetNode)
   }
 
   /**
@@ -305,7 +306,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   /**
    * Ensures that the full path to a configuration node has been initialized.
    * Because the model of the managed tree is lazily initialized it can happen
-   * that clients wants to perform operations on nodes which have not yet been
+   * that clients want to perform operations on nodes which have not yet been
    * created. In this case, the full path to such a target node has to be
    * initialized. This is done by this method. It returns the tree item
    * corresponding to the passed in node or ''None'' if it cannot be
@@ -317,7 +318,9 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   private def ensureInitialized(node: ConfigurationNode): Option[ConfigTreeItem] = {
     if (node == null) None
     else {
-      itemMap.get(node) orElse ininitializeParentPath(node)
+      val item = itemMap.get(node) orElse initializeParentPath(node)
+      item foreach(_.setExpanded(true))
+      item
     }
   }
 
@@ -328,7 +331,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * @param node the target node
    * @return an option with the corresponding tree item
    */
-  private def ininitializeParentPath(node: ConfigurationNode): Option[ConfigTreeItem] = {
+  private def initializeParentPath(node: ConfigurationNode): Option[ConfigTreeItem] = {
     val optItem = ensureInitialized(node.getParentNode)
     optItem foreach (_.getChildren) // initializes the child items
     itemMap.get(node)
