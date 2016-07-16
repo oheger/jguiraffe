@@ -28,7 +28,6 @@
     <version>1.4-SNAPSHOT</version>
   </parent>
 
-  <groupId>net.sf.jguiraffe</groupId>
   <artifactId>jguiraffe-parent</artifactId>
   <packaging>pom</packaging>
 
