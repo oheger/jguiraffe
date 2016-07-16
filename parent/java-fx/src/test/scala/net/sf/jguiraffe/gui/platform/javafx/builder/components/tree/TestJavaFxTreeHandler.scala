@@ -15,11 +15,11 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import javafx.beans.value.{ObservableValue, ChangeListener}
-import javafx.scene.control.{SelectionMode, TreeItem, TreeView}
+import javafx.beans.value.{ChangeListener, ObservableValue}
+import javafx.collections.FXCollections
+import javafx.scene.control.{MultipleSelectionModel, SelectionMode, TreeItem, TreeView}
 
 import net.sf.jguiraffe.gui.builder.components.model.{TreeExpandVetoException, TreeExpansionEvent, TreeExpansionListener, TreeHandler, TreeNodePath, TreePreExpansionListener}
-
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.apache.commons.configuration.HierarchicalConfiguration
 import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigurationNode}
@@ -747,6 +747,57 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
     tree.getSelectionModel select handler.itemMap(path.getTargetNode)
     assertEquals("Wrong selected value", path.getTargetNode,
         handler.observableValue.get.getValue.node)
+  }
+
+  /**
+    * Creates a mock selection model for the tree of the specified handler and
+    * installs it.
+    *
+    * @param handler the handler
+    * @return the mock selection model
+    */
+  private def createSelectionModelMock(handler: JavaFxTreeHandler):
+  MultipleSelectionModel[TreeItem[ConfigNodeData]] = {
+    val model = niceMock[MultipleSelectionModel[TreeItem[ConfigNodeData]]]
+    getTree(handler) setSelectionModel model
+    model
+  }
+
+  /**
+    * Tests whether an invalid selection does not cause harm.
+    */
+  @Test def testInvalidSelectionItems(): Unit = {
+    val handler = createInitializedHandler(multiSelect = true)
+    val selectionModel = createSelectionModelMock(handler)
+    val node = new DefaultConfigurationNode("test")
+    val item = new TreeItem[ConfigNodeData](ConfigNodeData(node))
+    val selection = FXCollections.observableArrayList[TreeItem[ConfigNodeData]]()
+    selection.add(item)
+    selection.add(null)
+    EasyMock.expect(selectionModel.getSelectedItems).andStubReturn(selection)
+    EasyMock.replay(selectionModel)
+
+    val paths = handler.getSelectedPaths
+    assertEquals("Wrong number of elements", 1, paths.length)
+    assertEquals("Wrong selected element", node, paths.head.getTargetNode)
+  }
+
+  /**
+    * Tests that the selected indices are queried before the selection is
+    * transformed.
+    */
+  @Test def testInvokeSelectionIndicesBeforeFetchingSelection(): Unit = {
+    val handler = createInitializedHandler(multiSelect = true)
+    val selectionModel = createSelectionModelMock(handler)
+    val item = new TreeItem[ConfigNodeData](ConfigNodeData(new DefaultConfigurationNode("test")))
+    val selection = FXCollections.observableArrayList[TreeItem[ConfigNodeData]](item)
+    EasyMock.expect(selectionModel.getSelectedIndices).andReturn(FXCollections
+      .observableArrayList(1))
+    EasyMock.expect(selectionModel.getSelectedItems).andStubReturn(selection)
+    EasyMock.replay(selectionModel)
+
+    handler.getSelectedPaths
+    EasyMock.verify(selectionModel)
   }
 }
 

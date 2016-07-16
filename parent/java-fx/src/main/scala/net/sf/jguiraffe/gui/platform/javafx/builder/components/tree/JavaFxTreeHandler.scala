@@ -18,7 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 import javafx.beans.property.{ReadOnlyObjectProperty, SimpleObjectProperty}
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.event.EventHandler
-import javafx.scene.control.{SelectionMode, TreeItem, TreeView}
+import javafx.scene.control.{MultipleSelectionModel, SelectionMode, TreeItem, TreeView}
 
 import net.sf.jguiraffe.gui.builder.components.model.{TreeExpandVetoException, TreeExpansionEvent, TreeExpansionListener, TreeHandler, TreeModelChangeListener, TreeNodePath, TreePreExpansionListener}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
@@ -155,13 +155,22 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
   }
 
   /**
-   * @inheritdoc This implementation transforms the tree's current selection
-   * into a (potential empty) array of ''TreeNodePath'' objects.
-   */
+    * @inheritdoc This implementation transforms the tree's current selection
+    *             into a (potential empty) array of ''TreeNodePath'' objects. This method
+    *             deals with some problems of the underlying JavaFX implementation.
+    *             Especially, in some cases, the list of selected items can contain null
+    *             elements which need to be filtered out.
+    */
   def getSelectedPaths: Array[TreeNodePath] = {
+    // Sometimes the selection returned by the tree contains invalid indices.
+    // Calling getSelectedIndices() before querying it seems to fix this.
+    // Still, in some cases, there are null entries in the selection.
+    tree.getSelectionModel.getSelectedIndices
+
     import scala.collection.JavaConversions._
-    val paths = for (item <- tree.getSelectionModel.getSelectedItems)
-      yield new TreeNodePath(item.getValue.node)
+    val paths = tree.getSelectionModel.getSelectedItems filterNot (_ == null) map { item =>
+      new TreeNodePath(item.getValue.node)
+    }
     paths.toArray
   }
 
