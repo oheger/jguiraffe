@@ -40,7 +40,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Node]))
-class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
+class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /** The number of children. */
   private val ComponentCount = 3
 
@@ -290,7 +290,7 @@ class TestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   }
 }
 
-object TestJavaFxPercentLayoutAdapter {
+object PMTestJavaFxPercentLayoutAdapter {
   @BeforeClass def setUpBeforeClass(): Unit = {
     JavaFxTestHelper.initPlatform()
   }

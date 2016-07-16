@@ -36,7 +36,7 @@ import org.scalatest.mock.EasyMockSugar
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[MouseEvent]))
-class TestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
+class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /** A default component name. */
   private val ComponentName = "SomeTestComponentName"
 

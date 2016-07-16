@@ -29,7 +29,7 @@ import javafx.scene.control.Label
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ActionEventSource
 
-object TestControlActionEventSource {
+object PMTestControlActionEventSource {
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
@@ -40,7 +40,7 @@ object TestControlActionEventSource {
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Label]))
-class TestControlActionEventSource extends JUnitSuite {
+class PMTestControlActionEventSource extends JUnitSuite {
   /** The mock for the label. */
   private var label: Label = _
 

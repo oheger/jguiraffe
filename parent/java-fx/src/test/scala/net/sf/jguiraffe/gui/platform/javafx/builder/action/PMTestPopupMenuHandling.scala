@@ -38,7 +38,7 @@ import org.scalatest.junit.JUnitSuite
 /**
  * Companion object.
  */
-object TestPopupMenuHandling {
+object PMTestPopupMenuHandling {
   /** A default x coordinate for a mouse event. */
   private val EventX = 128
 
@@ -76,9 +76,9 @@ object TestPopupMenuHandling {
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[MouseEvent], classOf[Node]))
-class TestPopupMenuHandling extends JUnitSuite {
+class PMTestPopupMenuHandling extends JUnitSuite {
 
-  import net.sf.jguiraffe.gui.platform.javafx.builder.action.TestPopupMenuHandling._
+  import net.sf.jguiraffe.gui.platform.javafx.builder.action.PMTestPopupMenuHandling._
 
   /**
    * Tests whether a correct context menu is created.

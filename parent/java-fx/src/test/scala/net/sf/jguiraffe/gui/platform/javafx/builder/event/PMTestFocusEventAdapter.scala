@@ -41,7 +41,7 @@ import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Node], classOf[ReadOnlyBooleanProperty]))
-class TestFocusEventAdapter extends JUnitSuite {
+class PMTestFocusEventAdapter extends JUnitSuite {
   /** Constant for a component name. */
   private val ComponentName = "MyTestComponent"
 

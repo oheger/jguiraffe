@@ -36,7 +36,7 @@ import javafx.scene.control.Control
 import javafx.scene.control.Tooltip
 import net.sf.jguiraffe.gui.builder.components.Color
 
-object TestJavaFxWidgetHandler {
+object PMTestJavaFxWidgetHandler {
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
@@ -47,7 +47,7 @@ object TestJavaFxWidgetHandler {
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Node], classOf[Control], classOf[Tooltip]))
-class TestJavaFxWidgetHandler extends JUnitSuite {
+class PMTestJavaFxWidgetHandler extends JUnitSuite {
   /** Constant for a test color. */
   private val TestColor = Color.newLogicInstance("someTestColor")
 

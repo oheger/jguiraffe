@@ -16,55 +16,48 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.scene.control.TableView
+import javafx.scene.control.TableColumn
 
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.runner.RunWith
-import org.junit.{BeforeClass, Before, Test}
+import org.junit.{Before, Test}
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
 
-object TestTableWidthExtractor {
-  @BeforeClass def setUpOnce(): Unit = {
-    JavaFxTestHelper.initPlatform()
-  }
-}
-
 /**
- * Test class for ''TableWidthExtractor''.
+ * Test class for ''ColumnWidthExtractor''.
  */
 @RunWith(classOf[PowerMockRunner])
-@PrepareForTest(Array(classOf[TableView[_]]))
-class TestTableWidthExtractor extends JUnitSuite {
-  /** The extractor to be tested. */
-  private var extractor: TableWidthExtractor = _
+@PrepareForTest(Array(classOf[TableColumn[_, _]]))
+class PMTestColumnWidthExtractor extends JUnitSuite {
+  /** The test extractor. */
+  private var extractor: ColumnWidthExtractor = _
 
-  @Before def setUp(): Unit = {
-    extractor = new TableWidthExtractor {}
+  @Before def setUp() {
+    extractor = new ColumnWidthExtractor {}
   }
 
   /**
-   * Tests whether the correct width property of a table is returned.
+   * Tests whether the correct width property is returned.
    */
-  @Test def testTableWidthProperty(): Unit = {
-    val table = new TableView[AnyRef]
-    assertSame("Wrong width property", table.widthProperty, extractor tableWidthProperty table)
+  @Test def testWidthProperty() {
+    val column = new TableColumn[AnyRef, AnyRef]
+    assertSame("Wrong width property", column.widthProperty, extractor widthProperty column)
   }
 
   /**
-   * Tests whether the width of a table can be determined.
+   * Tests whether the width of a column can be extracted.
    */
-  @Test def testTableWidth(): Unit = {
-    val table = PowerMock.createMock(classOf[TableView[AnyRef]])
-    val width = 640.5
+  @Test def testColumnWidth() {
+    val column = PowerMock.createMock(classOf[TableColumn[_, _]])
+    val width = 100.5
     val property = new SimpleDoubleProperty(width)
-    EasyMock.expect(table.widthProperty).andReturn(property)
+    EasyMock.expect(column.widthProperty).andReturn(property)
     PowerMock.replayAll()
 
-    assertEquals("Wrong width", width, extractor.tableWidth(table), 0.001)
+    assertEquals("Wrong result", width, extractor columnWidth column, .001)
   }
 }

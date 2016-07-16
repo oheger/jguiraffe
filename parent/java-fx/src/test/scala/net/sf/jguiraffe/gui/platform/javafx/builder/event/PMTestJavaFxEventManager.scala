@@ -44,7 +44,7 @@ import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Node]))
-class TestJavaFxEventManager extends JUnitSuite {
+class PMTestJavaFxEventManager extends JUnitSuite {
   /** Constant for a test component name. */
   private val CompName = "JavaFxEventManagerTestComponent"
 

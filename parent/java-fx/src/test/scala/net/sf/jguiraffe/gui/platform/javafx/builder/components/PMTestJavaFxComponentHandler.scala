@@ -29,7 +29,7 @@ import org.scalatest.junit.JUnitSuite
 
 import javafx.scene.control.Control
 
-object TestJavaFxComponentHandler {
+object PMTestJavaFxComponentHandler {
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
@@ -40,7 +40,7 @@ object TestJavaFxComponentHandler {
  */
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Control]))
-class TestJavaFxComponentHandler extends JUnitSuite {
+class PMTestJavaFxComponentHandler extends JUnitSuite {
   /** The mock control wrapped by the handler. */
   private var control: Control = _
 

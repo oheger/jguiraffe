@@ -46,7 +46,7 @@ import org.scalatest.junit.JUnitSuite
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[Stage], classOf[ReadOnlyBooleanProperty],
   classOf[MouseEvent], classOf[Scene]))
-class TestJavaFxWindow extends JUnitSuite {
+class PMTestJavaFxWindow extends JUnitSuite {
   /** A mock for the wrapped stage. */
   private var stage: Stage = _
 
@@ -446,11 +446,11 @@ class TestJavaFxWindow extends JUnitSuite {
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage, autoClose = false)
     wnd setWindowClosingStrategy strategy
-    val closingEventAnswer = TestJavaFxWindow registerClosingListener wnd
+    val closingEventAnswer = PMTestJavaFxWindow registerClosingListener wnd
 
     listenerAnswer.get.handle(event)
     PowerMock.verifyAll()
-    TestJavaFxWindow.checkClosingEvent(closingEventAnswer, wnd, event)
+    PMTestJavaFxWindow.checkClosingEvent(closingEventAnswer, wnd, event)
   }
 
   /**
@@ -472,11 +472,11 @@ class TestJavaFxWindow extends JUnitSuite {
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage, autoClose = true)
     wnd setWindowClosingStrategy strategy
-    val closingEventAnswer = TestJavaFxWindow registerClosingListener wnd
+    val closingEventAnswer = PMTestJavaFxWindow registerClosingListener wnd
 
     listenerAnswer.get.handle(event)
     PowerMock.verifyAll()
-    TestJavaFxWindow.checkClosingEvent(closingEventAnswer, wnd, event)
+    PMTestJavaFxWindow.checkClosingEvent(closingEventAnswer, wnd, event)
   }
 
   /**
@@ -512,7 +512,7 @@ class TestJavaFxWindow extends JUnitSuite {
   }
 }
 
-object TestJavaFxWindow {
+object PMTestJavaFxWindow {
   @BeforeClass def setUpBeforeClass() {
     JavaFxTestHelper.initPlatform()
   }

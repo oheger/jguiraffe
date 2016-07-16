@@ -44,7 +44,7 @@ import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer.convertToOption
 @RunWith(classOf[PowerMockRunner])
 @PrepareForTest(Array(classOf[FxWindow], classOf[Stage],
   classOf[ReadOnlyBooleanProperty]))
-class TestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
+class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Prepares a test for the adapter's event sender. This method creates a
    * test instance associated with an event listener list to which the given
