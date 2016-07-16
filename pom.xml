@@ -158,6 +158,20 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.10.4</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>${maven.user}</Built-By>
+              </manifestEntries>
+            </archive>
+            <additionalparam>-Xdoclint:none</additionalparam>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -165,7 +179,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.4</version>
+        <version>3.5.1</version>
       </plugin>
 
       <plugin>
@@ -239,7 +253,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -267,7 +280,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.3.1</version>
+        <version>3.0.4</version>
         <configuration>
           <excludeFilterFile>../../conf/findbugs-exclude.xml</excludeFilterFile>
         </configuration>
@@ -343,7 +356,7 @@
     release. The required command is as follows:
 
     mvn clean install site:site -P release,sign -Dmaven.user=user
-    
+
     The signed distribution artifacts are then available in the target directory
     of the distribution module.
   -->
