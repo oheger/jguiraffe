@@ -28,6 +28,14 @@
   <body>
     <release version="1.4" date="TBD"
       description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/22">
+        Fixed a NullPointerException in selection handling of
+        JavaFxTreeHandler.
+      </action>
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/21">
+        Labels rendered within a percent layout are given now a slightly
+        greater width, so that the text is fully displayed.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/20">
         Application now offers a method for accessing the bean context that was
         created when the main window was constructed.
