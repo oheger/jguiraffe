@@ -1,4 +1,101 @@
                            JGUIraffe Library
+                              Version 1.3.1
+                              Release Notes
+
+
+INTRODUCTION
+============
+
+This document contains the release notes for this version of the JGUIraffe
+library. JGUIraffe is a framework supporting the implementation of Java
+desktop applications using concepts like declarative UI definition, action and
+command objects, and dependency injection.
+
+As the minor version number change implies, the 1.3.1 release is just a bugfix
+release containing a number of fixes and minor updates. The majority of fixes
+is related to the JavaFX module: The JavaFX support introduced with version 1.3
+had a bunch of problems with different UI controls. Many of them have now be
+solved, so it is recommended to switch to this version when making use of the
+JavaFX module.
+
+Version 1.3.1 is binary and source compatible with version 1.3. Unfortunately,
+the clirr report is currently not available; it had to be disabled because the
+plugin does not support Java 8 as build environment.
+
+The JGUIraffe core and the Swing modules require Java 1.5 or higher; the JavaFX
+module is tested against JavaFX 2.2 which is shipped with Java 1.8 (it does not
+use any Java 1.8 features though and can in theory run with Java 1.7). It is
+compiled against Scala 2.11.
+
+Below is a list of all changes introduced by this release:
+
+BUG FIXES
+=========
+* [http://sourceforge.net/p/jguiraffe/bugs/22]
+  Fixed a NullPointerException in selection handling of JavaFxTreeHandler.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/21]
+  Labels rendered within a percent layout are given now a slightly greater
+  width, so that the text is fully displayed.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/20]
+  Application now offers a method for accessing the bean context that was
+  created when the main window was constructed.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/19]
+  The action tag now supports a new enabled attribute. This can be used to
+  disable actions after their creation.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/18]
+  JavaFxWindowManager now supports customizing JavaFX stage creation. For this
+  purpose the new trait StageFactory was introduced. With DefaultStageFactory
+  there is a default implementation which can be extended.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/17]
+  FormController now offers a new method validateAndDisplayMessages() which can
+  be used to trigger a validation with user feedback at any time. This is
+  useful for instance for the implementation of an Apply button.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/16]
+  It is now possible to add custom beans created dynamically by an application
+  to the global bean context.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/15]
+  Using the unit dlu in a JavaFX splitter component no longer causes an
+  exception.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/14]
+  JavaFX panels can now be assigned basic attributes like color or font.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/13]
+  JavaFX tables now correctly evaluate the multi-selection flag.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/12]
+  JavaFX labels can now be assigned an icon. The ClassCastException that
+  occurred in this case has been fixed.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/11]
+  The JavaFX application is now correctly set up so that the primary stage can
+  be created successfully in JavaFX 8.
+
+* [http://sourceforge.net/p/jguiraffe/bugs/10]
+  The build of JGUIraffe is now possible with both Java 7 and Java 8.
+
+
+OTHER CHANGES
+=============
+* The build of the JavaFX module is now faster because not for all tests a
+  forked JVM has to be created.
+
+Comprehensive documentation about the JGUIraffe library is available on
+the project's web site
+    http://jguiraffe.sourceforge.net/
+
+A user's guide can be found at
+    http://jguiraffe.sourceforge.net/jguiraffe/userguide/user_guide.html
+
+
+                           JGUIraffe Library
                                Version 1.3
                               Release Notes
 
