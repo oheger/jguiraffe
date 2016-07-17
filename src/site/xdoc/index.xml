@@ -39,7 +39,7 @@
       <a href="introduction.html">introduction</a> or a
       <a href="userguide/user_guide.html">user's guide</a>. Aggregated
       <a href="apidocs/index.html">Javadocs</a> are available as well. Use the
-      links on the left hand side menu to navigate to these documents. When 
+      links on the left hand side menu to navigate to these documents. When
       learning the library this is the place to start.
       </li>
       <li>
@@ -62,14 +62,22 @@
   <p>
   <table>
   <tr>
-    <td>2015-01-18</td>
+    <td>2016-07-17</td>
     <td>
-    Release 1.3 of <em>JGUIraffe</em>. In addition to Swing, <em>JGUIraffe</em>
-    applications now support JavaFX as target platform. Downloads are available
-    from the SourceForge project site; as usual, the artifacts can also be
-    downloaded automatically from the Central Maven repository.
+      With release 1.3.1 a bugfix release of <em>JGUIraffe</em> is provided which
+      mainly addresses problems in the JavaFX module. The new release can be
+      obtained via the usual sources.
     </td>
   </tr>
+    <tr>
+      <td>2015-01-18</td>
+      <td>
+        Release 1.3 of <em>JGUIraffe</em>. In addition to Swing, <em>JGUIraffe</em>
+        applications now support JavaFX as target platform. Downloads are available
+        from the SourceForge project site; as usual, the artifacts can also be
+        downloaded automatically from the Central Maven repository.
+      </td>
+    </tr>
   <tr>
     <td>2012-11-15</td>
     <td>
