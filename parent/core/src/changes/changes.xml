@@ -28,6 +28,9 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+        <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/24">
+            JavaFX windows can now be assigned an icon.
+        </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/23">
         JavaFX static text elements now handle icons correctly.
       </action>
