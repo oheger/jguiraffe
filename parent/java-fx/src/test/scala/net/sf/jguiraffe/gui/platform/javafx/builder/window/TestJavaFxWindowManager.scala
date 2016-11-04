@@ -17,12 +17,14 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
 import javafx.scene.Group
 import javafx.scene.control.MenuBar
+import javafx.scene.image.Image
 import javafx.scene.text.Text
-import javafx.stage.{Stage, Modality}
+import javafx.stage.{Modality, Stage}
 
 import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderData, FormBuilderException}
 import net.sf.jguiraffe.gui.builder.window.{Window, WindowBuilderData, WindowData}
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
 import org.apache.commons.jelly.JellyContext
 import org.easymock.EasyMock
@@ -51,6 +53,13 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    */
   private def extractStage(wnd: Window) =
     wnd.asInstanceOf[JavaFxWindow].stage
+
+  /**
+    * Creates a test image.
+    * @return the image
+    */
+  private def createImage(): Image =
+  new Image("icon.jpg")
 
   /**
    * Tests whether an initial and another stage can be created.
@@ -107,7 +116,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   @Test def testInitTitle() {
     val title = "A window title"
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(title = title)
+    val windowData = WindowDataImpl(title = title)
     val wndNew = manager.createFrame(builderData, windowData, null)
     val wnd = manager.createFrame(builderData, windowData, wndNew)
     assertEquals("Wrong title", title, wnd.getTitle)
@@ -118,7 +127,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testInitController() {
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(controller = this)
+    val windowData = WindowDataImpl(controller = this)
     val wndNew = manager.createFrame(builderData, windowData, null)
     val wnd = manager.createFrame(builderData, windowData, wndNew)
     assertEquals("Wrong controller", this, wnd.getWindowController)
@@ -129,7 +138,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testInitBounds() {
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(xPos = 10, yPos = 20, width = 300,
+    val windowData = WindowDataImpl(xPos = 10, yPos = 20, width = 300,
       height = 200)
     val wndNew = manager.createFrame(builderData, windowData, null)
     val wnd = manager.createFrame(builderData, windowData, wndNew)
@@ -140,12 +149,25 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Tests whether an icon for the window is processed correctly.
+    */
+  @Test def testInitIcon(): Unit = {
+    val image = createImage()
+    val builderData = createWindowBuilderData()
+    val windowData = WindowDataImpl(icon = ImageWrapper(image))
+    val wndNew = manager.createFrame(builderData, windowData, null)
+    val wnd = manager.createFrame(builderData, windowData, wndNew).asInstanceOf[JavaFxWindow]
+    assertEquals("Wrong number of icons", 1, wnd.stage.getIcons.size())
+    assertEquals("Wrong icon", image, wnd.stage.getIcons.get(0))
+  }
+
+  /**
    * Helper method for testing that the auto close flag is set correctly.
    * @param autoClose the auto close flag to be set
    */
   private def checkAutoCloseFlag(autoClose: Boolean): Unit = {
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(autoClose = autoClose)
+    val windowData = WindowDataImpl(autoClose = autoClose)
     val wnd = manager.createFrame(builderData, windowData, null).asInstanceOf[JavaFxWindow]
     assertEquals("Wrong autoClose flag", autoClose, wnd.autoClose)
   }
@@ -171,7 +193,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    */
   private def createWindowWithMenuBar(menuBar: AnyRef): Window = {
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(menuBar = menuBar)
+    val windowData = WindowDataImpl(menuBar = menuBar)
     val wndNew = manager.createFrame(builderData, windowData, null)
     manager.createFrame(builderData, windowData, wndNew)
   }
@@ -241,7 +263,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    */
   private def checkCreateDialog(modal: Boolean, expModality: Modality) {
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(title = "some title")
+    val windowData = WindowDataImpl(title = "some title")
     val wndNew = manager.createDialog(builderData, windowData, modal, null)
     val wnd = manager.createDialog(builderData, windowData, modal,
       wndNew).asInstanceOf[JavaFxWindow]
@@ -268,7 +290,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    */
   @Test def testCreateInternalFrame() {
     val builderData = createWindowBuilderData()
-    val windowData = new WindowDataImpl(title = "some title")
+    val windowData = WindowDataImpl(title = "some title")
     val wndNew = manager.createInternalFrame(builderData, windowData, null)
     val wnd = manager.createInternalFrame(builderData, windowData,
       wndNew).asInstanceOf[JavaFxWindow]

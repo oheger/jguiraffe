@@ -18,11 +18,12 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 import javafx.scene.control.MenuBar
 import javafx.stage.Modality
 import javafx.stage.Stage
+
 import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData
 import net.sf.jguiraffe.gui.builder.window.WindowData
 import net.sf.jguiraffe.gui.builder.window.WindowManager
-import net.sf.jguiraffe.gui.platform.javafx.common.ComponentUtils
+import net.sf.jguiraffe.gui.platform.javafx.common.{ComponentUtils, ImageWrapper}
 import net.sf.jguiraffe.gui.platform.javafx.layout.JavaFxUnitSizeHandler
 
 /**
@@ -127,10 +128,12 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: S
     fxwnd.windowController = data.getController
     initWindowBounds(data, fxwnd.stage)
     initMenuBar(fxwnd, data.getMenuBar)
+    initIcon(fxwnd, data)
   }
 
   /**
    * Initializes the window's menu bar if one is defined.
+   *
    * @param window the window
    * @param menuBar the optional menu bar
    */
@@ -158,6 +161,19 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: S
     }
     if (defined(data.getHeight)) {
       stage.setHeight(data.getHeight)
+    }
+  }
+
+  /**
+    * Initializes the window's icon from the given data object.
+    * @param window the window
+    * @param data the data object
+    */
+  private def initIcon(window: JavaFxWindow, data: WindowData): Unit = {
+    data.getIcon match {
+      case ImageWrapper(image) =>
+        window.stage.getIcons add image
+      case _ =>
     }
   }
 
