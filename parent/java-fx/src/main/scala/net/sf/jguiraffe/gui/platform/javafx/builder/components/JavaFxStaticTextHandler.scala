@@ -16,13 +16,14 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import scala.beans.BeanProperty
-
 import javafx.scene.Node
 import javafx.scene.control.Label
+
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextHandler
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
 import net.sf.jguiraffe.gui.builder.components.tags.StaticTextDataImpl
+import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
 
 /**
  * The JavaFX-specific implementation of a ''ComponentHandler'' for a
@@ -72,6 +73,7 @@ private class JavaFxStaticTextHandler(label: Label)
   def setIcon(icon: Object) {
     val fxIcon = icon match {
       case nd: Node => nd
+      case iw: ImageWrapper => iw.newImageView()
       case _ => null
     }
     label setGraphic fxIcon

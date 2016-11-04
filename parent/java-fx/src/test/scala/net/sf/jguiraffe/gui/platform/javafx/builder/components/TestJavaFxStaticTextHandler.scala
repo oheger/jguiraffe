@@ -21,16 +21,17 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.{BeforeClass, Before, Test}
+import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
-
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
 import net.sf.jguiraffe.gui.builder.components.tags.StaticTextDataImpl
+import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
 
 object TestJavaFxStaticTextHandler {
   @BeforeClass def setUpOnce(): Unit = {
@@ -61,7 +62,14 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
    * @return the icon
    */
   private def createIcon() =
-    new ImageView(new Image("icon.jpg"))
+    new ImageView(createImage())
+
+  /**
+    * Creates a test image.
+    * @return the image
+    */
+  private def createImage(): Image =
+    new Image("icon.jpg")
 
   /**
    * Tests whether the correct type is returned.
@@ -121,5 +129,16 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
     assertNull("Got an icon", label.getGraphic)
     assertEquals("Wrong content display", ContentDisplay.LEFT,
       label.getContentDisplay)
+  }
+
+  /**
+    * Tests that an ImageWrapper passed to the setIcon() method is
+    * handled correctly.
+    */
+  @Test def testSetIconImageWrapper(): Unit = {
+    val image = createImage()
+    val icon = ImageWrapper(image)
+    handler setIcon icon
+    assertEquals("Wrong icon", image, label.getGraphic.asInstanceOf[ImageView].getImage)
   }
 }
