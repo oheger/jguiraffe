@@ -30,17 +30,17 @@ import net.sf.jguiraffe.gui.builder.window.WindowListener
  *
  * Unfortunately, there is a mismatch between Java FX window events and
  * JGUIraffe window events. Therefore, no one to one mapping is possible.
- * The following mappings are implemented by this class:
- *
- * - WINDOW_SHOWN => WINDOW_OPENED
- * - WINDOW_HIDING => WINDOW_CLOSING
- * - WINDOW_HIDDEN => WINDOW_CLOSED
+ * The initial JavaFX ''WINDOW_SHOWN'' event is mapped to the
+ * ''WINDOW_OPENED'' event.
  *
  * Java FX does not define events for window activation or deactivation, and
  * events related to the window's current icon state. However, these events
  * correspond to changes on some properties of the window. So listeners
  * on the Java FX window's ''focused'' and ''iconified'' properties are
  * registered for generating such events.
+ *
+ * Events related to the closing of the window are handled by the window
+ * implementation.
  *
  * @param window the wrapped JGUIraffe window
  * @param sender the object for transporting events
@@ -56,6 +56,9 @@ class WindowEventAdapter private[event] (val window: Window,
   /** A listener for reacting on icon state changes. */
   @volatile private var iconListener: ChangeListener[java.lang.Boolean] = _
 
+  /** A flag whether the event has already been opened. */
+  private var windowOpen = false
+
   /**
    * Maps the given Java FX event to a corresponding JGUIraffe event and
    * passes it to the event sender.
@@ -63,14 +66,9 @@ class WindowEventAdapter private[event] (val window: Window,
    */
   def handleEvent(event: FxWindowEvent) {
     event.getEventType match {
-      case FxWindowEvent.WINDOW_SHOWN =>
+      case FxWindowEvent.WINDOW_SHOWN if !windowOpen =>
         fire(event, WindowEvent.Type.WINDOW_OPENED)
-
-      case FxWindowEvent.WINDOW_HIDDEN =>
-        fire(event, WindowEvent.Type.WINDOW_CLOSED)
-
-      case FxWindowEvent.WINDOW_HIDING =>
-        fire(event, WindowEvent.Type.WINDOW_CLOSING)
+        windowOpen = true
 
       case _ =>
     }

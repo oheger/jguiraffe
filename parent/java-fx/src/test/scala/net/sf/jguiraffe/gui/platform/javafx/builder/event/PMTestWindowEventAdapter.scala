@@ -170,7 +170,21 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   }
 
   /**
-   * Tests whether a window closing event can be generated.
+    * Tests that only the first SHOWN event is mapped to an OPENED event.
+    */
+  @Test def testHandleMultipleShownEvents(): Unit = {
+    val wnd = mock[Window]
+    val sender = new MockSender
+    val adapter = new WindowEventAdapter(wnd, sender)
+    val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_SHOWN)
+    adapter.handleEvent(event)
+    sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_OPENED)
+    adapter.handleEvent(event)
+    sender.checkNoEvent()
+  }
+
+  /**
+   * Tests whether a window HIDING event is ignored.
    */
   @Test def testHandleEventClosing() {
     val wnd = mock[Window]
@@ -178,11 +192,11 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
     val adapter = new WindowEventAdapter(wnd, sender)
     val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_HIDING)
     adapter.handleEvent(event)
-    sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_CLOSING)
+    sender.checkNoEvent()
   }
 
   /**
-   * Tests whether a window closed event can be generated.
+   * Tests whether a window HIDDEN event is ignored.
    */
   @Test def testHandleEventClosed() {
     val wnd = mock[Window]
@@ -190,7 +204,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
     val adapter = new WindowEventAdapter(wnd, sender)
     val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_HIDDEN)
     adapter.handleEvent(event)
-    sender.checkEvent(wnd, event, WindowEvent.Type.WINDOW_CLOSED)
+    sender.checkNoEvent()
   }
 
   /**
@@ -202,7 +216,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
     val adapter = new WindowEventAdapter(wnd, sender)
     val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_CLOSE_REQUEST)
     adapter.handleEvent(event)
-    sender.checkNoEvent
+    sender.checkNoEvent()
   }
 
   /**
@@ -312,9 +326,9 @@ class MockSender extends EventSender[WindowEvent] {
    */
   def checkEvent(wnd: Window, src: Object, evtype: WindowEvent.Type) {
     val ev = event.get
-    assertSame("Wrong window", wnd, ev.getSourceWindow())
-    assertSame("Wrong source", src, ev.getSource())
-    assertEquals("Wrong event type", evtype, ev.getType())
+    assertSame("Wrong window", wnd, ev.getSourceWindow)
+    assertSame("Wrong source", src, ev.getSource)
+    assertEquals("Wrong event type", evtype, ev.getType)
     event = None
   }
 
