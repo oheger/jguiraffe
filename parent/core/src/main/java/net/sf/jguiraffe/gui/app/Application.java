@@ -400,6 +400,9 @@ public class Application
     /** The current exit handler of this application. */
     private final AtomicReference<Runnable> exitHandler;
 
+    /** The tracker for the main window's closed state. */
+    private final MainWindowCloseTracker mainWindowCloseTracker;
+
     /** Stores the bean context of the main window. */
     private BeanContext mainWindowBeanContext;
 
@@ -411,6 +414,18 @@ public class Application
      */
     public Application()
     {
+        this(new MainWindowCloseTracker());
+    }
+
+    /**
+     * Creates a new instance of {@code Application} and initializes it with all
+     * dependencies. This constructor is used for testing purposes.
+     *
+     * @param tracker the {@code MainWindowCloseTracker}
+     */
+    Application(MainWindowCloseTracker tracker)
+    {
+        mainWindowCloseTracker = tracker;
         shutdownListeners = new EventListenerList();
         beanBuilderResults = new ArrayList<BeanBuilderResult>();
         exitHandler = new AtomicReference<Runnable>();
@@ -1115,6 +1130,7 @@ public class Application
                 {
                     appCtx.setMainWindow(mainWindow);
                     initMainWindow(mainWindow, config);
+                    getMainWindowCloseTracker().initMainWindow(mainWindow);
                 }
                 mainWindowBeanContext = builderData.getBuilderContext();
             }
@@ -1299,6 +1315,7 @@ public class Application
         log.debug("Calling shutdown listeners.");
         if (fireCanShutdown())
         {
+            getMainWindowCloseTracker().ensureMainWindowClosed(this);
             fireShutdown();
             onShutdown();
             getCommandQueue().shutdown(true);
@@ -1514,6 +1531,17 @@ public class Application
         }
 
         getExitHandler().run();
+    }
+
+    /**
+     * Returns the helper object to keep track on the main window's closed
+     * state.
+     *
+     * @return the {@code MainWindowCloseTracker} used by this instance
+     */
+    MainWindowCloseTracker getMainWindowCloseTracker()
+    {
+        return mainWindowCloseTracker;
     }
 
     /**
