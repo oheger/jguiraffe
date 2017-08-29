@@ -104,6 +104,8 @@ private class JavaFxWindow private[window] (val stage: Stage,
     closingPermitted = force || getWindowClosingStrategy.canClose(this)
     if (closingPermitted) {
       stage.close()
+      fireClosedEvent(new javafx.stage.WindowEvent(stage,
+        javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST))
       true
     } else {
       false
@@ -148,7 +150,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
     if (windowClosingStrategy != null) windowClosingStrategy
     else InvariantWindowClosingStrategy.DEFAULT_INSTANCE
 
-  def setWindowClosingStrategy(wcs: WindowClosingStrategy) = {
+  def setWindowClosingStrategy(wcs: WindowClosingStrategy): Unit = {
     windowClosingStrategy = wcs
   }
 
@@ -180,6 +182,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
                 e.consume()
               } else {
                 fireClosingEvent(e)
+                fireClosedEvent(e)
               }
             }
           }
@@ -192,10 +195,19 @@ private class JavaFxWindow private[window] (val stage: Stage,
    * listeners.
    * @param source the source event
    */
-  private def fireClosingEvent(source: javafx.stage.WindowEvent) {
-    windowListeners.fire(new WindowEvent(source, JavaFxWindow.this, WindowEvent.Type
-      .WINDOW_CLOSING),
-      _.windowClosing(_))
+  private def fireClosingEvent(source: javafx.stage.WindowEvent): Unit = {
+    windowListeners.fire(new WindowEvent(source, JavaFxWindow.this,
+      WindowEvent.Type.WINDOW_CLOSING), _.windowClosing(_))
+  }
+
+  /**
+    * Creates a window closed event and passes it to all registered event
+    * listeners.
+    * @param source the source event
+    */
+  private def fireClosedEvent(source: javafx.stage.WindowEvent): Unit = {
+    windowListeners.fire(new WindowEvent(source, JavaFxWindow.this,
+      WindowEvent.Type.WINDOW_CLOSED), _.windowClosed(_))
   }
 }
 

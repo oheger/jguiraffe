@@ -261,29 +261,49 @@ class PMTestJavaFxWindow extends JUnitSuite {
    */
   @Test def testCloseForce() {
     val strat = PowerMock.createMock(classOf[WindowClosingStrategy])
-    val wnd = createWindow()
+    prepareApplyTest()
+    expectWindowListener()
+    expectMouseListener()
+    expectClosingListener()
     stage.close()
     PowerMock.replayAll()
+    val wnd = JavaFxWindow(stage, autoClose = true)
+    val listener = PMTestJavaFxWindow.createAndRegisterWindowListener(wnd)
+    val closeAnswer = PMTestJavaFxWindow.expectClosedNotification(listener)
+    EasyMock.replay(listener)
     wnd setWindowClosingStrategy strat
 
     assertTrue("Wrong result", wnd.close(force = true))
     assertTrue("Closing not permitted", wnd.closingPermitted)
+    val event = PMTestJavaFxWindow.checkClosingEvent(closeAnswer, wnd,
+      evType = WindowEvent.Type.WINDOW_CLOSED)
+    val fxEvent = event.getSource.asInstanceOf[javafx.stage.WindowEvent]
+    assertEquals("Wrong window", stage, fxEvent.getSource)
   }
 
   /**
    * Tests a close operation allowed by the strategy.
    */
   @Test def testCloseStrategyAllows() {
-    val strat = PowerMock.createMock(classOf[WindowClosingStrategy])
-    val wnd = createWindow()
-    EasyMock.expect(strat.canClose(wnd)).andReturn(true)
+    val strat = EasyMock.createMock(classOf[WindowClosingStrategy])
+    prepareApplyTest()
+    expectWindowListener()
+    expectMouseListener()
+    expectClosingListener()
     stage.close()
     PowerMock.replayAll()
+    val wnd = JavaFxWindow(stage, autoClose = true)
+    EasyMock.expect(strat.canClose(wnd)).andReturn(true)
+    val listener = PMTestJavaFxWindow.createAndRegisterWindowListener(wnd)
+    val closeAnswer = PMTestJavaFxWindow.expectClosedNotification(listener)
+    EasyMock.replay(listener, strat)
     wnd setWindowClosingStrategy strat
 
     assertTrue("Wrong result", wnd.close(force = false))
     assertTrue("Closing not permitted", wnd.closingPermitted)
     PowerMock.verifyAll()
+    PMTestJavaFxWindow.checkClosingEvent(closeAnswer, wnd,
+      evType = WindowEvent.Type.WINDOW_CLOSED)
   }
 
   /**
@@ -444,7 +464,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
     EasyMock.expectLastCall().andReturn(FxWindowEvent.WINDOW_CLOSE_REQUEST).anyTimes()
     event.consume()
     PowerMock.replayAll()
-    val wnd = JavaFxWindow(stage, autoClose = false)
+    val wnd = JavaFxWindow(stage)
     wnd setWindowClosingStrategy strategy
     val closingEventAnswer = PMTestJavaFxWindow registerClosingListener wnd
 
@@ -472,11 +492,16 @@ class PMTestJavaFxWindow extends JUnitSuite {
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage, autoClose = true)
     wnd setWindowClosingStrategy strategy
-    val closingEventAnswer = PMTestJavaFxWindow registerClosingListener wnd
+    val listener = PMTestJavaFxWindow.createAndRegisterWindowListener(wnd)
+    val closingEventAnswer = PMTestJavaFxWindow.expectClosingNotification(listener)
+    val closedAnswer = PMTestJavaFxWindow.expectClosedNotification(listener)
+    EasyMock.replay(listener)
 
     listenerAnswer.get.handle(event)
     PowerMock.verifyAll()
     PMTestJavaFxWindow.checkClosingEvent(closingEventAnswer, wnd, event)
+    PMTestJavaFxWindow.checkClosingEvent(closedAnswer, wnd, event,
+      evType = WindowEvent.Type.WINDOW_CLOSED)
   }
 
   /**
@@ -518,18 +543,59 @@ object PMTestJavaFxWindow {
   }
 
   /**
-   * Registers a mock window listener at the given window which expects a window
-   * closing event.
-   * @param window the window to be tested
-   * @return the answer for obtaining the received event
-   */
-  private def registerClosingListener(window: JavaFxWindow): FetchAnswer[Void, WindowEvent] = {
+    * Creates a mock window listener and registers it at the specified window.
+    *
+    * @param window the window to be tested
+    * @return the mock window listener
+    */
+  private def createAndRegisterWindowListener(window: JavaFxWindow): WindowListener = {
     val listener = EasyMock.createMock(classOf[WindowListener])
+    window addWindowListener listener
+    listener
+  }
+
+  /**
+    * Prepares the specified window listener mock to expect a window closing
+    * event notification.
+    *
+    * @param listener the listener mock
+    * @return the answer for obtaining the event received
+    */
+  private def expectClosingNotification(listener: WindowListener):
+  FetchAnswer[Void, WindowEvent] = {
     val answer = new FetchAnswer[Void, WindowEvent]
     listener.windowClosing(EasyMock.anyObject(classOf[WindowEvent]))
     EasyMock.expectLastCall().andAnswer(answer)
+    answer
+  }
+
+  /**
+    * Prepares the specified window listener mock to expect a window closed
+    * event notification.
+    *
+    * @param listener the listener mock
+    * @return the answer for obtaining the event received
+    */
+  private def expectClosedNotification(listener: WindowListener):
+  FetchAnswer[Void, WindowEvent] = {
+    val answer = new FetchAnswer[Void, WindowEvent]
+    listener.windowClosed(EasyMock.anyObject(classOf[WindowEvent]))
+    EasyMock.expectLastCall().andAnswer(answer)
+    answer
+  }
+
+  /**
+    * Registers a mock window listener at the given window which expects a window
+    * closing event.
+    *
+    * @param window the window to be tested
+    * @return the answer for obtaining the received event
+    */
+  private def registerClosingListener(window: JavaFxWindow):
+  FetchAnswer[Void, WindowEvent] = {
+    val listener = createAndRegisterWindowListener(window)
+    val answer = expectClosingNotification(listener)
     EasyMock.replay(listener)
-    window addWindowListener listener
     answer
   }
 
@@ -538,14 +604,19 @@ object PMTestJavaFxWindow {
    * @param answer the answer for obtaining the event
    * @param window the expected window
    * @param source the expected event source (may be null, then no test for the source is done)
+   * @param evType the expected type of the event
+   * @return the window event received by the listener
    */
   private def checkClosingEvent(answer: FetchAnswer[_, WindowEvent], window: JavaFxWindow,
-                                source: AnyRef = null): Unit = {
+                                source: AnyRef = null,
+                                evType: WindowEvent.Type = WindowEvent.Type.WINDOW_CLOSING):
+  WindowEvent = {
     val event = answer.get
     if (source != null) {
       assertEquals("Wrong event source", source, event.getSource)
     }
     assertEquals("Wrong window", window, event.getSourceWindow)
-    assertEquals("Wrong event type", WindowEvent.Type.WINDOW_CLOSING, event.getType)
+    assertEquals("Wrong event type", evType, event.getType)
+    event
   }
 }
