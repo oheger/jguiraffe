@@ -28,6 +28,12 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/25">
+        Handling of close notifications has been reworked for JavaFX windows.
+        Window closed events are no longer sent when the window becomes
+        invisible; they are sent when the window is actually closed, either by
+        clicking the X button or by an invocation of the close() method.
+      </action>
         <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/24">
             JavaFX windows can now be assigned an icon.
         </action>
