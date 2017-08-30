@@ -1299,54 +1299,44 @@ public class Application
      * asking if the application should be ended anyway. The resource for this
      * message is defined by the passed in parameter, which can be a resource ID
      * or an {@code ApplicationResourceDef} object. Only if the user
-     * confirms this, the application will be ended.
+     * confirms this, the application will be ended. If the application has
+     * already been shut down, this invocation has no effect.
      *
      * @param msgres defines the resource of the message to be displayed
      * @param titleres defines the resource of the title of the message
      */
     public void shutdown(Object msgres, Object titleres)
     {
-        log.info("shutdown() called.");
-        if (!shutdownFlag.compareAndSet(false, true))
-        {
-            return;
-        }
-        if (titleres != null && getCommandQueue().isPending())
-        {
-            if (getApplicationContext().messageBox(msgres, titleres,
-                    MessageOutput.MESSAGE_QUESTION, MessageOutput.BTN_YES_NO)
-                    != MessageOutput.RET_YES)
-            {
-                return;
-            }
-        }
-
-        log.debug("Calling shutdown listeners.");
-        if (fireCanShutdown())
-        {
-            getMainWindowCloseTracker().ensureMainWindowClosed(this);
-            fireShutdown();
-            onShutdown();
-            getCommandQueue().shutdown(true);
-            releaseBeanBuilderResults(getIninitializedBuilderResults());
-            exitApplication(0);
-        }
-        else
-        {
-            log.debug("Veto of shutdown listener!");
-            shutdownFlag.set(false);
-        }
+        doShutdown(msgres, titleres, false);
     }
 
     /**
      * Shuts down this application unconditionally. This version of the {@code
      * shutdown()} method does not check for tasks still running in the
      * background. It directly invokes the registered shutdown listeners and
-     * exits the application if none vetos.
+     * exits the application if none vetos. If the application has already been
+     * shut down, this invocation has no effect.
      */
     public void shutdown()
     {
         shutdown(null, null);
+    }
+
+    /**
+     * Shuts down this application unconditionally, optionally without asking
+     * shutdown listeners for permission. If the {@code force} parameter is
+     * <b>false</b>, the {@code canShutdown()} method of registered shutdown
+     * listeners is invoked, so that they can abort the shutdown operation. With
+     * the value <b>true</b>, this is not the case; the method then assumes that
+     * no shutdown listener has objections against the operation. If the
+     * application has already been shut down, this invocation has no effect.
+     *
+     * @param force a flag whether the shutdown should be enforced
+     * @since 1.4
+     */
+    public void shutdown(boolean force)
+    {
+        doShutdown(null, null, true);
     }
 
     /**
@@ -1663,6 +1653,47 @@ public class Application
             throw new IllegalArgumentException("Bean context must not be null!");
         }
         return (Application) context.getBean(BEAN_APPLICATION);
+    }
+
+    /**
+     * Handles a shutdown operation with all supported settings.
+     *
+     * @param msgres defines the resource of the message to be displayed
+     * @param titleres defines the resource of the title of the message
+     * @param force a flag whether the shutdown should be enforced
+     */
+    private void doShutdown(Object msgres, Object titleres, boolean force)
+    {
+        log.info("shutdown() called.");
+        if (!shutdownFlag.compareAndSet(false, true))
+        {
+            return;
+        }
+        if (titleres != null && getCommandQueue().isPending())
+        {
+            if (getApplicationContext().messageBox(msgres, titleres,
+                    MessageOutput.MESSAGE_QUESTION,
+                    MessageOutput.BTN_YES_NO) != MessageOutput.RET_YES)
+            {
+                return;
+            }
+        }
+
+        log.debug("Calling shutdown listeners.");
+        if (force || fireCanShutdown())
+        {
+            getMainWindowCloseTracker().ensureMainWindowClosed(this);
+            fireShutdown();
+            onShutdown();
+            getCommandQueue().shutdown(true);
+            releaseBeanBuilderResults(getIninitializedBuilderResults());
+            exitApplication(0);
+        }
+        else
+        {
+            log.debug("Veto of shutdown listener!");
+            shutdownFlag.set(false);
+        }
     }
 
     /**

@@ -1062,10 +1062,27 @@ public class TestApplication
      * Tests a shutdown() operation if background tasks are to be ignored.
      */
     @Test
-    public void testShutdownForced() throws BuilderException
+    public void testShutdownNoConfirmation() throws BuilderException
     {
         prepareShutdownTest(false);
         app.shutdown();
+        verifyShutdownTest();
+    }
+
+    /**
+     * Tests a forced shutdown operation; shutdown listeners should not be
+     * called.
+     */
+    @Test
+    public void testShutdownForced() throws BuilderException {
+        prepareShutdownTest(false);
+        ApplicationShutdownListener listener =
+                EasyMock.createMock(ApplicationShutdownListener.class);
+        listener.shutdown(app);
+        EasyMock.replay(listener);
+        app.addShutdownListener(listener);
+
+        app.shutdown(true);
         verifyShutdownTest();
     }
 
