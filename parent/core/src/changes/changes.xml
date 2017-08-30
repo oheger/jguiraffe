@@ -28,6 +28,16 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/feature-requests/8">
+        Added a new shutdown() method to application which allows a forced
+        shutdown. In this mode, shutdown listeners are not asked for
+        permission.
+      </action>
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/26">
+        Made shutdown handling more consistent. It is ensured that the main
+        window is closed exactly once, and that multiple invocations of
+        shutdown() have no effect.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/25">
         Handling of close notifications has been reworked for JavaFX windows.
         Window closed events are no longer sent when the window becomes

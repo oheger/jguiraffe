@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.di.BeanProvider;
@@ -842,6 +845,7 @@ public class TestApplication
                 .createMock(ApplicationContext.class);
         final Window mockWindow = EasyMock.createMock(Window.class);
         Builder mockBuilder = EasyMock.createMock(Builder.class);
+        MainWindowCloseTracker tracker = EasyMock.createMock(MainWindowCloseTracker.class);
         final BeanContext windowContext = EasyMock.createMock(BeanContext.class);
         final ApplicationBuilderData mockData = new ApplicationBuilderData();
         Configuration config = prepareInitWindowTest(mockWindow);
@@ -858,12 +862,14 @@ public class TestApplication
             }
         });
         mockCtx.setMainWindow(mockWindow);
-        EasyMock.replay(mockCtx, mockWindow, mockBuilder, windowContext);
+        tracker.initMainWindow(mockWindow);
+        EasyMock.replay(mockCtx, mockWindow, mockBuilder, windowContext, tracker);
+        app = new ApplicationTestImpl(tracker);
 
         app.initGUI(mockCtx);
         assertSame("Wrong main window bean context", windowContext,
                 app.getMainWindowBeanContext());
-        EasyMock.verify(mockCtx, mockWindow, mockBuilder);
+        EasyMock.verify(mockCtx, mockWindow, mockBuilder, tracker);
     }
 
     /**
@@ -967,6 +973,8 @@ public class TestApplication
     @Test
     public void testShutdownQuit() throws Exception
     {
+        MainWindowCloseTracker tracker = EasyMock.createMock(MainWindowCloseTracker.class);
+        app = new ApplicationTestImpl(tracker);
         app.setConfigResourceName(CONFIG_MAX);
         app.setApplicationContext(app.createApplicationContext());
         app.setCommandQueue(new CommandQueueImpl(createSynchronizer())
@@ -983,7 +991,7 @@ public class TestApplication
                         "Hello", MessageOutput.MESSAGE_QUESTION,
                         MessageOutput.BTN_YES_NO)).andReturn(
                 MessageOutput.RET_NO);
-        EasyMock.replay(mockOut);
+        EasyMock.replay(mockOut, tracker);
         app.getApplicationContext().setMessageOutput(mockOut);
 
         app.shutdown(new Message(RES_GRP, "test2"), new Message(RES_GRP,
@@ -1005,11 +1013,13 @@ public class TestApplication
         BeanBuilderFactory factory = EasyMock
                 .createMock(BeanBuilderFactory.class);
         BeanBuilder builder = EasyMock.createMock(BeanBuilder.class);
+        MainWindowCloseTracker tracker = EasyMock.createMock(MainWindowCloseTracker.class);
         if (checkPending)
         {
             EasyMock.expect(queue.isPending()).andReturn(Boolean.FALSE);
         }
         queue.shutdown(true);
+        app = new ApplicationTestImpl(tracker);
         app.setConfigResourceName(CONFIG_MAX);
         app.setApplicationContext(app.createApplicationContext());
         EasyMock.expect(factory.getBeanBuilder()).andStubReturn(builder);
@@ -1017,7 +1027,8 @@ public class TestApplication
         {
             builder.release(result);
         }
-        EasyMock.replay(queue, factory, builder);
+        tracker.ensureMainWindowClosed(app);
+        EasyMock.replay(queue, factory, builder, tracker);
         app.setCommandQueue(queue);
         app.mockFactory = factory;
         app.setExitHandler(new TestExitHandler(app));
@@ -1031,7 +1042,8 @@ public class TestApplication
         TestExitHandler eh = (TestExitHandler) app.getExitHandler();
         assertEquals("Wrong exit code set", 0, eh.getExitCode());
         BeanBuilder builder = app.mockFactory.getBeanBuilder();
-        EasyMock.verify(app.getCommandQueue(), app.mockFactory, builder);
+        EasyMock.verify(app.getCommandQueue(), app.mockFactory, builder,
+                app.getMainWindowCloseTracker());
     }
 
     /**
@@ -1050,11 +1062,89 @@ public class TestApplication
      * Tests a shutdown() operation if background tasks are to be ignored.
      */
     @Test
-    public void testShutdownForced() throws BuilderException
+    public void testShutdownNoConfirmation() throws BuilderException
     {
         prepareShutdownTest(false);
         app.shutdown();
         verifyShutdownTest();
+    }
+
+    /**
+     * Tests a forced shutdown operation; shutdown listeners should not be
+     * called.
+     */
+    @Test
+    public void testShutdownForced() throws BuilderException {
+        prepareShutdownTest(false);
+        ApplicationShutdownListener listener =
+                EasyMock.createMock(ApplicationShutdownListener.class);
+        listener.shutdown(app);
+        EasyMock.replay(listener);
+        app.addShutdownListener(listener);
+
+        app.shutdown(true);
+        verifyShutdownTest();
+    }
+
+    /**
+     * Tests that shutdown() is executed only once, even if invoked from
+     * multiple threads.
+     */
+    @Test
+    public void testMultipleShutdownInvocations()
+            throws BuilderException, InterruptedException
+    {
+        final int threadCount = 16;
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicInteger errorCount = new AtomicInteger();
+        Thread[] threads = new Thread[threadCount];
+        for (int i = 0; i < threadCount; i++)
+        {
+            threads[i] = new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        latch.await(10, TimeUnit.SECONDS);
+                        app.shutdown();
+                    }
+                    catch (Throwable e)
+                    {
+                        errorCount.incrementAndGet();
+                    }
+                }
+            };
+            threads[i].start();
+        }
+        prepareShutdownTest(false);
+
+        latch.countDown();
+        for (Thread t : threads)
+        {
+            t.join(3000);
+        }
+        assertEquals("Got errors", 0, errorCount.get());
+        verifyShutdownTest();
+    }
+
+    /**
+     * Tests that a shutdown that is aborted because of the veto of a listener
+     * resets the shutdown flag, so that another shutdown is possible.
+     */
+    @Test
+    public void testShutdownFlagResetOnVetoOfListener()
+    {
+        ApplicationShutdownListener listener =
+                EasyMock.createMock(ApplicationShutdownListener.class);
+        EasyMock.expect(listener.canShutdown(app)).andReturn(Boolean.FALSE).times(2);
+        EasyMock.replay(listener);
+        app.addShutdownListener(listener);
+
+        app.shutdown();
+        app.shutdown();
+        EasyMock.verify(listener);
     }
 
     /**
@@ -1092,6 +1182,15 @@ public class TestApplication
         app.setExitHandler(new TestExitHandler(app));
         app.setExitHandler(null);
         assertSame("Different exit handler", defHandler, app.getExitHandler());
+    }
+
+    /**
+     * Tests the default close tracker created by the application.
+     */
+    @Test
+    public void testDefaultMainWindowCloseTracker()
+    {
+        assertNotNull("No close tracker", app.getMainWindowCloseTracker());
     }
 
     /**
@@ -1347,7 +1446,7 @@ public class TestApplication
         /** The CLP to be returned by initClassLoaderProvider().*/
         ClassLoaderProvider clpOverride;
 
-        /** The CLP passed to processBeanDefintions().*/
+        /** The CLP passed to processBeanDefinitions().*/
         ClassLoaderProvider clpProcess;
 
         /** A mock factory to be returned by getBeanBuilderFactory().*/
@@ -1361,6 +1460,16 @@ public class TestApplication
          * class.
          */
         private boolean overrideGetPlatformBeansLocator = true;
+
+        public ApplicationTestImpl()
+        {
+            super();
+        }
+
+        public ApplicationTestImpl(MainWindowCloseTracker tracker)
+        {
+            super(tracker);
+        }
 
         /**
          * Returns the locator for platform-specific bean declarations.
