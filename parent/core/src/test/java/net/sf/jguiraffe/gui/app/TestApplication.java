@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.di.BeanProvider;
@@ -1064,6 +1067,67 @@ public class TestApplication
         prepareShutdownTest(false);
         app.shutdown();
         verifyShutdownTest();
+    }
+
+    /**
+     * Tests that shutdown() is executed only once, even if invoked from
+     * multiple threads.
+     */
+    @Test
+    public void testMultipleShutdownInvocations()
+            throws BuilderException, InterruptedException
+    {
+        final int threadCount = 16;
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicInteger errorCount = new AtomicInteger();
+        Thread[] threads = new Thread[threadCount];
+        for (int i = 0; i < threadCount; i++)
+        {
+            threads[i] = new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        latch.await(10, TimeUnit.SECONDS);
+                        app.shutdown();
+                    }
+                    catch (Throwable e)
+                    {
+                        errorCount.incrementAndGet();
+                    }
+                }
+            };
+            threads[i].start();
+        }
+        prepareShutdownTest(false);
+
+        latch.countDown();
+        for (Thread t : threads)
+        {
+            t.join(3000);
+        }
+        assertEquals("Got errors", 0, errorCount.get());
+        verifyShutdownTest();
+    }
+
+    /**
+     * Tests that a shutdown that is aborted because of the veto of a listener
+     * resets the shutdown flag, so that another shutdown is possible.
+     */
+    @Test
+    public void testShutdownFlagResetOnVetoOfListener()
+    {
+        ApplicationShutdownListener listener =
+                EasyMock.createMock(ApplicationShutdownListener.class);
+        EasyMock.expect(listener.canShutdown(app)).andReturn(Boolean.FALSE).times(2);
+        EasyMock.replay(listener);
+        app.addShutdownListener(listener);
+
+        app.shutdown();
+        app.shutdown();
+        EasyMock.verify(listener);
     }
 
     /**

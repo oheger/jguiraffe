@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.sf.jguiraffe.di.BeanContext;
@@ -403,6 +404,9 @@ public class Application
     /** The tracker for the main window's closed state. */
     private final MainWindowCloseTracker mainWindowCloseTracker;
 
+    /** A flag whether the application has already been shutdown. */
+    private final AtomicBoolean shutdownFlag;
+
     /** Stores the bean context of the main window. */
     private BeanContext mainWindowBeanContext;
 
@@ -429,6 +433,7 @@ public class Application
         shutdownListeners = new EventListenerList();
         beanBuilderResults = new ArrayList<BeanBuilderResult>();
         exitHandler = new AtomicReference<Runnable>();
+        shutdownFlag = new AtomicBoolean();
     }
 
     /**
@@ -1302,6 +1307,10 @@ public class Application
     public void shutdown(Object msgres, Object titleres)
     {
         log.info("shutdown() called.");
+        if (!shutdownFlag.compareAndSet(false, true))
+        {
+            return;
+        }
         if (titleres != null && getCommandQueue().isPending())
         {
             if (getApplicationContext().messageBox(msgres, titleres,
@@ -1325,6 +1334,7 @@ public class Application
         else
         {
             log.debug("Veto of shutdown listener!");
+            shutdownFlag.set(false);
         }
     }
 
