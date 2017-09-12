@@ -2241,7 +2241,7 @@ handler.setValue(counter++);
     <a name="splitters"/><strong>Splitters</strong>
   </p>
   <p>
-    Sometimes it is necessary to devide the space available in a window on
+    Sometimes it is necessary to divide the space available in a window on
     multiple components. Examples include a mail application showing a list of
     received mails in the top and the text of the currently selected mail in the
     bottom, or a directory browser application that displays a directory tree in
@@ -2294,9 +2294,13 @@ handler.setValue(counter++);
     the following properties of a splitter can be configured:
     <ul>
     <li>The <em>orientation</em> of the splitter. This attribute determines whether
-    the splitter splits the available space into a left and a right component (if
-    the value is <em>VERTICAL</em> which is the default) or into a top and a
-    bottom component (if the orientation is <em>HORIZONTAL</em>).</li>
+    the splitter splits the available space into an upper and a lower component - if
+    the value is <em>VERTICAL</em> (which is the default) - or into a left and a
+    right component - if the orientation is <em>HORIZONTAL</em>. (Note: The
+    orientation is derived from the arrangement of the components managed by
+    the splitter. For instance, in <em>horizontal</em> mode, the components are
+    aligned horizontally while the splitter itself is a vertical bar. This may
+    be a bit confusing.)</li>
     <li>The <em>size</em> of the splitter can be specified. The splitter is
     displayed as a line between the components it separates. With this attribute
     the thickness of this line can be defined.</li>
