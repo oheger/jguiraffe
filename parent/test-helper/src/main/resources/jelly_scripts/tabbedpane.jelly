@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
       <f:icon resource="icon.gif"/>
     </f:tab>
   </f:tabbedpane>
-  
+
   <!-- Another tabbed pane with a placement declaration. This pane will also
        be added to the form.
    -->
@@ -52,7 +52,7 @@
       <f:icon resource="icon.gif"/>
     </f:tab>
   </f:tabbedpane>
-  
+
   <!-- Tests tabbed panes, for which names are automatically generated -->
   <f:tabbedpane ifName="TEST_AUTONAME">
     <f:tab title="First Tab" mnemonic="F" tooltip="Tip1">
@@ -63,14 +63,14 @@
       </f:tabbedpane>
     </f:tab>
   </f:tabbedpane>
-  
+
   <!-- A tabbed pane with an invalid placement attribute -->
   <f:tabbedpane ifName="ERR_PLACEMENT" placement="an invalid placement">
     <f:tab title="First Tab" mnemonic="F">
       <f:label text="Tab 1"/>
     </f:tab>
   </f:tabbedpane>
-  
+
   <!-- A tabbed pane with a layout object declaration -->
   <f:tabbedpane ifName="ERR_LAYOUT">
     <f:borderlayout leftMargin="10" rightMargin="4" topMargin="0.5cm"
@@ -79,7 +79,7 @@
       <f:label text="Tab 1"/>
     </f:tab>
   </f:tabbedpane>
-  
+
   <!-- A tabbed pane that contain other elements than tab tags -->
   <f:tabbedpane ifName="ERR_OTHERCOMP">
     <f:tab title="First Tab" mnemonic="F">
@@ -87,12 +87,12 @@
     </f:tab>
     <f:label text="Tab 1"/>
   </f:tabbedpane>
-  
+
   <!-- A tab tag that is not nested inside a tabbedpane tag -->
   <f:tab ifName="ERR_NESTED" title="First Tab" mnemonic="F">
     <f:label text="Tab 1"/>
   </f:tab>
-  
+
   <!-- A tabbed pane with a tab that contains multiple components -->
   <f:tabbedpane ifName="ERR_MULTICOMP">
     <f:tab title="First Tab" mnemonic="F">
@@ -100,12 +100,12 @@
       <f:label text="Tab Multi"/>
     </f:tab>
   </f:tabbedpane>
-  
+
   <!-- A tabbed pane with a tab that is undefined -->
   <f:tabbedpane ifName="ERR_UNDEF">
     <f:tab tooltipres="TAB_TIP1">
       <f:label text="Tab 1"/>
     </f:tab>
   </f:tabbedpane>
-  
+
 </j:jelly>

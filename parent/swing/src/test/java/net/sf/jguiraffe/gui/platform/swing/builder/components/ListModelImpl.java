@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2016 The JGUIraffe Team.
+ * Copyright 2006-2017 The JGUIraffe Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ class ListModelImpl implements ListModel
 {
     /** Constant for the prefix of a display element.*/
     static final String DISPLAY_PREFIX = "Display";
-    
+
     /** Constant for the prefix of a value element.*/
     static final String VALUE_PREFIX = "Value";
-    
+
     private int count;
 
     public ListModelImpl(int cnt)

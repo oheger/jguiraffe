@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@
   <!-- Test of an event listener type tag -->
   <f:tree name="testTree" model="treeModel" ifName="EVENTTYPE_BUILDER">
     <a:mouseEvent actionName="TEST_ACTION">
-      <a:listenerType type="Expansion" 
+      <a:listenerType type="Expansion"
         listenerClass="net.sf.jguiraffe.gui.builder.components.model.TreeExpansionListener"/>
       <a:listenerType type="change"/>
     </a:mouseEvent>

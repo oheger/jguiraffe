@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 <!--
   A test bean builder script with some test declarations for platform-specific
   beans.
-  
+
   $Id: defaultbeans.jelly 211 2012-07-10 19:49:13Z oheger $
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder">

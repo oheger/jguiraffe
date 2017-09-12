@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   A script with bean definitions used for testing. This script is read by a
   test application during its initialization phase. Some of the default beans
   are overridden here.
-  
+
   $Id: applicationbeans.jelly 205 2012-01-29 18:29:57Z oheger $
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:di="diBuilder">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,19 +23,19 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="formBuilder">
   <!-- A normal static text directly defined -->
   <f:statictext name="t1" text="A static text" ifName="TEST_TEXT"/>
-  
+
   <!-- A static text whose text comes from a resource -->
   <f:statictext name="t1" textres="STATIC_TEXT" ifName="TEST_TEXTRES"/>
 
   <!-- A static text whose text comes from a resource with a res group -->
   <f:statictext name="t1" textres="STATIC_TEXT"
     resgrp="testformbuilderresources" ifName="TEST_TEXTRESGRP"/>
-    
+
   <!-- A static text with an icon -->
   <f:statictext name="t1" ifName="TEST_ICON">
     <f:icon resource="icon.gif"/>
   </f:statictext>
-  
+
   <!-- A static text with both a text and an icon -->
   <f:statictext name="t1" textres="STATIC_TEXT" alignment="right"
     ifName="TEST_TEXTICON">
@@ -44,7 +44,7 @@
 
   <!-- A static text with neither text nor icon. This is also allowed. -->
   <f:statictext ifName="TEST_STATIC_NULL" name="t1"/>
-  
+
   <!-- A static text that will be added to a form -->
   <f:statictext ifName="TEST_FORM" textres="STATIC_TEXT" name="t1"
     noField="false"/>

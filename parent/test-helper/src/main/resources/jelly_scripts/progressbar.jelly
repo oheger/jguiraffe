@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@
        properties.
   -->
   <f:progressbar name="p1" ifName="TEST_DEFAULT"/>
-  
+
   <!-- A completely defined progressbar. -->
   <f:progressbar name="p1" text="progress" ifName="TEST_TEXT" min="1" max="200"
     value="17" allowText="true"/>
-  
+
   <!-- A completely defined progressbar whose text is defined using a resID. -->
   <f:progressbar name="p1" textres="PROGRESS_TEXT" ifName="TEST_TEXTRES"
     resgrp="testformbuilderresources" min="1" max="200" value="17"

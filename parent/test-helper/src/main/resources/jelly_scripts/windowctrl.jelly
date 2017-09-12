@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@
 
     <!-- A controller that is initialized with the window -->
     <w:controller ifName="CTRL_WINDOW" beanName="CTRL_WINDOW"/>
-      
+
     <!-- A controller that is initialized with the window builder data object -->
     <w:controller ifName="CTRL_WINDOWDATA" beanName="CTRL_WINDOWDATA"/>
 

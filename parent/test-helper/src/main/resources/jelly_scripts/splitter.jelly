@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Copyright 2006-2016 The JGUIraffe Team.
+    Copyright 2006-2017 The JGUIraffe Team.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
     <f:textarea name="comp1"/>
     <f:textarea name="comp2"/>
   </f:splitter>
-  
+
   <!-- Tests a nested splitter definition -->
   <f:splitter ifName="TEST_NESTED" pos="50" size="10" resizeWeight="0.5">
     <f:textarea name="comp1"/>
@@ -35,25 +35,25 @@
       <f:textarea name="comp3"/>
     </f:splitter>
   </f:splitter>
-  
+
   <!-- A splitter with too few child components -->
   <f:splitter ifName="ERR_TOO_FEW">
     <f:textarea name="comp1"/>
   </f:splitter>
-  
+
   <!-- A splitter with too many child components -->
   <f:splitter ifName="ERR_TOO_MANY">
     <f:textarea name="comp1"/>
     <f:textarea name="comp2"/>
     <f:textarea name="comp3"/>
   </f:splitter>
-  
+
   <!-- A splitter with an invalid size -->
   <f:splitter ifName="ERR_SIZE" size="-10">
     <f:textarea name="comp1"/>
     <f:textarea name="comp2"/>
   </f:splitter>
-  
+
   <!-- A splitter with an invalid resizeWeight -->
   <f:splitter ifName="ERR_RESIZEWEIGHT" resizeWeight="1.01">
     <f:textarea name="comp1"/>
