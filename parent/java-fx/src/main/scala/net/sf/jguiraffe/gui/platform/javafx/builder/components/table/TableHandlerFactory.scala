@@ -68,9 +68,8 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
     installTableWidthListener(controller, tableView)
     initializeFixedColumnWidths(controller, sizeHandler, composite, builderData)
 
-    //TODO set correct table form controller
     val handler = new JavaFxTableHandler(tableView, controller.getDataModel,
-      rowFactory.styleProperty, null)
+      rowFactory.styleProperty, controller)
     handler.tableDataChanged()
     handler
   }

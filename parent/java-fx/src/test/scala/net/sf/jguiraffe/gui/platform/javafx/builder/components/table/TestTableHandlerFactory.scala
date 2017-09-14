@@ -133,6 +133,7 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
       mockWidthCalculator, mockRecalibrator, mockWidthObservable, controller, builderData) {
       val handler = factory.createTableHandler(controller, sizeHandler, composite, builderData)
         .asInstanceOf[JavaFxTableHandler]
+      assertSame("Wrong form controller", controller, handler.formController)
       table = handler.getComponent.asInstanceOf[TableView[AnyRef]]
 
       assertEquals("Wrong editable flag", editable, table.isEditable)
