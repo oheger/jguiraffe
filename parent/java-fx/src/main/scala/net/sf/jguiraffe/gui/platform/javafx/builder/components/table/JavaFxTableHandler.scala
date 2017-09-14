@@ -20,7 +20,8 @@ import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.builder.components.model.TableHandler
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{Styles, JavaFxStylesHandler}
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxStylesHandler, Styles}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.JavaFxComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.apache.commons.lang.StringUtils
@@ -58,10 +59,12 @@ import scala.beans.BeanProperty
  * @param table the manged table view component
  * @param model the list serving as table model
  * @param selectionStyles here the styles to be applied for the selected row are stored
+ * @param formController the ''TableFormController''
  */
 private class JavaFxTableHandler(table: TableView[AnyRef],
                                  @BeanProperty val model: java.util.List[AnyRef],
-                                  val selectionStyles: StringProperty)
+                                  val selectionStyles: StringProperty,
+                                  val formController: TableFormController)
   extends JavaFxComponentHandler[Object](table) with TableHandler with ChangeEventSource {
   /** An object for creating the styles for the row selection. */
   private lazy val selectionStylesHandler = createStylesHandler()
@@ -132,6 +135,7 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
    * the items list of the table view.
    */
   override def rowsInserted(startIdx: Int, endIdx: Int): Unit = {
+    formController.invalidateRange(startIdx, endIdx)
     table.getItems.addAll(startIdx, model.subList(startIdx, endIdx + 1))
   }
 
@@ -142,6 +146,7 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
    * collection.
    */
   override def rowsUpdated(startIdx: Int, endIdx: Int): Unit = {
+    formController.invalidateRange(startIdx, endIdx)
     val items = table.getItems
     for (i <- startIdx to endIdx) {
       items.set(i, model get i)
@@ -154,8 +159,9 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
    * collection.
    */
   override def rowsDeleted(startIdx: Int, endIdx: Int): Unit = {
+    formController.invalidateRange(startIdx, endIdx)
     val items = table.getItems
-    for (i <- startIdx to endIdx) {
+    for (_ <- startIdx to endIdx) {
       items remove startIdx
     }
   }

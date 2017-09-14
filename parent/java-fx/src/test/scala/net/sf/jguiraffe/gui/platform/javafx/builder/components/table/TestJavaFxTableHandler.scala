@@ -19,8 +19,10 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.{SelectionMode, TableView}
 
 import net.sf.jguiraffe.gui.builder.components.Color
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
+import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
@@ -87,7 +89,8 @@ object TestJavaFxTableHandler {
    */
   private def createHandler(multiSelect: Boolean = false, model: java.util.List[AnyRef] =
   createModel()): JavaFxTableHandler =
-    new JavaFxTableHandler(createTable(multiSelect), model, new SimpleStringProperty)
+    new JavaFxTableHandler(createTable(multiSelect), model, new SimpleStringProperty,
+      EasyMock.createMock(classOf[TableFormController]))
 
   /**
    * Creates a test handler and initializes its table model.
@@ -110,7 +113,7 @@ object TestJavaFxTableHandler {
    */
   private def checkSelectedIndices(handler: JavaFxTableHandler, expected: Array[Int]): Unit = {
     val selIndices = tableFrom(handler).getSelectionModel.getSelectedIndices
-    assertEquals("Wrong number of selected indices", expected.size, selIndices.size)
+    assertEquals("Wrong number of selected indices", expected.length, selIndices.size)
     val indicesCollection = java.util.Arrays.asList(expected map Integer.valueOf: _*)
     assertTrue(s"Wrong selected indices: $selIndices", selIndices.containsAll(indicesCollection))
   }
@@ -168,7 +171,7 @@ class TestJavaFxTableHandler extends JUnitSuite {
    */
   @Test def testGetSelectedIndex(): Unit = {
     val Index = Rows / 2
-    val handler = createInitializedHandler(multiSelect = false)
+    val handler = createInitializedHandler()
     tableFrom(handler).getSelectionModel select Index
 
     assertEquals("Wrong selected index", Index, handler.getSelectedIndex)
@@ -180,7 +183,7 @@ class TestJavaFxTableHandler extends JUnitSuite {
    */
   @Test def testSetSelectedIndex(): Unit = {
     val Index = 2
-    val handler = createInitializedHandler(multiSelect = false)
+    val handler = createInitializedHandler()
 
     handler setSelectedIndex Index
     assertEquals("Wrong selected index", Index, tableFrom(handler).getSelectionModel
@@ -253,7 +256,7 @@ class TestJavaFxTableHandler extends JUnitSuite {
    */
   @Test def testGetDataSingleSelection(): Unit = {
     val Index = Rows / 2
-    val handler = createInitializedHandler(multiSelect = false)
+    val handler = createInitializedHandler()
     tableFrom(handler).getSelectionModel select Index
 
     assertEquals("Wrong selected index", Integer.valueOf(Index), handler.getData)
@@ -276,7 +279,7 @@ class TestJavaFxTableHandler extends JUnitSuite {
    */
   @Test def testSetDataSingleIndex(): Unit = {
     val Index = 4
-    val handler = createInitializedHandler(multiSelect = false)
+    val handler = createInitializedHandler()
     tableFrom(handler).getSelectionModel select (Index + 1)
 
     handler setData Integer.valueOf(Index)
@@ -330,9 +333,12 @@ class TestJavaFxTableHandler extends JUnitSuite {
     val handler = createInitializedHandler(model = model)
     model.add(Index, new TableData(47))
     model.add(Index + 1, new TableData(11))
+    handler.formController.invalidateRange(Index, Index + 1)
+    EasyMock.replay(handler.formController)
 
     handler.rowsInserted(Index, Index + 1)
     checkTableItems(handler)
+    EasyMock.verify(handler.formController)
   }
 
   /**
@@ -344,9 +350,12 @@ class TestJavaFxTableHandler extends JUnitSuite {
     val handler = createInitializedHandler(model = model)
     model.remove(Index)
     model.remove(Index)
+    handler.formController.invalidateRange(Index, Index + 1)
+    EasyMock.replay(handler.formController)
 
     handler.rowsDeleted(Index, Index + 1)
     checkTableItems(handler)
+    EasyMock.verify(handler.formController)
   }
 
   /**
@@ -358,9 +367,12 @@ class TestJavaFxTableHandler extends JUnitSuite {
     val handler = createInitializedHandler(model = model)
     model.set(Index, new TableData(100))
     model.set(Index + 1, new TableData(200))
+    handler.formController.invalidateRange(Index, Index + 1)
+    EasyMock.replay(handler.formController)
 
     handler.rowsUpdated(Index, Index + 1)
     checkTableItems(handler)
+    EasyMock.verify(handler.formController)
   }
 
   /**
