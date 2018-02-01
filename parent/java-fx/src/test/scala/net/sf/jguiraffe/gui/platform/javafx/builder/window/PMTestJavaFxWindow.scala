@@ -70,7 +70,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
     mouseListeners = PowerMock.createMock(
       classOf[EventListenerList[FormMouseEvent, FormMouseListener]])
     new JavaFxWindow(stage, windowListeners, mouseListeners, new WindowRootContainerWrapper,
-      autoClose = true)
+      autoClose = true, closeable = true)
   }
 
   /**
@@ -502,6 +502,32 @@ class PMTestJavaFxWindow extends JUnitSuite {
     PMTestJavaFxWindow.checkClosingEvent(closingEventAnswer, wnd, event)
     PMTestJavaFxWindow.checkClosingEvent(closedAnswer, wnd, event,
       evType = WindowEvent.Type.WINDOW_CLOSED)
+  }
+
+  /**
+    * Tests the closing listener if the closeable flag is false.
+    */
+  @Test def testClosingListenerNotCloseable(): Unit = {
+    val event = PowerMock.createMock(classOf[FxWindowEvent])
+    val strategy = PowerMock.createMock(classOf[WindowClosingStrategy])
+    val windowListener = PowerMock.createMock(classOf[WindowListener])
+    prepareApplyTest()
+    expectWindowListener()
+    expectMouseListener()
+    val listenerAnswer =
+      new FetchAnswer[Object, EventHandler[FxWindowEvent]](argIdx = 1)
+    expectClosingListener()
+    EasyMock.expectLastCall().andAnswer(listenerAnswer)
+    event.getEventType
+    EasyMock.expectLastCall().andReturn(FxWindowEvent.WINDOW_CLOSE_REQUEST).anyTimes()
+    event.consume()
+    PowerMock.replayAll()
+    val wnd = JavaFxWindow(stage, closeable = false)
+    wnd setWindowClosingStrategy strategy
+    wnd addWindowListener windowListener
+
+    listenerAnswer.get.handle(event)
+    PowerMock.verifyAll()
   }
 
   /**

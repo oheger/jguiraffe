@@ -51,7 +51,8 @@ import scala.beans.BeanProperty
 private class JavaFxWindow private[window] (val stage: Stage,
   windowListeners: EventListenerList[WindowEvent, WindowListener],
   mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener],
-  @BeanProperty val rootContainer: WindowRootContainerWrapper, val autoClose: Boolean)
+  @BeanProperty val rootContainer: WindowRootContainerWrapper, val autoClose: Boolean,
+  val closeable: Boolean)
   extends Window with WindowWrapper {
   /** The underlying wrapped window. */
   override val getWrappedWindow = stage
@@ -174,11 +175,11 @@ private class JavaFxWindow private[window] (val stage: Stage,
       new EventHandler[javafx.stage.WindowEvent] {
         def handle(e: javafx.stage.WindowEvent) {
           if (!closingPermitted) {
-            if(!autoClose) {
+            if (!autoClose && closeable) {
               fireClosingEvent(e)
               e.consume()
             } else {
-              if(!getWindowClosingStrategy.canClose(JavaFxWindow.this)) {
+              if (!closeable || !getWindowClosingStrategy.canClose(JavaFxWindow.this)) {
                 e.consume()
               } else {
                 fireClosingEvent(e)
@@ -223,14 +224,15 @@ private object JavaFxWindow {
    * @param autoClose flag whether the window should close itself when the user clicks the close
    *                  icon
    * @param sizeHandler an optional size handler object
+   * @param closeable flag whether the window can be closed using the X icon
    * @return the fully initialized ''JavaFxWindow'' object
    */
   def apply(stage: Stage, autoClose: Boolean = false, sizeHandler: Option[UnitSizeHandler] =
-  None): JavaFxWindow = {
+  None, closeable: Boolean = true): JavaFxWindow = {
     val wndListeners = new EventListenerList[WindowEvent, WindowListener]
     val mouseListeners = new EventListenerList[FormMouseEvent, FormMouseListener]
     val root = new WindowRootContainerWrapper(sizeHandler)
-    val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners, root, autoClose)
+    val wnd = new JavaFxWindow(stage, wndListeners, mouseListeners, root, autoClose, closeable)
 
     WindowEventAdapter(stage, wnd, wndListeners)
     val mouseAdapter = MouseEventAdapter(mouseListeners)
