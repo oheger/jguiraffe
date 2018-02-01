@@ -187,6 +187,31 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Helper method for testing that the closeable flag is set correctly.
+    * @param closeable the closeable flag to be set
+    */
+  private def checkCloseableFlag(closeable: Boolean): Unit = {
+    val builderData = createWindowBuilderData()
+    val windowData = WindowDataImpl(closable = closeable)
+    val wnd = manager.createFrame(builderData, windowData, null).asInstanceOf[JavaFxWindow]
+    assertEquals("Wrong closeable flag", closeable, wnd.closeable)
+  }
+
+  /**
+    * Tests whether a closeable flag set to true is handled correctly.
+    */
+  @Test def testCloseableTrue(): Unit = {
+    checkCloseableFlag(closeable = true)
+  }
+
+  /**
+    * Tests whether a closeable flag set to false is handled correctly.
+    */
+  @Test def testCloseableFalse(): Unit = {
+    checkCloseableFlag(closeable = false)
+  }
+
+  /**
    * Helper method for creating a window with the specified menu bar.
    * @param menuBar the menu bar
    * @return the window
