@@ -16,8 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont, Styles,
-JavaFxStylesHandler}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{JavaFxFont, JavaFxStylesHandler, Styles}
 import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
@@ -25,15 +24,16 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.{BeforeClass, Before, Test}
+import org.junit.{Before, BeforeClass, Test}
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatest.junit.JUnitSuite
 import javafx.scene.Node
-import javafx.scene.control.Control
-import javafx.scene.control.Tooltip
+import javafx.scene.control.{Control, TextField, Tooltip}
+import javafx.scene.shape.Circle
+
 import net.sf.jguiraffe.gui.builder.components.Color
 
 object PMTestJavaFxWidgetHandler {
@@ -84,7 +84,7 @@ class PMTestJavaFxWidgetHandler extends JUnitSuite {
    */
   @Test def testIsVisible() {
     EasyMock.expect(node.isVisible).andReturn(true)
-    EasyMock.expect(node.isVisible()).andReturn(false)
+    EasyMock.expect(node.isVisible).andReturn(false)
     PowerMock.replayAll()
     assertTrue("Wrong result (1)", widgetHandler.isVisible)
     assertFalse("Wrong result (2)", widgetHandler.isVisible)
@@ -214,6 +214,7 @@ class PMTestJavaFxWidgetHandler extends JUnitSuite {
    * support this.
    */
   @Test def testGetToolTipUnsupported() {
+    val handler = new JavaFxWidgetHandler(new Circle, toolTipFactory)
     assertNull("Got a tool tip", widgetHandler.getToolTip)
   }
 
@@ -230,23 +231,18 @@ class PMTestJavaFxWidgetHandler extends JUnitSuite {
    * Tests whether a tool tip can be obtained from a control.
    */
   @Test def testGetToolTipSupported() {
-    val ctrl = PowerMock.createMock(classOf[Control])
-    val tip = PowerMock.createMock(classOf[Tooltip])
-    EasyMock.expect(ctrl.getTooltip()).andReturn(tip)
-    EasyMock.expect(tip.getText).andReturn(TestToolTip)
-    PowerMock.replayAll()
+    val tip = new Tooltip(TestToolTip)
+    val ctrl = new TextField
+    ctrl setTooltip tip
     val whandler = new JavaFxWidgetHandler(ctrl, toolTipFactory)
     assertEquals("Wrong tool tip", TestToolTip, whandler.getToolTip)
-    PowerMock.verifyAll()
   }
 
   /**
    * Tests getToolTip() if the widget supports tool tips, but none was set.
    */
   @Test def testGetToolTipSupportedNotSet() {
-    val ctrl = PowerMock.createMock(classOf[Control])
-    EasyMock.expect(ctrl.getTooltip()).andReturn(null)
-    PowerMock.replayAll()
+    val ctrl = new TextField
     val whandler = new JavaFxWidgetHandler(ctrl, toolTipFactory)
     assertNull("Got a tool tip", widgetHandler.getToolTip)
   }
@@ -255,26 +251,25 @@ class PMTestJavaFxWidgetHandler extends JUnitSuite {
    * Tests whether a tool tip can be set if the widget supports this.
    */
   @Test def testSetToolTipSupported() {
-    val ctrl = PowerMock.createMock(classOf[Control])
-    val tip = PowerMock.createMock(classOf[Tooltip])
+    val ctrl = new TextField
+    val tip = new Tooltip("test tip")
     EasyMock.expect(toolTipFactory.createToolTip(TestToolTip)).andReturn(tip)
-    ctrl setTooltip tip
     PowerMock.replayAll()
     val whandler = new JavaFxWidgetHandler(ctrl, toolTipFactory)
     whandler setToolTip TestToolTip
-    PowerMock.verifyAll()
+    assertEquals("Wrong tip", tip, ctrl.getTooltip)
   }
 
   /**
    * Tests whether a null tool tip can be set.
    */
   @Test def testSetToolTipSupportedNull() {
-    val ctrl = PowerMock.createMock(classOf[Control])
-    ctrl setTooltip null
-    PowerMock.replayAll()
+    val ctrl = new TextField
+    ctrl setTooltip new Tooltip("tip")
     val whandler = new JavaFxWidgetHandler(ctrl, toolTipFactory)
+
     whandler setToolTip null
-    PowerMock.verifyAll()
+    assertNull("Got a tip", ctrl.getTooltip)
   }
 
   /**
