@@ -147,7 +147,7 @@
               <jelly>XML_STYLE</jelly>
             </mapping>
             <properties>
-              <year>2017</year>
+              <year>2018</year>
             </properties>
           </configuration>
           <executions>

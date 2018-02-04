@@ -51,7 +51,7 @@
 
       <dependency>
         <groupId>org.scala-lang.modules</groupId>
-        <artifactId>scala-parser-combinators_2.11</artifactId>
+        <artifactId>scala-parser-combinators_2.12</artifactId>
       </dependency>
 
     <dependency>
@@ -71,7 +71,7 @@
 
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.11</artifactId>
+      <artifactId>scalatest_2.12</artifactId>
     </dependency>
 
     <dependency>
@@ -100,7 +100,7 @@
         <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.3.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -117,9 +117,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <scalaVersion>${version.scala}</scalaVersion>
-        </configuration>
       </plugin>
 
       <plugin>

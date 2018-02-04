@@ -47,9 +47,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.scala>2.11.8</version.scala>
-    <version.scala.modules>1.0.4</version.scala.modules>
-    <powermock.version>1.5</powermock.version>
+    <version.scala>2.12.4</version.scala>
+    <version.scala.modules>1.0.7</version.scala.modules>
+    <powermock.version>1.7.3</powermock.version>
     <license.file>../conf/License-Header.txt</license.file>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -79,7 +79,7 @@
 
       <dependency>
         <groupId>org.scala-lang.modules</groupId>
-        <artifactId>scala-parser-combinators_2.11</artifactId>
+        <artifactId>scala-parser-combinators_2.12</artifactId>
         <version>${version.scala.modules}</version>
       </dependency>
 
@@ -111,8 +111,8 @@
 
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.11</artifactId>
-        <version>2.1.6</version>
+        <artifactId>scalatest_2.12</artifactId>
+        <version>3.0.4</version>
         <scope>test</scope>
       </dependency>
 
@@ -211,7 +211,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.3.7</version>
+          <version>3.5.0</version>
           <inherited>true</inherited>
           <executions>
             <execution>
