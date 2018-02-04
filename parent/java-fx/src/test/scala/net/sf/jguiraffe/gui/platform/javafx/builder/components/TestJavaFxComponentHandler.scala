@@ -15,21 +15,14 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import javafx.scene.control.Label
+
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
-import org.easymock.EasyMock
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.{BeforeClass, Before, Test}
-import org.junit.runner.RunWith
-import org.powermock.api.easymock.PowerMock
-import org.powermock.core.classloader.annotations.PrepareForTest
-import org.powermock.modules.junit4.PowerMockRunner
+import org.junit.Assert.{assertFalse, assertSame, assertTrue}
+import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
 
-import javafx.scene.control.Control
-
-object PMTestJavaFxComponentHandler {
+object TestJavaFxComponentHandler {
   @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
@@ -38,53 +31,47 @@ object PMTestJavaFxComponentHandler {
 /**
  * Test class for ''JavaFxComponentHandler''.
  */
-@RunWith(classOf[PowerMockRunner])
-@PrepareForTest(Array(classOf[Control]))
-class PMTestJavaFxComponentHandler extends JUnitSuite {
+class TestJavaFxComponentHandler extends JUnitSuite {
   /** The mock control wrapped by the handler. */
-  private var control: Control = _
+  private var control: Label = _
 
   /** The test component handler. */
   private var handler: JavaFxComponentHandlerTestImpl = _
 
   @Before def setUp() {
-    control = PowerMock.createMock(classOf[Control])
+    control = new Label
     handler = new JavaFxComponentHandlerTestImpl(control)
   }
 
   /**
-   * Tests whether the enabled state can be queried.
+   * Tests whether the enabled state can be queried if it is true.
    */
-  @Test def testIsEnabled() {
-    EasyMock.expect(control.isDisabled).andReturn(true)
-    EasyMock.expect(control.isDisabled).andReturn(false)
-    PowerMock.replayAll()
+  @Test def testIsEnabledTrue() {
+    control setDisable false
 
-    assertFalse("Not enabled", handler.isEnabled)
-    assertTrue("Still enabled", handler.isEnabled)
-    PowerMock.verifyAll()
+    assertTrue("Wrong result", handler.isEnabled)
+  }
+
+  @Test def testIsEnabledFalse(): Unit = {
+    control setDisable true
+
+    assertFalse("Wrong result", handler.isEnabled)
   }
 
   /**
    * Tests whether the enabled state can be changed to true.
    */
   @Test def testSetEnabledTrue() {
-    control setDisable false
-    PowerMock.replayAll()
-
     handler setEnabled true
-    PowerMock.verifyAll()
+    assertFalse("Not enabled", control.isDisable)
   }
 
   /**
    * Tests whether the enabled state can be changed to false.
    */
   @Test def testSetEnabledFalse() {
-    control setDisable true
-    PowerMock.replayAll()
-
     handler setEnabled false
-    PowerMock.verifyAll()
+    assertTrue("Not disabled", control.isDisable)
   }
 
   /**
@@ -118,9 +105,9 @@ class PMTestJavaFxComponentHandler extends JUnitSuite {
   /**
    * A test implementation of a concrete component handler.
    */
-  private class JavaFxComponentHandlerTestImpl(c: Control)
+  private class JavaFxComponentHandlerTestImpl(c: Label)
     extends JavaFxComponentHandler[AnyRef](c) {
-    def getData(): AnyRef = {
+    def getData: AnyRef = {
       throw new UnsupportedOperationException("Unexpected method call!")
     }
 
