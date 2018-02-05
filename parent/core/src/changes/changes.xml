@@ -28,16 +28,19 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/29">
-        JavaFX windows now handle the closeable property correctly.
-      </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/28">
-        Fixed an update problem with JavaFX tables that only have a single row.
+      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/9">
+        The JavaFX module now requires Scala 2.12.
       </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/feature-requests/8">
         Added a new shutdown() method to application which allows a forced
         shutdown. In this mode, shutdown listeners are not asked for
         permission.
+      </action>
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/29">
+        JavaFX windows now handle the closeable property correctly.
+      </action>
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/28">
+        Fixed an update problem with JavaFX tables that only have a single row.
       </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/26">
         Made shutdown handling more consistent. It is ensured that the main
