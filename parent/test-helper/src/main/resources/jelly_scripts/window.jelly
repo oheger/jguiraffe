@@ -55,9 +55,9 @@
     <f:icon resource="icon.gif"/>
   </w:frame>
 
-  <!-- A frame with flags -->
-  <w:frame ifName="FRAME_FLAGS" closable="true" iconifiable="true"
-    maximizable="true" resizable="true"/>
+  <!-- A frame with flags that do not have their default values -->
+  <w:frame ifName="FRAME_FLAGS" closable="false" iconifiable="false"
+    maximizable="false" resizable="false"/>
 
   <!-- A frame whose auto-close flag is set to false. -->
   <w:frame ifName="FRAME_AUTOCLOSE" autoClose="false"/>
@@ -103,9 +103,9 @@
     <f:icon resource="icon.gif"/>
   </w:iframe>
 
-  <!-- A iframe with flags -->
-  <w:iframe ifName="IFRAME_FLAGS" closable="true" iconifiable="true"
-    maximizable="true" resizable="true"/>
+  <!-- A iframe with flags that do not have their default values -->
+  <w:iframe ifName="IFRAME_FLAGS" closable="false" iconifiable="false"
+    maximizable="false" resizable="false"/>
 
   <!-- A iframe whose auto-close flag is set to false. -->
   <w:iframe ifName="IFRAME_AUTOCLOSE" autoClose="false"/>
@@ -153,9 +153,9 @@
     <f:icon resource="icon.gif"/>
   </w:dialog>
 
-  <!-- A dialog with flags -->
-  <w:dialog ifName="DIALOG_FLAGS" closable="true" iconifiable="true"
-    maximizable="true" resizable="true" closeOnEsc="false"/>
+  <!-- A dialog with flags that do not have their default values -->
+  <w:dialog ifName="DIALOG_FLAGS" closable="false" iconifiable="false"
+    maximizable="false" resizable="false" closeOnEsc="false"/>
 
   <!-- A dialog whose auto-close flag is set to false. -->
   <w:dialog ifName="DIALOG_AUTOCLOSE" autoClose="false" closeOnEsc="false"/>

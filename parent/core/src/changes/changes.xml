@@ -37,7 +37,10 @@
         permission.
       </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/29">
-        JavaFX windows now handle the closeable property correctly.
+        JavaFX windows now handle the closeable property correctly. The default
+        values of windows flags like closeable, resizable, etc. have been
+        changed from false to true. (In most cases, these features should be
+        enabled.)
       </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/28">
         Fixed an update problem with JavaFX tables that only have a single row.

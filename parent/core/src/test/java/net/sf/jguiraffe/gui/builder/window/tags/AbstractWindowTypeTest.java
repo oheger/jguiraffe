@@ -40,6 +40,9 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
     /** Constant for the builder generated window prologue. */
     protected static final String WINDOW_PROLOGUE = "WINDOW ";
 
+    /** Constant for the default flag values. */
+    protected static final String FLAGS = "FLAGS = CIMR ";
+
     /** Constant for the window's root container prefix. */
     protected static final String CONTAINER = " { Container: WindowRootContainer { ";
 
@@ -115,7 +118,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testSimpleWindow() throws Exception
     {
-        executeWindowTest(BUILDER_SIMPLE, "]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_SIMPLE, FLAGS + "]" + CONTAINER_EMPTY);
     }
 
     /**
@@ -123,7 +126,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithCoords() throws Exception
     {
-        executeWindowTest(BUILDER_COORDS, "X = 10 Y = 20 W = 200 H = 100 ]"
+        executeWindowTest(BUILDER_COORDS, FLAGS + "X = 10 Y = 20 W = 200 H = 100 ]"
                 + CONTAINER_EMPTY);
     }
 
@@ -132,7 +135,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowCentered() throws Exception
     {
-        executeWindowTest(BUILDER_CENTERED, "W = 200 H = 100 CENTER ]"
+        executeWindowTest(BUILDER_CENTERED, FLAGS + "W = 200 H = 100 CENTER ]"
                 + CONTAINER_EMPTY);
     }
 
@@ -141,7 +144,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithTitle() throws Exception
     {
-        executeWindowTest(BUILDER_TITLE, "TITLE = Window title ]"
+        executeWindowTest(BUILDER_TITLE, "TITLE = Window title " + FLAGS + "]"
                 + CONTAINER_EMPTY);
     }
 
@@ -150,7 +153,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithTitleFromRes() throws Exception
     {
-        executeWindowTest(BUILDER_TITLERES, "TITLE = Window caption ]"
+        executeWindowTest(BUILDER_TITLERES, "TITLE = Window caption " + FLAGS + "]"
                 + CONTAINER_EMPTY);
     }
 
@@ -160,7 +163,8 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
     public void testWindowWithIcon() throws Exception
     {
         executeWindowTest(BUILDER_ICON,
-                "ICON = ICON [ " + iconLocatorString() + " ] ]" + CONTAINER_EMPTY);
+                "ICON = ICON [ " + iconLocatorString() + " ] " + FLAGS + "]" +
+                        CONTAINER_EMPTY);
     }
 
     /**
@@ -168,7 +172,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithFlags() throws Exception
     {
-        executeWindowTest(BUILDER_FLAGS, "FLAGS = CIMR ]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_FLAGS, "]" + CONTAINER_EMPTY);
     }
 
     /**
@@ -176,7 +180,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowAutoClose() throws Exception
     {
-        executeWindowTest(BUILDER_AUTOCLOSE, "NOAUTOCLOSE ]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_AUTOCLOSE, FLAGS + "NOAUTOCLOSE ]" + CONTAINER_EMPTY);
     }
 
     /**
@@ -184,7 +188,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithMenu() throws Exception
     {
-        executeWindowTest(BUILDER_MENU, MENU + " ]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_MENU, FLAGS + MENU + " ]" + CONTAINER_EMPTY);
     }
 
     /**
@@ -201,7 +205,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithContent() throws Exception
     {
-        executeWindowTest(BUILDER_CONTENT, "]" + CONTAINER
+        executeWindowTest(BUILDER_CONTENT, FLAGS + "]" + CONTAINER
                 + "LABEL [ TEXT = A label ALIGN = LEFT ] } }");
     }
 
@@ -210,7 +214,7 @@ public abstract class AbstractWindowTypeTest extends AbstractWindowTagTest
      */
     public void testWindowWithDefBtn() throws Exception
     {
-        executeWindowTest(BUILDER_DEFBTN, "]" + CONTAINER
+        executeWindowTest(BUILDER_DEFBTN, FLAGS + "]" + CONTAINER
                 + "BUTTON [ TEXT = Press me ALIGN = LEFT "
                 + "NAME = defaultButton DEFAULT ] } }");
         assertNull("Still got default button name", builderData

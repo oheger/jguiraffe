@@ -48,7 +48,7 @@ public class TestDialogTag extends AbstractWindowTypeTest
      */
     public void testNonModalDialog() throws Exception
     {
-        executeWindowTest(BUILDER_NONMODAL, "NONMODAL ]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_NONMODAL, FLAGS + "NONMODAL ]" + CONTAINER_EMPTY);
     }
 
     /**
@@ -56,7 +56,7 @@ public class TestDialogTag extends AbstractWindowTypeTest
      */
     public void testAutoClose() throws Exception
     {
-        executeWindowTest(BUILDER_AUTOCLOSE, "NOAUTOCLOSE ]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_AUTOCLOSE, FLAGS + "NOAUTOCLOSE ]" + CONTAINER_EMPTY);
     }
 
     /**
@@ -64,7 +64,7 @@ public class TestDialogTag extends AbstractWindowTypeTest
      */
     public void testDefaultCloseOnEsc() throws Exception
     {
-        executeWindowTest(BUILDER_CLOSEESC, "CLOSEONESC ]" + CONTAINER_EMPTY);
+        executeWindowTest(BUILDER_CLOSEESC, FLAGS + "CLOSEONESC ]" + CONTAINER_EMPTY);
     }
 
     /**

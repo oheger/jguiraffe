@@ -105,22 +105,26 @@ import org.apache.commons.jelly.JellyTagException;
  * </tr>
  * <tr>
  * <td valign="top">closable</td>
- * <td>A flag indicating whether the new window can be closed.</td>
+ * <td>A flag indicating whether the new window can be closed. Default is
+ * <strong>true</strong>.</td>
  * <td valign="top">yes</td>
  * </tr>
  * <tr>
  * <td valign="top">iconifiable</td>
- * <td>A flag indicating whether the new window can be iconified.</td>
+ * <td>A flag indicating whether the new window can be iconified. Default is
+ * <strong>true</strong>.</td>
  * <td valign="top">yes</td>
  * </tr>
  * <tr>
  * <td valign="top">maximizable</td>
- * <td>A flag indicating whether the new window can be maximized.</td>
+ * <td>A flag indicating whether the new window can be maximized. Default is
+ * <strong>true</strong>.</td>
  * <td valign="top">yes</td>
  * </tr>
  * <tr>
  * <td valign="top">resizable</td>
- * <td>A flag indicating whether the new window can be resized.</td>
+ * <td>A flag indicating whether the new window can be resized. Default is
+ * <strong>true</strong>.</td>
  * <td valign="top">yes</td>
  * </tr>
  * <tr>
@@ -194,16 +198,16 @@ public abstract class WindowBaseTag extends ContainerTag implements WindowData,
     private boolean center;
 
     /** Stores the closable flag. */
-    private boolean closable;
+    private boolean closable = true;
 
     /** Stores the iconifiable flag. */
-    private boolean iconifiable;
+    private boolean iconifiable = true;
 
     /** Stores the maximizable flag. */
-    private boolean maximizable;
+    private boolean maximizable = true;
 
     /** Stores the resizable flag. */
-    private boolean resizable;
+    private boolean resizable = true;
 
     /** Stores the auto-close flag. */
     private boolean autoClose;
