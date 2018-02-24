@@ -36,6 +36,11 @@
         shutdown. In this mode, shutdown listeners are not asked for
         permission.
       </action>
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/30">
+        The Export-Package header of the OSGi bundle generated for the core
+        project now includes impl packages. Some of them are useful for client
+        bundles as well.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/29">
         JavaFX windows now handle the closeable property correctly. The default
         values of windows flags like closeable, resizable, etc. have been
