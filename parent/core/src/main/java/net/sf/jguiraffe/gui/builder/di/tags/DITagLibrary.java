@@ -35,6 +35,7 @@ public class DITagLibrary extends TagLibrary
         registerTag("const", ConstantValueTag.class);
         registerTag("constructor", ConstructorTag.class);
         registerTag("constructorInvocation", ConstructorInvocationTag.class);
+        registerTag("contextBean", ContextBeanTag.class);
         registerTag("element", ElementTag.class);
         registerTag("entry", EntryTag.class);
         registerTag("entryKey", EntryKeyTag.class);
