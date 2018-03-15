@@ -28,6 +28,9 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/10">
+        Added a tag for exposing a variable from the Jelly context as bean.
+      </action>
       <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/9">
         The JavaFX module now requires Scala 2.12.
       </action>
