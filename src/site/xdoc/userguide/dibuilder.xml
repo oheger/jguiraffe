@@ -1019,6 +1019,74 @@ Line 3]]&gt;&lt;/di:value&gt;
   &lt;/di:bean&gt;
     </source>
   <p>
+    <a name="Access_to_constants"/><strong>Access to constants</strong>
+  </p>
+  <p>
+    It is sometimes necessary to reference a value that is defined as a
+    constant (a <strong>public static final</strong> member field) in a class.
+    For this purpose, the DI library offers the <code>&lt;const&gt;</code> tag
+    (which is implemented by the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/di/tags/ConstantValueTag.html">
+    ConstantValueTag</a></code> class). Consider for instance the following
+    class that defines such a constant:
+  </p>
+    <source>
+package com.acme.data;
+
+public class Constants
+{
+    public static final int ANSWER = 42;
+}
+    </source>
+  <p>
+    In order to create an instance of the reflection test class passing in the
+    <code>ANSWER</code> constant as value for the constructor's
+    <strong>int</strong> parameter, the following fragment can be used:
+  </p>
+    <source>
+&lt;di:bean name=&quot;constantTest&quot; beanClass=&quot;net.sf.jguiraffe.di.ReflectionTestClass&quot;&gt;
+  &lt;di:constructor&gt;
+    &lt;di:param value=&quot;The question&quot;&gt;
+    &lt;di:param&gt;
+      &lt;di:const targetClass=&quot;com.acme.data.Constants&quot;
+        field=&quot;ANSWER&quot;/&gt;
+    &lt;/di:param&gt;
+  &lt;/di:constructor&gt;
+&lt;/di:bean&gt;
+    </source>
+  <p>
+    The tag fetches the value of the referenced field from the given target
+    class and passes it to an enclosing tag. Alternatively, the
+    <em>var</em> attribute can be used which assigns the field value to a
+    variable in the Jelly context.
+  </p>
+  <p>
+    There is another option to directly expose the values of constants as
+    beans. For instance, a Java class may define a default instance as an
+    <em>INSTANCE</em> property; or Scala objects are exposed to Java as a
+    static field named <em>MODULE$</em>. This can be achieved by a combination
+    of the already discussed <code>&lt;const&gt;</code> tag and the
+    <code>&lt;contextBean&gt;</code> tag (implemented by the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/builder/di/tags/ContextBeanTag.html">
+    ContextBeanTag</a></code> class). The latter obtains an object stored
+    in the Jelly context and makes it available as a bean in the current bean
+    context. The idea is that the <code>&lt;const&gt;</code> tag is invoked
+    with its <em>var</em> attribute to store the value of the constant field in
+    the Jelly context. From there it can be accessed and exposed by the
+    <code>&lt;contextBean&gt;</code> tag. The following example shows how this
+    looks like for a Scala object implementing a service:
+  </p>
+    <source>
+&lt;di:const var=&quot;playlistServiceVar&quot;
+  targetClassName=&quot;com.acme.audio.playlist.service.PlaylistService$&quot;
+  field=&quot;MODULE$&quot;/&gt;
+&lt;di:contextBean var=&quot;playlistServiceVar&quot; name=&quot;playlistService&quot;/&gt;
+    </source>
+  <p>
+    Here the <code>PlaylistService</code> can now be accessed from the bean
+    context under the name <em>playlistService</em>.
+  </p>
+  <p>
     <a name="Complex_initializations"/><strong>Complex initializations</strong>
   </p>
   <p>

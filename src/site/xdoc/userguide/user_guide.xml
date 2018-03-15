@@ -132,6 +132,7 @@
           <li><a href="dibuilder.html#Dependencies">Dependencies to other beans</a></li>
           <li><a href="dibuilder.html#Collections">Collections</a></li>
           <li><a href="dibuilder.html#Complex_string_values">Complex string values</a></li>
+          <li><a href="dibuilder.html#Access_to_constants">Access to constants</a></li>
           <li><a href="dibuilder.html#Complex_initializations">Complex initializations</a></li>
           <li><a href="dibuilder.html#Builder_classes">Builder classes</a></li>
           <li><a href="dibuilder.html#Factory_beans">Factory beans</a></li>
