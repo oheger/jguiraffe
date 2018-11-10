@@ -19,6 +19,7 @@ import java.awt.Rectangle
 
 import javafx.geometry.Orientation
 import javafx.scene.Node
+import javafx.scene.control.Labeled
 import net.sf.jguiraffe.gui.layout.PercentLayoutPlatformAdapter
 import net.sf.jguiraffe.gui.layout.UnitSizeHandler
 
@@ -37,10 +38,10 @@ class JavaFxPercentLayoutAdapter(components: Array[Node],
   constraints: Array[Object], sizeHandler: Option[UnitSizeHandler] = None)
   extends PercentLayoutPlatformAdapter {
   /** The number of components managed by the associated container. */
-  val getComponentCount = constraints.length
+  val getComponentCount: Int = constraints.length
 
   /** The size handler used for Java FX percent layouts. */
-  val getSizeHandler = sizeHandler.getOrElse(new JavaFxUnitSizeHandler)
+  val getSizeHandler: UnitSizeHandler = sizeHandler.getOrElse(new JavaFxUnitSizeHandler)
 
   def getComponent(index: Int): Object = components(index)
 
@@ -53,9 +54,7 @@ class JavaFxPercentLayoutAdapter(components: Array[Node],
 
   def getPreferredComponentSize(component: Object, vert: Boolean): Int = {
     val node = asNode(component)
-    // Note: The preferred width seems to be slightly too small; therefore, it
-    // is increased by 1 pixel as a workaround. See BUG-21.
-    getSize(node, vert, node.prefWidth(_) + 1, node.prefHeight)
+    getSize(node, vert, getPreferredWidth(node), node.prefHeight)
   }
 
   def setComponentBounds(component: Object, bounds: Rectangle) {
@@ -120,6 +119,24 @@ class JavaFxPercentLayoutAdapter(components: Array[Node],
       getHeight(node, fHeight, fWidth)
     } else {
       getWidth(node, fWidth, fHeight)
+    }
+  }
+
+  /**
+    * Calculates the preferred width of a node. In tests it has been discovered
+    * that the preferred width seems to be slightly too small for components
+    * with a text; therefore, it is increased by 1 pixel as a workaround for
+    * components affected. See BUG-21.
+    *
+    * @param node   the node in question
+    * @param height the height value of this node
+    * @return the preferred width of this control
+    */
+  private def getPreferredWidth(node: Node)(height: Double): Double = {
+    val width = node.prefWidth(height)
+    node match {
+      case _: Labeled => width + 1
+      case _ => width
     }
   }
 

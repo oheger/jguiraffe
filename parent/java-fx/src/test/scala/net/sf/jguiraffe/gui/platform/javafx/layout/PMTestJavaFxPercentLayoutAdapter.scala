@@ -17,23 +17,21 @@ package net.sf.jguiraffe.gui.platform.javafx.layout
 
 import java.awt.Rectangle
 
+import javafx.geometry.Orientation
+import javafx.scene.Node
+import javafx.scene.control.Label
+import javafx.scene.text.Text
+import net.sf.jguiraffe.gui.layout.UnitSizeHandler
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.{Before, BeforeClass, Test}
+import org.junit.Assert.{assertEquals, assertSame, assertTrue}
 import org.junit.runner.RunWith
+import org.junit.{Before, BeforeClass, Test}
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import org.scalatest.junit.JUnitSuite
 import org.scalatest.easymock.EasyMockSugar
-import javafx.geometry.Orientation
-import javafx.scene.Node
-import javafx.scene.text.Text
-
-import net.sf.jguiraffe.gui.layout.UnitSizeHandler
-import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
+import org.scalatest.junit.JUnitSuite
 
 /**
  * Test class for ''JavaFxPercentLayoutAdapter''.
@@ -94,26 +92,50 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Initializes the bias property of the given node mock.
+    *
+    * @param node the node
+    * @param bias the content bias
+    * @tparam T the concrete node type
+    * @return the updated node mock
+    */
+  private def initBias[T <: Node](node: T, bias: Orientation): T = {
+    EasyMock.expect(node.getContentBias).andReturn(bias)
+    node
+  }
+
+  /**
    * Creates a mock node with the specified content bias.
    * @param bias the content bias
    * @return the mock node
    */
-  private def nodeWithBias(bias: Orientation): Node = {
-    val node = mock[Node]
-    EasyMock.expect(node.getContentBias).andReturn(bias)
-    node
-  }
+  private def nodeWithBias(bias: Orientation): Node =
+    initBias(mock[Node], bias)
 
   /**
    * Tests whether the preferred component width can be obtained for nodes with
    * horizontal bias.
    */
   @Test def testGetPreferredComponentWidthHorizontalBias() {
+    val Width = 100
     val node = nodeWithBias(Orientation.HORIZONTAL)
-    EasyMock.expect(node.prefWidth(-1)).andReturn(100)
+    EasyMock.expect(node.prefWidth(-1)).andReturn(Width)
     whenExecuting(node) {
-      assertEquals("Wrong result", 101, adapter.getPreferredComponentSize(node, vert = false))
+      assertEquals("Wrong result", Width, adapter.getPreferredComponentSize(node, vert = false))
     }
+  }
+
+  /**
+    * Tests whether the preferred width of Labeled components with horizontal
+    * bias is adjusted.
+    */
+  @Test def testGetPreferredLabeledWidthHorizontalBias(): Unit = {
+    val Width = 128
+    val labeled = new Label
+    labeled.setWrapText(true)
+    labeled.setPrefWidth(Width)
+    assertEquals("Wrong result", Width + 1,
+      adapter.getPreferredComponentSize(labeled, vert = false))
   }
 
   /**
@@ -124,7 +146,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(null)
     EasyMock.expect(node.prefWidth(-1)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 101, adapter.getPreferredComponentSize(node, vert = false))
+      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, vert = false))
     }
   }
 
@@ -138,7 +160,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     EasyMock.expect(node.prefHeight(-1)).andReturn(height)
     EasyMock.expect(node.prefWidth(height)).andReturn(100)
     whenExecuting(node) {
-      assertEquals("Wrong result", 101, adapter.getPreferredComponentSize(node, vert = false))
+      assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, vert = false))
     }
   }
 
@@ -174,7 +196,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     val width = 150.0
     EasyMock.expect(node.prefWidth(-1)).andReturn(width)
-    EasyMock.expect(node.prefHeight(width + 1)).andReturn(100)
+    EasyMock.expect(node.prefHeight(width)).andReturn(100)
     whenExecuting(node) {
       assertEquals("Wrong result", 100, adapter.getPreferredComponentSize(node, vert = true))
     }
