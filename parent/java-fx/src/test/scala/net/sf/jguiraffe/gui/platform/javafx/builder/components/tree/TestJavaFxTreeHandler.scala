@@ -27,7 +27,7 @@ import org.easymock.{EasyMock, IAnswer}
 import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertNull, assertSame, assertTrue}
 import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 import scala.collection.mutable
 

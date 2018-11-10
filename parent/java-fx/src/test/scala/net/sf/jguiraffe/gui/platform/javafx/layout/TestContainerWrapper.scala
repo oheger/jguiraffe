@@ -27,7 +27,7 @@ import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
 import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 object TestContainerWrapper {
   @BeforeClass def setUpOnce(): Unit = {

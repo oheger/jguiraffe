@@ -18,7 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.event
 import org.junit.Before
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 import net.sf.jguiraffe.gui.builder.event.FormChangeEvent
 import net.sf.jguiraffe.gui.builder.event.FormEventManager

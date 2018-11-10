@@ -19,7 +19,7 @@ import javafx.scene.control.TableColumn
 
 import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 /**
  * Test class for ''TableColumnWidthChangeListener''.

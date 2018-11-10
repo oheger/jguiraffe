@@ -19,7 +19,7 @@ import org.apache.commons.configuration.tree.ConfigurationNode
 import org.easymock.EasyMock
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 /**
  * Test class for ''ConfigNodeData''.

@@ -23,7 +23,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 import javafx.scene.Node
 import net.sf.jguiraffe.gui.builder.components.tags.TreeIconHandler

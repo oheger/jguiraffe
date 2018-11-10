@@ -26,7 +26,7 @@ import org.apache.commons.jelly.JellyContext
 import org.junit.Assert.{assertEquals, assertSame}
 import org.junit.{BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 /**
  * Test class for ''ToolTipCreationCallBack''.

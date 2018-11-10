@@ -28,7 +28,7 @@ import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
 import org.junit.{BeforeClass, Before, Test}
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 /**
  * The companion object for ''TestTreeHandlerFactory''.

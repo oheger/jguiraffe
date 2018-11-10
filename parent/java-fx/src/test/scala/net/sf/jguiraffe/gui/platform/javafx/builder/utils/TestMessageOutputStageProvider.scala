@@ -23,7 +23,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper._
 import org.junit.Assert._
 import org.junit.{Before, BeforeClass, Test}
 import org.scalatest.junit.JUnitSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 object TestMessageOutputStageProvider {
   @BeforeClass def setUpOnce(): Unit = {
