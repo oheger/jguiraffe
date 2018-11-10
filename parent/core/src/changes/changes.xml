@@ -39,6 +39,10 @@
         shutdown. In this mode, shutdown listeners are not asked for
         permission.
       </action>
+      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/31">
+        Fixed dynamic growing of percent layouts when the content of
+        controls contained was changed.
+      </action>
       <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/30">
         The Export-Package header of the OSGi bundle generated for the core
         project now includes impl packages. Some of them are useful for client
