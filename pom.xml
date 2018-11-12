@@ -15,9 +15,6 @@
     limitations under the License.
 
 -->
-<!-- ===================================================================== -->
-<!-- $Id: pom.xml 217 2012-11-14 20:58:20Z oheger $ -->
-<!-- ===================================================================== -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -32,7 +29,7 @@
   </modules>
 
   <name>JGUIraffe BOM</name>
-  <url>http://jguiraffe.sourceforge.net/</url>
+  <url>https://github.com/oheger/jguiraffe</url>
   <organization>
     <name>The JGUIraffe Team</name>
   </organization>
@@ -40,27 +37,20 @@
     The parent pom of the JGUIraffe project.
   </description>
   <issueManagement>
-    <system>SourceForge2</system>
-    <url>http://sourceforge.net/p/jguiraffe/</url>
+    <system>GitHub</system>
+    <url>https://github.com/oheger/jguiraffe/issues/</url>
   </issueManagement>
   <scm>
-    <connection>scm:git:http://git.code.sf.net/p/jguiraffe/git</connection>
-    <url>http://git.code.sf.net/p/jguiraffe/git</url>
+    <url>https://github.com/oheger/jguiraffe</url>
+    <connection>scm:git:git://github.com/oheger/jguiraffe.git</connection>
+    <developerConnection>scm:git:git://github.com/oheger/jguiraffe.git</developerConnection>
   </scm>
-  <mailingLists>
-    <mailingList>
-      <name>JGUIraffe developers</name>
-      <post>jguiraffe-developers@lists.sourceforge.net</post>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/jguiraffe-developers</subscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=jguiraffe-developers</archive>
-    </mailingList>
-  </mailingLists>
 
   <developers>
     <developer>
       <id>oheger</id>
       <name>Oliver Heger</name>
-      <email>oheger@users.sourceforge.net</email>
+      <email>oheger@apache.org</email>
     </developer>
   </developers>
 
@@ -219,11 +209,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.2</version>
-        <configuration>
-          <webAccessUrl>http://jguiraffe.svn.sourceforge.net/viewvc/jguiraffe/trunk</webAccessUrl>
-          <anonymousConnection>scm:svn:https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe/trunk</anonymousConnection>
-          <developerConnection>scm:svn:https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe/trunk</developerConnection>
-        </configuration>
         <reportSets>
           <reportSet>
             <reports>
