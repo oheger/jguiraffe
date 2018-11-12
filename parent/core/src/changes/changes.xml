@@ -28,144 +28,144 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
-      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/10">
+      <action dev="oheger" type="add" issue="41">
         Added a tag for exposing a variable from the Jelly context as bean.
       </action>
-      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/9">
+      <action dev="oheger" type="add" issue="40">
         The JavaFX module now requires Scala 2.12.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/feature-requests/8">
+      <action dev="oheger" type="fix" issue="39">
         Added a new shutdown() method to application which allows a forced
         shutdown. In this mode, shutdown listeners are not asked for
         permission.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/31">
+      <action dev="oheger" type="fix" issue="31">
         Fixed dynamic growing of percent layouts when the content of
         controls contained was changed.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/30">
+      <action dev="oheger" type="fix" issue="30">
         The Export-Package header of the OSGi bundle generated for the core
         project now includes impl packages. Some of them are useful for client
         bundles as well.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/29">
+      <action dev="oheger" type="fix" issue="29">
         JavaFX windows now handle the closeable property correctly. The default
         values of windows flags like closeable, resizable, etc. have been
         changed from false to true. (In most cases, these features should be
         enabled.)
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/28">
+      <action dev="oheger" type="fix" issue="28">
         Fixed an update problem with JavaFX tables that only have a single row.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/26">
+      <action dev="oheger" type="fix" issue="26">
         Made shutdown handling more consistent. It is ensured that the main
         window is closed exactly once, and that multiple invocations of
         shutdown() have no effect.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/25">
+      <action dev="oheger" type="fix" issue="25">
         Handling of close notifications has been reworked for JavaFX windows.
         Window closed events are no longer sent when the window becomes
         invisible; they are sent when the window is actually closed, either by
         clicking the X button or by an invocation of the close() method.
       </action>
-        <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/24">
+        <action dev="oheger" type="fix" issue="24">
             JavaFX windows can now be assigned an icon.
         </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/23">
+      <action dev="oheger" type="fix" issue="23">
         JavaFX static text elements now handle icons correctly.
       </action>
     </release>
 
     <release version="1.3.1" date="2016-07-17"
       description="Bugfix release; addresses many problems with JavaFX">
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/22">
+      <action dev="oheger" type="fix" issue="22">
         Fixed a NullPointerException in selection handling of
         JavaFxTreeHandler.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/21">
+      <action dev="oheger" type="fix" issue="21">
         Labels rendered within a percent layout are given now a slightly
         greater width, so that the text is fully displayed.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/20">
+      <action dev="oheger" type="fix" issue="20">
         Application now offers a method for accessing the bean context that was
         created when the main window was constructed.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/19">
+      <action dev="oheger" type="fix" issue="19">
         The action tag now supports a new enabled attribute. This can be used to
         disable actions after their creation.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/18">
+      <action dev="oheger" type="fix" issue="18">
         JavaFxWindowManager now supports customizing JavaFX stage creation. For
         this purpose the new trait StageFactory was introduced. With
         DefaultStageFactory there is a default implementation which can be
         extended.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/17">
+      <action dev="oheger" type="fix" issue="17">
         FormController now offers a new method validateAndDisplayMessages()
         which can be used to trigger a validation with user feedback at any
         time. This is useful for instance for the implementation of an Apply
         button.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/16">
+      <action dev="oheger" type="fix" issue="16">
         It is now possible to add custom beans created dynamically by an
         application to the global bean context.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/15">
+      <action dev="oheger" type="fix" issue="15">
         Using the unit dlu in a JavaFX splitter component no longer causes an
         exception.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/14">
+      <action dev="oheger" type="fix" issue="14">
         JavaFX panels can now be assigned basic attributes like color or font.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/13">
+      <action dev="oheger" type="fix" issue="13">
         JavaFX tables now correctly evaluate the multi-selection flag.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/12">
+      <action dev="oheger" type="fix" issue="12">
         JavaFX labels can now be assigned an icon. The ClassCastException that
         occurred in this case has been fixed.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/11">
+      <action dev="oheger" type="fix" issue="11">
         The JavaFX application is now correctly set up so that the primary stage
         can be created successfully in JavaFX 8.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/10">
+      <action dev="oheger" type="fix" issue="10">
         The build of JGUIraffe is now possible with both Java 7 and Java 8.
       </action>
     </release>
 
     <release version="1.3" date="2015-01-18"
       description="Support for JavaFX">
-      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/7">
+      <action dev="oheger" type="add" issue="38">
         JavaFX is now supported as target platform.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/9">
+      <action dev="oheger" type="fix" issue="9">
         The default value of the canShrink property of PercentLayoutBase was
         changed from false to true. This is appropriate for the majority of
         use cases.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/8">
+      <action dev="oheger" type="fix" issue="8">
         SwingMessageOutput no longer allows HTML-based formatting. Leading and
         trailing html tags are removed from the message text.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/7">
+      <action dev="oheger" type="fix" issue="7">
         SwingMessageOutput now allows specifying a maximum line length.
         Message texts are processed so that no line exceeds the specified
         length. Line wrapping is enabled per default.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/6">
+      <action dev="oheger" type="fix" issue="6">
         The documentation of the MessageOutput interface was improved regarding
         the way the passed in message text is processed.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/5">
+      <action dev="oheger" type="fix" issue="5">
         The colrenderer tag now works as expected in Swing.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/4">
+      <action dev="oheger" type="fix" issue="4">
         Editable tree view components now work correctly in Swing.
       </action>
-      <action dev="oheger" type="fix" issue="http://sourceforge.net/p/jguiraffe/bugs/3">
+      <action dev="oheger" type="fix" issue="3">
         Editable combo boxes no longer throw an exception in Swing.
       </action>
-      <action dev="oheger" type="add" issue="http://sourceforge.net/p/jguiraffe/feature-requests/6">
+      <action dev="oheger" type="add" issue="37">
         Added the tag di:resource to resolve resources on the class path.
       </action>
       <action dev="oheger" type="add">
@@ -177,34 +177,34 @@
 
     <release version="1.2" date="2012-11-15"
       description="Adding OSGi support">
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/feature-requests/5" type="update">
+      <action dev="oheger" issue="36" type="update">
         Added OSGi support.
       </action>
     </release>
 
     <release version="1.1" date="2012-02-12"
       description="First maintenance release">
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/feature-requests/4" type="add">
+      <action dev="oheger" issue="35" type="add">
         Improvements of the dependency injection framework related to factory
         beans and builder classes.
       </action>
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/feature-requests/3" type="add">
+      <action dev="oheger" issue="34" type="add">
         SwingTableComponentHandler now ensures that a newly selected row
         (in single-selection mode) becomes visible. If necessary, it changes the
         position of the scroll pane.
       </action>
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/feature-requests/2" type="update">
+      <action dev="oheger" issue="33" type="update">
         Updated test dependency to EasyMock to the most recent version 3.0.
       </action>
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/feature-requests/1" type="add">
+      <action dev="oheger" issue="32" type="add">
         Added a transformer to StaticTextData objects which simpliefies usage
         of static text controls in forms.
       </action>
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/bugs/2" type="fix">
+      <action dev="oheger" issue="2" type="fix">
         Builders could throw an undocumented LocatorException. Such exceptions
         are now caught and re-thrown as BuilderException exceptions.
       </action>
-      <action dev="oheger" issue="http://sourceforge.net/p/jguiraffe/bugs/1" type="fix">
+      <action dev="oheger" issue="1" type="fix">
         Fixed a NullPointerException which can occur in the dependency injection
         framework when looking up beans by classes rather than bean names.
       </action>
