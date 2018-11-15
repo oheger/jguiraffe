@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>JGUIraffe Examples - Checkstyle report</title>
+    <link>https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples</link>
+    <description>JGUIraffe Examples - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2018 The JGUIraffe Team</copyright>
+    <item>
+      <title>File: 31,
+             Errors: 60,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html</link>
+      <description>
+        <p>Click <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.EditDesktopTask.java">net/sf/jguiraffe/examples/tutorial/mainwnd/EditDesktopTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.DummyActionTask.java">net/sf/jguiraffe/examples/tutorial/mainwnd/DummyActionTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.FileSizeTransformer.java">net/sf/jguiraffe/examples/tutorial/mainwnd/FileSizeTransformer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.bgtask.BgTaskCommand.java">net/sf/jguiraffe/examples/tutorial/bgtask/BgTaskCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.createfile.ClearTextActionTask.java">net/sf/jguiraffe/examples/tutorial/createfile/ClearTextActionTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.createfile.CreateFileData.java">net/sf/jguiraffe/examples/tutorial/createfile/CreateFileData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.OpenDesktopTask.java">net/sf/jguiraffe/examples/tutorial/mainwnd/OpenDesktopTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.OpenViewSettingsDlgCommand.java">net/sf/jguiraffe/examples/tutorial/viewset/OpenViewSettingsDlgCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.TablePopupHandler.java">net/sf/jguiraffe/examples/tutorial/mainwnd/TablePopupHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.ColorListModel.java">net/sf/jguiraffe/examples/tutorial/viewset/ColorListModel.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.ViewSettingsFormController.java">net/sf/jguiraffe/examples/tutorial/viewset/ViewSettingsFormController.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.model.FileData.java">net/sf/jguiraffe/examples/tutorial/model/FileData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.RefreshActionTask.java">net/sf/jguiraffe/examples/tutorial/mainwnd/RefreshActionTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.createfile.AppendTextActionTask.java">net/sf/jguiraffe/examples/tutorial/createfile/AppendTextActionTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.FileSystemChangeListener.java">net/sf/jguiraffe/examples/tutorial/mainwnd/FileSystemChangeListener.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.bgtask.BgTaskData.java">net/sf/jguiraffe/examples/tutorial/bgtask/BgTaskData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.createfile.UniqueFileNameValidator.java">net/sf/jguiraffe/examples/tutorial/createfile/UniqueFileNameValidator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.AbstractDesktopTask.java">net/sf/jguiraffe/examples/tutorial/mainwnd/AbstractDesktopTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.BooleanRadioButtonHandler.java">net/sf/jguiraffe/examples/tutorial/viewset/BooleanRadioButtonHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.ViewSettings.java">net/sf/jguiraffe/examples/tutorial/viewset/ViewSettings.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  33
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.PrintDesktopTask.java">net/sf/jguiraffe/examples/tutorial/mainwnd/PrintDesktopTask.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.CreateViewSettingsCommand.java">net/sf/jguiraffe/examples/tutorial/viewset/CreateViewSettingsCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.TreeChangeListener.java">net/sf/jguiraffe/examples/tutorial/mainwnd/TreeChangeListener.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.model.DirectoryData.java">net/sf/jguiraffe/examples/tutorial/model/DirectoryData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.createfile.CreateFileCommand.java">net/sf/jguiraffe/examples/tutorial/createfile/CreateFileCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.viewset.ViewSettingsFormValidator.java">net/sf/jguiraffe/examples/tutorial/viewset/ViewSettingsFormValidator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.FileSystemListModel.java">net/sf/jguiraffe/examples/tutorial/mainwnd/FileSystemListModel.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.TableChangeListener.java">net/sf/jguiraffe/examples/tutorial/mainwnd/TableChangeListener.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.MainWndController.java">net/sf/jguiraffe/examples/tutorial/mainwnd/MainWndController.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.mainwnd.ReadDirectoryCommand.java">net/sf/jguiraffe/examples/tutorial/mainwnd/ReadDirectoryCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-examples/checkstyle.html#net.sf.jguiraffe.examples.tutorial.Main.java">net/sf/jguiraffe/examples/tutorial/Main.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
