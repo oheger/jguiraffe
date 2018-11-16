@@ -20,7 +20,7 @@
 <document>
 
   <properties>
-    <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+    <author email="oheger@apache.org">Oliver Heger</author>
     <title>Building from VCS</title>
   </properties>
 
@@ -33,7 +33,7 @@
     command
   </p>
     <source><![CDATA[
-git clone git://git.code.sf.net/p/jguiraffe/git jguiraffe-git
+git clone https://github.com/oheger/jguiraffe.git jguiraffe-git
     ]]></source>
   <p>
     This command produces a maven aggregator project with a couple of modules.

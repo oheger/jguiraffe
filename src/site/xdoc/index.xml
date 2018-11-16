@@ -20,7 +20,7 @@
 <document>
 
   <properties>
-    <author email="oheger@users.sourceforge.net">Oliver Heger</author>
+    <author email="oheger@apache.org">Oliver Heger</author>
     <title>JGuiraffe</title>
   </properties>
 
@@ -61,6 +61,12 @@
   <subsection name="News">
   <p>
   <table>
+  <tr>
+    <td>2018-11-16</td>
+    <td>
+      The project has moved from SourceForge to GitHub.
+    </td>
+  </tr>
   <tr>
     <td>2016-07-17</td>
     <td>
@@ -129,28 +135,33 @@
   </p>
   </subsection>
 
-  <subsection name="Downloads">
+  <subsection name="Get it">
   <p>
-    The <em>JGUIraffe</em> distributions are available in two different flavours:
-    <ul>
-      <li>The binary distribution mainly contains the jar with the code of the
-      library. This is needed when running an application based on
-      <em>JGUIraffe</em>. In addition, there are the Javadocs and helper jars
-      with source code and API documentation which can be integrated into
-      common IDEs.</li>
-      <li>The source distribution contains the sources of the <em>JGUIraffe</em>
-      library, the examples, and the web site. From these sources the library
-      can be built using the <a href="building.html">Maven build</a>.</li>
-    </ul>
+    To use <em>JGUIraffe</em> in your projects, add the corresponding
+    dependency to the build tool of your choice (they are available from
+    <a href="http://repo1.maven.org/maven2">Maven Central</a>. Depending on the
+    desired target platform, you can either use
   </p>
+    <source><![CDATA[
+    <dependency>
+      <groupId>net.sf.jguiraffe</groupId>
+      <artifactId>jguiraffe-swing</artifactId>
+      <version>1.3.1</version>
+    </dependency>
+    ]]></source>
   <p>
-    You can dowload both distributions from the
-    <a href="http://sourceforge.net/projects/jguiraffe/">Sourceforge project
-    site.</a>. To ensure integrity the artifacts have been signed. Please make
-    sure that you verify the signature after downloading. A file with the keys
-    used for signing can be found
-    <a href="https://jguiraffe.svn.sourceforge.net/svnroot/jguiraffe/trunk/conf/KEYS">
-    here</a>.
+    for Swing or
+  </p>
+    <source><![CDATA[
+    <dependency>
+      <groupId>net.sf.jguiraffe</groupId>
+      <artifactId>jguiraffe-java-fx</artifactId>
+      <version>1.3.1</version>
+    </dependency>
+    ]]></source>
+  <p>
+    for JavaFX. If you want to check out the code, follow the instructions
+    under <a href="building.html">Maven build</a>.
   </p>
   </subsection>
   </section>
