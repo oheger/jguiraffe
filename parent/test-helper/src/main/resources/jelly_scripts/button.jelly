@@ -27,7 +27,8 @@
   </f:button>
   <f:button textres="BTN_OK" resgrp="testformbuilderresources" command="OK"
     noField="false" name="ok" default="true"/>
-  <f:button textres="BTN_CANCEL" mnemonicres="BTN_CANCEL" command="CANCEL" name="cancel"/>
+  <f:button textres="BTN_CANCEL" mnemonicres="BTN_CANCEL" command="CANCEL" name="cancel"
+    cancel="true"/>
 
   <f:toggleButton name="toggle" text="Toggle" command="tog"/>
 

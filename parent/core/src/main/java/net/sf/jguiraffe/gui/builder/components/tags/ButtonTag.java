@@ -15,8 +15,10 @@
  */
 package net.sf.jguiraffe.gui.builder.components.tags;
 
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment;
 import net.sf.jguiraffe.gui.forms.ComponentHandler;
 
 import org.apache.commons.jelly.JellyTagException;
@@ -68,8 +70,7 @@ import org.apache.commons.jelly.JellyTagException;
  * <tr>
  * <td valign="top"><code>alignment</code></td>
  * <td>Defines the relative position of the label's icon to its text. This can
- * be one of the literal names of the
- * {@link net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment
+ * be one of the literal names of the {@link TextIconAlignment
  * TextIconAlignment} class.</td>
  * <td valign="top">yes</td>
  * </tr>
@@ -100,6 +101,15 @@ import org.apache.commons.jelly.JellyTagException;
  * one button in a form should be marked as default button.</td>
  * <td valign="top">yes</td>
  * </tr>
+ * <tr>
+ * <td valign="top"><code>cancel</code></td>
+ * <td>A boolean flag that indicates whether this button is the cancel button
+ * for the current window. The cancel button is automatically triggered when
+ * the user presses the Escape key. If the window allows closing on Escape, the
+ * button is then triggered. Only a single button in a form should be marked as
+ * cancel button.</td>
+ * <td valign="top">yes</td>
+ * </tr>
  * </table>
  * </p>
  *
@@ -110,6 +120,9 @@ public class ButtonTag extends ToggleButtonTag
 {
     /** A flag whether this is the default button. */
     private boolean defaultButton;
+
+    /** A flag whether this is the cancel button. */
+    private boolean cancel;
 
     /**
      * Creates a new instance of <code>ButtonTag</code>.
@@ -142,6 +155,28 @@ public class ButtonTag extends ToggleButtonTag
     }
 
     /**
+     * Returns a flag whether this tag represents the cancel button of the
+     * current form.
+     *
+     * @return the cancel button flag
+     * @since 1.4
+     */
+    public boolean isCancel()
+    {
+        return cancel;
+    }
+
+    /**
+     * Set method of the {@code cancel} attribute.
+     *
+     * @param f the attribute's value
+     */
+    public void setCancel(boolean f)
+    {
+        this.cancel = f;
+    }
+
+    /**
      * Creates the new command button component.
      *
      * @param manager the component manager
@@ -160,8 +195,7 @@ public class ButtonTag extends ToggleButtonTag
      * Performs processing before this tag's body is evaluated. This
      * implementation checks whether this button is marked as default button. If
      * so, the button's name is stored in the current
-     * {@link net.sf.jguiraffe.gui.builder.components.ComponentBuilderData
-     * ComponentBuilderData} object.
+     * {@link ComponentBuilderData ComponentBuilderData} object.
      *
      * @throws JellyTagException if the tag is used incorrectly
      * @throws FormBuilderException if an error occurs
@@ -175,6 +209,10 @@ public class ButtonTag extends ToggleButtonTag
         if (isDefault())
         {
             getBuilderData().setDefaultButtonName(getName());
+        }
+        if (isCancel())
+        {
+            getBuilderData().setCancelButtonName(getName());
         }
     }
 }

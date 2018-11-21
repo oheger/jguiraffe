@@ -38,7 +38,8 @@ public class TestButtonTag extends AbstractTagTest
                     + colorString(0, 0, 0)
                     + " NAME = image ],"
                     + " BUTTON [ TEXT = OK ALIGN = LEFT CMD = OK NAME = ok DEFAULT ],"
-                    + " BUTTON [ TEXT = Cancel ALIGN = LEFT MNEMO = C CMD = CANCEL NAME = cancel ],"
+                    + " BUTTON [ TEXT = Cancel ALIGN = LEFT MNEMO = C CMD = CANCEL"
+                    + " NAME = cancel CANCEL ],"
                     + " TOGGLE [ TEXT = Toggle ALIGN = LEFT CMD = tog NAME = toggle ] }";
 
     /**
@@ -75,6 +76,16 @@ public class TestButtonTag extends AbstractTagTest
         executeScript(SCRIPT);
         assertEquals("Wrong name of default button", "ok", builderData
                 .getDefaultButtonName());
+    }
+
+    /**
+     * Tests whether the name of the cancel button is recorded.
+     */
+    public void testCancelButtonName() throws Exception
+    {
+        executeScript(SCRIPT);
+        assertEquals("Wrong name of cancel button", "cancel",
+                builderData.getCancelButtonName());
     }
 
     /**

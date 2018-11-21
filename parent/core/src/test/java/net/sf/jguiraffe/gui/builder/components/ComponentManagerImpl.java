@@ -334,8 +334,18 @@ public class ComponentManagerImpl implements ComponentManager
     public ComponentHandler createButton(ButtonTag tag, boolean create)
             throws FormBuilderException
     {
+        StringBuilder attributes = new StringBuilder();
+        if (tag.isDefault())
+        {
+            attributes.append("DEFAULT");
+        }
+        if (tag.isCancel())
+        {
+            attributes.append(" CANCEL");
+        }
         return createPushButton(tag, create, "BUTTON",
-                tag.isDefault() ? "DEFAULT" : null);
+                (attributes.length() > 0) ? attributes.toString().trim()
+                        : null);
     }
 
     public ComponentHandler createToggleButton(ToggleButtonTag tag,

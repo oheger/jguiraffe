@@ -245,6 +245,9 @@ public class ComponentBuilderData implements Composite,
     /** Stores the name of the current default button. */
     private String defaultButtonName;
 
+    /** Stores the name of the current cancel button. */
+    private String cancelButtonName;
+
     /** A counter that determines whether callbacks are disabled. */
     private int callBacksEnabledState;
 
@@ -1130,6 +1133,32 @@ public class ComponentBuilderData implements Composite,
     public void setDefaultButtonName(String defaultButtonName)
     {
         this.defaultButtonName = defaultButtonName;
+    }
+
+    /**
+     * Returns the name of the cancel button set for the current window. This
+     * can be <strong>null</strong> if no cancel button has been set.
+     *
+     * @return the name of the cancel button or <strong>null</strong>
+     * @since 1.4
+     */
+    public String getCancelButtonName()
+    {
+        return cancelButtonName;
+    }
+
+    /**
+     * Sets the name of the cancel button for the current window. This method is
+     * called by a button tag if the button is marked as cancel button. The
+     * property is then evaluated for the handling of the Escape key in windows.
+     *
+     * @param cancelButtonName the name of the cancel button; can be
+     *        <strong>null</strong> to clear the property
+     * @since 1.4
+     */
+    public void setCancelButtonName(String cancelButtonName)
+    {
+        this.cancelButtonName = cancelButtonName;
     }
 
     /**
