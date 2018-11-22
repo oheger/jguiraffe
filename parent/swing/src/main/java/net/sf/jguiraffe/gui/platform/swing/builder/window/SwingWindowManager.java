@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -289,7 +290,8 @@ public class SwingWindowManager implements WindowManager
     /**
      * Takes care about closing the window when the {@code ESCAPE} key is
      * pressed. This method checks whether the close on escape flag is set. If
-     * so, it registers an action for this key that closes the window.
+     * so, it registers an action for this key that either invokes the cancel
+     * button (if defined) or directly closes the window.
      *
      * @param window the window to be handled
      * @param data the window data object
@@ -299,17 +301,27 @@ public class SwingWindowManager implements WindowManager
     {
         if (data.isCloseOnEsc())
         {
-            JRootPane rootPane = window.getRootPane();
-
-            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CMD_ESCAPE);
-            rootPane.getActionMap().put(CMD_ESCAPE, new AbstractAction()
+            ComponentBuilderData builderData = data.getComponentBuilderData();
+            final JButton cancelButton = (JButton) builderData
+                    .getComponent(builderData.getCancelButtonName());
+            Action escAction = (cancelButton != null) ? new AbstractAction()
             {
-                public void actionPerformed(ActionEvent event)
+                public void actionPerformed(ActionEvent e)
+                {
+                    cancelButton.doClick();
+                }
+            } : new AbstractAction()
+            {
+                public void actionPerformed(ActionEvent e)
                 {
                     window.close(false);
                 }
-            });
+            };
+
+            JRootPane rootPane = window.getRootPane();
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                    KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CMD_ESCAPE);
+            rootPane.getActionMap().put(CMD_ESCAPE, escAction);
         }
     }
 

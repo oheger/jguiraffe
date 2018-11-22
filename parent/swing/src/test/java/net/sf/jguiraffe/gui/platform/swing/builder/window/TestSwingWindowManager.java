@@ -467,6 +467,35 @@ public class TestSwingWindowManager
     }
 
     /**
+     * Tests that a cancel button is processed when registering the handler for
+     * the escape key.
+     */
+    @Test
+    public void testInitSwingWindowPropertiesCloseOnEscWithCancelButton()
+    {
+        Window parent = EasyMock.createMock(Window.class);
+        SwingWindow window = prepareInitPropertiesTest(parent);
+        JButton cancelButton = EasyMock.createMock(JButton.class);
+        JRootPane rootPane = new JRootPane();
+        EasyMock.expect(window.getRootPane()).andReturn(rootPane);
+        cancelButton.doClick();
+        EasyMock.replay(window, parent, cancelButton);
+        WindowDataImpl data = createWindowData(false);
+        data.setCloseOnEsc(true);
+        final String cancelButtonName = "cancelButton";
+        data.getComponentBuilderData().storeComponent(cancelButtonName,
+                cancelButton);
+        data.getComponentBuilderData().setCancelButtonName(cancelButtonName);
+
+        manager.initSwingWindowProperties(window, data, parent);
+        Object obj = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .get(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+        Action action = rootPane.getActionMap().get(obj);
+        action.actionPerformed(null);
+        EasyMock.verify(window, parent, cancelButton);
+    }
+
+    /**
      * Tests whether the default button is handled correctly when initializing a
      * window.
      */
