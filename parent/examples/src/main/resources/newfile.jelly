@@ -165,7 +165,7 @@
       <f:button name="btnOk" textres="newfile_btn_create"
         mnemonicres="newfile_btn_create_mnemo" command="create"/>
       <f:button name="btnCancel" textres="newfile_btn_cancel"
-        mnemonicres="newfile_btn_cancel_mnemo"/>
+        mnemonicres="newfile_btn_cancel_mnemo" cancel="true"/>
     </f:panel>
 
     <!-- Connect the form controller -->

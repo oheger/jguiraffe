@@ -294,7 +294,7 @@
       <f:button name="btnOk" textres="viewset_btn_save"
         mnemonicres="viewset_btn_save_mnemo" default="true"/>
       <f:button name="btnCancel" textres="viewset_btn_cancel"
-        mnemonicres="viewset_btn_cancel_mnemo"/>
+        mnemonicres="viewset_btn_cancel_mnemo" cancel="true"/>
     </f:panel>
 
     <!-- Connect the form controller -->

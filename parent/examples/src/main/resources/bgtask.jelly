@@ -98,7 +98,7 @@
       <f:button name="btnStart" textres="bgtask_btn_start"
         mnemonicres="bgtask_btn_start_mnemo" command="start" default="true"/>
       <f:button name="btnCancel" textres="bgtask_btn_cancel"
-        mnemonicres="bgtask_btn_cancel_mnemo"/>
+        mnemonicres="bgtask_btn_cancel_mnemo" cancel="true"/>
     </f:panel>
 
     <!-- Connect the form controller -->
