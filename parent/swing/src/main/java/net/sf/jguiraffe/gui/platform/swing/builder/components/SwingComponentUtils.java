@@ -25,8 +25,14 @@ import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 
 import net.sf.jguiraffe.gui.builder.components.Color;
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack;
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 
+import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag;
+import net.sf.jguiraffe.gui.layout.NumberWithUnit;
+import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -340,7 +346,76 @@ final class SwingComponentUtils
     public static JScrollPane scrollPaneFor(Scrollable comp, int scrWidth,
             int scrHeight)
     {
-        JScrollPane scr = new JScrollPane((Component) comp);
+        JScrollPane scr = scrollPaneFor(comp);
+        Dimension prefSize = calculatePreferredScrollSize(comp, scrWidth, scrHeight, scr);
+
+        scr.setPreferredSize(prefSize);
+        return scr;
+    }
+
+    /**
+     * Creates an uninitialized scroll pane for the specified component.
+     *
+     * @param comp the component to be added to the scroll pane
+     * @return the scroll pane
+     * @since 1.4
+     */
+    public static JScrollPane scrollPaneFor(Scrollable comp)
+    {
+        return new JScrollPane((Component) comp);
+    }
+
+    /**
+     * Creates a scroll pane for the specified component that is initialized in
+     * a callback when the builder operation is finished. This is necessary to
+     * calculate the correct preferred size if it is defined in certain units
+     * (that require an initialized parent component). Therefore, this method
+     * creates and returns an uninitialized scroll pane and adds a callback
+     * which completes the initialization later.
+     *
+     * @param comp the component to be added to the scroll pane
+     * @param scrWidth the preferred scroll width
+     * @param scrHeight the preferred scroll height
+     * @param sizeHandler the size handler
+     * @param tag the current tag
+     * @param builderData the builder data object
+     * @return the scroll pane
+     * @since 1.4
+     */
+    public static JScrollPane scrollPaneLazyInit(final Scrollable comp,
+            final NumberWithUnit scrWidth, final NumberWithUnit scrHeight,
+            final SwingSizeHandler sizeHandler, final FormBaseTag tag,
+            ComponentBuilderData builderData)
+    {
+        final JScrollPane scr = scrollPaneFor(comp);
+        builderData.addCallBack(new ComponentBuilderCallBack()
+        {
+            public void callBack(ComponentBuilderData builderData,
+                    Object params) throws FormBuilderException
+            {
+                Object container = tag.findContainer().getContainer();
+                int width = scrWidth.toPixel(sizeHandler, container, false);
+                int height = scrHeight.toPixel(sizeHandler, container, true);
+                scr.setPreferredSize(
+                        calculatePreferredScrollSize(comp, width, height, scr));
+            }
+        }, null);
+        return scr;
+    }
+
+    /**
+     * Calculates the preferred size of a scroll pane based on the given
+     * parameters.
+     *
+     * @param comp the component to be added to the scroll pane
+     * @param scrWidth the preferred scroll width (&lt;= 0 for undefined)
+     * @param scrHeight the preferred scroll height (&lt;= 0 for undefined)
+     * @param scr the scroll pane
+     * @return the preferred scroll size for this scroll pane
+     */
+    private static Dimension calculatePreferredScrollSize(Scrollable comp,
+            int scrWidth, int scrHeight, JScrollPane scr)
+    {
         Dimension prefSize;
         Insets is;
 
@@ -357,9 +432,9 @@ final class SwingComponentUtils
 
         if (scrWidth <= 0)
         {
-            prefSize.width += scr.getVerticalScrollBar().getPreferredSize()
-                    .getWidth()
-                    + is.left + is.right;
+            prefSize.width +=
+                    scr.getVerticalScrollBar().getPreferredSize().getWidth()
+                            + is.left + is.right;
         }
         else
         {
@@ -368,16 +443,14 @@ final class SwingComponentUtils
 
         if (scrHeight <= 0)
         {
-            prefSize.height += scr.getHorizontalScrollBar().getPreferredSize()
-                    .getHeight()
-                    + is.top + is.bottom;
+            prefSize.height +=
+                    scr.getHorizontalScrollBar().getPreferredSize().getHeight()
+                            + is.top + is.bottom;
         }
         else
         {
             prefSize.height = scrHeight;
         }
-
-        scr.setPreferredSize(prefSize);
-        return scr;
+        return prefSize;
     }
 }

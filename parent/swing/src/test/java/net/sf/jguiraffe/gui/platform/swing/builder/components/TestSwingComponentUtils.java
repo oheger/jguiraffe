@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -27,13 +28,27 @@ import java.lang.reflect.Field;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import net.sf.jguiraffe.gui.builder.components.Color;
 import net.sf.jguiraffe.gui.builder.components.ColorHelper;
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
+import net.sf.jguiraffe.gui.builder.components.DefaultContainerSelector;
+import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 
+import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag;
+import net.sf.jguiraffe.gui.builder.components.tags.PanelTag;
+import net.sf.jguiraffe.gui.builder.components.tags.TextAreaTag;
+import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy;
+import net.sf.jguiraffe.gui.layout.NumberWithUnit;
+import net.sf.jguiraffe.gui.layout.Unit;
+import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
+import net.sf.jguiraffe.transform.TransformerContext;
+import org.apache.commons.jelly.JellyContext;
+import org.apache.commons.jelly.JellyTagException;
 import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -213,7 +228,6 @@ public class TestSwingComponentUtils
                 - scr.getHorizontalScrollBar().getPreferredSize().height;
         assertTrue("Wrong deltaX: " + deltaX, deltaX < 10);
         assertTrue("Wrong deltaY: " + deltaY, deltaY < 10);
-        dscr = scr.getMinimumSize();
     }
 
     /**
@@ -229,6 +243,51 @@ public class TestSwingComponentUtils
         JScrollPane scr = SwingComponentUtils.scrollPaneFor(comp, d2.width,
                 d2.height);
         assertEquals("Wrong preferred size", d2, scr.getPreferredSize());
+    }
+
+    /**
+     * Tests whether a scroll pane can be initialized lazily.
+     */
+    @Test
+    public void testScrollPaneLazyInit()
+            throws FormBuilderException, JellyTagException
+    {
+        JTextArea comp = new JTextArea(40, 8);
+        Dimension d = comp.getPreferredScrollableViewportSize();
+        NumberWithUnit scrWidth = new NumberWithUnit(55, Unit.DLU);
+        NumberWithUnit scrHeight = new NumberWithUnit(d.height * 2);
+        SwingSizeHandler sizeHandler = new SwingSizeHandler();
+        final JPanel panel = new JPanel();
+        int resultWidth = scrWidth.toPixel(sizeHandler, panel, false);
+        int resultHeight = scrHeight.toPixel(sizeHandler, panel, true);
+        Dimension expectedPreferredSize =
+                new Dimension(resultWidth, resultHeight);
+        FormBaseTag tag = new TextAreaTag();
+        PanelTag parentTag = new PanelTag()
+        {
+            @Override
+            public Object getContainer()
+            {
+                return panel;
+            }
+        };
+        tag.setParent(parentTag);
+        ComponentBuilderData builderData = new ComponentBuilderData();
+        builderData.initializeForm(
+                EasyMock.createNiceMock(TransformerContext.class),
+                new BeanBindingStrategy());
+        builderData.setContainerSelector(new DefaultContainerSelector());
+        tag.setContext(new JellyContext());
+        builderData.put(tag.getContext());
+
+        JScrollPane scr = SwingComponentUtils.scrollPaneLazyInit(comp, scrWidth,
+                scrHeight, sizeHandler, tag, builderData);
+        assertNotEquals("Already got preferred size", expectedPreferredSize,
+                scr.getPreferredSize());
+        builderData.invokeCallBacks();
+        Dimension preferredSize = scr.getPreferredSize();
+        assertEquals("Wrong preferred size", expectedPreferredSize,
+                preferredSize);
     }
 
     /**
