@@ -276,10 +276,15 @@ Window = wbd.getWindow("msgbox");
       catching this event and reacting accordingly.</li>
       <li>the <em>closeOnEsc</em> flag. This flag controls whether the window
       can be closed by pressing the escape key. This is usually desired behavior
-      of dialog windows. Here pressing escape means that the user wants to
-      cancel editing and dismiss all changes. Therefore the flag is <b>true</b>
-      per default for dialog windows and <b>false</b> for windows of other
-      types.</li>
+      of dialog windows. Here pressing escape means the equivalent of pressing
+      the dialog's cancel button: that the user wants to cancel editing and
+      dismiss all changes. Therefore the flag is <b>true</b> per default for
+      dialog windows and <b>false</b> for windows of other types. Note that a
+      value of <strong>true</strong> for this flag assumes that a cancel button
+      is present in the window (refer to
+      <a href="formbuilder.html#buttons">Buttons</a> for further information);
+      actually, the escape key is handled by simulating a click event on this
+      cancel button.</li>
       <li>a reference to the menu bar of the window. Menus are defined using
       tags of the <em>Action builder tag library</em> as described in the
       section <a href="actionbuilder.html#Main_menus_and_tool_bars">Main menus

@@ -138,6 +138,9 @@ public interface WindowData
     /**
      * Returns a flag whether the window should close itself if the user presses
      * the {@code ESCAPE} key. This is especially useful for dialog windows.
+     * Note: Windows making use of this flag should also define a cancel
+     * button; this button is triggered as a reaction on the {@code ESCAPE}
+     * key.
      *
      * @return a flag whether the {@code ESCAPE} key should close the window
      */
