@@ -16,16 +16,17 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
 import javafx.scene.Group
-import javafx.scene.control.MenuBar
+import javafx.scene.control.{Button, MenuBar}
 import javafx.scene.image.Image
 import javafx.scene.text.Text
 import javafx.stage.{Modality, Stage}
-
 import net.sf.jguiraffe.gui.builder.components.{ComponentBuilderData, FormBuilderException}
 import net.sf.jguiraffe.gui.builder.window.{Window, WindowBuilderData, WindowData}
+import net.sf.jguiraffe.gui.forms.bind.BeanBindingStrategy
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
+import net.sf.jguiraffe.transform.TransformerContext
 import org.apache.commons.jelly.JellyContext
 import org.easymock.EasyMock
 import org.junit.Assert._
@@ -311,6 +312,38 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Tests whether a cancel button is correctly initialized.
+    */
+  @Test def testCreateDialogWithCancelButton(): Unit = {
+    val builderData = createWindowBuilderData()
+    val windowData = WindowDataImpl(title = "Esc", closeOnEsc = true)
+    val CancelButtonName = "myCancelButton"
+    val cancelButton = new Button
+    val wndNew = manager.createFrame(builderData, windowData, null)
+    windowData.getComponentBuilderData.storeComponent(CancelButtonName, cancelButton)
+    windowData.getComponentBuilderData setCancelButtonName CancelButtonName
+
+    manager.createFrame(builderData, windowData, wndNew)
+    assertTrue("Cancel button not initialized", cancelButton.isCancelButton)
+  }
+
+  /**
+    * Tests handling of a cancel button if a window must not be closed via ESC.
+    */
+  @Test def testNoCancelButtonIsSetIfCloseOnEscIsDisabled(): Unit = {
+    val builderData = createWindowBuilderData()
+    val windowData = WindowDataImpl(title = "Esc")
+    val CancelButtonName = "cancelButtonToBeIgnored"
+    val cancelButton = new Button
+    val wndNew = manager.createDialog(builderData, windowData, modal = true, wnd = null)
+    windowData.getComponentBuilderData.storeComponent(CancelButtonName, cancelButton)
+    windowData.getComponentBuilderData setCancelButtonName CancelButtonName
+
+    manager.createDialog(builderData, windowData, modal = true, wndNew)
+    assertFalse("Cancel button flag set", cancelButton.isCancelButton)
+  }
+
+  /**
    * Tests the creation of an internal frame.
    */
   @Test def testCreateInternalFrame() {
@@ -341,10 +374,23 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Creates a default ''ComponentBuilderData'' object that can be used by
+    * tests.
+    *
+    * @return the initialized builder data object
+    */
+  private def createComponentBuilderData(): ComponentBuilderData = {
+    val data = new ComponentBuilderData
+    val transCtx = niceMock[TransformerContext]
+    data.initializeForm(transCtx, new BeanBindingStrategy)
+    data
+  }
+
+  /**
    * A test implementation of the WindowData interface.
    */
   private case class WindowDataImpl(
-    @BeanProperty componentBuilderData: ComponentBuilderData = null,
+    @BeanProperty componentBuilderData: ComponentBuilderData = createComponentBuilderData(),
     @BeanProperty controller: Object = null,
     @BeanProperty height: Int = WindowData.UNDEFINED,
     @BeanProperty icon: Object = null,
@@ -365,7 +411,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
 
 object TestJavaFxWindowManager {
   /** A set with style sheet URLs to be added to newly created Scene objects. */
-  val StyleSheets = Set("style1.css", "otherStyle.css")
+  val StyleSheets: Set[String] = Set("style1.css", "otherStyle.css")
 
   /**
    * The test instance. It has to be created once because it initializes the

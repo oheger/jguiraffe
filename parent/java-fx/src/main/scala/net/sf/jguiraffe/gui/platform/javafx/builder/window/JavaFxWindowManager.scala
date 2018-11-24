@@ -15,10 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
-import javafx.scene.control.MenuBar
+import javafx.scene.control.{Button, MenuBar}
 import javafx.stage.Modality
 import javafx.stage.Stage
-
 import net.sf.jguiraffe.gui.builder.window.Window
 import net.sf.jguiraffe.gui.builder.window.WindowBuilderData
 import net.sf.jguiraffe.gui.builder.window.WindowData
@@ -130,6 +129,7 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: S
     initWindowBounds(data, fxwnd.stage)
     initMenuBar(fxwnd, data.getMenuBar)
     initIcon(fxwnd, data)
+    initCancelButton(data)
   }
 
   /**
@@ -175,6 +175,23 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: S
       case ImageWrapper(image) =>
         window.stage.getIcons add image
       case _ =>
+    }
+  }
+
+  /**
+    * Initializes the cancel button for a window if possible. This also makes
+    * sure that the window can be closed via the ESC key.
+    *
+    * @param data the window data object
+    */
+  private def initCancelButton(data: WindowData): Unit = {
+    if (data.isCloseOnEsc) {
+      data.getComponentBuilderData.getComponent(
+        data.getComponentBuilderData.getCancelButtonName) match {
+        case btn: Button =>
+          btn.setCancelButton(true)
+        case _ => // no cancel button defined
+      }
     }
   }
 
