@@ -28,6 +28,11 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="add" issue="42">
+        Improved the handling of the Escape key in windows. It is now possible
+        to declare a button as cancel button. Pressing the Escape key in the
+        window is then equivalent to clicking on this button.
+      </action>
       <action dev="oheger" type="add" issue="41">
         Added a tag for exposing a variable from the Jelly context as bean.
       </action>
