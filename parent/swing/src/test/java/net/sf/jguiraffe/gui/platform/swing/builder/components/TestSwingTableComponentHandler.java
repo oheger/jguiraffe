@@ -233,6 +233,21 @@ public class TestSwingTableComponentHandler
     }
 
     /**
+     * Tests the constructor that expects a scroll pane.
+     */
+    @Test
+    public void testScrollPaneCanBePassedToConstructor()
+    {
+        JScrollPane scrollPane = new JScrollPane();
+        SwingTableComponentHandler tableHandler =
+                new SwingTableComponentHandler(table, scrollPane);
+
+        assertEquals("Wrong scroll pane", scrollPane,
+                tableHandler.getOuterComponent());
+        assertEquals("Wrong table", table, tableHandler.getComponent());
+    }
+
+    /**
      * Tests the setData() method in single selection mode.
      */
     @Test
@@ -318,7 +333,7 @@ public class TestSwingTableComponentHandler
     public void testSetDataNumber()
     {
         initSingleSel();
-        handler.setData(Long.valueOf(2));
+        handler.setData(2L);
         assertEquals("Selected index was not set", 2, table.getSelectedRow());
     }
 

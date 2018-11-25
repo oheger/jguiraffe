@@ -84,6 +84,20 @@ class SwingTableComponentHandler extends SwingComponentHandler<Object> implement
     }
 
     /**
+     * Creates a new instance of {@code SwingTableComponentHandler} and
+     * initializes it with the table and the scroll pane.
+     *
+     * @param table the wrapped table component
+     * @param scr the scroll pane
+     * @since 1.4
+     */
+    public SwingTableComponentHandler(JTable table, JScrollPane scr)
+    {
+        super(table);
+        scrollPane = scr;
+    }
+
+    /**
      * Returns the table component.
      *
      * @return the table
