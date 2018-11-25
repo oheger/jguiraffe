@@ -162,6 +162,22 @@ public class TestSwingTreeComponentHandler
     }
 
     /**
+     * Tests that an instance can be created with a scroll pane.
+     */
+    @Test
+    public void testInitWithScrollPane()
+    {
+        JScrollPane scr = new JScrollPane();
+        SwingTreeComponentHandler treeHandler =
+                new SwingTreeComponentHandler(tree, model, NAME, scr);
+
+        assertEquals("Wrong tree", tree, treeHandler.getTree());
+        assertEquals("Wrong configuration as tree model",
+                model.getConfiguration(), treeHandler.getModel());
+        assertEquals("Wrong scroll pane", scr, treeHandler.getOuterComponent());
+    }
+
+    /**
      * Tests whether the correct tree component is returned.
      */
     @Test
@@ -709,11 +725,10 @@ public class TestSwingTreeComponentHandler
         final String msg = "Not allowed for this test!";
         javax.swing.event.TreeExpansionEvent event = new javax.swing.event.TreeExpansionEvent(
                 tree, treePath(KEY_APP));
-        TreeExpandVetoException veto = new TreeExpandVetoException(
+        l.veto = new TreeExpandVetoException(
                 new TreeExpansionEvent(this, handler, NAME,
                         TreeExpansionEvent.Type.NODE_EXPAND, nodePath(KEY_APP)),
                 msg);
-        l.veto = veto;
         handler.addPreExpansionListener(l);
         try
         {
@@ -761,7 +776,6 @@ public class TestSwingTreeComponentHandler
         /**
          * Verifies an event received by this listener.
          *
-         * @param handler the component handler for the tree
          * @param key the key of the expected path
          * @param type the expected event type
          */

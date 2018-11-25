@@ -101,12 +101,27 @@ class SwingTreeComponentHandler extends SwingComponentHandler<Object> implements
             SwingConfigurationTreeModel model, String name, int scrollWidth,
             int scrollHeight)
     {
+        this(tree, model, name, SwingComponentUtils.scrollPaneFor(tree,
+                scrollWidth, scrollHeight));
+    }
+
+    /**
+     * Creates a new instance of {@code SwingTreeComponentHandler} with a scroll
+     * pane that has been initialized externally.
+     *
+     * @param tree the tree component wrapped by this handler
+     * @param model the model for the tree
+     * @param name the name of this component
+     * @param scr the scroll pane
+     */
+    public SwingTreeComponentHandler(JTree tree,
+            SwingConfigurationTreeModel model, String name, JScrollPane scr)
+    {
         super(tree);
         this.model = model;
         this.name = name;
+        scrollPane = scr;
 
-        scrollPane = SwingComponentUtils.scrollPaneFor(tree, scrollWidth,
-                scrollHeight);
         listenerList = new EventListenerList();
         tree.addTreeExpansionListener(this);
         tree.addTreeWillExpandListener(this);
