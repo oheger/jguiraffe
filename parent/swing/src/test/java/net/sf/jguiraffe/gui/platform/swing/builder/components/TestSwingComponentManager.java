@@ -172,9 +172,10 @@ public class TestSwingComponentManager
      * stored in the context. A tag initialized by this method can be executed.
      *
      * @param tag the tag to be initialized
+     * @return the {@code ComponentBuilderData} assigned to the tag
      * @throws JellyTagException if an error occurs
      */
-    private void initTag(FormBaseTag tag) throws JellyTagException
+    private ComponentBuilderData initTag(FormBaseTag tag) throws JellyTagException
     {
         TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.class);
         EasyMock.replay(tctx);
@@ -186,6 +187,7 @@ public class TestSwingComponentManager
         builderData.initializeForm(tctx, new BeanBindingStrategy());
         builderData.setFieldHandlerFactory(new DefaultFieldHandlerFactory());
         tag.setBody(new TagScript());
+        return builderData;
     }
 
     /**
@@ -1315,23 +1317,23 @@ public class TestSwingComponentManager
      * created.
      */
     @Test
-    public void testCreateTableColumnWidth() throws FormBuilderException
+    public void testCreateTableColumnWidth()
+            throws FormBuilderException, JellyTagException
     {
         TableTag tag = createTableTag(true);
-        ComponentBuilderData data = new ComponentBuilderData();
+        ComponentBuilderData data = initTag(tag);
         JPanel container = new JPanel();
         container.setFont(new Font("SansSerif", 0, 20));
         data.setRootContainer(container);
-        data.put(tag.getContext());
         SwingTableComponentHandler handler = checkTableHandler(tag);
         int totalWidth = checkFixedColumnWidths(container, handler, tag);
-        assertEquals("Wrong resize mode", JTable.AUTO_RESIZE_OFF, handler
-                .getTable().getAutoResizeMode());
+        assertEquals("Wrong resize mode", JTable.AUTO_RESIZE_OFF,
+                handler.getTable().getAutoResizeMode());
         assertEquals("Wrong number of listeners", 0, listenerCount(handler));
         // there is a delta due to sizes of scroll bars and insets
-        int delta = Math.abs(handler.getTable()
-                .getPreferredScrollableViewportSize().width
-                - totalWidth);
+        int delta = Math.abs(
+                handler.getTable().getPreferredScrollableViewportSize().width
+                        - totalWidth);
         assertTrue("Wrong viewport width! Delta = " + delta, delta < 100);
     }
 
@@ -1339,7 +1341,8 @@ public class TestSwingComponentManager
      * Tests whether columns with a percent width are handled correctly.
      */
     @Test
-    public void testCreateTableColumnPercentWidth() throws FormBuilderException
+    public void testCreateTableColumnPercentWidth()
+            throws FormBuilderException, JellyTagException
     {
         TableTag tag = createTableTag(true);
         TableColumnTag colTag = new TableColumnTag();
@@ -1348,11 +1351,10 @@ public class TestSwingComponentManager
         colTag = new TableColumnTag();
         colTag.setPercentWidth(40);
         tag.addColumn(colTag);
-        ComponentBuilderData data = new ComponentBuilderData();
+        ComponentBuilderData data = initTag(tag);
         JPanel container = new JPanel();
         container.setFont(new Font("SansSerif", 0, 20));
         data.setRootContainer(container);
-        data.put(tag.getContext());
         SwingTableComponentHandler handler = checkTableHandler(tag);
         checkFixedColumnWidths(container, handler, tag);
         assertEquals("Wrong resize mode", JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS,
@@ -1371,6 +1373,7 @@ public class TestSwingComponentManager
         TableTag tag = createTableTag(false, String.valueOf(scrollWidth),
                 String.valueOf(scrollHeight));
         SwingTableComponentHandler handler = checkTableHandler(tag);
+        FormBaseTag.getBuilderData(tag.getContext()).invokeCallBacks();
         JScrollPane scr = (JScrollPane) handler.getOuterComponent();
         Dimension d = scr.getPreferredSize();
         assertEquals("Wrong preferred width", scrollWidth, d.width);

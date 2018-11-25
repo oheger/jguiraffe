@@ -58,6 +58,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
@@ -1013,12 +1014,11 @@ public class SwingComponentManager implements ComponentManager
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
             Object container = tag.findContainer().getContainer();
+            JScrollPane scrollPane = SwingComponentUtils.scrollPaneLazyInit(table, tag.getPreferredScrollWidth(),
+                    tag.getPreferredScrollHeight(), sizeHandler, tag,
+                    FormBaseTag.getBuilderData(tag.getContext()));
             SwingTableComponentHandler handler =
-                    new SwingTableComponentHandler(table, tag
-                            .getPreferredScrollWidth().toPixel(sizeHandler,
-                                    container, false), tag
-                            .getPreferredScrollHeight().toPixel(sizeHandler,
-                                    container, true));
+                    new SwingTableComponentHandler(table, scrollPane);
             registerTableListener(tag, handler);
             return handler;
         }
