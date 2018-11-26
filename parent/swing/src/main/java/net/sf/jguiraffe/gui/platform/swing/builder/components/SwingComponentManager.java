@@ -58,6 +58,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
@@ -964,7 +965,7 @@ public class SwingComponentManager implements ComponentManager
      * @return the component handler
      * @throws FormBuilderException if an error occurs
      */
-    public ComponentHandler<Object> createTable(TableTag tag, boolean create)
+    public ComponentHandler<Object> createTable(final TableTag tag, boolean create)
             throws FormBuilderException
     {
         if (create)
@@ -974,10 +975,9 @@ public class SwingComponentManager implements ComponentManager
 
         else
         {
-            JTable table = new JTable();
+            final JTable table = new JTable();
             SwingTableModel model = new SwingTableModel(tag, table);
             table.setModel(model);
-            initTableColumnWidths(tag, table);
             initComponent(table, tag);
 
             if (tag.getEditorSelectionHandler() == null)
@@ -1012,11 +1012,23 @@ public class SwingComponentManager implements ComponentManager
                 registerRowHeightListener(table, model);
             }
 
+            ComponentBuilderData builderData =
+                    FormBaseTag.getBuilderData(tag.getContext());
+            builderData.addCallBack(new ComponentBuilderCallBack()
+            {
+                public void callBack(ComponentBuilderData builderData,
+                        Object params) throws FormBuilderException
+                {
+                    // Needs to be deferred as the enclosing container is not
+                    // yet available.
+                    initTableColumnWidths(tag, table);
+                }
+            }, null);
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
             JScrollPane scrollPane = SwingComponentUtils.scrollPaneLazyInit(
                     table, tag.getPreferredScrollWidth(),
                     tag.getPreferredScrollHeight(), sizeHandler, tag,
-                    FormBaseTag.getBuilderData(tag.getContext()));
+                    builderData);
             SwingTableComponentHandler handler =
                     new SwingTableComponentHandler(table, scrollPane);
             registerTableListener(tag, handler);

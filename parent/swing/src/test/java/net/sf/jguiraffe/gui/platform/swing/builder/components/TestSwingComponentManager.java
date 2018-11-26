@@ -1323,10 +1323,13 @@ public class TestSwingComponentManager
     {
         TableTag tag = createTableTag(true);
         ComponentBuilderData data = initTag(tag);
+        data.setRootContainer(null);
+        SwingTableComponentHandler handler = checkTableHandler(tag);
         JPanel container = new JPanel();
         container.setFont(new Font("SansSerif", 0, 20));
         data.setRootContainer(container);
-        SwingTableComponentHandler handler = checkTableHandler(tag);
+        data.invokeCallBacks();
+
         int totalWidth = checkFixedColumnWidths(container, handler, tag);
         assertEquals("Wrong resize mode", JTable.AUTO_RESIZE_OFF,
                 handler.getTable().getAutoResizeMode());
@@ -1357,6 +1360,8 @@ public class TestSwingComponentManager
         container.setFont(new Font("SansSerif", 0, 20));
         data.setRootContainer(container);
         SwingTableComponentHandler handler = checkTableHandler(tag);
+        ComponentBuilderData builderData = ComponentBuilderData.get(tag.getContext());
+        builderData.invokeCallBacks();
         checkFixedColumnWidths(container, handler, tag);
         assertEquals("Wrong resize mode", JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS,
                 handler.getTable().getAutoResizeMode());
