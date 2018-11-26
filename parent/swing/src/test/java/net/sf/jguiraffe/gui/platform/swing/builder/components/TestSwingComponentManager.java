@@ -17,6 +17,7 @@ package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -1754,6 +1755,9 @@ public class TestSwingComponentManager
         tag.doTag(null);
         ComponentHandler<?> handler = tag.getComponentHandler();
         JScrollPane scr = (JScrollPane) handler.getOuterComponent();
+        assertNotEquals("Size already initialized", scrollWidth,
+                scr.getPreferredSize().width);
+        FormBaseTag.getBuilderData(tag.getContext()).invokeCallBacks();
         Dimension prefSz = scr.getPreferredSize();
         assertEquals("Wrong preferred width", scrollWidth, prefSz.width);
         assertEquals("Wrong preferred height", scrollHeight, prefSz.height);

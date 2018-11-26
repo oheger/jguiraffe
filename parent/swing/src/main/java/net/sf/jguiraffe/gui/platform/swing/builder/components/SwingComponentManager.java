@@ -1013,8 +1013,8 @@ public class SwingComponentManager implements ComponentManager
             }
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
-            Object container = tag.findContainer().getContainer();
-            JScrollPane scrollPane = SwingComponentUtils.scrollPaneLazyInit(table, tag.getPreferredScrollWidth(),
+            JScrollPane scrollPane = SwingComponentUtils.scrollPaneLazyInit(
+                    table, tag.getPreferredScrollWidth(),
                     tag.getPreferredScrollHeight(), sizeHandler, tag,
                     FormBaseTag.getBuilderData(tag.getContext()));
             SwingTableComponentHandler handler =
@@ -1062,11 +1062,12 @@ public class SwingComponentManager implements ComponentManager
             tree.setCellEditor(new SwingTreeCellEditor(tree, renderer));
 
             SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
-            Object container = tag.findContainer().getContainer();
+            JScrollPane scrollPane = SwingComponentUtils.scrollPaneLazyInit(
+                    tree, tag.getPreferredScrollWidth(),
+                    tag.getPreferredScrollHeight(), sizeHandler, tag,
+                    FormBaseTag.getBuilderData(tag.getContext()));
             return new SwingTreeComponentHandler(tree, model, tag.getName(),
-                    tag.getPreferredScrollWidth().toPixel(sizeHandler,
-                            container, false), tag.getPreferredScrollHeight()
-                            .toPixel(sizeHandler, container, true));
+                    scrollPane);
         }
     }
 
