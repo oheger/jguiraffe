@@ -34,23 +34,19 @@ import org.junit.Test;
  */
 public class TestSwingTextAreaHandler
 {
-    /** Constant for the scroll width.*/
+    /** Constant for the scroll width. */
     private static final int SCROLL_WIDTH = 320;
 
-    /** Constant for the scroll height.*/
+    /** Constant for the scroll height. */
     private static final int SCROLL_HEIGHT = 200;
 
-    /** The test text area.*/
+    /** The test text area. */
     private JTextArea textArea;
-
-    /** The handler to be tested.*/
-    private SwingTextAreaHandler handler;
 
     @Before
     public void setUp() throws Exception
     {
         textArea = new JTextArea();
-        handler = new SwingTextAreaHandler(textArea, SCROLL_WIDTH, SCROLL_HEIGHT);
     }
 
     /**
@@ -59,10 +55,26 @@ public class TestSwingTextAreaHandler
     @Test
     public void testGetOuterComponent()
     {
+        SwingTextAreaHandler handler =
+                new SwingTextAreaHandler(textArea, SCROLL_WIDTH, SCROLL_HEIGHT);
         JScrollPane scr = (JScrollPane) handler.getOuterComponent();
-        assertSame("Wrong view port component", textArea, scr.getViewport().getView());
+        assertSame("Wrong view port component", textArea,
+                scr.getViewport().getView());
         Dimension d = scr.getPreferredSize();
         assertEquals("Wrong preferred width", SCROLL_WIDTH, d.width);
         assertEquals("Wrong preferred height", SCROLL_HEIGHT, d.height);
+    }
+
+    /**
+     * Tests the constructor that expects a scroll pane.
+     */
+    @Test
+    public void testInitWithExternalScrollPane()
+    {
+        JScrollPane scr = new JScrollPane();
+        SwingTextAreaHandler handler = new SwingTextAreaHandler(textArea, scr);
+
+        assertEquals("Wrong component", textArea, handler.getComponent());
+        assertEquals("Wrong scroll pane", scr, handler.getOuterComponent());
     }
 }

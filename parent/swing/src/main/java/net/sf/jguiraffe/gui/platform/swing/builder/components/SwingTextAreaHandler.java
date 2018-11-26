@@ -48,9 +48,23 @@ class SwingTextAreaHandler extends SwingTextHandler
     public SwingTextAreaHandler(JTextArea textArea, int scrollWidth,
             int scrollHeight)
     {
+        this(textArea, SwingComponentUtils.scrollPaneFor(textArea, scrollWidth,
+                scrollHeight));
+    }
+
+    /**
+     * Creates a new instance of {@code SwingTextAreaHandler} and sets the
+     * scroll pane to be used. With this constructor the handler can be
+     * initialized with a scroll pane created externally.
+     *
+     * @param textArea the text area
+     * @param scr the scroll pane to be used
+     * @since 1.4
+     */
+    public SwingTextAreaHandler(JTextArea textArea, JScrollPane scr)
+    {
         super(textArea);
-        scrollPane = SwingComponentUtils.scrollPaneFor(textArea, scrollWidth,
-                scrollHeight);
+        scrollPane = scr;
     }
 
     /**
