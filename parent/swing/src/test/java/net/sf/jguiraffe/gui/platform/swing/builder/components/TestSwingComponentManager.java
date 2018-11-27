@@ -761,9 +761,10 @@ public class TestSwingComponentManager
      * @return the list box tag
      */
     private ListBoxTag createListBoxTag(Boolean multi, String scrollWidth,
-            String scrollHeight)
+            String scrollHeight) throws JellyTagException
     {
         ListBoxTag tag = new ListBoxTag();
+        initTag(tag);
         tag.setListModel(new ListModelImpl(10));
         tag.setName("testList");
         try
@@ -771,7 +772,7 @@ public class TestSwingComponentManager
             initTag(tag);
             if (multi != null)
             {
-                tag.setMulti(multi.booleanValue());
+                tag.setMulti(multi);
             }
             if (scrollWidth != null)
             {
@@ -794,7 +795,8 @@ public class TestSwingComponentManager
      * Tests whether a list box with single selection can be created.
      */
     @Test
-    public void testCreateListBoxSingleSel() throws FormBuilderException
+    public void testCreateListBoxSingleSel()
+            throws FormBuilderException, JellyTagException
     {
         ListBoxTag tag = createListBoxTag(null, null, null);
         ComponentHandler<?> ch = manager.createListBox(tag, false);
@@ -809,7 +811,8 @@ public class TestSwingComponentManager
      * Tests whether a list box with multiple selection can be created.
      */
     @Test
-    public void testCreateListBoxMultiSel() throws FormBuilderException
+    public void testCreateListBoxMultiSel()
+            throws FormBuilderException, JellyTagException
     {
         ListBoxTag tag = createListBoxTag(Boolean.TRUE, null, null);
         ComponentHandler<?> ch = manager.createListBox(tag, false);
@@ -818,26 +821,56 @@ public class TestSwingComponentManager
         SwingListBoxHandler handler = (SwingListBoxHandler) ch;
         JList list = handler.getList();
         assertEquals("Wrong multi selection mode",
-                ListSelectionModel.MULTIPLE_INTERVAL_SELECTION, list
-                        .getSelectionMode());
+                ListSelectionModel.MULTIPLE_INTERVAL_SELECTION,
+                list.getSelectionMode());
+    }
+
+    /**
+     * Helper method for testing whether the scroll size of list box components
+     * is set correctly.
+     *
+     * @param multi the multi-selection flag
+     */
+    private void checkCreateListBoxScrollSize(Boolean multi)
+            throws JellyTagException, FormBuilderException
+    {
+        final int scrollWidth = 150;
+        final int scrollHeight = 90;
+        ListBoxTag tag = createListBoxTag(multi, String.valueOf(scrollWidth),
+                String.valueOf(scrollHeight));
+
+        SwingListBoxHandler handler =
+                (SwingListBoxHandler) manager.createListBox(tag, false);
+        Component outerComponent = (Component) handler.getOuterComponent();
+        assertNotEquals("Size already initialized", scrollHeight,
+                outerComponent.getPreferredSize().height);
+        ComponentBuilderData builderData =
+                FormBaseTag.getBuilderData(tag.getContext());
+        builderData.invokeCallBacks();
+        Dimension d = outerComponent.getPreferredSize();
+        assertEquals("Wrong scroll width", scrollWidth, d.width);
+        assertEquals("Wrong scroll height", scrollHeight, d.height);
     }
 
     /**
      * Tests whether the scroll size is taken into account when creating a list.
      */
     @Test
-    public void testCreateListBoxScrollSize() throws FormBuilderException
+    public void testCreateListBoxScrollSize()
+            throws FormBuilderException, JellyTagException
     {
-        final int scrollWidth = 150;
-        final int scrollHeight = 90;
-        ListBoxTag tag = createListBoxTag(null, String.valueOf(scrollWidth),
-                String.valueOf(scrollHeight));
-        SwingListBoxHandler handler = (SwingListBoxHandler) manager
-                .createListBox(tag, false);
-        Dimension d = ((Component) handler.getOuterComponent())
-                .getPreferredSize();
-        assertEquals("Wrong scroll width", scrollWidth, d.width);
-        assertEquals("Wrong scroll height", scrollHeight, d.height);
+        checkCreateListBoxScrollSize(null);
+    }
+
+    /**
+     * Tests whether the scroll size is taken into account when creating a list
+     * with multi-selection.
+     */
+    @Test
+    public void testCreateListBoxMultiScrollSize()
+            throws FormBuilderException, JellyTagException
+    {
+        checkCreateListBoxScrollSize(Boolean.TRUE);
     }
 
     /**

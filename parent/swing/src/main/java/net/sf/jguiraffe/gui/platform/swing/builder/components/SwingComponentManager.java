@@ -790,24 +790,20 @@ public class SwingComponentManager implements ComponentManager
         initComponent(list, tag);
 
         SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
-        Object container = tag.findContainer().getContainer();
-        int scrollWidth = tag.getPreferredScrollWidth().toPixel(sizeHandler,
-                container, false);
-        int scrollHeight = tag.getPreferredScrollHeight().toPixel(sizeHandler,
-                container, true);
+        JScrollPane scr = SwingComponentUtils.scrollPaneLazyInit(list,
+                tag.getPreferredScrollWidth(), tag.getPreferredScrollHeight(),
+                sizeHandler, tag);
 
         if (tag.isMulti())
         {
-            list
-                    .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            return new SwingMultiListBoxHandler(list, tag.getListModel(),
-                    scrollWidth, scrollHeight);
+            list.setSelectionMode(
+                    ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            return new SwingMultiListBoxHandler(list, tag.getListModel(), scr);
         }
         else
         {
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            return new SwingListBoxHandler(list, tag.getListModel(),
-                    scrollWidth, scrollHeight);
+            return new SwingListBoxHandler(list, tag.getListModel(), scr);
         }
     }
 
