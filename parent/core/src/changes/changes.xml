@@ -28,6 +28,10 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="fix" issue="43">
+        The scroll width and height of Swing components that have a scroll pane
+        can now be configured in the unit DLU.
+      </action>
       <action dev="oheger" type="add" issue="42">
         Improved the handling of the Escape key in windows. It is now possible
         to declare a button as cancel button. Pressing the Escape key in the
@@ -39,7 +43,7 @@
       <action dev="oheger" type="add" issue="40">
         The JavaFX module now requires Scala 2.12.
       </action>
-      <action dev="oheger" type="fix" issue="39">
+      <action dev="oheger" type="add" issue="39">
         Added a new shutdown() method to application which allows a forced
         shutdown. In this mode, shutdown listeners are not asked for
         permission.
