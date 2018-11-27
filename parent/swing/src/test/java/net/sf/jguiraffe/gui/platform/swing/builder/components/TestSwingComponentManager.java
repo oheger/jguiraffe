@@ -617,7 +617,7 @@ public class TestSwingComponentManager
         assertEquals("Wrong rows", 8, text.getRows());
         assertTrue("Wrong line wrap", text.getLineWrap());
         assertTrue("Wrong wrap style", text.getWrapStyleWord());
-        assertTrue("Wrong outer compoment",
+        assertTrue("Wrong outer component",
                 handler.getOuterComponent() instanceof JScrollPane);
     }
 
@@ -645,10 +645,13 @@ public class TestSwingComponentManager
                 return scrollWidth;
             }
         };
-        initTag(tag);
+        ComponentBuilderData builderData = initTag(tag);
         ComponentHandler<?> handler = manager.createTextArea(tag, false);
-        Dimension psize = ((JScrollPane) handler.getOuterComponent())
-                .getPreferredSize();
+        JScrollPane scrollPane = (JScrollPane) handler.getOuterComponent();
+        assertNotEquals("Already initialized", (int) scrollWidth.getValue(),
+                scrollPane.getPreferredSize().width);
+        builderData.invokeCallBacks();
+        Dimension psize = scrollPane.getPreferredSize();
         assertEquals("Wrong preferred width", (int) scrollWidth.getValue(),
                 psize.width);
         assertEquals("Wrong preferred height", (int) scrollHeight.getValue(),

@@ -674,11 +674,10 @@ public class SwingComponentManager implements ComponentManager
 
         initText(text, tag, tag.getMaxlength());
         SwingSizeHandler sizeHandler = fetchSizeHandler(tag);
-        Object container = tag.findContainer().getContainer();
-        return new SwingTextAreaHandler(text, tag.getPreferredScrollWidth()
-                .toPixel(sizeHandler, container, false), tag
-                .getPreferredScrollHeight().toPixel(sizeHandler, container,
-                        true));
+        JScrollPane scrollPane = SwingComponentUtils.scrollPaneLazyInit(text,
+                tag.getPreferredScrollWidth(), tag.getPreferredScrollHeight(),
+                sizeHandler, tag, ComponentBuilderData.get(tag.getContext()));
+        return new SwingTextAreaHandler(text, scrollPane);
     }
 
     /**
