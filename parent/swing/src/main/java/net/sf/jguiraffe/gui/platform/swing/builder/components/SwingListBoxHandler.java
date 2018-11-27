@@ -53,9 +53,23 @@ class SwingListBoxHandler extends SwingListModelHandler implements
     public SwingListBoxHandler(JList list, ListModel listModel,
             int scrollWidth, int scrollHeight)
     {
+        this(list, listModel, SwingComponentUtils.scrollPaneFor(list,
+                scrollWidth, scrollHeight));
+    }
+
+    /**
+     * Creates a new instance of {@code SwingListBoxHandler} and passes in the
+     * scroll pane to be used.
+     *
+     * @param list the list component
+     * @param listModel the list model
+     * @param scr the scroll pane
+     * @since 1.4
+     */
+    public SwingListBoxHandler(JList list, ListModel listModel, JScrollPane scr)
+    {
         super(list, listModel);
-        scrollPane = SwingComponentUtils.scrollPaneFor(list, scrollWidth,
-                scrollHeight);
+        scrollPane = scr;
     }
 
     /**

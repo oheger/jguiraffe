@@ -18,6 +18,10 @@ package net.sf.jguiraffe.gui.platform.swing.builder.components;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+
+import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -99,5 +103,22 @@ public class TestSwingListBoxHandler extends
         handler.setData("No list element");
         assertEquals("Selection not cleared for invalid data", -1, component
                 .getSelectedIndex());
+    }
+
+    /**
+     * Tests whether a scroll pane can be passed to the constructor.
+     */
+    @Test
+    public void testInitWithScrollPane()
+    {
+        JList list = new JList();
+        ListModel listModel = setUpListModel();
+        JScrollPane scr = new JScrollPane();
+        SwingListBoxHandler listHandler =
+                new SwingListBoxHandler(list, listModel, scr);
+
+        assertEquals("Wrong list", list, listHandler.getComponent());
+        assertEquals("Wrong list model", MODEL_SIZE, listModel.size());
+        assertEquals("Wrong scroll pane", scr, listHandler.getOuterComponent());
     }
 }
