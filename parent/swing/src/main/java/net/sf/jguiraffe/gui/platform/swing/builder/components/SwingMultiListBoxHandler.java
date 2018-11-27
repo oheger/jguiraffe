@@ -16,6 +16,7 @@
 package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils;
@@ -47,6 +48,20 @@ class SwingMultiListBoxHandler extends SwingListBoxHandler
             int scrollWidth, int scrollHeight)
     {
         super(list, listModel, scrollWidth, scrollHeight);
+    }
+
+    /**
+     * Creates a new instance of {@code SwingMultiListBoxHandler} and
+     * initializes it with the scroll pane to be used.
+     *
+     * @param list the list component
+     * @param listModel the model
+     * @param scr the scroll pane
+     */
+    public SwingMultiListBoxHandler(JList list, ListModel listModel,
+            JScrollPane scr)
+    {
+        super(list, listModel, scr);
     }
 
     /**

@@ -15,13 +15,15 @@
  */
 package net.sf.jguiraffe.gui.platform.swing.builder.components;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -128,6 +130,23 @@ public class TestSwingMultiListBoxHandler extends
     }
 
     /**
+     * Tests whether a scroll pane can be passed to the constructor.
+     */
+    @Test
+    public void testInitWithScrollPane()
+    {
+        JList list = new JList();
+        ListModel listModel = setUpListModel();
+        JScrollPane scr = new JScrollPane();
+        SwingListBoxHandler listHandler =
+                new SwingMultiListBoxHandler(list, listModel, scr);
+
+        assertEquals("Wrong list", list, listHandler.getComponent());
+        assertEquals("Wrong list model", MODEL_SIZE, listModel.size());
+        assertEquals("Wrong scroll pane", scr, listHandler.getOuterComponent());
+    }
+
+    /**
      * Helper method for comparing an array.
      *
      * @param expected the expected list values
@@ -136,7 +155,6 @@ public class TestSwingMultiListBoxHandler extends
     private static void compareArray(Object[] expected, Object value)
     {
         assertTrue("Wrong value object", value instanceof Object[]);
-        assertTrue("Arrays not equal", Arrays
-                .equals(expected, (Object[]) value));
+        assertArrayEquals("Arrays not equal", expected, (Object[]) value);
     }
 }
