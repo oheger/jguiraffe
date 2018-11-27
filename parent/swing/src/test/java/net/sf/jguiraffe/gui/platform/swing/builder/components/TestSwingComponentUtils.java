@@ -281,7 +281,7 @@ public class TestSwingComponentUtils
         builderData.put(tag.getContext());
 
         JScrollPane scr = SwingComponentUtils.scrollPaneLazyInit(comp, scrWidth,
-                scrHeight, sizeHandler, tag, builderData);
+                scrHeight, sizeHandler, tag);
         assertNotEquals("Already got preferred size", expectedPreferredSize,
                 scr.getPreferredSize());
         builderData.invokeCallBacks();

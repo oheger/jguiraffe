@@ -378,16 +378,16 @@ final class SwingComponentUtils
      * @param scrHeight the preferred scroll height
      * @param sizeHandler the size handler
      * @param tag the current tag
-     * @param builderData the builder data object
      * @return the scroll pane
      * @since 1.4
      */
     public static JScrollPane scrollPaneLazyInit(final Scrollable comp,
             final NumberWithUnit scrWidth, final NumberWithUnit scrHeight,
-            final SwingSizeHandler sizeHandler, final FormBaseTag tag,
-            ComponentBuilderData builderData)
+            final SwingSizeHandler sizeHandler, final FormBaseTag tag)
     {
         final JScrollPane scr = scrollPaneFor(comp);
+        ComponentBuilderData builderData =
+                FormBaseTag.getBuilderData(tag.getContext());
         builderData.addCallBack(new ComponentBuilderCallBack()
         {
             public void callBack(ComponentBuilderData builderData,
