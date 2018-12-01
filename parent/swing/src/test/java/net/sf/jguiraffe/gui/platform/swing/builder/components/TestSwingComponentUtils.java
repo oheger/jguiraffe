@@ -345,4 +345,56 @@ public class TestSwingComponentUtils
         JLabel comp = new JLabel();
         SwingComponentUtils.setFont(comp, this);
     }
+
+    /**
+     * Tests that the text of a tool tip is returned that is not HTML.
+     */
+    @Test
+    public void testGetToolTipNoHtml()
+    {
+        final String tip = "This is a plain\ntool tip.";
+        JLabel comp = new JLabel();
+        comp.setToolTipText(tip);
+
+        assertEquals("Wrong tool tip text", tip,
+                SwingComponentUtils.getToolTip(comp));
+    }
+
+    /**
+     * Tests that HTML markup is removed when the tool tip is queried.
+     */
+    @Test
+    public void testGetToolTipWithHtml()
+    {
+        final String tip = "This is a\ncomplex\ntool tip!";
+        JLabel comp = new JLabel();
+        SwingComponentUtils.setToolTip(comp, tip);
+
+        assertEquals("Wrong tool tip text", tip,
+                SwingComponentUtils.getToolTip(comp));
+    }
+
+    /**
+     * Tests removeHtml() for null input.
+     */
+    @Test
+    public void testRemoveHtmlNull()
+    {
+        assertNull("Wrong result", SwingComponentUtils.removeHtml(null));
+    }
+
+    /**
+     * Tests removeHtml() if the text is not correctly wrapped by HTML tags.
+     */
+    @Test
+    public void testRemoveHtmlNoValidTags()
+    {
+        final String text1 = "<html>Invalid 1";
+        final String text2 = "Invalid<br>2</html>";
+
+        assertEquals("Wrong result (1)", text1,
+                SwingComponentUtils.removeHtml(text1));
+        assertEquals("Wrong result (2)", text2,
+                SwingComponentUtils.removeHtml(text2));
+    }
 }

@@ -53,6 +53,9 @@ import org.apache.commons.logging.LogFactory;
  */
 final class SwingComponentUtils
 {
+    /** Constant for the line break string. */
+    static final String LF = "\n";
+
     /** Constant for the HTML start tag. */
     private static final String HTML_START = "<html>";
 
@@ -61,9 +64,6 @@ final class SwingComponentUtils
 
     /** Constant for the "br" tag. */
     private static final String TAG_BR = "<br>";
-
-    /** Constant for the line break string. */
-    private static final String LF = "\n";
 
     /** The logger. */
     private static final Log LOG = LogFactory.getLog(SwingComponentUtils.class);
@@ -210,14 +210,15 @@ final class SwingComponentUtils
     }
 
     /**
-     * Returns the tool tip of the associated component.
+     * Returns the tool tip of the associated component. HTML markup in the
+     * tool tip text is removed.
      *
      * @param component the component
      * @return the tool tip
      */
     public static String getToolTip(JComponent component)
     {
-        return component.getToolTipText();
+        return removeHtml(component.getToolTipText());
     }
 
     /**
@@ -314,6 +315,27 @@ final class SwingComponentUtils
             }
         }
 
+        return s;
+    }
+
+    /**
+     * Removes HTML markup from the given string if it is contained. This
+     * function is the reverse operation of {@link #toHtml(String)}. It can be
+     * used to obtain the original content of a text that has been converted to
+     * Swing-like HTML.
+     *
+     * @param s the string to be processed (can be <b>null</b>)
+     * @return the processed string
+     * @since 1.4
+     */
+    public static String removeHtml(String s)
+    {
+        if (s != null && s.startsWith(HTML_START) && s.endsWith(HTML_END))
+        {
+            String unwrapped = s.substring(HTML_START.length(),
+                    s.length() - HTML_END.length());
+            return unwrapped.replace(TAG_BR, LF);
+        }
         return s;
     }
 
