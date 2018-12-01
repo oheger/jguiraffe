@@ -468,6 +468,36 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
   }
 
   /**
+    * Tests whether a widget handler for a group of radio buttons can be
+    * created.
+    */
+  @Test def testWidgetHandlerForRadioGroup(): Unit = {
+    val group = new ToggleGroup
+    val radio = new RadioButton
+    group.getToggles.add(radio)
+
+    manager.getWidgetHandlerFor(group) match {
+      case groupHandler: RadioGroupWidgetHandler =>
+        assertEquals("Wrong number of radios", 1,
+          groupHandler.getRadioButtons.size())
+        assertEquals("Wrong group widget", group, groupHandler.getWidget)
+        val radioHandler = groupHandler.getRadioButtons.get(0)
+        assertEquals("Wrong radio widget", radio, radioHandler.getWidget)
+      case w =>
+        fail("Unexpected widget: " + w)
+    }
+  }
+
+  /**
+    * Tests that an exception is thrown when creating a widget handler for an
+    * empty radio button group.
+    */
+  @Test(expected = classOf[FormBuilderRuntimeException])
+  def testWidgetHandlerForEmptyRadioGroup(): Unit = {
+    manager.getWidgetHandlerFor(new ToggleGroup)
+  }
+
+  /**
    * Tests whether an exception is thrown if an unsupported object is passed to
    * widgetHandlerFor().
    */
@@ -789,11 +819,11 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    * Tests whether a radio group can be created.
    */
   @Test def testCreateRadioGroup() {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     val radio1 = new RadioButton
     val radio2 = new RadioButton
     val map = Map("radio1" -> radio1.asInstanceOf[Object], "radio2" -> radio2)
-    val group = manager.createRadioGroup(map).asInstanceOf[ToggleGroup]
+    val group = manager.createRadioGroup(map.asJava).asInstanceOf[ToggleGroup]
     assertEquals("Group not set for R1", group, radio1.getToggleGroup)
     assertEquals("Group not set for R2", group, radio2.getToggleGroup)
   }
@@ -971,7 +1001,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
     JavaFxComponentManager.installSizeHandler(tag, sizeHandler)
     manager = createAndInstallBorderPanelFactory(tag, Some(transformerFunc))
 
-    val wrapper = checkPanelProperties(manager.createPanel(tag, create = false)
+    checkPanelProperties(manager.createPanel(tag, create = false)
       .asInstanceOf[ContainerWrapper])
   }
 
@@ -1312,7 +1342,7 @@ class TestJavaFxComponentManager extends JUnitSuite with EasyMockSugar {
    */
   private def sliderTag(or: Orientation): SliderTag = {
     new SliderTag {
-      override def getSliderOrientation = or
+      override def getSliderOrientation: Orientation = or
     }
   }
 

@@ -102,6 +102,13 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
         new NodeWidgetHandler(node)
       case item: MenuItem =>
         new MenuItemWidgetHandler(item)
+      case group: ToggleGroup =>
+        import scala.collection.JavaConverters._
+        val radioWidgets = group.getToggles.asScala map getWidgetHandlerFor
+        if (radioWidgets.isEmpty)
+          throw new FormBuilderRuntimeException(
+            "Cannot create widget handler for empty radio button group!")
+        new RadioGroupWidgetHandler(group, radioWidgets.asJava, "\n")
       case _ => throw new FormBuilderRuntimeException("Cannot create widget handler for " +
         component)
     }
