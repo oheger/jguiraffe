@@ -28,6 +28,9 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="fix" issue="44">
+        JavaFX can now supports widget handlers for groups of radio buttons.
+      </action>
       <action dev="oheger" type="fix" issue="43">
         The scroll width and height of Swing components that have a scroll pane
         can now be configured in the unit DLU.
