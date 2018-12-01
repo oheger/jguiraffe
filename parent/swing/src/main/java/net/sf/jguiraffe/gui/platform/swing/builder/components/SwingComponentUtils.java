@@ -30,6 +30,7 @@ import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 
+import net.sf.jguiraffe.gui.builder.components.RadioGroupWidgetHandler;
 import net.sf.jguiraffe.gui.builder.components.tags.FormBaseTag;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
 import net.sf.jguiraffe.gui.platform.swing.layout.SwingSizeHandler;
@@ -244,7 +245,10 @@ final class SwingComponentUtils
      * @param tip1 component 1 of the tool tip
      * @param tip2 component 2 of the tool tip
      * @param separator the separator between the tip components
+     * @deprecated Functionality to combine tool tips is now available in
+     * {@link RadioGroupWidgetHandler}.
      */
+    @Deprecated
     public static void setToolTip(JComponent component, String tip1,
             String tip2, String separator)
     {
@@ -263,7 +267,10 @@ final class SwingComponentUtils
      * @param tip2 component 2 of the tool tip
      * @param separator the separator between the tip components
      * @return the combined tool tip
+     * @deprecated Functionality to combine tool tips is now available in
+     * {@link RadioGroupWidgetHandler}.
      */
+    @Deprecated
     public static String combineToolTips(String tip1, String tip2,
             String separator)
     {
