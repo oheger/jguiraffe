@@ -55,7 +55,10 @@ import java.awt.Font;
 import java.awt.LayoutManager;
 import java.awt.font.TextAttribute;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderCallBack;
@@ -64,6 +67,7 @@ import net.sf.jguiraffe.gui.builder.components.ComponentManager;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 import net.sf.jguiraffe.gui.builder.components.Orientation;
+import net.sf.jguiraffe.gui.builder.components.RadioGroupWidgetHandler;
 import net.sf.jguiraffe.gui.builder.components.WidgetHandler;
 import net.sf.jguiraffe.gui.builder.components.model.StaticTextData;
 import net.sf.jguiraffe.gui.builder.components.model.TextIconAlignment;
@@ -264,7 +268,15 @@ public class SwingComponentManager implements ComponentManager
                 throw new FormBuilderRuntimeException(
                         "ButtonGroup must not be empty!");
             }
-            return new SwingRadioGroupWidgetHandler(group);
+            List<WidgetHandler> radioHandlers =
+                    new ArrayList<WidgetHandler>(group.getButtonCount());
+            for (Enumeration<AbstractButton> en = group.getElements(); en
+                    .hasMoreElements();)
+            {
+                radioHandlers.add(getWidgetHandlerFor(en.nextElement()));
+            }
+            return new RadioGroupWidgetHandler(group, radioHandlers,
+                    SwingComponentUtils.LF);
         }
         else
         {

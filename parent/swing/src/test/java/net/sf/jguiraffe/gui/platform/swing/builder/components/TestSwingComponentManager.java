@@ -70,6 +70,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
@@ -78,6 +79,7 @@ import net.sf.jguiraffe.gui.builder.components.DefaultFieldHandlerFactory;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderRuntimeException;
 import net.sf.jguiraffe.gui.builder.components.Orientation;
+import net.sf.jguiraffe.gui.builder.components.RadioGroupWidgetHandler;
 import net.sf.jguiraffe.gui.builder.components.WidgetHandler;
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 import net.sf.jguiraffe.gui.builder.components.model.ProgressBarHandler;
@@ -1701,11 +1703,17 @@ public class TestSwingComponentManager
     public void testGetWidgetHandlerForButtonGroup()
     {
         ButtonGroup grp = new ButtonGroup();
-        grp.add(new JRadioButton());
-        SwingRadioGroupWidgetHandler handler = (SwingRadioGroupWidgetHandler) manager
-                .getWidgetHandlerFor(grp);
-        assertSame("Wrong underlying button group", grp, handler
-                .getButtonGroup());
+        JRadioButton radio = new JRadioButton();
+        grp.add(radio);
+
+        RadioGroupWidgetHandler handler =
+                (RadioGroupWidgetHandler) manager.getWidgetHandlerFor(grp);
+        assertSame("Wrong underlying button group", grp, handler.getWidget());
+        List<WidgetHandler> radioButtons = handler.getRadioButtons();
+        assertEquals("Wrong number of buttons", 1, radioButtons.size());
+        assertEquals("Wrong widget handler", radio,
+                radioButtons.get(0).getWidget());
+        assertEquals("Wrong tip separator", "\n", handler.getTipSeparator());
     }
 
     /**
