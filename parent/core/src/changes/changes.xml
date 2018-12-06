@@ -28,6 +28,10 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="add" issue="45">
+        The user configuration of an application is now written to disk only if
+        it has been actually changed.
+      </action>
       <action dev="oheger" type="fix" issue="44">
         JavaFX can now supports widget handlers for groups of radio buttons.
       </action>
