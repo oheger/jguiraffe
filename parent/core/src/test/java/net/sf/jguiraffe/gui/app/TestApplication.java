@@ -72,6 +72,7 @@ import net.sf.jguiraffe.transform.ValidationMessageHandler;
 
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -134,7 +135,7 @@ public class TestApplication
     }
 
     @After
-    public void tearDown() throws Exception
+    public void tearDown()
     {
         removeUserConfig();
         if (app.getApplicationContext() != null
@@ -271,7 +272,7 @@ public class TestApplication
      * Tests creation of the message output object.
      */
     @Test
-    public void testCreateAppCtxMessageOutput() throws ApplicationException
+    public void testCreateAppCtxMessageOutput()
     {
         app.setConfigResourceName(CONFIG_MIN);
         ApplicationContext ctx = app.createApplicationContext();
@@ -477,10 +478,79 @@ public class TestApplication
     }
 
     /**
+     * Creates a window object whose bounds are initialized from the given
+     * configuration object.
+     *
+     * @param config the configuration
+     * @return the new window object
+     */
+    private static WindowImpl initWindowFromConfig(Configuration config)
+    {
+        WindowImpl window = new WindowImpl();
+        window.setBounds(config.getInt(Application.PROP_XPOS),
+                config.getInt(Application.PROP_YPOS),
+                config.getInt(Application.PROP_WIDTH),
+                config.getInt(Application.PROP_HEIGHT));
+        return window;
+    }
+
+    /**
+     * Tests that the user configuration is not saved if the content has not
+     * changed.
+     */
+    @Test
+    public void testUserConfigSkipSaveIfNoChanges()
+            throws ConfigurationException
+    {
+        setUpUserConfig(false);
+        XMLConfiguration userConfig = new XMLConfiguration();
+        userConfig.setProperty(Application.PROP_XPOS, 11);
+        userConfig.setProperty(Application.PROP_YPOS, 12);
+        userConfig.setProperty(Application.PROP_WIDTH, 640);
+        userConfig.setProperty(Application.PROP_HEIGHT, 480);
+        userConfig.save(usrConfFile);
+        long modifiedTime = usrConfFile.lastModified();
+        app.setConfigResourceName(CONFIG_MAX);
+        app.setApplicationContext(app.createApplicationContext());
+        WindowImpl window = initWindowFromConfig(userConfig);
+        app.getApplicationContext().setMainWindow(window);
+        app.onShutdown();
+
+        assertEquals("User config was written", modifiedTime,
+                usrConfFile.lastModified());
+    }
+
+    /**
+     * Tests that the user configuration is saved if there was a change on its
+     * properties.
+     */
+    @Test
+    public void testUserConfigSavedDueToPropertyChange()
+            throws ConfigurationException
+    {
+        setUpUserConfig(false);
+        XMLConfiguration userConfig = new XMLConfiguration();
+        userConfig.setProperty(Application.PROP_XPOS, 110);
+        userConfig.setProperty(Application.PROP_YPOS, 120);
+        userConfig.setProperty(Application.PROP_WIDTH, 1024);
+        userConfig.setProperty(Application.PROP_HEIGHT, 800);
+        userConfig.save(usrConfFile);
+        app.setConfigResourceName(CONFIG_MAX);
+        app.setApplicationContext(app.createApplicationContext());
+        WindowImpl window = initWindowFromConfig(userConfig);
+        app.getApplicationContext().setMainWindow(window);
+
+        app.getUserConfiguration().addProperty("changed", true);
+        app.onShutdown();
+        XMLConfiguration conf = new XMLConfiguration(usrConfFile);
+        assertTrue("Property not saved", conf.getBoolean("changed"));
+    }
+
+    /**
      * Tests accessing the user configuration if it is not defined.
      */
     @Test(expected = ApplicationRuntimeException.class)
-    public void testUserConfigNonExisting() throws ApplicationException
+    public void testUserConfigNonExisting()
     {
         app.setConfigResourceName(CONFIG_MIN);
         app.setApplicationContext(app.createApplicationContext());
@@ -528,7 +598,27 @@ public class TestApplication
         ApplicationContextImpl ctx = new ApplicationContextImpl();
         ctx.setConfiguration(cc);
         app.setApplicationContext(ctx);
+        app.saveUserConfiguration(true);
+    }
+
+    /**
+     * Tests that the modified flag for the user configuration is reset when the
+     * configuration is saved.
+     */
+    @Test
+    public void testUserConfigChangedFlagIsResetAfterSaving()
+            throws ApplicationException
+    {
+        setUpUserConfig(false);
+        app.setConfigResourceName(CONFIG_MAX);
+        app.setApplicationContext(app.createApplicationContext());
+        app.getUserConfiguration().setProperty("foo", "bar");
         app.saveUserConfiguration();
+        long modified = usrConfFile.lastModified();
+
+        app.saveUserConfiguration();
+        assertEquals("Configuration saved again", modified,
+                usrConfFile.lastModified());
     }
 
     /**
@@ -853,14 +943,15 @@ public class TestApplication
         EasyMock.expect(mockCtx.getConfiguration()).andReturn(config);
         EasyMock.expect(mockCtx.newBuilder()).andReturn(mockBuilder);
         EasyMock.expect(mockCtx.initBuilderData()).andReturn(mockData);
-        EasyMock.expect(
-                mockBuilder.buildWindow((Locator) EasyMock.anyObject(),
-                        EasyMock.same(mockData))).andAnswer(new IAnswer<Window>() {
-            public Window answer() throws Throwable {
-                mockData.setBuilderContext(windowContext);
-                return mockWindow;
-            }
-        });
+        EasyMock.expect(mockBuilder.buildWindow((Locator) EasyMock.anyObject(),
+                EasyMock.same(mockData))).andAnswer(new IAnswer<Window>()
+                {
+                    public Window answer()
+                    {
+                        mockData.setBuilderContext(windowContext);
+                        return mockWindow;
+                    }
+                });
         mockCtx.setMainWindow(mockWindow);
         tracker.initMainWindow(mockWindow);
         EasyMock.replay(mockCtx, mockWindow, mockBuilder, windowContext, tracker);
@@ -971,7 +1062,7 @@ public class TestApplication
      * Test an aborted shutdown operation.
      */
     @Test
-    public void testShutdownQuit() throws Exception
+    public void testShutdownQuit()
     {
         MainWindowCloseTracker tracker = EasyMock.createMock(MainWindowCloseTracker.class);
         app = new ApplicationTestImpl(tracker);
@@ -1247,9 +1338,8 @@ public class TestApplication
      * Helper method for testing a running application.
      *
      * @param app the application to be tested
-     * @throws Exception if an error occurs
      */
-    protected void checkRunningApp(ApplicationTestImpl app) throws Exception
+    protected void checkRunningApp(ApplicationTestImpl app)
     {
         ApplicationContext appCtx = app.getApplicationContext();
         assertNotNull("No application context set", appCtx);
@@ -1321,7 +1411,7 @@ public class TestApplication
     {
         private boolean executed;
 
-        public void execute() throws Exception
+        public void execute()
         {
             executed = true;
         }

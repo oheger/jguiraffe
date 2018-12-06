@@ -48,6 +48,7 @@ import net.sf.jguiraffe.locators.ClassPathLocator;
 import net.sf.jguiraffe.locators.Locator;
 import net.sf.jguiraffe.locators.LocatorConverter;
 import net.sf.jguiraffe.locators.LocatorUtils;
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -59,6 +60,8 @@ import org.apache.commons.configuration.PropertyConverter;
 import org.apache.commons.configuration.beanutils.BeanDeclaration;
 import org.apache.commons.configuration.beanutils.BeanHelper;
 import org.apache.commons.configuration.beanutils.XMLBeanDeclaration;
+import org.apache.commons.configuration.event.ConfigurationEvent;
+import org.apache.commons.configuration.event.ConfigurationListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -413,6 +416,9 @@ public class Application
     /** The exit code of this application. */
     private int exitCode;
 
+    /** A flag whether the user configuration has been changed. */
+    private volatile boolean userConfigChanged;
+
     /**
      * Creates a new instance of {@code Application}.
      */
@@ -632,60 +638,64 @@ public class Application
     public Configuration getUserConfiguration()
             throws ApplicationRuntimeException
     {
-        Configuration userConfig = null;
-
-        if (getApplicationContext().getConfiguration() instanceof CombinedConfiguration)
-        {
-            CombinedConfiguration cconf = (CombinedConfiguration) getApplicationContext()
-                    .getConfiguration();
-            String userConfigName = cconf.getString(PROP_USRCONFNAME,
-                    USRCONF_NAME);
-            userConfig = cconf.getConfiguration(userConfigName);
-        }
-
-        if (userConfig == null)
-        {
-            throw new ApplicationRuntimeException(
-                    "Cannot obtain user configuration!");
-        }
-        return userConfig;
+        return getUserConfiguration(getApplicationContext());
     }
 
     /**
-     * Stores the configuration with user specific settings. This method obtains
-     * the user configuration by calling the
-     * {@link #getUserConfiguration()}
-     * method. It expects that the user configuration implements the
-     * {@code FileConfiguration} interface. If a different configuration
-     * type is used as user configuration, this method should also be adapted.
+     * Stores the configuration with user specific settings if there have been
+     * changes. This is equivalent to calling
+     * {@code saveUserConfiguration(false);}.
      *
      * @throws ApplicationException if an error occurs
      */
     public void saveUserConfiguration() throws ApplicationException
     {
-        Configuration conf = getUserConfiguration();
-        if (conf instanceof FileConfiguration)
+        saveUserConfiguration(false);
+    }
+
+    /**
+     * Stores the configuration with user specific settings. This method obtains
+     * the user configuration by calling the {@link #getUserConfiguration()}
+     * method. It expects that the user configuration implements the
+     * {@code FileConfiguration} interface. If a different configuration type is
+     * used as user configuration, this method should also be adapted. With the
+     * {@code force} flag the behavior can be controlled if the configuration
+     * has not been modified: if it is <strong>false</strong>, no action is
+     * taken in this case; otherwise, the configuration is written anyway.
+     *
+     * @param force flag whether an unmodified configuration should be saved
+     * @throws ApplicationException if an error occurs
+     * @since 1.4
+     */
+    public void saveUserConfiguration(boolean force) throws ApplicationException
+    {
+        if (userConfigChanged || force)
         {
-            FileConfiguration fconf = (FileConfiguration) conf;
-            try
+            Configuration conf = getUserConfiguration();
+            if (conf instanceof FileConfiguration)
             {
-                fconf.save();
-                if (log.isInfoEnabled())
+                FileConfiguration fconf = (FileConfiguration) conf;
+                try
                 {
-                    log.info("Saved user configuration to " + fconf.getURL());
+                    fconf.save();
+                    userConfigChanged = false;
+                    if (log.isInfoEnabled())
+                    {
+                        log.info("Saved user configuration to "
+                                + fconf.getURL());
+                    }
+                }
+                catch (ConfigurationException cex)
+                {
+                    throw new ApplicationException(
+                            "Could not save user configuration!", cex);
                 }
             }
-            catch (ConfigurationException cex)
+            else
             {
                 throw new ApplicationException(
-                        "Could not save user configuration!", cex);
+                        "User configuration is no file-based configuration!");
             }
-        }
-
-        else
-        {
-            throw new ApplicationException(
-                    "User configuration is no file-based configuration!");
         }
     }
 
@@ -702,8 +712,11 @@ public class Application
         HierarchicalConfiguration config = createConfiguration();
         setBeanBuilderFactory(createBeanBuilderFactory(config));
         BeanContext beanContext = initBeans(config);
-        return (ApplicationContext) beanContext
+        ApplicationContext appContext = (ApplicationContext) beanContext
                 .getBean(BEAN_APPLICATION_CONTEXT);
+        registerUserConfigChangeListener(appContext);
+
+        return appContext;
     }
 
     /**
@@ -1410,8 +1423,7 @@ public class Application
      */
     protected void onShutdown()
     {
-        if (getApplicationContext().getConfiguration().getBoolean(PROP_USRCONF,
-                false))
+        if (isSaveUserConfig(getApplicationContext()))
         {
             try
             {
@@ -1427,9 +1439,9 @@ public class Application
 
     /**
      * Updates the user configuration. This method is called during shutdown if
-     * the {@code storeuserconfig} configuration property is set. Here
-     * actual settings can be written in the user configuration object so that
-     * they can be restored the next time the application is started again. This
+     * the {@code storeuserconfig} configuration property is set. Here actual
+     * settings can be written in the user configuration object so that they can
+     * be restored the next time the application is started again. This
      * implementation stores the actual bounds of the main frame in the user
      * config.
      */
@@ -1439,10 +1451,10 @@ public class Application
         if (wnd != null)
         {
             Configuration uc = getUserConfiguration();
-            uc.setProperty(PROP_XPOS, Integer.valueOf(wnd.getXPos()));
-            uc.setProperty(PROP_YPOS, Integer.valueOf(wnd.getYPos()));
-            uc.setProperty(PROP_WIDTH, Integer.valueOf(wnd.getWidth()));
-            uc.setProperty(PROP_HEIGHT, Integer.valueOf(wnd.getHeight()));
+            updateWindowPositionInConfig(uc, PROP_XPOS, wnd.getXPos());
+            updateWindowPositionInConfig(uc, PROP_YPOS, wnd.getYPos());
+            updateWindowPositionInConfig(uc, PROP_WIDTH, wnd.getWidth());
+            updateWindowPositionInConfig(uc, PROP_HEIGHT, wnd.getHeight());
         }
     }
 
@@ -1707,6 +1719,94 @@ public class Application
     {
         return ClassPathLocator.getInstance(resource, getClass()
                 .getClassLoader());
+    }
+
+    /**
+     * Registers a change listener at the user configuration if necessary. With
+     * this listener, changes on the user configuration can be tracked. When the
+     * configuration is to be saved it can be checked whether there were
+     * actually changes; if not, the save operation can be skipped.
+     *
+     * @param appContext the application context
+     */
+    private void registerUserConfigChangeListener(ApplicationContext appContext)
+    {
+        if (isSaveUserConfig(appContext) && getUserConfiguration(
+                appContext) instanceof AbstractConfiguration)
+        {
+            ((AbstractConfiguration) getUserConfiguration(appContext))
+                    .addConfigurationListener(new ConfigurationListener()
+                    {
+                        public void configurationChanged(
+                                ConfigurationEvent event)
+                        {
+                            if (!event.isBeforeUpdate())
+                            {
+                                userConfigChanged = true;
+                            }
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Returns a flag whether the user configuration should be saved/updated on
+     * application shutdown. The result is obtained from the application's
+     * configuration.
+     *
+     * @param appCtx the current application context
+     * @return a flag whether the user configuration should be updated
+     */
+    private static boolean isSaveUserConfig(ApplicationContext appCtx)
+    {
+        return appCtx.getConfiguration().getBoolean(PROP_USRCONF, false);
+    }
+
+    /**
+     * Obtains the user configuration from the given application context.
+     *
+     * @param appCtx the application context
+     * @return the user configuration
+     * @throws ApplicationRuntimeException if the user configuration cannot be
+     *         obtained
+     */
+    private static Configuration getUserConfiguration(ApplicationContext appCtx)
+    {
+        Configuration userConfig = null;
+
+        if (appCtx.getConfiguration() instanceof CombinedConfiguration)
+        {
+            CombinedConfiguration cconf =
+                    (CombinedConfiguration) appCtx.getConfiguration();
+            String userConfigName =
+                    cconf.getString(PROP_USRCONFNAME, USRCONF_NAME);
+            userConfig = cconf.getConfiguration(userConfigName);
+        }
+
+        if (userConfig == null)
+        {
+            throw new ApplicationRuntimeException(
+                    "Cannot obtain user configuration!");
+        }
+        return userConfig;
+    }
+
+    /**
+     * Updates a configuration property for the position of the main window. The
+     * property is only written if it has been changed.
+     *
+     * @param c the configuration
+     * @param property the property path
+     * @param pos the position to be written
+     */
+    private static void updateWindowPositionInConfig(Configuration c,
+            String property, int pos)
+    {
+        int oldValue = c.getInt(property, pos + 1);
+        if (oldValue != pos)
+        {
+            c.setProperty(property, pos);
+        }
     }
 
     /**
