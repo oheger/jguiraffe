@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2018 The JGUIraffe Team</copyright>
     <item>
-      <title>File: 58,
-             Errors: 0,
+      <title>File: 57,
+             Errors: 1,
              Warnings: 0,
              Infos: 0
       </title>
@@ -225,20 +225,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-swing/checkstyle.html#net.sf.jguiraffe.gui.platform.swing.builder.components.SwingRadioGroupWidgetHandler.java">net/sf/jguiraffe/gui/platform/swing/builder/components/SwingRadioGroupWidgetHandler.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-swing/checkstyle.html#net.sf.jguiraffe.gui.platform.swing.builder.event.ChangeListener.java">net/sf/jguiraffe/gui/platform/swing/builder/event/ChangeListener.java</a>
                 </td>
                 <td>
@@ -304,7 +290,7 @@
                   0
                 </td>
                 <td>
-                  0
+                  1
                 </td>
               </tr>
                           <tr>
