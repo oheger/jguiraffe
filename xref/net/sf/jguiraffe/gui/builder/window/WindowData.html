@@ -148,42 +148,45 @@
 <a class="jxr_linenumber" name="138" href="#138">138</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">     * Returns a flag whether the window should close itself if the user presses</em>
 <a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     * the {@code ESCAPE} key. This is especially useful for dialog windows.</em>
-<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     * @return a flag whether the {@code ESCAPE} key should close the window</em>
-<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="144" href="#144">144</a>     <strong class="jxr_keyword">boolean</strong> isCloseOnEsc();
-<a class="jxr_linenumber" name="145" href="#145">145</a> 
-<a class="jxr_linenumber" name="146" href="#146">146</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     * Returns the menu bar for the new window. The object returned by this</em>
-<a class="jxr_linenumber" name="148" href="#148">148</a> <em class="jxr_javadoccomment">     * method must be compatible with the platform specific window manager</em>
-<a class="jxr_linenumber" name="149" href="#149">149</a> <em class="jxr_javadoccomment">     * implementation, i.e. must represent a valid menu bar for this platform.</em>
-<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     * This should be the case if it was constructed by the action builder</em>
-<a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     * library.</em>
-<a class="jxr_linenumber" name="152" href="#152">152</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="153" href="#153">153</a> <em class="jxr_javadoccomment">     * @return the window's menu bar (can be &lt;b&gt;null&lt;/b&gt; if the window does not</em>
-<a class="jxr_linenumber" name="154" href="#154">154</a> <em class="jxr_javadoccomment">     * have a menu bar)</em>
-<a class="jxr_linenumber" name="155" href="#155">155</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="156" href="#156">156</a>     Object getMenuBar();
-<a class="jxr_linenumber" name="157" href="#157">157</a> 
-<a class="jxr_linenumber" name="158" href="#158">158</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="159" href="#159">159</a> <em class="jxr_javadoccomment">     * Returns the new window's controller. This object is not really evaluated</em>
-<a class="jxr_linenumber" name="160" href="#160">160</a> <em class="jxr_javadoccomment">     * by the window manager, but should be passed to the platform specific</em>
-<a class="jxr_linenumber" name="161" href="#161">161</a> <em class="jxr_javadoccomment">     * implementation of the &lt;code&gt;Window&lt;/code&gt; interface, so that the</em>
-<a class="jxr_linenumber" name="162" href="#162">162</a> <em class="jxr_javadoccomment">     * window's controller can be queried by application code.</em>
-<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     * @return the window's controller object (can be &lt;b&gt;null&lt;/b&gt;)</em>
-<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a>     Object getController();
-<a class="jxr_linenumber" name="167" href="#167">167</a> 
-<a class="jxr_linenumber" name="168" href="#168">168</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * Returns the current {@code ComponentBuilderData} object. This object can</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * be queried by a {@link WindowManager} implementation to obtain context</em>
-<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * information needed for the creation of a window.</em>
-<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * @return the current {@code ComponentBuilderData} object</em>
-<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="175" href="#175">175</a>     <a href="../../../../../../net/sf/jguiraffe/gui/builder/components/ComponentBuilderData.html">ComponentBuilderData</a> getComponentBuilderData();
-<a class="jxr_linenumber" name="176" href="#176">176</a> }
+<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * Note: Windows making use of this flag should also define a cancel</em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     * button; this button is triggered as a reaction on the {@code ESCAPE}</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">     * key.</em>
+<a class="jxr_linenumber" name="144" href="#144">144</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="145" href="#145">145</a> <em class="jxr_javadoccomment">     * @return a flag whether the {@code ESCAPE} key should close the window</em>
+<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a>     <strong class="jxr_keyword">boolean</strong> isCloseOnEsc();
+<a class="jxr_linenumber" name="148" href="#148">148</a> 
+<a class="jxr_linenumber" name="149" href="#149">149</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     * Returns the menu bar for the new window. The object returned by this</em>
+<a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     * method must be compatible with the platform specific window manager</em>
+<a class="jxr_linenumber" name="152" href="#152">152</a> <em class="jxr_javadoccomment">     * implementation, i.e. must represent a valid menu bar for this platform.</em>
+<a class="jxr_linenumber" name="153" href="#153">153</a> <em class="jxr_javadoccomment">     * This should be the case if it was constructed by the action builder</em>
+<a class="jxr_linenumber" name="154" href="#154">154</a> <em class="jxr_javadoccomment">     * library.</em>
+<a class="jxr_linenumber" name="155" href="#155">155</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="156" href="#156">156</a> <em class="jxr_javadoccomment">     * @return the window's menu bar (can be &lt;b&gt;null&lt;/b&gt; if the window does not</em>
+<a class="jxr_linenumber" name="157" href="#157">157</a> <em class="jxr_javadoccomment">     * have a menu bar)</em>
+<a class="jxr_linenumber" name="158" href="#158">158</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="159" href="#159">159</a>     Object getMenuBar();
+<a class="jxr_linenumber" name="160" href="#160">160</a> 
+<a class="jxr_linenumber" name="161" href="#161">161</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="162" href="#162">162</a> <em class="jxr_javadoccomment">     * Returns the new window's controller. This object is not really evaluated</em>
+<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     * by the window manager, but should be passed to the platform specific</em>
+<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     * implementation of the &lt;code&gt;Window&lt;/code&gt; interface, so that the</em>
+<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * window's controller can be queried by application code.</em>
+<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * @return the window's controller object (can be &lt;b&gt;null&lt;/b&gt;)</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="169" href="#169">169</a>     Object getController();
+<a class="jxr_linenumber" name="170" href="#170">170</a> 
+<a class="jxr_linenumber" name="171" href="#171">171</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     * Returns the current {@code ComponentBuilderData} object. This object can</em>
+<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * be queried by a {@link WindowManager} implementation to obtain context</em>
+<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     * information needed for the creation of a window.</em>
+<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     * @return the current {@code ComponentBuilderData} object</em>
+<a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="178" href="#178">178</a>     <a href="../../../../../../net/sf/jguiraffe/gui/builder/components/ComponentBuilderData.html">ComponentBuilderData</a> getComponentBuilderData();
+<a class="jxr_linenumber" name="179" href="#179">179</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

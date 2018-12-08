@@ -477,233 +477,262 @@
 <a class="jxr_linenumber" name="467" href="#467">467</a>     }
 <a class="jxr_linenumber" name="468" href="#468">468</a> 
 <a class="jxr_linenumber" name="469" href="#469">469</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="470" href="#470">470</a> <em class="jxr_javadoccomment">     * Tests whether the default button is handled correctly when initializing a</em>
-<a class="jxr_linenumber" name="471" href="#471">471</a> <em class="jxr_javadoccomment">     * window.</em>
+<a class="jxr_linenumber" name="470" href="#470">470</a> <em class="jxr_javadoccomment">     * Tests that a cancel button is processed when registering the handler for</em>
+<a class="jxr_linenumber" name="471" href="#471">471</a> <em class="jxr_javadoccomment">     * the escape key.</em>
 <a class="jxr_linenumber" name="472" href="#472">472</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="473" href="#473">473</a>     @Test
-<a class="jxr_linenumber" name="474" href="#474">474</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testInitSwingWindowPropertiesDefaultButton()
+<a class="jxr_linenumber" name="474" href="#474">474</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testInitSwingWindowPropertiesCloseOnEscWithCancelButton()
 <a class="jxr_linenumber" name="475" href="#475">475</a>     {
 <a class="jxr_linenumber" name="476" href="#476">476</a>         Window parent = EasyMock.createMock(Window.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="477" href="#477">477</a>         SwingWindow window = prepareInitPropertiesTest(parent);
-<a class="jxr_linenumber" name="478" href="#478">478</a>         JRootPane rootPane = <strong class="jxr_keyword">new</strong> JRootPane();
-<a class="jxr_linenumber" name="479" href="#479">479</a>         EasyMock.expect(window.getRootPane()).andReturn(rootPane);
-<a class="jxr_linenumber" name="480" href="#480">480</a>         EasyMock.replay(window, parent);
-<a class="jxr_linenumber" name="481" href="#481">481</a>         <strong class="jxr_keyword">final</strong> String defBtnName = <span class="jxr_string">"defaultButton"</span>;
-<a class="jxr_linenumber" name="482" href="#482">482</a>         JButton defBtn = <strong class="jxr_keyword">new</strong> JButton(defBtnName);
+<a class="jxr_linenumber" name="478" href="#478">478</a>         JButton cancelButton = EasyMock.createMock(JButton.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="479" href="#479">479</a>         JRootPane rootPane = <strong class="jxr_keyword">new</strong> JRootPane();
+<a class="jxr_linenumber" name="480" href="#480">480</a>         EasyMock.expect(window.getRootPane()).andReturn(rootPane);
+<a class="jxr_linenumber" name="481" href="#481">481</a>         cancelButton.doClick();
+<a class="jxr_linenumber" name="482" href="#482">482</a>         EasyMock.replay(window, parent, cancelButton);
 <a class="jxr_linenumber" name="483" href="#483">483</a>         <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data = createWindowData(false);
-<a class="jxr_linenumber" name="484" href="#484">484</a>         data.getComponentBuilderData().storeComponent(defBtnName, defBtn);
-<a class="jxr_linenumber" name="485" href="#485">485</a>         data.getComponentBuilderData().setDefaultButtonName(defBtnName);
-<a class="jxr_linenumber" name="486" href="#486">486</a>         manager.initSwingWindowProperties(window, data, parent);
-<a class="jxr_linenumber" name="487" href="#487">487</a>         assertSame(<span class="jxr_string">"Wrong default button"</span>, defBtn, rootPane.getDefaultButton());
-<a class="jxr_linenumber" name="488" href="#488">488</a>         EasyMock.verify(window, parent);
-<a class="jxr_linenumber" name="489" href="#489">489</a>     }
-<a class="jxr_linenumber" name="490" href="#490">490</a> 
-<a class="jxr_linenumber" name="491" href="#491">491</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="492" href="#492">492</a> <em class="jxr_javadoccomment">     * Creates and initializes an internal frame.</em>
-<a class="jxr_linenumber" name="493" href="#493">493</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="494" href="#494">494</a> <em class="jxr_javadoccomment">     * @param data the frame's data</em>
-<a class="jxr_linenumber" name="495" href="#495">495</a> <em class="jxr_javadoccomment">     * @return the new internal frame</em>
-<a class="jxr_linenumber" name="496" href="#496">496</a> <em class="jxr_javadoccomment">     * @throws WindowBuilderException if an error occurs</em>
-<a class="jxr_linenumber" name="497" href="#497">497</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="498" href="#498">498</a>     <strong class="jxr_keyword">private</strong> SwingWindow createInternalFrame(<a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data)
-<a class="jxr_linenumber" name="499" href="#499">499</a>             <strong class="jxr_keyword">throws</strong> WindowBuilderException
-<a class="jxr_linenumber" name="500" href="#500">500</a>     {
-<a class="jxr_linenumber" name="501" href="#501">501</a>         SwingWindow iframe = (SwingWindow) manager.createInternalFrame(
-<a class="jxr_linenumber" name="502" href="#502">502</a>                 builderData, data, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="503" href="#503">503</a>         <strong class="jxr_keyword">return</strong> (SwingWindow) manager.createInternalFrame(builderData, data,
-<a class="jxr_linenumber" name="504" href="#504">504</a>                 iframe);
-<a class="jxr_linenumber" name="505" href="#505">505</a>     }
-<a class="jxr_linenumber" name="506" href="#506">506</a> 
-<a class="jxr_linenumber" name="507" href="#507">507</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="508" href="#508">508</a> <em class="jxr_javadoccomment">     * Creates and initializes an internal frame. The internal frame's parent</em>
-<a class="jxr_linenumber" name="509" href="#509">509</a> <em class="jxr_javadoccomment">     * window can also be created. If this parameter is set, a frame will be</em>
-<a class="jxr_linenumber" name="510" href="#510">510</a> <em class="jxr_javadoccomment">     * created that contains a JDesktopPane.</em>
-<a class="jxr_linenumber" name="511" href="#511">511</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="512" href="#512">512</a> <em class="jxr_javadoccomment">     * @param data the frame's data</em>
-<a class="jxr_linenumber" name="513" href="#513">513</a> <em class="jxr_javadoccomment">     * @param withParent the parent flag</em>
-<a class="jxr_linenumber" name="514" href="#514">514</a> <em class="jxr_javadoccomment">     * @return the new internal frame</em>
-<a class="jxr_linenumber" name="515" href="#515">515</a> <em class="jxr_javadoccomment">     * @throws WindowBuilderException if an error occurs</em>
-<a class="jxr_linenumber" name="516" href="#516">516</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="517" href="#517">517</a>     <strong class="jxr_keyword">private</strong> SwingWindow createInternalFrame(<a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data,
-<a class="jxr_linenumber" name="518" href="#518">518</a>             <strong class="jxr_keyword">boolean</strong> withParent) <strong class="jxr_keyword">throws</strong> WindowBuilderException
-<a class="jxr_linenumber" name="519" href="#519">519</a>     {
-<a class="jxr_linenumber" name="520" href="#520">520</a>         <strong class="jxr_keyword">if</strong> (withParent)
-<a class="jxr_linenumber" name="521" href="#521">521</a>         {
-<a class="jxr_linenumber" name="522" href="#522">522</a>             setUpInternalFrameParent();
-<a class="jxr_linenumber" name="523" href="#523">523</a>         }
-<a class="jxr_linenumber" name="524" href="#524">524</a> 
-<a class="jxr_linenumber" name="525" href="#525">525</a>         <strong class="jxr_keyword">return</strong> createInternalFrame(data);
-<a class="jxr_linenumber" name="526" href="#526">526</a>     }
-<a class="jxr_linenumber" name="527" href="#527">527</a> 
-<a class="jxr_linenumber" name="528" href="#528">528</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="529" href="#529">529</a> <em class="jxr_javadoccomment">     * Helper method for initializing a parent frame window that suits the needs</em>
-<a class="jxr_linenumber" name="530" href="#530">530</a> <em class="jxr_javadoccomment">     * of an internal frame.</em>
-<a class="jxr_linenumber" name="531" href="#531">531</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="532" href="#532">532</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setUpInternalFrameParent()
-<a class="jxr_linenumber" name="533" href="#533">533</a>     {
-<a class="jxr_linenumber" name="534" href="#534">534</a>         JFrame frame = <strong class="jxr_keyword">new</strong> JFrame(<span class="jxr_string">"MainFrame"</span>);
-<a class="jxr_linenumber" name="535" href="#535">535</a>         JDesktopPane desktop = <strong class="jxr_keyword">new</strong> JDesktopPane();
-<a class="jxr_linenumber" name="536" href="#536">536</a>         desktop.setPreferredSize(<strong class="jxr_keyword">new</strong> Dimension(PARENT_WIDTH, PARENT_HEIGHT));
-<a class="jxr_linenumber" name="537" href="#537">537</a>         frame.getContentPane().add(desktop, BorderLayout.CENTER);
-<a class="jxr_linenumber" name="538" href="#538">538</a>         frame.pack();
-<a class="jxr_linenumber" name="539" href="#539">539</a>         builderData.setParentWindow(<strong class="jxr_keyword">new</strong> FrameAdapter(frame, false));
-<a class="jxr_linenumber" name="540" href="#540">540</a>     }
-<a class="jxr_linenumber" name="541" href="#541">541</a> 
-<a class="jxr_linenumber" name="542" href="#542">542</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="543" href="#543">543</a> <em class="jxr_javadoccomment">     * Checks all attributes of the given internal frame.</em>
-<a class="jxr_linenumber" name="544" href="#544">544</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="545" href="#545">545</a> <em class="jxr_javadoccomment">     * @param window the internal frame to check</em>
-<a class="jxr_linenumber" name="546" href="#546">546</a> <em class="jxr_javadoccomment">     * @param data the expected data</em>
-<a class="jxr_linenumber" name="547" href="#547">547</a> <em class="jxr_javadoccomment">     * @param center the expected center flag</em>
-<a class="jxr_linenumber" name="548" href="#548">548</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="549" href="#549">549</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkInternalFrame(SwingWindow window, <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data,
-<a class="jxr_linenumber" name="550" href="#550">550</a>             <strong class="jxr_keyword">boolean</strong> center)
-<a class="jxr_linenumber" name="551" href="#551">551</a>     {
-<a class="jxr_linenumber" name="552" href="#552">552</a>         assertTrue(<span class="jxr_string">"Window is no internal frame"</span>,
-<a class="jxr_linenumber" name="553" href="#553">553</a>                 window instanceof InternalFrameAdapter);
-<a class="jxr_linenumber" name="554" href="#554">554</a>         checkWindow(window, data, center);
-<a class="jxr_linenumber" name="555" href="#555">555</a>         JInternalFrame iframe = (InternalFrameAdapter) window;
-<a class="jxr_linenumber" name="556" href="#556">556</a>         assertEquals(<span class="jxr_string">"Wrong internal frame close operation"</span>,
-<a class="jxr_linenumber" name="557" href="#557">557</a>                 JInternalFrame.DO_NOTHING_ON_CLOSE,
-<a class="jxr_linenumber" name="558" href="#558">558</a>                 iframe.getDefaultCloseOperation());
-<a class="jxr_linenumber" name="559" href="#559">559</a>         assertEquals(<span class="jxr_string">"Wrong menu"</span>, data.getMenuBar(), iframe.getJMenuBar());
-<a class="jxr_linenumber" name="560" href="#560">560</a>         assertEquals(<span class="jxr_string">"Wrong resizable flag"</span>, data.isResizable(),
-<a class="jxr_linenumber" name="561" href="#561">561</a>                 iframe.isResizable());
-<a class="jxr_linenumber" name="562" href="#562">562</a>         assertEquals(<span class="jxr_string">"Wrong closable flag"</span>, data.isClosable(),
-<a class="jxr_linenumber" name="563" href="#563">563</a>                 iframe.isClosable());
-<a class="jxr_linenumber" name="564" href="#564">564</a>         assertEquals(<span class="jxr_string">"Wrong maximizable flag"</span>, data.isMaximizable(),
-<a class="jxr_linenumber" name="565" href="#565">565</a>                 iframe.isMaximizable());
-<a class="jxr_linenumber" name="566" href="#566">566</a>         assertEquals(<span class="jxr_string">"Wrong iconifiable flag"</span>, data.isIconifiable(),
-<a class="jxr_linenumber" name="567" href="#567">567</a>                 iframe.isIconifiable());
-<a class="jxr_linenumber" name="568" href="#568">568</a>         assertEquals(<span class="jxr_string">"Wrong icon"</span>, data.getIcon(), iframe.getFrameIcon());
-<a class="jxr_linenumber" name="569" href="#569">569</a>         assertTrue(<span class="jxr_string">"Wrong parent window"</span>,
-<a class="jxr_linenumber" name="570" href="#570">570</a>                 builderData.getParentWindow() instanceof FrameAdapter);
-<a class="jxr_linenumber" name="571" href="#571">571</a>         JDesktopPane desktop = WindowHelper
-<a class="jxr_linenumber" name="572" href="#572">572</a>                 .findDesktopPane(((FrameAdapter) builderData.getParentWindow())
-<a class="jxr_linenumber" name="573" href="#573">573</a>                         .getFrame());
-<a class="jxr_linenumber" name="574" href="#574">574</a>         assertNotNull(<span class="jxr_string">"No desktop pane"</span>, desktop);
-<a class="jxr_linenumber" name="575" href="#575">575</a>         assertEquals(<span class="jxr_string">"Internal frame was not added to desktop pane"</span>, 1,
-<a class="jxr_linenumber" name="576" href="#576">576</a>                 desktop.getComponentCount());
-<a class="jxr_linenumber" name="577" href="#577">577</a>     }
-<a class="jxr_linenumber" name="578" href="#578">578</a> 
-<a class="jxr_linenumber" name="579" href="#579">579</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="580" href="#580">580</a> <em class="jxr_javadoccomment">     * Creates a window data object with test data.</em>
-<a class="jxr_linenumber" name="581" href="#581">581</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="582" href="#582">582</a> <em class="jxr_javadoccomment">     * @param bounds a flag whether the window's bounds should be initialized</em>
-<a class="jxr_linenumber" name="583" href="#583">583</a> <em class="jxr_javadoccomment">     * @return an initialized window data object</em>
-<a class="jxr_linenumber" name="584" href="#584">584</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="585" href="#585">585</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> createWindowData(<strong class="jxr_keyword">boolean</strong> bounds)
-<a class="jxr_linenumber" name="586" href="#586">586</a>     {
-<a class="jxr_linenumber" name="587" href="#587">587</a>         TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="588" href="#588">588</a>         EasyMock.replay(tctx);
-<a class="jxr_linenumber" name="589" href="#589">589</a>         <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a>();
-<a class="jxr_linenumber" name="590" href="#590">590</a>         data.setController(TEST_CONTROLLER);
-<a class="jxr_linenumber" name="591" href="#591">591</a>         data.setTitle(TEST_TITLE);
-<a class="jxr_linenumber" name="592" href="#592">592</a>         icon = <strong class="jxr_keyword">new</strong> ImageIcon(getClass().getResource(TEST_ICON));
-<a class="jxr_linenumber" name="593" href="#593">593</a>         data.setIcon(icon);
-<a class="jxr_linenumber" name="594" href="#594">594</a>         JMenuBar bar = <strong class="jxr_keyword">new</strong> JMenuBar();
-<a class="jxr_linenumber" name="595" href="#595">595</a>         JMenu menu = <strong class="jxr_keyword">new</strong> JMenu(<span class="jxr_string">"File"</span>);
-<a class="jxr_linenumber" name="596" href="#596">596</a>         menu.add(<strong class="jxr_keyword">new</strong> JMenuItem(<span class="jxr_string">"Exit"</span>));
-<a class="jxr_linenumber" name="597" href="#597">597</a>         bar.add(menu);
-<a class="jxr_linenumber" name="598" href="#598">598</a>         data.setMenuBar(bar);
-<a class="jxr_linenumber" name="599" href="#599">599</a>         ComponentBuilderData builderData = <strong class="jxr_keyword">new</strong> ComponentBuilderData();
-<a class="jxr_linenumber" name="600" href="#600">600</a>         builderData.initializeForm(tctx, <strong class="jxr_keyword">new</strong> BeanBindingStrategy());
-<a class="jxr_linenumber" name="601" href="#601">601</a>         data.setComponentBuilderData(builderData);
-<a class="jxr_linenumber" name="602" href="#602">602</a> 
-<a class="jxr_linenumber" name="603" href="#603">603</a>         <strong class="jxr_keyword">if</strong> (bounds)
-<a class="jxr_linenumber" name="604" href="#604">604</a>         {
-<a class="jxr_linenumber" name="605" href="#605">605</a>             data.setXPos(TEST_X);
-<a class="jxr_linenumber" name="606" href="#606">606</a>             data.setYPos(TEST_Y);
-<a class="jxr_linenumber" name="607" href="#607">607</a>             data.setWidth(TEST_WIDTH);
-<a class="jxr_linenumber" name="608" href="#608">608</a>             data.setHeight(TEST_HEIGHT);
-<a class="jxr_linenumber" name="609" href="#609">609</a>         }
-<a class="jxr_linenumber" name="610" href="#610">610</a> 
-<a class="jxr_linenumber" name="611" href="#611">611</a>         <strong class="jxr_keyword">return</strong> data;
-<a class="jxr_linenumber" name="612" href="#612">612</a>     }
-<a class="jxr_linenumber" name="613" href="#613">613</a> 
-<a class="jxr_linenumber" name="614" href="#614">614</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="615" href="#615">615</a> <em class="jxr_javadoccomment">     * Tests if the window's properties match the given data object.</em>
-<a class="jxr_linenumber" name="616" href="#616">616</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="617" href="#617">617</a> <em class="jxr_javadoccomment">     * @param window the window</em>
-<a class="jxr_linenumber" name="618" href="#618">618</a> <em class="jxr_javadoccomment">     * @param data the data</em>
-<a class="jxr_linenumber" name="619" href="#619">619</a> <em class="jxr_javadoccomment">     * @param center the expected center flag</em>
-<a class="jxr_linenumber" name="620" href="#620">620</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="621" href="#621">621</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkWindow(SwingWindow window, <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data,
-<a class="jxr_linenumber" name="622" href="#622">622</a>             <strong class="jxr_keyword">boolean</strong> center)
-<a class="jxr_linenumber" name="623" href="#623">623</a>     {
-<a class="jxr_linenumber" name="624" href="#624">624</a>         data.checkWindow(window);
-<a class="jxr_linenumber" name="625" href="#625">625</a>         assertEquals(<span class="jxr_string">"Wrong parent window"</span>, builderData.getParentWindow(),
-<a class="jxr_linenumber" name="626" href="#626">626</a>                 window.getParentWindow());
-<a class="jxr_linenumber" name="627" href="#627">627</a>         assertEquals(<span class="jxr_string">"Wrong center flag"</span>, center, window.getWindowHelper()
-<a class="jxr_linenumber" name="628" href="#628">628</a>                 .isCenter());
-<a class="jxr_linenumber" name="629" href="#629">629</a>     }
-<a class="jxr_linenumber" name="630" href="#630">630</a> 
-<a class="jxr_linenumber" name="631" href="#631">631</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="632" href="#632">632</a> <em class="jxr_javadoccomment">     * A test frame class that checks whether the pack() method was called.</em>
-<a class="jxr_linenumber" name="633" href="#633">633</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="634" href="#634">634</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestFramePackObserver</a> <strong class="jxr_keyword">extends</strong> JFrame
-<a class="jxr_linenumber" name="635" href="#635">635</a>     {
-<a class="jxr_linenumber" name="636" href="#636">636</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="637" href="#637">637</a> <em class="jxr_javadoccomment">         * The serial version UID.</em>
-<a class="jxr_linenumber" name="638" href="#638">638</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="639" href="#639">639</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -1409228441149802638L;
-<a class="jxr_linenumber" name="640" href="#640">640</a> 
-<a class="jxr_linenumber" name="641" href="#641">641</a>         <strong class="jxr_keyword">boolean</strong> packCalled;
+<a class="jxr_linenumber" name="484" href="#484">484</a>         data.setCloseOnEsc(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="485" href="#485">485</a>         <strong class="jxr_keyword">final</strong> String cancelButtonName = <span class="jxr_string">"cancelButton"</span>;
+<a class="jxr_linenumber" name="486" href="#486">486</a>         data.getComponentBuilderData().storeComponent(cancelButtonName,
+<a class="jxr_linenumber" name="487" href="#487">487</a>                 cancelButton);
+<a class="jxr_linenumber" name="488" href="#488">488</a>         data.getComponentBuilderData().setCancelButtonName(cancelButtonName);
+<a class="jxr_linenumber" name="489" href="#489">489</a> 
+<a class="jxr_linenumber" name="490" href="#490">490</a>         manager.initSwingWindowProperties(window, data, parent);
+<a class="jxr_linenumber" name="491" href="#491">491</a>         Object obj = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+<a class="jxr_linenumber" name="492" href="#492">492</a>                 .get(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+<a class="jxr_linenumber" name="493" href="#493">493</a>         Action action = rootPane.getActionMap().get(obj);
+<a class="jxr_linenumber" name="494" href="#494">494</a>         action.actionPerformed(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="495" href="#495">495</a>         EasyMock.verify(window, parent, cancelButton);
+<a class="jxr_linenumber" name="496" href="#496">496</a>     }
+<a class="jxr_linenumber" name="497" href="#497">497</a> 
+<a class="jxr_linenumber" name="498" href="#498">498</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="499" href="#499">499</a> <em class="jxr_javadoccomment">     * Tests whether the default button is handled correctly when initializing a</em>
+<a class="jxr_linenumber" name="500" href="#500">500</a> <em class="jxr_javadoccomment">     * window.</em>
+<a class="jxr_linenumber" name="501" href="#501">501</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="502" href="#502">502</a>     @Test
+<a class="jxr_linenumber" name="503" href="#503">503</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testInitSwingWindowPropertiesDefaultButton()
+<a class="jxr_linenumber" name="504" href="#504">504</a>     {
+<a class="jxr_linenumber" name="505" href="#505">505</a>         Window parent = EasyMock.createMock(Window.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="506" href="#506">506</a>         SwingWindow window = prepareInitPropertiesTest(parent);
+<a class="jxr_linenumber" name="507" href="#507">507</a>         JRootPane rootPane = <strong class="jxr_keyword">new</strong> JRootPane();
+<a class="jxr_linenumber" name="508" href="#508">508</a>         EasyMock.expect(window.getRootPane()).andReturn(rootPane);
+<a class="jxr_linenumber" name="509" href="#509">509</a>         EasyMock.replay(window, parent);
+<a class="jxr_linenumber" name="510" href="#510">510</a>         <strong class="jxr_keyword">final</strong> String defBtnName = <span class="jxr_string">"defaultButton"</span>;
+<a class="jxr_linenumber" name="511" href="#511">511</a>         JButton defBtn = <strong class="jxr_keyword">new</strong> JButton(defBtnName);
+<a class="jxr_linenumber" name="512" href="#512">512</a>         <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data = createWindowData(false);
+<a class="jxr_linenumber" name="513" href="#513">513</a>         data.getComponentBuilderData().storeComponent(defBtnName, defBtn);
+<a class="jxr_linenumber" name="514" href="#514">514</a>         data.getComponentBuilderData().setDefaultButtonName(defBtnName);
+<a class="jxr_linenumber" name="515" href="#515">515</a>         manager.initSwingWindowProperties(window, data, parent);
+<a class="jxr_linenumber" name="516" href="#516">516</a>         assertSame(<span class="jxr_string">"Wrong default button"</span>, defBtn, rootPane.getDefaultButton());
+<a class="jxr_linenumber" name="517" href="#517">517</a>         EasyMock.verify(window, parent);
+<a class="jxr_linenumber" name="518" href="#518">518</a>     }
+<a class="jxr_linenumber" name="519" href="#519">519</a> 
+<a class="jxr_linenumber" name="520" href="#520">520</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="521" href="#521">521</a> <em class="jxr_javadoccomment">     * Creates and initializes an internal frame.</em>
+<a class="jxr_linenumber" name="522" href="#522">522</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="523" href="#523">523</a> <em class="jxr_javadoccomment">     * @param data the frame's data</em>
+<a class="jxr_linenumber" name="524" href="#524">524</a> <em class="jxr_javadoccomment">     * @return the new internal frame</em>
+<a class="jxr_linenumber" name="525" href="#525">525</a> <em class="jxr_javadoccomment">     * @throws WindowBuilderException if an error occurs</em>
+<a class="jxr_linenumber" name="526" href="#526">526</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="527" href="#527">527</a>     <strong class="jxr_keyword">private</strong> SwingWindow createInternalFrame(<a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data)
+<a class="jxr_linenumber" name="528" href="#528">528</a>             <strong class="jxr_keyword">throws</strong> WindowBuilderException
+<a class="jxr_linenumber" name="529" href="#529">529</a>     {
+<a class="jxr_linenumber" name="530" href="#530">530</a>         SwingWindow iframe = (SwingWindow) manager.createInternalFrame(
+<a class="jxr_linenumber" name="531" href="#531">531</a>                 builderData, data, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="532" href="#532">532</a>         <strong class="jxr_keyword">return</strong> (SwingWindow) manager.createInternalFrame(builderData, data,
+<a class="jxr_linenumber" name="533" href="#533">533</a>                 iframe);
+<a class="jxr_linenumber" name="534" href="#534">534</a>     }
+<a class="jxr_linenumber" name="535" href="#535">535</a> 
+<a class="jxr_linenumber" name="536" href="#536">536</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="537" href="#537">537</a> <em class="jxr_javadoccomment">     * Creates and initializes an internal frame. The internal frame's parent</em>
+<a class="jxr_linenumber" name="538" href="#538">538</a> <em class="jxr_javadoccomment">     * window can also be created. If this parameter is set, a frame will be</em>
+<a class="jxr_linenumber" name="539" href="#539">539</a> <em class="jxr_javadoccomment">     * created that contains a JDesktopPane.</em>
+<a class="jxr_linenumber" name="540" href="#540">540</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="541" href="#541">541</a> <em class="jxr_javadoccomment">     * @param data the frame's data</em>
+<a class="jxr_linenumber" name="542" href="#542">542</a> <em class="jxr_javadoccomment">     * @param withParent the parent flag</em>
+<a class="jxr_linenumber" name="543" href="#543">543</a> <em class="jxr_javadoccomment">     * @return the new internal frame</em>
+<a class="jxr_linenumber" name="544" href="#544">544</a> <em class="jxr_javadoccomment">     * @throws WindowBuilderException if an error occurs</em>
+<a class="jxr_linenumber" name="545" href="#545">545</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="546" href="#546">546</a>     <strong class="jxr_keyword">private</strong> SwingWindow createInternalFrame(<a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data,
+<a class="jxr_linenumber" name="547" href="#547">547</a>             <strong class="jxr_keyword">boolean</strong> withParent) <strong class="jxr_keyword">throws</strong> WindowBuilderException
+<a class="jxr_linenumber" name="548" href="#548">548</a>     {
+<a class="jxr_linenumber" name="549" href="#549">549</a>         <strong class="jxr_keyword">if</strong> (withParent)
+<a class="jxr_linenumber" name="550" href="#550">550</a>         {
+<a class="jxr_linenumber" name="551" href="#551">551</a>             setUpInternalFrameParent();
+<a class="jxr_linenumber" name="552" href="#552">552</a>         }
+<a class="jxr_linenumber" name="553" href="#553">553</a> 
+<a class="jxr_linenumber" name="554" href="#554">554</a>         <strong class="jxr_keyword">return</strong> createInternalFrame(data);
+<a class="jxr_linenumber" name="555" href="#555">555</a>     }
+<a class="jxr_linenumber" name="556" href="#556">556</a> 
+<a class="jxr_linenumber" name="557" href="#557">557</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="558" href="#558">558</a> <em class="jxr_javadoccomment">     * Helper method for initializing a parent frame window that suits the needs</em>
+<a class="jxr_linenumber" name="559" href="#559">559</a> <em class="jxr_javadoccomment">     * of an internal frame.</em>
+<a class="jxr_linenumber" name="560" href="#560">560</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="561" href="#561">561</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setUpInternalFrameParent()
+<a class="jxr_linenumber" name="562" href="#562">562</a>     {
+<a class="jxr_linenumber" name="563" href="#563">563</a>         JFrame frame = <strong class="jxr_keyword">new</strong> JFrame(<span class="jxr_string">"MainFrame"</span>);
+<a class="jxr_linenumber" name="564" href="#564">564</a>         JDesktopPane desktop = <strong class="jxr_keyword">new</strong> JDesktopPane();
+<a class="jxr_linenumber" name="565" href="#565">565</a>         desktop.setPreferredSize(<strong class="jxr_keyword">new</strong> Dimension(PARENT_WIDTH, PARENT_HEIGHT));
+<a class="jxr_linenumber" name="566" href="#566">566</a>         frame.getContentPane().add(desktop, BorderLayout.CENTER);
+<a class="jxr_linenumber" name="567" href="#567">567</a>         frame.pack();
+<a class="jxr_linenumber" name="568" href="#568">568</a>         builderData.setParentWindow(<strong class="jxr_keyword">new</strong> FrameAdapter(frame, false));
+<a class="jxr_linenumber" name="569" href="#569">569</a>     }
+<a class="jxr_linenumber" name="570" href="#570">570</a> 
+<a class="jxr_linenumber" name="571" href="#571">571</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="572" href="#572">572</a> <em class="jxr_javadoccomment">     * Checks all attributes of the given internal frame.</em>
+<a class="jxr_linenumber" name="573" href="#573">573</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="574" href="#574">574</a> <em class="jxr_javadoccomment">     * @param window the internal frame to check</em>
+<a class="jxr_linenumber" name="575" href="#575">575</a> <em class="jxr_javadoccomment">     * @param data the expected data</em>
+<a class="jxr_linenumber" name="576" href="#576">576</a> <em class="jxr_javadoccomment">     * @param center the expected center flag</em>
+<a class="jxr_linenumber" name="577" href="#577">577</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="578" href="#578">578</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkInternalFrame(SwingWindow window, <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data,
+<a class="jxr_linenumber" name="579" href="#579">579</a>             <strong class="jxr_keyword">boolean</strong> center)
+<a class="jxr_linenumber" name="580" href="#580">580</a>     {
+<a class="jxr_linenumber" name="581" href="#581">581</a>         assertTrue(<span class="jxr_string">"Window is no internal frame"</span>,
+<a class="jxr_linenumber" name="582" href="#582">582</a>                 window instanceof InternalFrameAdapter);
+<a class="jxr_linenumber" name="583" href="#583">583</a>         checkWindow(window, data, center);
+<a class="jxr_linenumber" name="584" href="#584">584</a>         JInternalFrame iframe = (InternalFrameAdapter) window;
+<a class="jxr_linenumber" name="585" href="#585">585</a>         assertEquals(<span class="jxr_string">"Wrong internal frame close operation"</span>,
+<a class="jxr_linenumber" name="586" href="#586">586</a>                 JInternalFrame.DO_NOTHING_ON_CLOSE,
+<a class="jxr_linenumber" name="587" href="#587">587</a>                 iframe.getDefaultCloseOperation());
+<a class="jxr_linenumber" name="588" href="#588">588</a>         assertEquals(<span class="jxr_string">"Wrong menu"</span>, data.getMenuBar(), iframe.getJMenuBar());
+<a class="jxr_linenumber" name="589" href="#589">589</a>         assertEquals(<span class="jxr_string">"Wrong resizable flag"</span>, data.isResizable(),
+<a class="jxr_linenumber" name="590" href="#590">590</a>                 iframe.isResizable());
+<a class="jxr_linenumber" name="591" href="#591">591</a>         assertEquals(<span class="jxr_string">"Wrong closable flag"</span>, data.isClosable(),
+<a class="jxr_linenumber" name="592" href="#592">592</a>                 iframe.isClosable());
+<a class="jxr_linenumber" name="593" href="#593">593</a>         assertEquals(<span class="jxr_string">"Wrong maximizable flag"</span>, data.isMaximizable(),
+<a class="jxr_linenumber" name="594" href="#594">594</a>                 iframe.isMaximizable());
+<a class="jxr_linenumber" name="595" href="#595">595</a>         assertEquals(<span class="jxr_string">"Wrong iconifiable flag"</span>, data.isIconifiable(),
+<a class="jxr_linenumber" name="596" href="#596">596</a>                 iframe.isIconifiable());
+<a class="jxr_linenumber" name="597" href="#597">597</a>         assertEquals(<span class="jxr_string">"Wrong icon"</span>, data.getIcon(), iframe.getFrameIcon());
+<a class="jxr_linenumber" name="598" href="#598">598</a>         assertTrue(<span class="jxr_string">"Wrong parent window"</span>,
+<a class="jxr_linenumber" name="599" href="#599">599</a>                 builderData.getParentWindow() instanceof FrameAdapter);
+<a class="jxr_linenumber" name="600" href="#600">600</a>         JDesktopPane desktop = WindowHelper
+<a class="jxr_linenumber" name="601" href="#601">601</a>                 .findDesktopPane(((FrameAdapter) builderData.getParentWindow())
+<a class="jxr_linenumber" name="602" href="#602">602</a>                         .getFrame());
+<a class="jxr_linenumber" name="603" href="#603">603</a>         assertNotNull(<span class="jxr_string">"No desktop pane"</span>, desktop);
+<a class="jxr_linenumber" name="604" href="#604">604</a>         assertEquals(<span class="jxr_string">"Internal frame was not added to desktop pane"</span>, 1,
+<a class="jxr_linenumber" name="605" href="#605">605</a>                 desktop.getComponentCount());
+<a class="jxr_linenumber" name="606" href="#606">606</a>     }
+<a class="jxr_linenumber" name="607" href="#607">607</a> 
+<a class="jxr_linenumber" name="608" href="#608">608</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="609" href="#609">609</a> <em class="jxr_javadoccomment">     * Creates a window data object with test data.</em>
+<a class="jxr_linenumber" name="610" href="#610">610</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="611" href="#611">611</a> <em class="jxr_javadoccomment">     * @param bounds a flag whether the window's bounds should be initialized</em>
+<a class="jxr_linenumber" name="612" href="#612">612</a> <em class="jxr_javadoccomment">     * @return an initialized window data object</em>
+<a class="jxr_linenumber" name="613" href="#613">613</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="614" href="#614">614</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> createWindowData(<strong class="jxr_keyword">boolean</strong> bounds)
+<a class="jxr_linenumber" name="615" href="#615">615</a>     {
+<a class="jxr_linenumber" name="616" href="#616">616</a>         TransformerContext tctx = EasyMock.createNiceMock(TransformerContext.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="617" href="#617">617</a>         EasyMock.replay(tctx);
+<a class="jxr_linenumber" name="618" href="#618">618</a>         <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a>();
+<a class="jxr_linenumber" name="619" href="#619">619</a>         data.setController(TEST_CONTROLLER);
+<a class="jxr_linenumber" name="620" href="#620">620</a>         data.setTitle(TEST_TITLE);
+<a class="jxr_linenumber" name="621" href="#621">621</a>         icon = <strong class="jxr_keyword">new</strong> ImageIcon(getClass().getResource(TEST_ICON));
+<a class="jxr_linenumber" name="622" href="#622">622</a>         data.setIcon(icon);
+<a class="jxr_linenumber" name="623" href="#623">623</a>         JMenuBar bar = <strong class="jxr_keyword">new</strong> JMenuBar();
+<a class="jxr_linenumber" name="624" href="#624">624</a>         JMenu menu = <strong class="jxr_keyword">new</strong> JMenu(<span class="jxr_string">"File"</span>);
+<a class="jxr_linenumber" name="625" href="#625">625</a>         menu.add(<strong class="jxr_keyword">new</strong> JMenuItem(<span class="jxr_string">"Exit"</span>));
+<a class="jxr_linenumber" name="626" href="#626">626</a>         bar.add(menu);
+<a class="jxr_linenumber" name="627" href="#627">627</a>         data.setMenuBar(bar);
+<a class="jxr_linenumber" name="628" href="#628">628</a>         ComponentBuilderData builderData = <strong class="jxr_keyword">new</strong> ComponentBuilderData();
+<a class="jxr_linenumber" name="629" href="#629">629</a>         builderData.initializeForm(tctx, <strong class="jxr_keyword">new</strong> BeanBindingStrategy());
+<a class="jxr_linenumber" name="630" href="#630">630</a>         data.setComponentBuilderData(builderData);
+<a class="jxr_linenumber" name="631" href="#631">631</a> 
+<a class="jxr_linenumber" name="632" href="#632">632</a>         <strong class="jxr_keyword">if</strong> (bounds)
+<a class="jxr_linenumber" name="633" href="#633">633</a>         {
+<a class="jxr_linenumber" name="634" href="#634">634</a>             data.setXPos(TEST_X);
+<a class="jxr_linenumber" name="635" href="#635">635</a>             data.setYPos(TEST_Y);
+<a class="jxr_linenumber" name="636" href="#636">636</a>             data.setWidth(TEST_WIDTH);
+<a class="jxr_linenumber" name="637" href="#637">637</a>             data.setHeight(TEST_HEIGHT);
+<a class="jxr_linenumber" name="638" href="#638">638</a>         }
+<a class="jxr_linenumber" name="639" href="#639">639</a> 
+<a class="jxr_linenumber" name="640" href="#640">640</a>         <strong class="jxr_keyword">return</strong> data;
+<a class="jxr_linenumber" name="641" href="#641">641</a>     }
 <a class="jxr_linenumber" name="642" href="#642">642</a> 
-<a class="jxr_linenumber" name="643" href="#643">643</a>         @Override
-<a class="jxr_linenumber" name="644" href="#644">644</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> pack()
-<a class="jxr_linenumber" name="645" href="#645">645</a>         {
-<a class="jxr_linenumber" name="646" href="#646">646</a>             <strong class="jxr_keyword">super</strong>.pack();
-<a class="jxr_linenumber" name="647" href="#647">647</a>             packCalled = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="648" href="#648">648</a>         }
-<a class="jxr_linenumber" name="649" href="#649">649</a>     }
-<a class="jxr_linenumber" name="650" href="#650">650</a> 
-<a class="jxr_linenumber" name="651" href="#651">651</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="652" href="#652">652</a> <em class="jxr_javadoccomment">     * A test dialog class that checks whether the pack() method was called.</em>
-<a class="jxr_linenumber" name="653" href="#653">653</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="654" href="#654">654</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestDialogPackObserver</a> <strong class="jxr_keyword">extends</strong> JDialog
-<a class="jxr_linenumber" name="655" href="#655">655</a>     {
-<a class="jxr_linenumber" name="656" href="#656">656</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="657" href="#657">657</a> <em class="jxr_javadoccomment">         * The serial version UID.</em>
-<a class="jxr_linenumber" name="658" href="#658">658</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="659" href="#659">659</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 4757232434966886907L;
-<a class="jxr_linenumber" name="660" href="#660">660</a> 
-<a class="jxr_linenumber" name="661" href="#661">661</a>         <strong class="jxr_keyword">boolean</strong> packCalled;
-<a class="jxr_linenumber" name="662" href="#662">662</a> 
-<a class="jxr_linenumber" name="663" href="#663">663</a>         @Override
-<a class="jxr_linenumber" name="664" href="#664">664</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> pack()
-<a class="jxr_linenumber" name="665" href="#665">665</a>         {
-<a class="jxr_linenumber" name="666" href="#666">666</a>             <strong class="jxr_keyword">super</strong>.pack();
-<a class="jxr_linenumber" name="667" href="#667">667</a>             packCalled = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="668" href="#668">668</a>         }
-<a class="jxr_linenumber" name="669" href="#669">669</a>     }
-<a class="jxr_linenumber" name="670" href="#670">670</a> 
-<a class="jxr_linenumber" name="671" href="#671">671</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="672" href="#672">672</a> <em class="jxr_javadoccomment">     * A test internal frame class that checks whether the pack() method was</em>
-<a class="jxr_linenumber" name="673" href="#673">673</a> <em class="jxr_javadoccomment">     * called.</em>
-<a class="jxr_linenumber" name="674" href="#674">674</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="675" href="#675">675</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestInternalFramePackObserver</a> <strong class="jxr_keyword">extends</strong> InternalFrameAdapter
-<a class="jxr_linenumber" name="676" href="#676">676</a>     {
-<a class="jxr_linenumber" name="677" href="#677">677</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="678" href="#678">678</a> <em class="jxr_javadoccomment">         * The serial version UID.</em>
-<a class="jxr_linenumber" name="679" href="#679">679</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="680" href="#680">680</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -3859327208598578295L;
-<a class="jxr_linenumber" name="681" href="#681">681</a> 
-<a class="jxr_linenumber" name="682" href="#682">682</a>         <strong class="jxr_keyword">boolean</strong> packCalled;
-<a class="jxr_linenumber" name="683" href="#683">683</a> 
-<a class="jxr_linenumber" name="684" href="#684">684</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestInternalFramePackObserver</a>(<strong class="jxr_keyword">boolean</strong> center)
-<a class="jxr_linenumber" name="685" href="#685">685</a>         {
-<a class="jxr_linenumber" name="686" href="#686">686</a>             <strong class="jxr_keyword">super</strong>(center);
-<a class="jxr_linenumber" name="687" href="#687">687</a>         }
-<a class="jxr_linenumber" name="688" href="#688">688</a> 
-<a class="jxr_linenumber" name="689" href="#689">689</a>         @Override
-<a class="jxr_linenumber" name="690" href="#690">690</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> pack()
-<a class="jxr_linenumber" name="691" href="#691">691</a>         {
-<a class="jxr_linenumber" name="692" href="#692">692</a>             <strong class="jxr_keyword">super</strong>.pack();
-<a class="jxr_linenumber" name="693" href="#693">693</a>             packCalled = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="694" href="#694">694</a>         }
-<a class="jxr_linenumber" name="695" href="#695">695</a>     }
-<a class="jxr_linenumber" name="696" href="#696">696</a> }
+<a class="jxr_linenumber" name="643" href="#643">643</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="644" href="#644">644</a> <em class="jxr_javadoccomment">     * Tests if the window's properties match the given data object.</em>
+<a class="jxr_linenumber" name="645" href="#645">645</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="646" href="#646">646</a> <em class="jxr_javadoccomment">     * @param window the window</em>
+<a class="jxr_linenumber" name="647" href="#647">647</a> <em class="jxr_javadoccomment">     * @param data the data</em>
+<a class="jxr_linenumber" name="648" href="#648">648</a> <em class="jxr_javadoccomment">     * @param center the expected center flag</em>
+<a class="jxr_linenumber" name="649" href="#649">649</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="650" href="#650">650</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkWindow(SwingWindow window, <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/WindowDataImpl.html">WindowDataImpl</a> data,
+<a class="jxr_linenumber" name="651" href="#651">651</a>             <strong class="jxr_keyword">boolean</strong> center)
+<a class="jxr_linenumber" name="652" href="#652">652</a>     {
+<a class="jxr_linenumber" name="653" href="#653">653</a>         data.checkWindow(window);
+<a class="jxr_linenumber" name="654" href="#654">654</a>         assertEquals(<span class="jxr_string">"Wrong parent window"</span>, builderData.getParentWindow(),
+<a class="jxr_linenumber" name="655" href="#655">655</a>                 window.getParentWindow());
+<a class="jxr_linenumber" name="656" href="#656">656</a>         assertEquals(<span class="jxr_string">"Wrong center flag"</span>, center, window.getWindowHelper()
+<a class="jxr_linenumber" name="657" href="#657">657</a>                 .isCenter());
+<a class="jxr_linenumber" name="658" href="#658">658</a>     }
+<a class="jxr_linenumber" name="659" href="#659">659</a> 
+<a class="jxr_linenumber" name="660" href="#660">660</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="661" href="#661">661</a> <em class="jxr_javadoccomment">     * A test frame class that checks whether the pack() method was called.</em>
+<a class="jxr_linenumber" name="662" href="#662">662</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="663" href="#663">663</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestFramePackObserver</a> <strong class="jxr_keyword">extends</strong> JFrame
+<a class="jxr_linenumber" name="664" href="#664">664</a>     {
+<a class="jxr_linenumber" name="665" href="#665">665</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="666" href="#666">666</a> <em class="jxr_javadoccomment">         * The serial version UID.</em>
+<a class="jxr_linenumber" name="667" href="#667">667</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="668" href="#668">668</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -1409228441149802638L;
+<a class="jxr_linenumber" name="669" href="#669">669</a> 
+<a class="jxr_linenumber" name="670" href="#670">670</a>         <strong class="jxr_keyword">boolean</strong> packCalled;
+<a class="jxr_linenumber" name="671" href="#671">671</a> 
+<a class="jxr_linenumber" name="672" href="#672">672</a>         @Override
+<a class="jxr_linenumber" name="673" href="#673">673</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> pack()
+<a class="jxr_linenumber" name="674" href="#674">674</a>         {
+<a class="jxr_linenumber" name="675" href="#675">675</a>             <strong class="jxr_keyword">super</strong>.pack();
+<a class="jxr_linenumber" name="676" href="#676">676</a>             packCalled = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="677" href="#677">677</a>         }
+<a class="jxr_linenumber" name="678" href="#678">678</a>     }
+<a class="jxr_linenumber" name="679" href="#679">679</a> 
+<a class="jxr_linenumber" name="680" href="#680">680</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="681" href="#681">681</a> <em class="jxr_javadoccomment">     * A test dialog class that checks whether the pack() method was called.</em>
+<a class="jxr_linenumber" name="682" href="#682">682</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="683" href="#683">683</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestDialogPackObserver</a> <strong class="jxr_keyword">extends</strong> JDialog
+<a class="jxr_linenumber" name="684" href="#684">684</a>     {
+<a class="jxr_linenumber" name="685" href="#685">685</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="686" href="#686">686</a> <em class="jxr_javadoccomment">         * The serial version UID.</em>
+<a class="jxr_linenumber" name="687" href="#687">687</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="688" href="#688">688</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 4757232434966886907L;
+<a class="jxr_linenumber" name="689" href="#689">689</a> 
+<a class="jxr_linenumber" name="690" href="#690">690</a>         <strong class="jxr_keyword">boolean</strong> packCalled;
+<a class="jxr_linenumber" name="691" href="#691">691</a> 
+<a class="jxr_linenumber" name="692" href="#692">692</a>         @Override
+<a class="jxr_linenumber" name="693" href="#693">693</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> pack()
+<a class="jxr_linenumber" name="694" href="#694">694</a>         {
+<a class="jxr_linenumber" name="695" href="#695">695</a>             <strong class="jxr_keyword">super</strong>.pack();
+<a class="jxr_linenumber" name="696" href="#696">696</a>             packCalled = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="697" href="#697">697</a>         }
+<a class="jxr_linenumber" name="698" href="#698">698</a>     }
+<a class="jxr_linenumber" name="699" href="#699">699</a> 
+<a class="jxr_linenumber" name="700" href="#700">700</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="701" href="#701">701</a> <em class="jxr_javadoccomment">     * A test internal frame class that checks whether the pack() method was</em>
+<a class="jxr_linenumber" name="702" href="#702">702</a> <em class="jxr_javadoccomment">     * called.</em>
+<a class="jxr_linenumber" name="703" href="#703">703</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="704" href="#704">704</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestInternalFramePackObserver</a> <strong class="jxr_keyword">extends</strong> InternalFrameAdapter
+<a class="jxr_linenumber" name="705" href="#705">705</a>     {
+<a class="jxr_linenumber" name="706" href="#706">706</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="707" href="#707">707</a> <em class="jxr_javadoccomment">         * The serial version UID.</em>
+<a class="jxr_linenumber" name="708" href="#708">708</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="709" href="#709">709</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -3859327208598578295L;
+<a class="jxr_linenumber" name="710" href="#710">710</a> 
+<a class="jxr_linenumber" name="711" href="#711">711</a>         <strong class="jxr_keyword">boolean</strong> packCalled;
+<a class="jxr_linenumber" name="712" href="#712">712</a> 
+<a class="jxr_linenumber" name="713" href="#713">713</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/window/TestSwingWindowManager.html">TestInternalFramePackObserver</a>(<strong class="jxr_keyword">boolean</strong> center)
+<a class="jxr_linenumber" name="714" href="#714">714</a>         {
+<a class="jxr_linenumber" name="715" href="#715">715</a>             <strong class="jxr_keyword">super</strong>(center);
+<a class="jxr_linenumber" name="716" href="#716">716</a>         }
+<a class="jxr_linenumber" name="717" href="#717">717</a> 
+<a class="jxr_linenumber" name="718" href="#718">718</a>         @Override
+<a class="jxr_linenumber" name="719" href="#719">719</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> pack()
+<a class="jxr_linenumber" name="720" href="#720">720</a>         {
+<a class="jxr_linenumber" name="721" href="#721">721</a>             <strong class="jxr_keyword">super</strong>.pack();
+<a class="jxr_linenumber" name="722" href="#722">722</a>             packCalled = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="723" href="#723">723</a>         }
+<a class="jxr_linenumber" name="724" href="#724">724</a>     }
+<a class="jxr_linenumber" name="725" href="#725">725</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
