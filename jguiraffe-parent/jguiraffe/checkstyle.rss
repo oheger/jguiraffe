@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2018 The JGUIraffe Team</copyright>
     <item>
-      <title>File: 444,
-             Errors: 3,
+      <title>File: 445,
+             Errors: 7,
              Warnings: 0,
              Infos: 0
       </title>
@@ -627,6 +627,20 @@
                 </td>
                 <td>
                   0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe/checkstyle.html#net.sf.jguiraffe.gui.builder.components.RadioGroupWidgetHandler.java">net/sf/jguiraffe/gui/builder/components/RadioGroupWidgetHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
                 </td>
               </tr>
                           <tr>
@@ -1620,7 +1634,7 @@
                   0
                 </td>
                 <td>
-                  0
+                  2
                 </td>
               </tr>
                           <tr>

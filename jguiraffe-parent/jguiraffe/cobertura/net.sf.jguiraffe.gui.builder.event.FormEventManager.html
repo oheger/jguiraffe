@@ -292,7 +292,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> PlatformEventManager getPlatformEventManager()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;142</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;143</td>  <td class="nbHitsCovered">&nbsp;4095</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> platformEventManager;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;143</td>  <td class="nbHitsCovered">&nbsp;4129</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> platformEventManager;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;144</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;145</td>  <td class="nbHits">&nbsp;</td>
@@ -311,7 +311,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> ComponentStore getComponentStore()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;152</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;153</td>  <td class="nbHitsCovered">&nbsp;8138</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> componentStore;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;153</td>  <td class="nbHitsCovered">&nbsp;8239</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> componentStore;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;154</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;155</td>  <td class="nbHits">&nbsp;</td>
@@ -358,13 +358,13 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> ComponentHandler&lt;?&gt; getComponentHandler(String name)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;177</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;178</td>  <td class="nbHitsCovered"><a title="Line 178: Conditional coverage 100% (2/2).">&nbsp;4071</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 178: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (getComponentStore() == <span class="keyword">null</span>)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;178</td>  <td class="nbHitsCovered"><a title="Line 178: Conditional coverage 100% (2/2).">&nbsp;4092</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 178: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (getComponentStore() == <span class="keyword">null</span>)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;179</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;180</td>  <td class="nbHitsCovered">&nbsp;1</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"ComponentStore must be set!"</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;181</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;182</td>  <td class="nbHitsCovered">&nbsp;4098</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getComponentStore().findComponentHandler(name);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;182</td>  <td class="nbHitsCovered">&nbsp;4136</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getComponentStore().findComponentHandler(name);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;183</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;184</td>  <td class="nbHits">&nbsp;</td>
@@ -1007,10 +1007,10 @@
   <td class="src"><pre class="src">&nbsp;            FormEventListener l)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;526</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;527</td>  <td class="nbHitsCovered"><a title="Line 527: Conditional coverage 100% (2/2).">&nbsp;1985</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 527: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (l != <span class="keyword">null</span>)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;527</td>  <td class="nbHitsCovered"><a title="Line 527: Conditional coverage 100% (2/2).">&nbsp;1988</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 527: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (l != <span class="keyword">null</span>)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;528</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;529</td>  <td class="nbHitsCovered"><a title="Line 529: Conditional coverage 100% (2/2).">&nbsp;2034</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 529: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (name == <span class="keyword">null</span>)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;529</td>  <td class="nbHitsCovered"><a title="Line 529: Conditional coverage 100% (2/2).">&nbsp;2026</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 529: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (name == <span class="keyword">null</span>)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;530</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;531</td>  <td class="nbHitsCovered">&nbsp;25</td>  <td class="src"><pre class="src">&nbsp;                addAllListener(type, l);</pre></td></tr>
@@ -1020,7 +1020,7 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">else</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;534</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;535</td>  <td class="nbHitsCovered">&nbsp;2001</td>  <td class="src"><pre class="src">&nbsp;                addNamedListener(type, name, l);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;535</td>  <td class="nbHitsCovered">&nbsp;1999</td>  <td class="src"><pre class="src">&nbsp;                addNamedListener(type, name, l);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;536</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;537</td>  <td class="nbHits">&nbsp;</td>
@@ -1091,7 +1091,7 @@
   <td class="src"><pre class="src">&nbsp;            FormEventListener l) <span class="keyword">throws</span> NoSuchElementException</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;572</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;573</td>  <td class="nbHitsCovered">&nbsp;1881</td>  <td class="src"><pre class="src">&nbsp;        ComponentHandler&lt;?&gt; ch = getComponentHandler(name);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;573</td>  <td class="nbHitsCovered">&nbsp;1907</td>  <td class="src"><pre class="src">&nbsp;        ComponentHandler&lt;?&gt; ch = getComponentHandler(name);</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;574</td>  <td class="nbHitsCovered"><a title="Line 574: Conditional coverage 100% (2/2).">&nbsp;1964</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 574: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (ch == <span class="keyword">null</span>)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;575</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
@@ -1102,7 +1102,7 @@
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;579</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;580</td>  <td class="nbHitsCovered">&nbsp;1951</td>  <td class="src"><pre class="src">&nbsp;        lock(type);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;580</td>  <td class="nbHitsCovered">&nbsp;1929</td>  <td class="src"><pre class="src">&nbsp;        lock(type);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;581</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;582</td>  <td class="nbHits">&nbsp;</td>
@@ -1111,13 +1111,13 @@
 <tr>  <td class="numLineCover">&nbsp;584</td>  <td class="nbHitsCovered"><a title="Line 584: Conditional coverage 100% (2/2).">&nbsp;2039</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 584: Conditional coverage 100% (2/2).">                    &amp;&amp; fetchNamedListenerCount(name, type) == 0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;585</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;586</td>  <td class="nbHitsUncovered"><a title="Line 586: Conditional coverage 50% (1/2).">&nbsp;1998</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 586: Conditional coverage 50% (1/2).">                <span class="keyword">if</span> (log.isInfoEnabled())</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;586</td>  <td class="nbHitsUncovered"><a title="Line 586: Conditional coverage 50% (1/2).">&nbsp;2015</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 586: Conditional coverage 50% (1/2).">                <span class="keyword">if</span> (log.isInfoEnabled())</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;587</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;588</td>  <td class="nbHitsCovered">&nbsp;1998</td>  <td class="src"><pre class="src">&nbsp;                    log.info(<span class="string">"Registering listener of type "</span> + type.name()</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;588</td>  <td class="nbHitsCovered">&nbsp;2015</td>  <td class="src"><pre class="src">&nbsp;                    log.info(<span class="string">"Registering listener of type "</span> + type.name()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;589</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                            + <span class="string">" for component "</span> + name);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;590</td>  <td class="nbHitsCovered">&nbsp;1998</td>  <td class="src"><pre class="src">&nbsp;                    getPlatformEventManager().registerListener(name, ch, <span class="keyword">this</span>,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;590</td>  <td class="nbHitsCovered">&nbsp;2015</td>  <td class="src"><pre class="src">&nbsp;                    getPlatformEventManager().registerListener(name, ch, <span class="keyword">this</span>,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;591</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                            type);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;592</td>  <td class="nbHits">&nbsp;</td>
@@ -1241,8 +1241,8 @@
 <tr>  <td class="numLineCover">&nbsp;663</td>  <td class="nbHitsCovered"><a title="Line 663: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;2008</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 663: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">                <span class="keyword">if</span> (countAfter == 0 &amp;&amp; fetchAllListenerCount(type) == 0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;664</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;665</td>  <td class="nbHitsCovered">&nbsp;3926</td>  <td class="src"><pre class="src">&nbsp;                    getPlatformEventManager().unregisterListener(name,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;666</td>  <td class="nbHitsCovered">&nbsp;1963</td>  <td class="src"><pre class="src">&nbsp;                            getComponentHandler(name), <span class="keyword">this</span>, type);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;665</td>  <td class="nbHitsCovered">&nbsp;3960</td>  <td class="src"><pre class="src">&nbsp;                    getPlatformEventManager().unregisterListener(name,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;666</td>  <td class="nbHitsCovered">&nbsp;1980</td>  <td class="src"><pre class="src">&nbsp;                            getComponentHandler(name), <span class="keyword">this</span>, type);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;667</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;668</td>  <td class="nbHits">&nbsp;</td>
@@ -1357,7 +1357,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">void</span> lock(FormListenerType type)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;733</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;734</td>  <td class="nbHitsCovered">&nbsp;6026</td>  <td class="src"><pre class="src">&nbsp;        lockListeners.lock();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;734</td>  <td class="nbHitsCovered">&nbsp;6031</td>  <td class="src"><pre class="src">&nbsp;        lockListeners.lock();</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;735</td>  <td class="nbHitsCovered">&nbsp;6111</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;736</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
@@ -1472,7 +1472,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">int</span> fetchAllListenerCount(FormListenerType type)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;797</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;798</td>  <td class="nbHitsCovered">&nbsp;4047</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> allListeners.getListenerCount(type.getListenerClass());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;798</td>  <td class="nbHitsCovered">&nbsp;4064</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> allListeners.getListenerCount(type.getListenerClass());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;799</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;800</td>  <td class="nbHits">&nbsp;</td>
@@ -1838,6 +1838,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 15.11.18 21:41.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 08.12.18 21:46.</div>
 </body>
 </html>

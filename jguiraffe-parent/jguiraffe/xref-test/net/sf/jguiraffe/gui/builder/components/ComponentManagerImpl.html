@@ -344,560 +344,570 @@
 <a class="jxr_linenumber" name="334" href="#334">334</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createButton(ButtonTag tag, <strong class="jxr_keyword">boolean</strong> create)
 <a class="jxr_linenumber" name="335" href="#335">335</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
 <a class="jxr_linenumber" name="336" href="#336">336</a>     {
-<a class="jxr_linenumber" name="337" href="#337">337</a>         <strong class="jxr_keyword">return</strong> createPushButton(tag, create, <span class="jxr_string">"BUTTON"</span>,
-<a class="jxr_linenumber" name="338" href="#338">338</a>                 tag.isDefault() ? <span class="jxr_string">"DEFAULT"</span> : <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="339" href="#339">339</a>     }
-<a class="jxr_linenumber" name="340" href="#340">340</a> 
-<a class="jxr_linenumber" name="341" href="#341">341</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createToggleButton(ToggleButtonTag tag,
-<a class="jxr_linenumber" name="342" href="#342">342</a>             <strong class="jxr_keyword">boolean</strong> create) <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="343" href="#343">343</a>     {
-<a class="jxr_linenumber" name="344" href="#344">344</a>         <strong class="jxr_keyword">return</strong> createPushButton(tag, create, <span class="jxr_string">"TOGGLE"</span>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="345" href="#345">345</a>     }
-<a class="jxr_linenumber" name="346" href="#346">346</a> 
-<a class="jxr_linenumber" name="347" href="#347">347</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">     * Helper method for creating a component handler for a button tag.</em>
-<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="350" href="#350">350</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
-<a class="jxr_linenumber" name="351" href="#351">351</a> <em class="jxr_javadoccomment">     * @param create the create flag</em>
-<a class="jxr_linenumber" name="352" href="#352">352</a> <em class="jxr_javadoccomment">     * @param name the name of the component (i.e. the button type)</em>
-<a class="jxr_linenumber" name="353" href="#353">353</a> <em class="jxr_javadoccomment">     * @param furtherAttrs optional additional attributes to be added</em>
-<a class="jxr_linenumber" name="354" href="#354">354</a> <em class="jxr_javadoccomment">     * @return the component handler</em>
-<a class="jxr_linenumber" name="355" href="#355">355</a> <em class="jxr_javadoccomment">     * @throws FormBuilderException if an error occurs</em>
-<a class="jxr_linenumber" name="356" href="#356">356</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="357" href="#357">357</a>     <strong class="jxr_keyword">private</strong> ComponentHandler createPushButton(ToggleButtonTag tag,
-<a class="jxr_linenumber" name="358" href="#358">358</a>             <strong class="jxr_keyword">boolean</strong> create, String name, String furtherAttrs)
-<a class="jxr_linenumber" name="359" href="#359">359</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="360" href="#360">360</a>     {
-<a class="jxr_linenumber" name="361" href="#361">361</a>         <strong class="jxr_keyword">if</strong> (!create)
-<a class="jxr_linenumber" name="362" href="#362">362</a>         {
-<a class="jxr_linenumber" name="363" href="#363">363</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="364" href="#364">364</a>             dumpTextIconData(buf, tag.getTextIconData());
-<a class="jxr_linenumber" name="365" href="#365">365</a>             appendAttr(buf, <span class="jxr_string">"CMD"</span>, tag.getCommand());
-<a class="jxr_linenumber" name="366" href="#366">366</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="367" href="#367">367</a>             <strong class="jxr_keyword">if</strong> (furtherAttrs != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="368" href="#368">368</a>             {
-<a class="jxr_linenumber" name="369" href="#369">369</a>                 buf.append(' ').append(furtherAttrs);
-<a class="jxr_linenumber" name="370" href="#370">370</a>             }
-<a class="jxr_linenumber" name="371" href="#371">371</a>             <strong class="jxr_keyword">return</strong> createHandler(name, buf, tag, Boolean.TYPE);
-<a class="jxr_linenumber" name="372" href="#372">372</a>         }
-<a class="jxr_linenumber" name="373" href="#373">373</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="374" href="#374">374</a>         {
-<a class="jxr_linenumber" name="375" href="#375">375</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="376" href="#376">376</a>         }
-<a class="jxr_linenumber" name="377" href="#377">377</a>     }
-<a class="jxr_linenumber" name="378" href="#378">378</a> 
-<a class="jxr_linenumber" name="379" href="#379">379</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTextField(TextFieldTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="380" href="#380">380</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="381" href="#381">381</a>     {
-<a class="jxr_linenumber" name="382" href="#382">382</a>         <strong class="jxr_keyword">return</strong> createTextComponent(<span class="jxr_string">"TEXTFIELD"</span>, tag, create);
-<a class="jxr_linenumber" name="383" href="#383">383</a>     }
-<a class="jxr_linenumber" name="384" href="#384">384</a> 
-<a class="jxr_linenumber" name="385" href="#385">385</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createPasswordField(PasswordFieldTag tag,
-<a class="jxr_linenumber" name="386" href="#386">386</a>             <strong class="jxr_keyword">boolean</strong> create) <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="387" href="#387">387</a>     {
-<a class="jxr_linenumber" name="388" href="#388">388</a>         <strong class="jxr_keyword">return</strong> createTextComponent(<span class="jxr_string">"PASSWORDFIELD"</span>, tag, create);
-<a class="jxr_linenumber" name="389" href="#389">389</a>     }
-<a class="jxr_linenumber" name="390" href="#390">390</a> 
-<a class="jxr_linenumber" name="391" href="#391">391</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="392" href="#392">392</a> <em class="jxr_javadoccomment">     * Helper method for creating a text field component which can either be a</em>
-<a class="jxr_linenumber" name="393" href="#393">393</a> <em class="jxr_javadoccomment">     * normal text field or a password field.</em>
-<a class="jxr_linenumber" name="394" href="#394">394</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="395" href="#395">395</a> <em class="jxr_javadoccomment">     * @param type the type name of the text field</em>
-<a class="jxr_linenumber" name="396" href="#396">396</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
-<a class="jxr_linenumber" name="397" href="#397">397</a> <em class="jxr_javadoccomment">     * @param create the create flag</em>
-<a class="jxr_linenumber" name="398" href="#398">398</a> <em class="jxr_javadoccomment">     * @return the component handler</em>
-<a class="jxr_linenumber" name="399" href="#399">399</a> <em class="jxr_javadoccomment">     * @throws FormBuilderException if an error occurs</em>
-<a class="jxr_linenumber" name="400" href="#400">400</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="401" href="#401">401</a>     <strong class="jxr_keyword">private</strong> ComponentHandler createTextComponent(String type, TextFieldTag tag,
-<a class="jxr_linenumber" name="402" href="#402">402</a>             <strong class="jxr_keyword">boolean</strong> create) <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="403" href="#403">403</a>     {
-<a class="jxr_linenumber" name="404" href="#404">404</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="405" href="#405">405</a>         {
-<a class="jxr_linenumber" name="406" href="#406">406</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="407" href="#407">407</a>         }
-<a class="jxr_linenumber" name="408" href="#408">408</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="409" href="#409">409</a>         {
-<a class="jxr_linenumber" name="410" href="#410">410</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="411" href="#411">411</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="412" href="#412">412</a>             <strong class="jxr_keyword">if</strong> (tag.getColumns() &gt; 0)
-<a class="jxr_linenumber" name="413" href="#413">413</a>             {
-<a class="jxr_linenumber" name="414" href="#414">414</a>                 appendAttr(buf, <span class="jxr_string">"COLUMNS"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getColumns()));
-<a class="jxr_linenumber" name="415" href="#415">415</a>             }
-<a class="jxr_linenumber" name="416" href="#416">416</a>             <strong class="jxr_keyword">if</strong> (tag.getMaxlength() &gt; 0)
-<a class="jxr_linenumber" name="417" href="#417">417</a>             {
-<a class="jxr_linenumber" name="418" href="#418">418</a>                 appendAttr(buf, <span class="jxr_string">"MAXLEN"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getMaxlength()));
-<a class="jxr_linenumber" name="419" href="#419">419</a>             }
-<a class="jxr_linenumber" name="420" href="#420">420</a>             <strong class="jxr_keyword">return</strong> createHandler(type, buf, tag, String.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="421" href="#421">421</a>         }
-<a class="jxr_linenumber" name="422" href="#422">422</a>     }
-<a class="jxr_linenumber" name="423" href="#423">423</a> 
-<a class="jxr_linenumber" name="424" href="#424">424</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTextArea(TextAreaTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="425" href="#425">425</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="426" href="#426">426</a>     {
-<a class="jxr_linenumber" name="427" href="#427">427</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="428" href="#428">428</a>         {
-<a class="jxr_linenumber" name="429" href="#429">429</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="430" href="#430">430</a>         }
-<a class="jxr_linenumber" name="431" href="#431">431</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="432" href="#432">432</a>         {
-<a class="jxr_linenumber" name="433" href="#433">433</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="434" href="#434">434</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="435" href="#435">435</a>             <strong class="jxr_keyword">if</strong> (tag.getColumns() &gt; 0)
-<a class="jxr_linenumber" name="436" href="#436">436</a>             {
-<a class="jxr_linenumber" name="437" href="#437">437</a>                 appendAttr(buf, <span class="jxr_string">"COLUMNS"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getColumns()));
-<a class="jxr_linenumber" name="438" href="#438">438</a>             }
-<a class="jxr_linenumber" name="439" href="#439">439</a>             <strong class="jxr_keyword">if</strong> (tag.getRows() &gt; 0)
-<a class="jxr_linenumber" name="440" href="#440">440</a>             {
-<a class="jxr_linenumber" name="441" href="#441">441</a>                 appendAttr(buf, <span class="jxr_string">"ROWS"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getRows()));
-<a class="jxr_linenumber" name="442" href="#442">442</a>             }
-<a class="jxr_linenumber" name="443" href="#443">443</a>             <strong class="jxr_keyword">if</strong> (tag.isWrap())
-<a class="jxr_linenumber" name="444" href="#444">444</a>             {
-<a class="jxr_linenumber" name="445" href="#445">445</a>                 appendAttr(buf, <span class="jxr_string">"WRAP"</span>, <span class="jxr_string">"YES"</span>);
-<a class="jxr_linenumber" name="446" href="#446">446</a>             }
-<a class="jxr_linenumber" name="447" href="#447">447</a>             <strong class="jxr_keyword">if</strong> (tag.getMaxlength() &gt; 0)
-<a class="jxr_linenumber" name="448" href="#448">448</a>             {
-<a class="jxr_linenumber" name="449" href="#449">449</a>                 appendAttr(buf, <span class="jxr_string">"MAXLEN"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getMaxlength()));
-<a class="jxr_linenumber" name="450" href="#450">450</a>             }
-<a class="jxr_linenumber" name="451" href="#451">451</a>             appendAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
-<a class="jxr_linenumber" name="452" href="#452">452</a>             appendAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
-<a class="jxr_linenumber" name="453" href="#453">453</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"TEXTAREA"</span>, buf, tag, String.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="454" href="#454">454</a>         }
-<a class="jxr_linenumber" name="455" href="#455">455</a>     }
-<a class="jxr_linenumber" name="456" href="#456">456</a> 
-<a class="jxr_linenumber" name="457" href="#457">457</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createCheckbox(CheckboxTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="458" href="#458">458</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="459" href="#459">459</a>     {
-<a class="jxr_linenumber" name="460" href="#460">460</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="461" href="#461">461</a>         {
-<a class="jxr_linenumber" name="462" href="#462">462</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="463" href="#463">463</a>         }
-<a class="jxr_linenumber" name="464" href="#464">464</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="465" href="#465">465</a>         {
-<a class="jxr_linenumber" name="466" href="#466">466</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="467" href="#467">467</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="468" href="#468">468</a>             dumpTextIconData(buf, tag.getTextIconData());
-<a class="jxr_linenumber" name="469" href="#469">469</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"CHECKBOX"</span>, buf, tag, Boolean.TYPE);
-<a class="jxr_linenumber" name="470" href="#470">470</a>         }
-<a class="jxr_linenumber" name="471" href="#471">471</a>     }
-<a class="jxr_linenumber" name="472" href="#472">472</a> 
-<a class="jxr_linenumber" name="473" href="#473">473</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createRadioButton(RadioButtonTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="474" href="#474">474</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="475" href="#475">475</a>     {
-<a class="jxr_linenumber" name="476" href="#476">476</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="477" href="#477">477</a>         {
-<a class="jxr_linenumber" name="478" href="#478">478</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="479" href="#479">479</a>         }
-<a class="jxr_linenumber" name="480" href="#480">480</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="481" href="#481">481</a>         {
-<a class="jxr_linenumber" name="482" href="#482">482</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="483" href="#483">483</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="484" href="#484">484</a>             dumpTextIconData(buf, tag.getTextIconData());
-<a class="jxr_linenumber" name="485" href="#485">485</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"RADIO"</span>, buf, tag, Boolean.TYPE);
-<a class="jxr_linenumber" name="486" href="#486">486</a>         }
-<a class="jxr_linenumber" name="487" href="#487">487</a>     }
-<a class="jxr_linenumber" name="488" href="#488">488</a> 
-<a class="jxr_linenumber" name="489" href="#489">489</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createComboBox(ComboBoxTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="490" href="#490">490</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="491" href="#491">491</a>     {
-<a class="jxr_linenumber" name="492" href="#492">492</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="493" href="#493">493</a>         {
-<a class="jxr_linenumber" name="494" href="#494">494</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="495" href="#495">495</a>         }
-<a class="jxr_linenumber" name="496" href="#496">496</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="497" href="#497">497</a>         {
-<a class="jxr_linenumber" name="498" href="#498">498</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="499" href="#499">499</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="500" href="#500">500</a>             appendAttr(buf, <span class="jxr_string">"EDIT"</span>, <strong class="jxr_keyword">new</strong> Boolean(tag.isEditable()));
-<a class="jxr_linenumber" name="501" href="#501">501</a>             StringBuilder model = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"{ "</span>);
-<a class="jxr_linenumber" name="502" href="#502">502</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; tag.getListModel().size(); i++)
-<a class="jxr_linenumber" name="503" href="#503">503</a>             {
-<a class="jxr_linenumber" name="504" href="#504">504</a>                 <strong class="jxr_keyword">if</strong> (i &gt; 0)
-<a class="jxr_linenumber" name="505" href="#505">505</a>                 {
-<a class="jxr_linenumber" name="506" href="#506">506</a>                     model.append(<span class="jxr_string">", "</span>);
-<a class="jxr_linenumber" name="507" href="#507">507</a>                 }
-<a class="jxr_linenumber" name="508" href="#508">508</a>                 model.append(tag.getListModel().getDisplayObject(i));
-<a class="jxr_linenumber" name="509" href="#509">509</a>             }
-<a class="jxr_linenumber" name="510" href="#510">510</a>             model.append(<span class="jxr_string">" }"</span>);
-<a class="jxr_linenumber" name="511" href="#511">511</a>             appendAttr(buf, <span class="jxr_string">"MODEL"</span>, model.toString());
-<a class="jxr_linenumber" name="512" href="#512">512</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"COMBO"</span>, buf, tag, tag.getListModel()
-<a class="jxr_linenumber" name="513" href="#513">513</a>                     .getType());
-<a class="jxr_linenumber" name="514" href="#514">514</a>         }
-<a class="jxr_linenumber" name="515" href="#515">515</a>     }
-<a class="jxr_linenumber" name="516" href="#516">516</a> 
-<a class="jxr_linenumber" name="517" href="#517">517</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createListBox(ListBoxTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="518" href="#518">518</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="519" href="#519">519</a>     {
-<a class="jxr_linenumber" name="520" href="#520">520</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="521" href="#521">521</a>         {
-<a class="jxr_linenumber" name="522" href="#522">522</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="523" href="#523">523</a>         }
-<a class="jxr_linenumber" name="524" href="#524">524</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="525" href="#525">525</a>         {
-<a class="jxr_linenumber" name="526" href="#526">526</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="527" href="#527">527</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="528" href="#528">528</a>             appendAttr(buf, <span class="jxr_string">"MULTI"</span>, <strong class="jxr_keyword">new</strong> Boolean(tag.isMulti()));
-<a class="jxr_linenumber" name="529" href="#529">529</a>             StringBuilder model = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"{ "</span>);
-<a class="jxr_linenumber" name="530" href="#530">530</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; tag.getListModel().size(); i++)
-<a class="jxr_linenumber" name="531" href="#531">531</a>             {
-<a class="jxr_linenumber" name="532" href="#532">532</a>                 <strong class="jxr_keyword">if</strong> (i &gt; 0)
-<a class="jxr_linenumber" name="533" href="#533">533</a>                 {
-<a class="jxr_linenumber" name="534" href="#534">534</a>                     model.append(<span class="jxr_string">", "</span>);
-<a class="jxr_linenumber" name="535" href="#535">535</a>                 }
-<a class="jxr_linenumber" name="536" href="#536">536</a>                 model.append(tag.getListModel().getDisplayObject(i));
-<a class="jxr_linenumber" name="537" href="#537">537</a>             }
-<a class="jxr_linenumber" name="538" href="#538">538</a>             model.append(<span class="jxr_string">" }"</span>);
-<a class="jxr_linenumber" name="539" href="#539">539</a>             appendAttr(buf, <span class="jxr_string">"MODEL"</span>, model.toString());
-<a class="jxr_linenumber" name="540" href="#540">540</a>             appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
-<a class="jxr_linenumber" name="541" href="#541">541</a>             appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
-<a class="jxr_linenumber" name="542" href="#542">542</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"LIST"</span>, buf, tag,
-<a class="jxr_linenumber" name="543" href="#543">543</a>                     (tag.isMulti()) ? Object[].<strong class="jxr_keyword">class</strong> : tag.getListModel()
-<a class="jxr_linenumber" name="544" href="#544">544</a>                             .getType());
-<a class="jxr_linenumber" name="545" href="#545">545</a>         }
-<a class="jxr_linenumber" name="546" href="#546">546</a>     }
-<a class="jxr_linenumber" name="547" href="#547">547</a> 
-<a class="jxr_linenumber" name="548" href="#548">548</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTabbedPane(TabbedPaneTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="549" href="#549">549</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="550" href="#550">550</a>     {
-<a class="jxr_linenumber" name="551" href="#551">551</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="552" href="#552">552</a>         {
-<a class="jxr_linenumber" name="553" href="#553">553</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="554" href="#554">554</a>         }
-<a class="jxr_linenumber" name="555" href="#555">555</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="556" href="#556">556</a>         {
-<a class="jxr_linenumber" name="557" href="#557">557</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="558" href="#558">558</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="559" href="#559">559</a>             appendAttr(buf, <span class="jxr_string">"PLACEMENT"</span>, tag.getPlacementValue().name());
-<a class="jxr_linenumber" name="560" href="#560">560</a>             buf.append(<span class="jxr_string">" TABS { "</span>);
-<a class="jxr_linenumber" name="561" href="#561">561</a>             <strong class="jxr_keyword">for</strong> (Iterator it = tag.getTabs().iterator(); it.hasNext();)
-<a class="jxr_linenumber" name="562" href="#562">562</a>             {
-<a class="jxr_linenumber" name="563" href="#563">563</a>                 TabbedPaneTag.TabData tabData = (TabbedPaneTag.TabData) it
-<a class="jxr_linenumber" name="564" href="#564">564</a>                         .next();
-<a class="jxr_linenumber" name="565" href="#565">565</a>                 buf.append(<span class="jxr_string">"TAB ["</span>);
-<a class="jxr_linenumber" name="566" href="#566">566</a>                 appendAttr(buf, <span class="jxr_string">"TITLE"</span>, tabData.getTitle());
-<a class="jxr_linenumber" name="567" href="#567">567</a>                 appendAttr(buf, <span class="jxr_string">"ICON"</span>, tabData.getIcon());
-<a class="jxr_linenumber" name="568" href="#568">568</a>                 appendAttr(buf, <span class="jxr_string">"TOOLTIP"</span>, tabData.getToolTip());
-<a class="jxr_linenumber" name="569" href="#569">569</a>                 <strong class="jxr_keyword">if</strong> (tabData.getMnemonic() != 0)
-<a class="jxr_linenumber" name="570" href="#570">570</a>                 {
-<a class="jxr_linenumber" name="571" href="#571">571</a>                     appendAttr(buf, <span class="jxr_string">"MNEMO"</span>, <strong class="jxr_keyword">new</strong> Character((<strong class="jxr_keyword">char</strong>) tabData
-<a class="jxr_linenumber" name="572" href="#572">572</a>                             .getMnemonic()));
-<a class="jxr_linenumber" name="573" href="#573">573</a>                 }
-<a class="jxr_linenumber" name="574" href="#574">574</a>                 appendAttr(buf, <span class="jxr_string">"COMP"</span>, tabData.getComponent());
-<a class="jxr_linenumber" name="575" href="#575">575</a>                 buf.append(<span class="jxr_string">" ] "</span>);
-<a class="jxr_linenumber" name="576" href="#576">576</a>             }
-<a class="jxr_linenumber" name="577" href="#577">577</a>             buf.append(<span class="jxr_string">"} "</span>);
-<a class="jxr_linenumber" name="578" href="#578">578</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"TABBEDPANE"</span>, buf, tag, Integer.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="579" href="#579">579</a>         }
-<a class="jxr_linenumber" name="580" href="#580">580</a>     }
-<a class="jxr_linenumber" name="581" href="#581">581</a> 
-<a class="jxr_linenumber" name="582" href="#582">582</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createStaticText(StaticTextTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="583" href="#583">583</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="584" href="#584">584</a>     {
-<a class="jxr_linenumber" name="585" href="#585">585</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="586" href="#586">586</a>         {
-<a class="jxr_linenumber" name="587" href="#587">587</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="588" href="#588">588</a>         }
-<a class="jxr_linenumber" name="589" href="#589">589</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="590" href="#590">590</a>         {
-<a class="jxr_linenumber" name="591" href="#591">591</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="592" href="#592">592</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="593" href="#593">593</a>             dumpTextIconData(buf, tag.getTextIconData());
-<a class="jxr_linenumber" name="594" href="#594">594</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"STATICTEXT"</span>, buf, tag, StaticTextData.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="595" href="#595">595</a>         }
-<a class="jxr_linenumber" name="596" href="#596">596</a>     }
-<a class="jxr_linenumber" name="597" href="#597">597</a> 
-<a class="jxr_linenumber" name="598" href="#598">598</a> 	<strong class="jxr_keyword">public</strong> ComponentHandler createProgressBar(ProgressBarTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="599" href="#599">599</a> 			<strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="600" href="#600">600</a> 	{
-<a class="jxr_linenumber" name="601" href="#601">601</a> 		<strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="602" href="#602">602</a> 		{
-<a class="jxr_linenumber" name="603" href="#603">603</a> 			<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="604" href="#604">604</a> 		}
-<a class="jxr_linenumber" name="605" href="#605">605</a> 		<strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="606" href="#606">606</a> 		{
-<a class="jxr_linenumber" name="607" href="#607">607</a> 			StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="608" href="#608">608</a> 			dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="609" href="#609">609</a> 			appendAttr(buf, <span class="jxr_string">"MIN"</span>, tag.getMin());
-<a class="jxr_linenumber" name="610" href="#610">610</a> 			appendAttr(buf, <span class="jxr_string">"MAX"</span>, tag.getMax());
-<a class="jxr_linenumber" name="611" href="#611">611</a> 			appendAttr(buf, <span class="jxr_string">"VALUE"</span>, tag.getValue());
-<a class="jxr_linenumber" name="612" href="#612">612</a> 			appendAttr(buf, <span class="jxr_string">"ALLOWTEXT"</span>, tag.isAllowText() ? Boolean.TRUE
-<a class="jxr_linenumber" name="613" href="#613">613</a> 					: Boolean.FALSE);
-<a class="jxr_linenumber" name="614" href="#614">614</a> 			<strong class="jxr_keyword">if</strong> (tag.getProgressTextData().isDefined())
-<a class="jxr_linenumber" name="615" href="#615">615</a> 			{
-<a class="jxr_linenumber" name="616" href="#616">616</a> 				appendAttr(buf, <span class="jxr_string">"TEXT"</span>, tag.getProgressTextData().getCaption());
-<a class="jxr_linenumber" name="617" href="#617">617</a> 			}
-<a class="jxr_linenumber" name="618" href="#618">618</a> 			<strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"PROGRESSBAR"</span>, buf, tag, Integer.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="619" href="#619">619</a> 		}
-<a class="jxr_linenumber" name="620" href="#620">620</a> 	}
-<a class="jxr_linenumber" name="621" href="#621">621</a> 
-<a class="jxr_linenumber" name="622" href="#622">622</a>     <strong class="jxr_keyword">public</strong> ComponentHandler&lt;Integer&gt; createSlider(SliderTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="623" href="#623">623</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="624" href="#624">624</a>     {
-<a class="jxr_linenumber" name="625" href="#625">625</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="626" href="#626">626</a>         {
-<a class="jxr_linenumber" name="627" href="#627">627</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="628" href="#628">628</a>         }
-<a class="jxr_linenumber" name="629" href="#629">629</a>         <strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="630" href="#630">630</a>         {
-<a class="jxr_linenumber" name="631" href="#631">631</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="632" href="#632">632</a>             dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="633" href="#633">633</a>             appendAttr(buf, <span class="jxr_string">"MIN"</span>, tag.getMin());
-<a class="jxr_linenumber" name="634" href="#634">634</a>             appendAttr(buf, <span class="jxr_string">"MAX"</span>, tag.getMax());
-<a class="jxr_linenumber" name="635" href="#635">635</a>             appendAttr(buf, <span class="jxr_string">"ORIENTATION"</span>, tag.getSliderOrientation().name());
-<a class="jxr_linenumber" name="636" href="#636">636</a>             appendAttr(buf, <span class="jxr_string">"MAJORTICKS"</span>, tag.getMajorTicks());
-<a class="jxr_linenumber" name="637" href="#637">637</a>             appendAttr(buf, <span class="jxr_string">"MINORTICKS"</span>, tag.getMinorTicks());
-<a class="jxr_linenumber" name="638" href="#638">638</a>             appendAttr(buf, <span class="jxr_string">"SHOWTICKS"</span>, tag.isShowTicks());
-<a class="jxr_linenumber" name="639" href="#639">639</a>             appendAttr(buf, <span class="jxr_string">"SHOWLABELS"</span>, tag.isShowLabels());
-<a class="jxr_linenumber" name="640" href="#640">640</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"SLIDER"</span>, buf, tag, Integer.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="641" href="#641">641</a>         }
-<a class="jxr_linenumber" name="642" href="#642">642</a>     }
-<a class="jxr_linenumber" name="643" href="#643">643</a> 
-<a class="jxr_linenumber" name="644" href="#644">644</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTable(TableTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="645" href="#645">645</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="646" href="#646">646</a>     {
-<a class="jxr_linenumber" name="647" href="#647">647</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="648" href="#648">648</a>         {
-<a class="jxr_linenumber" name="649" href="#649">649</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="650" href="#650">650</a>         }
-<a class="jxr_linenumber" name="651" href="#651">651</a>         StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="652" href="#652">652</a>         dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="653" href="#653">653</a>         appendAttr(buf, <span class="jxr_string">"SELECTIONFG"</span>, tag.getSelectionForegroundColor());
-<a class="jxr_linenumber" name="654" href="#654">654</a>         appendAttr(buf, <span class="jxr_string">"SELECTIONBG"</span>, tag.getSelectionBackgroundColor());
-<a class="jxr_linenumber" name="655" href="#655">655</a>         appendAttr(buf, <span class="jxr_string">"EDITABLE"</span>, tag.isTableEditable());
-<a class="jxr_linenumber" name="656" href="#656">656</a>         appendAttr(buf, <span class="jxr_string">"VALIDATIONERRTITLE"</span>, tag.getValidationErrorTitle());
-<a class="jxr_linenumber" name="657" href="#657">657</a>         <strong class="jxr_keyword">if</strong> (tag.isMultiSelection())
+<a class="jxr_linenumber" name="337" href="#337">337</a>         StringBuilder attributes = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="338" href="#338">338</a>         <strong class="jxr_keyword">if</strong> (tag.isDefault())
+<a class="jxr_linenumber" name="339" href="#339">339</a>         {
+<a class="jxr_linenumber" name="340" href="#340">340</a>             attributes.append(<span class="jxr_string">"DEFAULT"</span>);
+<a class="jxr_linenumber" name="341" href="#341">341</a>         }
+<a class="jxr_linenumber" name="342" href="#342">342</a>         <strong class="jxr_keyword">if</strong> (tag.isCancel())
+<a class="jxr_linenumber" name="343" href="#343">343</a>         {
+<a class="jxr_linenumber" name="344" href="#344">344</a>             attributes.append(<span class="jxr_string">" CANCEL"</span>);
+<a class="jxr_linenumber" name="345" href="#345">345</a>         }
+<a class="jxr_linenumber" name="346" href="#346">346</a>         <strong class="jxr_keyword">return</strong> createPushButton(tag, create, <span class="jxr_string">"BUTTON"</span>,
+<a class="jxr_linenumber" name="347" href="#347">347</a>                 (attributes.length() &gt; 0) ? attributes.toString().trim()
+<a class="jxr_linenumber" name="348" href="#348">348</a>                         : <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="349" href="#349">349</a>     }
+<a class="jxr_linenumber" name="350" href="#350">350</a> 
+<a class="jxr_linenumber" name="351" href="#351">351</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createToggleButton(ToggleButtonTag tag,
+<a class="jxr_linenumber" name="352" href="#352">352</a>             <strong class="jxr_keyword">boolean</strong> create) <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="353" href="#353">353</a>     {
+<a class="jxr_linenumber" name="354" href="#354">354</a>         <strong class="jxr_keyword">return</strong> createPushButton(tag, create, <span class="jxr_string">"TOGGLE"</span>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="355" href="#355">355</a>     }
+<a class="jxr_linenumber" name="356" href="#356">356</a> 
+<a class="jxr_linenumber" name="357" href="#357">357</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="358" href="#358">358</a> <em class="jxr_javadoccomment">     * Helper method for creating a component handler for a button tag.</em>
+<a class="jxr_linenumber" name="359" href="#359">359</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="360" href="#360">360</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
+<a class="jxr_linenumber" name="361" href="#361">361</a> <em class="jxr_javadoccomment">     * @param create the create flag</em>
+<a class="jxr_linenumber" name="362" href="#362">362</a> <em class="jxr_javadoccomment">     * @param name the name of the component (i.e. the button type)</em>
+<a class="jxr_linenumber" name="363" href="#363">363</a> <em class="jxr_javadoccomment">     * @param furtherAttrs optional additional attributes to be added</em>
+<a class="jxr_linenumber" name="364" href="#364">364</a> <em class="jxr_javadoccomment">     * @return the component handler</em>
+<a class="jxr_linenumber" name="365" href="#365">365</a> <em class="jxr_javadoccomment">     * @throws FormBuilderException if an error occurs</em>
+<a class="jxr_linenumber" name="366" href="#366">366</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="367" href="#367">367</a>     <strong class="jxr_keyword">private</strong> ComponentHandler createPushButton(ToggleButtonTag tag,
+<a class="jxr_linenumber" name="368" href="#368">368</a>             <strong class="jxr_keyword">boolean</strong> create, String name, String furtherAttrs)
+<a class="jxr_linenumber" name="369" href="#369">369</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="370" href="#370">370</a>     {
+<a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">if</strong> (!create)
+<a class="jxr_linenumber" name="372" href="#372">372</a>         {
+<a class="jxr_linenumber" name="373" href="#373">373</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="374" href="#374">374</a>             dumpTextIconData(buf, tag.getTextIconData());
+<a class="jxr_linenumber" name="375" href="#375">375</a>             appendAttr(buf, <span class="jxr_string">"CMD"</span>, tag.getCommand());
+<a class="jxr_linenumber" name="376" href="#376">376</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="377" href="#377">377</a>             <strong class="jxr_keyword">if</strong> (furtherAttrs != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="378" href="#378">378</a>             {
+<a class="jxr_linenumber" name="379" href="#379">379</a>                 buf.append(' ').append(furtherAttrs);
+<a class="jxr_linenumber" name="380" href="#380">380</a>             }
+<a class="jxr_linenumber" name="381" href="#381">381</a>             <strong class="jxr_keyword">return</strong> createHandler(name, buf, tag, Boolean.TYPE);
+<a class="jxr_linenumber" name="382" href="#382">382</a>         }
+<a class="jxr_linenumber" name="383" href="#383">383</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="384" href="#384">384</a>         {
+<a class="jxr_linenumber" name="385" href="#385">385</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="386" href="#386">386</a>         }
+<a class="jxr_linenumber" name="387" href="#387">387</a>     }
+<a class="jxr_linenumber" name="388" href="#388">388</a> 
+<a class="jxr_linenumber" name="389" href="#389">389</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTextField(TextFieldTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="390" href="#390">390</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="391" href="#391">391</a>     {
+<a class="jxr_linenumber" name="392" href="#392">392</a>         <strong class="jxr_keyword">return</strong> createTextComponent(<span class="jxr_string">"TEXTFIELD"</span>, tag, create);
+<a class="jxr_linenumber" name="393" href="#393">393</a>     }
+<a class="jxr_linenumber" name="394" href="#394">394</a> 
+<a class="jxr_linenumber" name="395" href="#395">395</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createPasswordField(PasswordFieldTag tag,
+<a class="jxr_linenumber" name="396" href="#396">396</a>             <strong class="jxr_keyword">boolean</strong> create) <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="397" href="#397">397</a>     {
+<a class="jxr_linenumber" name="398" href="#398">398</a>         <strong class="jxr_keyword">return</strong> createTextComponent(<span class="jxr_string">"PASSWORDFIELD"</span>, tag, create);
+<a class="jxr_linenumber" name="399" href="#399">399</a>     }
+<a class="jxr_linenumber" name="400" href="#400">400</a> 
+<a class="jxr_linenumber" name="401" href="#401">401</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="402" href="#402">402</a> <em class="jxr_javadoccomment">     * Helper method for creating a text field component which can either be a</em>
+<a class="jxr_linenumber" name="403" href="#403">403</a> <em class="jxr_javadoccomment">     * normal text field or a password field.</em>
+<a class="jxr_linenumber" name="404" href="#404">404</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="405" href="#405">405</a> <em class="jxr_javadoccomment">     * @param type the type name of the text field</em>
+<a class="jxr_linenumber" name="406" href="#406">406</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
+<a class="jxr_linenumber" name="407" href="#407">407</a> <em class="jxr_javadoccomment">     * @param create the create flag</em>
+<a class="jxr_linenumber" name="408" href="#408">408</a> <em class="jxr_javadoccomment">     * @return the component handler</em>
+<a class="jxr_linenumber" name="409" href="#409">409</a> <em class="jxr_javadoccomment">     * @throws FormBuilderException if an error occurs</em>
+<a class="jxr_linenumber" name="410" href="#410">410</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="411" href="#411">411</a>     <strong class="jxr_keyword">private</strong> ComponentHandler createTextComponent(String type, TextFieldTag tag,
+<a class="jxr_linenumber" name="412" href="#412">412</a>             <strong class="jxr_keyword">boolean</strong> create) <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="413" href="#413">413</a>     {
+<a class="jxr_linenumber" name="414" href="#414">414</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="415" href="#415">415</a>         {
+<a class="jxr_linenumber" name="416" href="#416">416</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="417" href="#417">417</a>         }
+<a class="jxr_linenumber" name="418" href="#418">418</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="419" href="#419">419</a>         {
+<a class="jxr_linenumber" name="420" href="#420">420</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="421" href="#421">421</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="422" href="#422">422</a>             <strong class="jxr_keyword">if</strong> (tag.getColumns() &gt; 0)
+<a class="jxr_linenumber" name="423" href="#423">423</a>             {
+<a class="jxr_linenumber" name="424" href="#424">424</a>                 appendAttr(buf, <span class="jxr_string">"COLUMNS"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getColumns()));
+<a class="jxr_linenumber" name="425" href="#425">425</a>             }
+<a class="jxr_linenumber" name="426" href="#426">426</a>             <strong class="jxr_keyword">if</strong> (tag.getMaxlength() &gt; 0)
+<a class="jxr_linenumber" name="427" href="#427">427</a>             {
+<a class="jxr_linenumber" name="428" href="#428">428</a>                 appendAttr(buf, <span class="jxr_string">"MAXLEN"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getMaxlength()));
+<a class="jxr_linenumber" name="429" href="#429">429</a>             }
+<a class="jxr_linenumber" name="430" href="#430">430</a>             <strong class="jxr_keyword">return</strong> createHandler(type, buf, tag, String.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="431" href="#431">431</a>         }
+<a class="jxr_linenumber" name="432" href="#432">432</a>     }
+<a class="jxr_linenumber" name="433" href="#433">433</a> 
+<a class="jxr_linenumber" name="434" href="#434">434</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTextArea(TextAreaTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="435" href="#435">435</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="436" href="#436">436</a>     {
+<a class="jxr_linenumber" name="437" href="#437">437</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="438" href="#438">438</a>         {
+<a class="jxr_linenumber" name="439" href="#439">439</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="440" href="#440">440</a>         }
+<a class="jxr_linenumber" name="441" href="#441">441</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="442" href="#442">442</a>         {
+<a class="jxr_linenumber" name="443" href="#443">443</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="444" href="#444">444</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="445" href="#445">445</a>             <strong class="jxr_keyword">if</strong> (tag.getColumns() &gt; 0)
+<a class="jxr_linenumber" name="446" href="#446">446</a>             {
+<a class="jxr_linenumber" name="447" href="#447">447</a>                 appendAttr(buf, <span class="jxr_string">"COLUMNS"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getColumns()));
+<a class="jxr_linenumber" name="448" href="#448">448</a>             }
+<a class="jxr_linenumber" name="449" href="#449">449</a>             <strong class="jxr_keyword">if</strong> (tag.getRows() &gt; 0)
+<a class="jxr_linenumber" name="450" href="#450">450</a>             {
+<a class="jxr_linenumber" name="451" href="#451">451</a>                 appendAttr(buf, <span class="jxr_string">"ROWS"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getRows()));
+<a class="jxr_linenumber" name="452" href="#452">452</a>             }
+<a class="jxr_linenumber" name="453" href="#453">453</a>             <strong class="jxr_keyword">if</strong> (tag.isWrap())
+<a class="jxr_linenumber" name="454" href="#454">454</a>             {
+<a class="jxr_linenumber" name="455" href="#455">455</a>                 appendAttr(buf, <span class="jxr_string">"WRAP"</span>, <span class="jxr_string">"YES"</span>);
+<a class="jxr_linenumber" name="456" href="#456">456</a>             }
+<a class="jxr_linenumber" name="457" href="#457">457</a>             <strong class="jxr_keyword">if</strong> (tag.getMaxlength() &gt; 0)
+<a class="jxr_linenumber" name="458" href="#458">458</a>             {
+<a class="jxr_linenumber" name="459" href="#459">459</a>                 appendAttr(buf, <span class="jxr_string">"MAXLEN"</span>, <strong class="jxr_keyword">new</strong> Integer(tag.getMaxlength()));
+<a class="jxr_linenumber" name="460" href="#460">460</a>             }
+<a class="jxr_linenumber" name="461" href="#461">461</a>             appendAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
+<a class="jxr_linenumber" name="462" href="#462">462</a>             appendAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
+<a class="jxr_linenumber" name="463" href="#463">463</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"TEXTAREA"</span>, buf, tag, String.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="464" href="#464">464</a>         }
+<a class="jxr_linenumber" name="465" href="#465">465</a>     }
+<a class="jxr_linenumber" name="466" href="#466">466</a> 
+<a class="jxr_linenumber" name="467" href="#467">467</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createCheckbox(CheckboxTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="468" href="#468">468</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="469" href="#469">469</a>     {
+<a class="jxr_linenumber" name="470" href="#470">470</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="471" href="#471">471</a>         {
+<a class="jxr_linenumber" name="472" href="#472">472</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="473" href="#473">473</a>         }
+<a class="jxr_linenumber" name="474" href="#474">474</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="475" href="#475">475</a>         {
+<a class="jxr_linenumber" name="476" href="#476">476</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="477" href="#477">477</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="478" href="#478">478</a>             dumpTextIconData(buf, tag.getTextIconData());
+<a class="jxr_linenumber" name="479" href="#479">479</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"CHECKBOX"</span>, buf, tag, Boolean.TYPE);
+<a class="jxr_linenumber" name="480" href="#480">480</a>         }
+<a class="jxr_linenumber" name="481" href="#481">481</a>     }
+<a class="jxr_linenumber" name="482" href="#482">482</a> 
+<a class="jxr_linenumber" name="483" href="#483">483</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createRadioButton(RadioButtonTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="484" href="#484">484</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="485" href="#485">485</a>     {
+<a class="jxr_linenumber" name="486" href="#486">486</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="487" href="#487">487</a>         {
+<a class="jxr_linenumber" name="488" href="#488">488</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="489" href="#489">489</a>         }
+<a class="jxr_linenumber" name="490" href="#490">490</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="491" href="#491">491</a>         {
+<a class="jxr_linenumber" name="492" href="#492">492</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="493" href="#493">493</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="494" href="#494">494</a>             dumpTextIconData(buf, tag.getTextIconData());
+<a class="jxr_linenumber" name="495" href="#495">495</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"RADIO"</span>, buf, tag, Boolean.TYPE);
+<a class="jxr_linenumber" name="496" href="#496">496</a>         }
+<a class="jxr_linenumber" name="497" href="#497">497</a>     }
+<a class="jxr_linenumber" name="498" href="#498">498</a> 
+<a class="jxr_linenumber" name="499" href="#499">499</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createComboBox(ComboBoxTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="500" href="#500">500</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="501" href="#501">501</a>     {
+<a class="jxr_linenumber" name="502" href="#502">502</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="503" href="#503">503</a>         {
+<a class="jxr_linenumber" name="504" href="#504">504</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="505" href="#505">505</a>         }
+<a class="jxr_linenumber" name="506" href="#506">506</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="507" href="#507">507</a>         {
+<a class="jxr_linenumber" name="508" href="#508">508</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="509" href="#509">509</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="510" href="#510">510</a>             appendAttr(buf, <span class="jxr_string">"EDIT"</span>, <strong class="jxr_keyword">new</strong> Boolean(tag.isEditable()));
+<a class="jxr_linenumber" name="511" href="#511">511</a>             StringBuilder model = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"{ "</span>);
+<a class="jxr_linenumber" name="512" href="#512">512</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; tag.getListModel().size(); i++)
+<a class="jxr_linenumber" name="513" href="#513">513</a>             {
+<a class="jxr_linenumber" name="514" href="#514">514</a>                 <strong class="jxr_keyword">if</strong> (i &gt; 0)
+<a class="jxr_linenumber" name="515" href="#515">515</a>                 {
+<a class="jxr_linenumber" name="516" href="#516">516</a>                     model.append(<span class="jxr_string">", "</span>);
+<a class="jxr_linenumber" name="517" href="#517">517</a>                 }
+<a class="jxr_linenumber" name="518" href="#518">518</a>                 model.append(tag.getListModel().getDisplayObject(i));
+<a class="jxr_linenumber" name="519" href="#519">519</a>             }
+<a class="jxr_linenumber" name="520" href="#520">520</a>             model.append(<span class="jxr_string">" }"</span>);
+<a class="jxr_linenumber" name="521" href="#521">521</a>             appendAttr(buf, <span class="jxr_string">"MODEL"</span>, model.toString());
+<a class="jxr_linenumber" name="522" href="#522">522</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"COMBO"</span>, buf, tag, tag.getListModel()
+<a class="jxr_linenumber" name="523" href="#523">523</a>                     .getType());
+<a class="jxr_linenumber" name="524" href="#524">524</a>         }
+<a class="jxr_linenumber" name="525" href="#525">525</a>     }
+<a class="jxr_linenumber" name="526" href="#526">526</a> 
+<a class="jxr_linenumber" name="527" href="#527">527</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createListBox(ListBoxTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="528" href="#528">528</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="529" href="#529">529</a>     {
+<a class="jxr_linenumber" name="530" href="#530">530</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="531" href="#531">531</a>         {
+<a class="jxr_linenumber" name="532" href="#532">532</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="533" href="#533">533</a>         }
+<a class="jxr_linenumber" name="534" href="#534">534</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="535" href="#535">535</a>         {
+<a class="jxr_linenumber" name="536" href="#536">536</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="537" href="#537">537</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="538" href="#538">538</a>             appendAttr(buf, <span class="jxr_string">"MULTI"</span>, <strong class="jxr_keyword">new</strong> Boolean(tag.isMulti()));
+<a class="jxr_linenumber" name="539" href="#539">539</a>             StringBuilder model = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"{ "</span>);
+<a class="jxr_linenumber" name="540" href="#540">540</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; tag.getListModel().size(); i++)
+<a class="jxr_linenumber" name="541" href="#541">541</a>             {
+<a class="jxr_linenumber" name="542" href="#542">542</a>                 <strong class="jxr_keyword">if</strong> (i &gt; 0)
+<a class="jxr_linenumber" name="543" href="#543">543</a>                 {
+<a class="jxr_linenumber" name="544" href="#544">544</a>                     model.append(<span class="jxr_string">", "</span>);
+<a class="jxr_linenumber" name="545" href="#545">545</a>                 }
+<a class="jxr_linenumber" name="546" href="#546">546</a>                 model.append(tag.getListModel().getDisplayObject(i));
+<a class="jxr_linenumber" name="547" href="#547">547</a>             }
+<a class="jxr_linenumber" name="548" href="#548">548</a>             model.append(<span class="jxr_string">" }"</span>);
+<a class="jxr_linenumber" name="549" href="#549">549</a>             appendAttr(buf, <span class="jxr_string">"MODEL"</span>, model.toString());
+<a class="jxr_linenumber" name="550" href="#550">550</a>             appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
+<a class="jxr_linenumber" name="551" href="#551">551</a>             appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
+<a class="jxr_linenumber" name="552" href="#552">552</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"LIST"</span>, buf, tag,
+<a class="jxr_linenumber" name="553" href="#553">553</a>                     (tag.isMulti()) ? Object[].<strong class="jxr_keyword">class</strong> : tag.getListModel()
+<a class="jxr_linenumber" name="554" href="#554">554</a>                             .getType());
+<a class="jxr_linenumber" name="555" href="#555">555</a>         }
+<a class="jxr_linenumber" name="556" href="#556">556</a>     }
+<a class="jxr_linenumber" name="557" href="#557">557</a> 
+<a class="jxr_linenumber" name="558" href="#558">558</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTabbedPane(TabbedPaneTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="559" href="#559">559</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="560" href="#560">560</a>     {
+<a class="jxr_linenumber" name="561" href="#561">561</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="562" href="#562">562</a>         {
+<a class="jxr_linenumber" name="563" href="#563">563</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="564" href="#564">564</a>         }
+<a class="jxr_linenumber" name="565" href="#565">565</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="566" href="#566">566</a>         {
+<a class="jxr_linenumber" name="567" href="#567">567</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="568" href="#568">568</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="569" href="#569">569</a>             appendAttr(buf, <span class="jxr_string">"PLACEMENT"</span>, tag.getPlacementValue().name());
+<a class="jxr_linenumber" name="570" href="#570">570</a>             buf.append(<span class="jxr_string">" TABS { "</span>);
+<a class="jxr_linenumber" name="571" href="#571">571</a>             <strong class="jxr_keyword">for</strong> (Iterator it = tag.getTabs().iterator(); it.hasNext();)
+<a class="jxr_linenumber" name="572" href="#572">572</a>             {
+<a class="jxr_linenumber" name="573" href="#573">573</a>                 TabbedPaneTag.TabData tabData = (TabbedPaneTag.TabData) it
+<a class="jxr_linenumber" name="574" href="#574">574</a>                         .next();
+<a class="jxr_linenumber" name="575" href="#575">575</a>                 buf.append(<span class="jxr_string">"TAB ["</span>);
+<a class="jxr_linenumber" name="576" href="#576">576</a>                 appendAttr(buf, <span class="jxr_string">"TITLE"</span>, tabData.getTitle());
+<a class="jxr_linenumber" name="577" href="#577">577</a>                 appendAttr(buf, <span class="jxr_string">"ICON"</span>, tabData.getIcon());
+<a class="jxr_linenumber" name="578" href="#578">578</a>                 appendAttr(buf, <span class="jxr_string">"TOOLTIP"</span>, tabData.getToolTip());
+<a class="jxr_linenumber" name="579" href="#579">579</a>                 <strong class="jxr_keyword">if</strong> (tabData.getMnemonic() != 0)
+<a class="jxr_linenumber" name="580" href="#580">580</a>                 {
+<a class="jxr_linenumber" name="581" href="#581">581</a>                     appendAttr(buf, <span class="jxr_string">"MNEMO"</span>, <strong class="jxr_keyword">new</strong> Character((<strong class="jxr_keyword">char</strong>) tabData
+<a class="jxr_linenumber" name="582" href="#582">582</a>                             .getMnemonic()));
+<a class="jxr_linenumber" name="583" href="#583">583</a>                 }
+<a class="jxr_linenumber" name="584" href="#584">584</a>                 appendAttr(buf, <span class="jxr_string">"COMP"</span>, tabData.getComponent());
+<a class="jxr_linenumber" name="585" href="#585">585</a>                 buf.append(<span class="jxr_string">" ] "</span>);
+<a class="jxr_linenumber" name="586" href="#586">586</a>             }
+<a class="jxr_linenumber" name="587" href="#587">587</a>             buf.append(<span class="jxr_string">"} "</span>);
+<a class="jxr_linenumber" name="588" href="#588">588</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"TABBEDPANE"</span>, buf, tag, Integer.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="589" href="#589">589</a>         }
+<a class="jxr_linenumber" name="590" href="#590">590</a>     }
+<a class="jxr_linenumber" name="591" href="#591">591</a> 
+<a class="jxr_linenumber" name="592" href="#592">592</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createStaticText(StaticTextTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="593" href="#593">593</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="594" href="#594">594</a>     {
+<a class="jxr_linenumber" name="595" href="#595">595</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="596" href="#596">596</a>         {
+<a class="jxr_linenumber" name="597" href="#597">597</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="598" href="#598">598</a>         }
+<a class="jxr_linenumber" name="599" href="#599">599</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="600" href="#600">600</a>         {
+<a class="jxr_linenumber" name="601" href="#601">601</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="602" href="#602">602</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="603" href="#603">603</a>             dumpTextIconData(buf, tag.getTextIconData());
+<a class="jxr_linenumber" name="604" href="#604">604</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"STATICTEXT"</span>, buf, tag, StaticTextData.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="605" href="#605">605</a>         }
+<a class="jxr_linenumber" name="606" href="#606">606</a>     }
+<a class="jxr_linenumber" name="607" href="#607">607</a> 
+<a class="jxr_linenumber" name="608" href="#608">608</a> 	<strong class="jxr_keyword">public</strong> ComponentHandler createProgressBar(ProgressBarTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="609" href="#609">609</a> 			<strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="610" href="#610">610</a> 	{
+<a class="jxr_linenumber" name="611" href="#611">611</a> 		<strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="612" href="#612">612</a> 		{
+<a class="jxr_linenumber" name="613" href="#613">613</a> 			<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="614" href="#614">614</a> 		}
+<a class="jxr_linenumber" name="615" href="#615">615</a> 		<strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="616" href="#616">616</a> 		{
+<a class="jxr_linenumber" name="617" href="#617">617</a> 			StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="618" href="#618">618</a> 			dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="619" href="#619">619</a> 			appendAttr(buf, <span class="jxr_string">"MIN"</span>, tag.getMin());
+<a class="jxr_linenumber" name="620" href="#620">620</a> 			appendAttr(buf, <span class="jxr_string">"MAX"</span>, tag.getMax());
+<a class="jxr_linenumber" name="621" href="#621">621</a> 			appendAttr(buf, <span class="jxr_string">"VALUE"</span>, tag.getValue());
+<a class="jxr_linenumber" name="622" href="#622">622</a> 			appendAttr(buf, <span class="jxr_string">"ALLOWTEXT"</span>, tag.isAllowText() ? Boolean.TRUE
+<a class="jxr_linenumber" name="623" href="#623">623</a> 					: Boolean.FALSE);
+<a class="jxr_linenumber" name="624" href="#624">624</a> 			<strong class="jxr_keyword">if</strong> (tag.getProgressTextData().isDefined())
+<a class="jxr_linenumber" name="625" href="#625">625</a> 			{
+<a class="jxr_linenumber" name="626" href="#626">626</a> 				appendAttr(buf, <span class="jxr_string">"TEXT"</span>, tag.getProgressTextData().getCaption());
+<a class="jxr_linenumber" name="627" href="#627">627</a> 			}
+<a class="jxr_linenumber" name="628" href="#628">628</a> 			<strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"PROGRESSBAR"</span>, buf, tag, Integer.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="629" href="#629">629</a> 		}
+<a class="jxr_linenumber" name="630" href="#630">630</a> 	}
+<a class="jxr_linenumber" name="631" href="#631">631</a> 
+<a class="jxr_linenumber" name="632" href="#632">632</a>     <strong class="jxr_keyword">public</strong> ComponentHandler&lt;Integer&gt; createSlider(SliderTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="633" href="#633">633</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="634" href="#634">634</a>     {
+<a class="jxr_linenumber" name="635" href="#635">635</a>         <strong class="jxr_keyword">if</strong> (create)
+<a class="jxr_linenumber" name="636" href="#636">636</a>         {
+<a class="jxr_linenumber" name="637" href="#637">637</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="638" href="#638">638</a>         }
+<a class="jxr_linenumber" name="639" href="#639">639</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="640" href="#640">640</a>         {
+<a class="jxr_linenumber" name="641" href="#641">641</a>             StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="642" href="#642">642</a>             dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="643" href="#643">643</a>             appendAttr(buf, <span class="jxr_string">"MIN"</span>, tag.getMin());
+<a class="jxr_linenumber" name="644" href="#644">644</a>             appendAttr(buf, <span class="jxr_string">"MAX"</span>, tag.getMax());
+<a class="jxr_linenumber" name="645" href="#645">645</a>             appendAttr(buf, <span class="jxr_string">"ORIENTATION"</span>, tag.getSliderOrientation().name());
+<a class="jxr_linenumber" name="646" href="#646">646</a>             appendAttr(buf, <span class="jxr_string">"MAJORTICKS"</span>, tag.getMajorTicks());
+<a class="jxr_linenumber" name="647" href="#647">647</a>             appendAttr(buf, <span class="jxr_string">"MINORTICKS"</span>, tag.getMinorTicks());
+<a class="jxr_linenumber" name="648" href="#648">648</a>             appendAttr(buf, <span class="jxr_string">"SHOWTICKS"</span>, tag.isShowTicks());
+<a class="jxr_linenumber" name="649" href="#649">649</a>             appendAttr(buf, <span class="jxr_string">"SHOWLABELS"</span>, tag.isShowLabels());
+<a class="jxr_linenumber" name="650" href="#650">650</a>             <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"SLIDER"</span>, buf, tag, Integer.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="651" href="#651">651</a>         }
+<a class="jxr_linenumber" name="652" href="#652">652</a>     }
+<a class="jxr_linenumber" name="653" href="#653">653</a> 
+<a class="jxr_linenumber" name="654" href="#654">654</a>     <strong class="jxr_keyword">public</strong> ComponentHandler createTable(TableTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="655" href="#655">655</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="656" href="#656">656</a>     {
+<a class="jxr_linenumber" name="657" href="#657">657</a>         <strong class="jxr_keyword">if</strong> (create)
 <a class="jxr_linenumber" name="658" href="#658">658</a>         {
-<a class="jxr_linenumber" name="659" href="#659">659</a>             buf.append(<span class="jxr_string">" MULTISELECT"</span>);
+<a class="jxr_linenumber" name="659" href="#659">659</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="660" href="#660">660</a>         }
-<a class="jxr_linenumber" name="661" href="#661">661</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
-<a class="jxr_linenumber" name="662" href="#662">662</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
-<a class="jxr_linenumber" name="663" href="#663">663</a> 
-<a class="jxr_linenumber" name="664" href="#664">664</a>         buf.append(<span class="jxr_string">" COLUMNS {"</span>);
-<a class="jxr_linenumber" name="665" href="#665">665</a>         <strong class="jxr_keyword">for</strong> (TableColumnTag col : tag.getColumns())
-<a class="jxr_linenumber" name="666" href="#666">666</a>         {
-<a class="jxr_linenumber" name="667" href="#667">667</a>             buf.append(<span class="jxr_string">" COLUMN ["</span>);
-<a class="jxr_linenumber" name="668" href="#668">668</a>             dumpInputComponent(buf, col);
-<a class="jxr_linenumber" name="669" href="#669">669</a>             <strong class="jxr_keyword">if</strong> (col.getHeaderText().isDefined())
-<a class="jxr_linenumber" name="670" href="#670">670</a>             {
-<a class="jxr_linenumber" name="671" href="#671">671</a>                 appendAttr(buf, <span class="jxr_string">"HEADER"</span>, col.getHeaderText().getCaption());
-<a class="jxr_linenumber" name="672" href="#672">672</a>             }
-<a class="jxr_linenumber" name="673" href="#673">673</a>             <strong class="jxr_keyword">if</strong> (col.getLogicDataClass() != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="674" href="#674">674</a>             {
-<a class="jxr_linenumber" name="675" href="#675">675</a>                 appendAttr(buf, <span class="jxr_string">"LOGICCLASS"</span>, col.getLogicDataClass().name());
-<a class="jxr_linenumber" name="676" href="#676">676</a>             }
-<a class="jxr_linenumber" name="677" href="#677">677</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (col.getDataClass() != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="678" href="#678">678</a>             {
-<a class="jxr_linenumber" name="679" href="#679">679</a>                 appendAttr(buf, <span class="jxr_string">"CLASS"</span>, col.getDataClass().getName());
-<a class="jxr_linenumber" name="680" href="#680">680</a>             }
-<a class="jxr_linenumber" name="681" href="#681">681</a>             appendAttr(buf, <span class="jxr_string">"WIDTH"</span>, col.getColumnWidth());
-<a class="jxr_linenumber" name="682" href="#682">682</a>             <strong class="jxr_keyword">if</strong> (col.getPercentWidth() != 0)
-<a class="jxr_linenumber" name="683" href="#683">683</a>             {
-<a class="jxr_linenumber" name="684" href="#684">684</a>                 appendAttr(buf, <span class="jxr_string">"PERCENTWIDTH"</span>, col.getPercentWidth());
-<a class="jxr_linenumber" name="685" href="#685">685</a>             }
-<a class="jxr_linenumber" name="686" href="#686">686</a>             appendAttr(buf, <span class="jxr_string">"EDITABLE"</span>, tag.isColumnEditable(col));
-<a class="jxr_linenumber" name="687" href="#687">687</a>             <strong class="jxr_keyword">if</strong> (col.getRendererComponent() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="661" href="#661">661</a>         StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="662" href="#662">662</a>         dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="663" href="#663">663</a>         appendAttr(buf, <span class="jxr_string">"SELECTIONFG"</span>, tag.getSelectionForegroundColor());
+<a class="jxr_linenumber" name="664" href="#664">664</a>         appendAttr(buf, <span class="jxr_string">"SELECTIONBG"</span>, tag.getSelectionBackgroundColor());
+<a class="jxr_linenumber" name="665" href="#665">665</a>         appendAttr(buf, <span class="jxr_string">"EDITABLE"</span>, tag.isTableEditable());
+<a class="jxr_linenumber" name="666" href="#666">666</a>         appendAttr(buf, <span class="jxr_string">"VALIDATIONERRTITLE"</span>, tag.getValidationErrorTitle());
+<a class="jxr_linenumber" name="667" href="#667">667</a>         <strong class="jxr_keyword">if</strong> (tag.isMultiSelection())
+<a class="jxr_linenumber" name="668" href="#668">668</a>         {
+<a class="jxr_linenumber" name="669" href="#669">669</a>             buf.append(<span class="jxr_string">" MULTISELECT"</span>);
+<a class="jxr_linenumber" name="670" href="#670">670</a>         }
+<a class="jxr_linenumber" name="671" href="#671">671</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
+<a class="jxr_linenumber" name="672" href="#672">672</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
+<a class="jxr_linenumber" name="673" href="#673">673</a> 
+<a class="jxr_linenumber" name="674" href="#674">674</a>         buf.append(<span class="jxr_string">" COLUMNS {"</span>);
+<a class="jxr_linenumber" name="675" href="#675">675</a>         <strong class="jxr_keyword">for</strong> (TableColumnTag col : tag.getColumns())
+<a class="jxr_linenumber" name="676" href="#676">676</a>         {
+<a class="jxr_linenumber" name="677" href="#677">677</a>             buf.append(<span class="jxr_string">" COLUMN ["</span>);
+<a class="jxr_linenumber" name="678" href="#678">678</a>             dumpInputComponent(buf, col);
+<a class="jxr_linenumber" name="679" href="#679">679</a>             <strong class="jxr_keyword">if</strong> (col.getHeaderText().isDefined())
+<a class="jxr_linenumber" name="680" href="#680">680</a>             {
+<a class="jxr_linenumber" name="681" href="#681">681</a>                 appendAttr(buf, <span class="jxr_string">"HEADER"</span>, col.getHeaderText().getCaption());
+<a class="jxr_linenumber" name="682" href="#682">682</a>             }
+<a class="jxr_linenumber" name="683" href="#683">683</a>             <strong class="jxr_keyword">if</strong> (col.getLogicDataClass() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="684" href="#684">684</a>             {
+<a class="jxr_linenumber" name="685" href="#685">685</a>                 appendAttr(buf, <span class="jxr_string">"LOGICCLASS"</span>, col.getLogicDataClass().name());
+<a class="jxr_linenumber" name="686" href="#686">686</a>             }
+<a class="jxr_linenumber" name="687" href="#687">687</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (col.getDataClass() != <strong class="jxr_keyword">null</strong>)
 <a class="jxr_linenumber" name="688" href="#688">688</a>             {
-<a class="jxr_linenumber" name="689" href="#689">689</a>                 buf.append(<span class="jxr_string">" RENDERER { "</span>).append(col.getRendererComponent());
-<a class="jxr_linenumber" name="690" href="#690">690</a>                 buf.append(<span class="jxr_string">" }"</span>);
-<a class="jxr_linenumber" name="691" href="#691">691</a>             }
-<a class="jxr_linenumber" name="692" href="#692">692</a>             <strong class="jxr_keyword">if</strong> (col.getEditorComponent() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="689" href="#689">689</a>                 appendAttr(buf, <span class="jxr_string">"CLASS"</span>, col.getDataClass().getName());
+<a class="jxr_linenumber" name="690" href="#690">690</a>             }
+<a class="jxr_linenumber" name="691" href="#691">691</a>             appendAttr(buf, <span class="jxr_string">"WIDTH"</span>, col.getColumnWidth());
+<a class="jxr_linenumber" name="692" href="#692">692</a>             <strong class="jxr_keyword">if</strong> (col.getPercentWidth() != 0)
 <a class="jxr_linenumber" name="693" href="#693">693</a>             {
-<a class="jxr_linenumber" name="694" href="#694">694</a>                 buf.append(<span class="jxr_string">" EDITOR { "</span>).append(col.getEditorComponent());
-<a class="jxr_linenumber" name="695" href="#695">695</a>                 buf.append(<span class="jxr_string">" }"</span>);
-<a class="jxr_linenumber" name="696" href="#696">696</a>             }
-<a class="jxr_linenumber" name="697" href="#697">697</a>             buf.append(<span class="jxr_string">" ]"</span>);
-<a class="jxr_linenumber" name="698" href="#698">698</a>         }
-<a class="jxr_linenumber" name="699" href="#699">699</a>         buf.append(<span class="jxr_string">" }"</span>);
-<a class="jxr_linenumber" name="700" href="#700">700</a>         <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"TABLE"</span>, buf, tag, Integer.TYPE);
-<a class="jxr_linenumber" name="701" href="#701">701</a>     }
-<a class="jxr_linenumber" name="702" href="#702">702</a> 
-<a class="jxr_linenumber" name="703" href="#703">703</a>     <strong class="jxr_keyword">public</strong> ComponentHandler&lt;Object&gt; createTree(TreeTag tag, <strong class="jxr_keyword">boolean</strong> create)
-<a class="jxr_linenumber" name="704" href="#704">704</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="705" href="#705">705</a>     {
-<a class="jxr_linenumber" name="706" href="#706">706</a>         <strong class="jxr_keyword">if</strong> (create)
-<a class="jxr_linenumber" name="707" href="#707">707</a>         {
-<a class="jxr_linenumber" name="708" href="#708">708</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="709" href="#709">709</a>         }
-<a class="jxr_linenumber" name="710" href="#710">710</a>         StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="711" href="#711">711</a>         dumpInputComponent(buf, tag);
-<a class="jxr_linenumber" name="712" href="#712">712</a>         appendAttr(buf, <span class="jxr_string">"MODEL"</span>, tag.getModel());
-<a class="jxr_linenumber" name="713" href="#713">713</a>         appendAttr(buf, <span class="jxr_string">"ICONHANDLER"</span>, tag.getIconHandler());
-<a class="jxr_linenumber" name="714" href="#714">714</a>         appendAttr(buf, <span class="jxr_string">"EDITABLE"</span>, tag.isEditable());
-<a class="jxr_linenumber" name="715" href="#715">715</a>         appendAttr(buf, <span class="jxr_string">"ROOTVISIBLE"</span>, tag.isRootVisible());
-<a class="jxr_linenumber" name="716" href="#716">716</a>         <strong class="jxr_keyword">if</strong> (tag.isMultiSelection())
+<a class="jxr_linenumber" name="694" href="#694">694</a>                 appendAttr(buf, <span class="jxr_string">"PERCENTWIDTH"</span>, col.getPercentWidth());
+<a class="jxr_linenumber" name="695" href="#695">695</a>             }
+<a class="jxr_linenumber" name="696" href="#696">696</a>             appendAttr(buf, <span class="jxr_string">"EDITABLE"</span>, tag.isColumnEditable(col));
+<a class="jxr_linenumber" name="697" href="#697">697</a>             <strong class="jxr_keyword">if</strong> (col.getRendererComponent() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="698" href="#698">698</a>             {
+<a class="jxr_linenumber" name="699" href="#699">699</a>                 buf.append(<span class="jxr_string">" RENDERER { "</span>).append(col.getRendererComponent());
+<a class="jxr_linenumber" name="700" href="#700">700</a>                 buf.append(<span class="jxr_string">" }"</span>);
+<a class="jxr_linenumber" name="701" href="#701">701</a>             }
+<a class="jxr_linenumber" name="702" href="#702">702</a>             <strong class="jxr_keyword">if</strong> (col.getEditorComponent() != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="703" href="#703">703</a>             {
+<a class="jxr_linenumber" name="704" href="#704">704</a>                 buf.append(<span class="jxr_string">" EDITOR { "</span>).append(col.getEditorComponent());
+<a class="jxr_linenumber" name="705" href="#705">705</a>                 buf.append(<span class="jxr_string">" }"</span>);
+<a class="jxr_linenumber" name="706" href="#706">706</a>             }
+<a class="jxr_linenumber" name="707" href="#707">707</a>             buf.append(<span class="jxr_string">" ]"</span>);
+<a class="jxr_linenumber" name="708" href="#708">708</a>         }
+<a class="jxr_linenumber" name="709" href="#709">709</a>         buf.append(<span class="jxr_string">" }"</span>);
+<a class="jxr_linenumber" name="710" href="#710">710</a>         <strong class="jxr_keyword">return</strong> createHandler(<span class="jxr_string">"TABLE"</span>, buf, tag, Integer.TYPE);
+<a class="jxr_linenumber" name="711" href="#711">711</a>     }
+<a class="jxr_linenumber" name="712" href="#712">712</a> 
+<a class="jxr_linenumber" name="713" href="#713">713</a>     <strong class="jxr_keyword">public</strong> ComponentHandler&lt;Object&gt; createTree(TreeTag tag, <strong class="jxr_keyword">boolean</strong> create)
+<a class="jxr_linenumber" name="714" href="#714">714</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="715" href="#715">715</a>     {
+<a class="jxr_linenumber" name="716" href="#716">716</a>         <strong class="jxr_keyword">if</strong> (create)
 <a class="jxr_linenumber" name="717" href="#717">717</a>         {
-<a class="jxr_linenumber" name="718" href="#718">718</a>             buf.append(<span class="jxr_string">" MULTISELECT"</span>);
+<a class="jxr_linenumber" name="718" href="#718">718</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="719" href="#719">719</a>         }
-<a class="jxr_linenumber" name="720" href="#720">720</a>         Map&lt;String, Object&gt; icons = <strong class="jxr_keyword">new</strong> TreeMap&lt;String, Object&gt;(tag.getIcons());
-<a class="jxr_linenumber" name="721" href="#721">721</a>         <strong class="jxr_keyword">if</strong> (!icons.isEmpty())
-<a class="jxr_linenumber" name="722" href="#722">722</a>         {
-<a class="jxr_linenumber" name="723" href="#723">723</a>             buf.append(<span class="jxr_string">" ICONS {"</span>);
-<a class="jxr_linenumber" name="724" href="#724">724</a>             <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, Object&gt; entry : icons.entrySet())
-<a class="jxr_linenumber" name="725" href="#725">725</a>             {
-<a class="jxr_linenumber" name="726" href="#726">726</a>                 appendAttr(buf, <span class="jxr_string">"NAME"</span>, entry.getKey());
-<a class="jxr_linenumber" name="727" href="#727">727</a>                 buf.append(<span class="jxr_string">" [ "</span>).append(entry.getValue()).append(<span class="jxr_string">"]"</span>);
-<a class="jxr_linenumber" name="728" href="#728">728</a>             }
-<a class="jxr_linenumber" name="729" href="#729">729</a>             buf.append(<span class="jxr_string">" }"</span>);
-<a class="jxr_linenumber" name="730" href="#730">730</a>         }
-<a class="jxr_linenumber" name="731" href="#731">731</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
-<a class="jxr_linenumber" name="732" href="#732">732</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
-<a class="jxr_linenumber" name="733" href="#733">733</a>         <a href="../../../../../../net/sf/jguiraffe/gui/builder/components/TreeHandlerImpl.html">TreeHandlerImpl</a> handler = <strong class="jxr_keyword">new</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/components/TreeHandlerImpl.html">TreeHandlerImpl</a>();
-<a class="jxr_linenumber" name="734" href="#734">734</a>         initHandler(handler, <span class="jxr_string">"TREE"</span>, buf, TreeNodePath.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="735" href="#735">735</a>         handler.setModel(tag.getTreeModel());
-<a class="jxr_linenumber" name="736" href="#736">736</a>         <strong class="jxr_keyword">return</strong> handler;
-<a class="jxr_linenumber" name="737" href="#737">737</a>     }
-<a class="jxr_linenumber" name="738" href="#738">738</a> 
-<a class="jxr_linenumber" name="739" href="#739">739</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="740" href="#740">740</a> <em class="jxr_javadoccomment">     * Creates a string representation for the properties of the passed in</em>
-<a class="jxr_linenumber" name="741" href="#741">741</a> <em class="jxr_javadoccomment">     * component tag.</em>
-<a class="jxr_linenumber" name="742" href="#742">742</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="743" href="#743">743</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
-<a class="jxr_linenumber" name="744" href="#744">744</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
-<a class="jxr_linenumber" name="745" href="#745">745</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="746" href="#746">746</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> dumpComponent(StringBuilder buf, ComponentBaseTag tag)
-<a class="jxr_linenumber" name="747" href="#747">747</a>     {
-<a class="jxr_linenumber" name="748" href="#748">748</a>         appendAttr(buf, <span class="jxr_string">"BCOL"</span>, tag.getBackgroundColor());
-<a class="jxr_linenumber" name="749" href="#749">749</a>         appendAttr(buf, <span class="jxr_string">"FCOL"</span>, tag.getForegroundColor());
-<a class="jxr_linenumber" name="750" href="#750">750</a>         appendAttr(buf, <span class="jxr_string">"FONT"</span>, tag.getFont());
-<a class="jxr_linenumber" name="751" href="#751">751</a>         appendAttr(buf, <span class="jxr_string">"FTREF"</span>, tag.getFontRef());
-<a class="jxr_linenumber" name="752" href="#752">752</a>         appendAttr(buf, <span class="jxr_string">"TOOLTIP"</span>, tag.getToolTipData().getCaption());
-<a class="jxr_linenumber" name="753" href="#753">753</a>     }
-<a class="jxr_linenumber" name="754" href="#754">754</a> 
-<a class="jxr_linenumber" name="755" href="#755">755</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="756" href="#756">756</a> <em class="jxr_javadoccomment">     * Creates a string representation for the properties of the passed in input</em>
-<a class="jxr_linenumber" name="757" href="#757">757</a> <em class="jxr_javadoccomment">     * component tag.</em>
-<a class="jxr_linenumber" name="758" href="#758">758</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="759" href="#759">759</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
-<a class="jxr_linenumber" name="760" href="#760">760</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
-<a class="jxr_linenumber" name="761" href="#761">761</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="762" href="#762">762</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> dumpInputComponent(StringBuilder buf, InputComponentTag tag)
-<a class="jxr_linenumber" name="763" href="#763">763</a>     {
-<a class="jxr_linenumber" name="764" href="#764">764</a>         dumpComponent(buf, tag);
-<a class="jxr_linenumber" name="765" href="#765">765</a>         appendAttr(buf, <span class="jxr_string">"NAME"</span>, tag.getName());
-<a class="jxr_linenumber" name="766" href="#766">766</a>         appendAttr(buf, <span class="jxr_string">"PROP"</span>, tag.getPropertyName());
-<a class="jxr_linenumber" name="767" href="#767">767</a>         appendAttr(buf, <span class="jxr_string">"DISP"</span>, tag.getDisplayName());
-<a class="jxr_linenumber" name="768" href="#768">768</a>         appendClassAttr(buf, <span class="jxr_string">"FLDVAL"</span>, tag.getFieldValidator());
-<a class="jxr_linenumber" name="769" href="#769">769</a>         appendClassAttr(buf, <span class="jxr_string">"FRMVAL"</span>, tag.getFormValidator());
-<a class="jxr_linenumber" name="770" href="#770">770</a>         appendClassAttr(buf, <span class="jxr_string">"READTR"</span>, tag.getReadTransformer());
-<a class="jxr_linenumber" name="771" href="#771">771</a>         appendClassAttr(buf, <span class="jxr_string">"WRITETR"</span>, tag.getWriteTransformer());
-<a class="jxr_linenumber" name="772" href="#772">772</a>     }
-<a class="jxr_linenumber" name="773" href="#773">773</a> 
-<a class="jxr_linenumber" name="774" href="#774">774</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="775" href="#775">775</a> <em class="jxr_javadoccomment">     * Creates a string representation for the properties of the passed in text</em>
-<a class="jxr_linenumber" name="776" href="#776">776</a> <em class="jxr_javadoccomment">     * icon data object.</em>
-<a class="jxr_linenumber" name="777" href="#777">777</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="778" href="#778">778</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
-<a class="jxr_linenumber" name="779" href="#779">779</a> <em class="jxr_javadoccomment">     * @param data the data object</em>
-<a class="jxr_linenumber" name="780" href="#780">780</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="781" href="#781">781</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> dumpTextIconData(StringBuilder buf, TextIconData data)
-<a class="jxr_linenumber" name="782" href="#782">782</a>     {
-<a class="jxr_linenumber" name="783" href="#783">783</a>         appendAttr(buf, <span class="jxr_string">"TEXT"</span>, data.getCaption());
-<a class="jxr_linenumber" name="784" href="#784">784</a>         appendAttr(buf, <span class="jxr_string">"ICON"</span>, data.getIcon());
-<a class="jxr_linenumber" name="785" href="#785">785</a>         appendAttr(buf, <span class="jxr_string">"ALIGN"</span>, data.getAlignmentString());
-<a class="jxr_linenumber" name="786" href="#786">786</a>         <strong class="jxr_keyword">if</strong> (data.getMnemonic() != 0)
-<a class="jxr_linenumber" name="787" href="#787">787</a>         {
-<a class="jxr_linenumber" name="788" href="#788">788</a>             appendAttr(buf, <span class="jxr_string">"MNEMO"</span>, <strong class="jxr_keyword">new</strong> Character((<strong class="jxr_keyword">char</strong>) data.getMnemonic()));
-<a class="jxr_linenumber" name="789" href="#789">789</a>         }
-<a class="jxr_linenumber" name="790" href="#790">790</a>     }
-<a class="jxr_linenumber" name="791" href="#791">791</a> 
-<a class="jxr_linenumber" name="792" href="#792">792</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="793" href="#793">793</a> <em class="jxr_javadoccomment">     * Creates a string with the component name and its properties.</em>
-<a class="jxr_linenumber" name="794" href="#794">794</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="795" href="#795">795</a> <em class="jxr_javadoccomment">     * @param compName the name of the component</em>
-<a class="jxr_linenumber" name="796" href="#796">796</a> <em class="jxr_javadoccomment">     * @param buf the buffer with the properties</em>
-<a class="jxr_linenumber" name="797" href="#797">797</a> <em class="jxr_javadoccomment">     * @return the string representation</em>
-<a class="jxr_linenumber" name="798" href="#798">798</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="799" href="#799">799</a>     <strong class="jxr_keyword">protected</strong> Object toPropString(String compName, StringBuilder buf)
-<a class="jxr_linenumber" name="800" href="#800">800</a>     {
-<a class="jxr_linenumber" name="801" href="#801">801</a>         StringBuilder buf2 = <strong class="jxr_keyword">new</strong> StringBuilder(compName);
-<a class="jxr_linenumber" name="802" href="#802">802</a>         <strong class="jxr_keyword">if</strong> (buf.length() &gt; 0)
-<a class="jxr_linenumber" name="803" href="#803">803</a>         {
-<a class="jxr_linenumber" name="804" href="#804">804</a>             buf2.append(<span class="jxr_string">" ["</span>).append(buf.toString()).append(<span class="jxr_string">" ]"</span>);
-<a class="jxr_linenumber" name="805" href="#805">805</a>         }
-<a class="jxr_linenumber" name="806" href="#806">806</a>         <strong class="jxr_keyword">return</strong> buf2;
-<a class="jxr_linenumber" name="807" href="#807">807</a>     }
-<a class="jxr_linenumber" name="808" href="#808">808</a> 
-<a class="jxr_linenumber" name="809" href="#809">809</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="810" href="#810">810</a> <em class="jxr_javadoccomment">     * Creates a dummy component handler object.</em>
-<a class="jxr_linenumber" name="811" href="#811">811</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="812" href="#812">812</a> <em class="jxr_javadoccomment">     * @param compName the name of the component</em>
-<a class="jxr_linenumber" name="813" href="#813">813</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
-<a class="jxr_linenumber" name="814" href="#814">814</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
-<a class="jxr_linenumber" name="815" href="#815">815</a> <em class="jxr_javadoccomment">     * @param defType the default component type</em>
-<a class="jxr_linenumber" name="816" href="#816">816</a> <em class="jxr_javadoccomment">     * @return the component handler</em>
-<a class="jxr_linenumber" name="817" href="#817">817</a> <em class="jxr_javadoccomment">     * @throws FormBuilderException if an error occurs</em>
-<a class="jxr_linenumber" name="818" href="#818">818</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="819" href="#819">819</a>     <strong class="jxr_keyword">protected</strong> ComponentHandler createHandler(String compName, StringBuilder buf,
-<a class="jxr_linenumber" name="820" href="#820">820</a>             InputComponentTag tag, Class defType) <strong class="jxr_keyword">throws</strong> FormBuilderException
-<a class="jxr_linenumber" name="821" href="#821">821</a>     {
-<a class="jxr_linenumber" name="822" href="#822">822</a>         ComponentHandlerImpl ch = <strong class="jxr_keyword">new</strong> ComponentHandlerImpl();
-<a class="jxr_linenumber" name="823" href="#823">823</a>         initHandler(ch, compName, buf, defType);
-<a class="jxr_linenumber" name="824" href="#824">824</a>         <strong class="jxr_keyword">return</strong> ch;
-<a class="jxr_linenumber" name="825" href="#825">825</a>     }
-<a class="jxr_linenumber" name="826" href="#826">826</a> 
-<a class="jxr_linenumber" name="827" href="#827">827</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="828" href="#828">828</a> <em class="jxr_javadoccomment">     * Initializes the standard properties of the given handler object.</em>
-<a class="jxr_linenumber" name="829" href="#829">829</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="830" href="#830">830</a> <em class="jxr_javadoccomment">     * @param ch the handler</em>
-<a class="jxr_linenumber" name="831" href="#831">831</a> <em class="jxr_javadoccomment">     * @param compName the name of the component</em>
-<a class="jxr_linenumber" name="832" href="#832">832</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
-<a class="jxr_linenumber" name="833" href="#833">833</a> <em class="jxr_javadoccomment">     * @param defType the default component type</em>
-<a class="jxr_linenumber" name="834" href="#834">834</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="835" href="#835">835</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initHandler(ComponentHandlerImpl ch, String compName,
-<a class="jxr_linenumber" name="836" href="#836">836</a>             StringBuilder buf, Class&lt;?&gt; defType)
-<a class="jxr_linenumber" name="837" href="#837">837</a>     {
-<a class="jxr_linenumber" name="838" href="#838">838</a>         ch.setType(defType);
-<a class="jxr_linenumber" name="839" href="#839">839</a>         ch.setComponent(toPropString(compName, buf));
-<a class="jxr_linenumber" name="840" href="#840">840</a>     }
-<a class="jxr_linenumber" name="841" href="#841">841</a> 
-<a class="jxr_linenumber" name="842" href="#842">842</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="843" href="#843">843</a> <em class="jxr_javadoccomment">     * Helper method for generating string representations.</em>
-<a class="jxr_linenumber" name="844" href="#844">844</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="845" href="#845">845</a> <em class="jxr_javadoccomment">     * @param buf the buffer</em>
-<a class="jxr_linenumber" name="846" href="#846">846</a> <em class="jxr_javadoccomment">     * @param name the attribute's name</em>
-<a class="jxr_linenumber" name="847" href="#847">847</a> <em class="jxr_javadoccomment">     * @param val the attribute's value</em>
-<a class="jxr_linenumber" name="848" href="#848">848</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="849" href="#849">849</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> appendAttr(StringBuilder buf, String name, Object val)
-<a class="jxr_linenumber" name="850" href="#850">850</a>     {
-<a class="jxr_linenumber" name="851" href="#851">851</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="852" href="#852">852</a>         {
-<a class="jxr_linenumber" name="853" href="#853">853</a>             buf.append(' ').append(name).append(<span class="jxr_string">" = "</span>).append(val);
-<a class="jxr_linenumber" name="854" href="#854">854</a>         }
-<a class="jxr_linenumber" name="855" href="#855">855</a>     }
-<a class="jxr_linenumber" name="856" href="#856">856</a> 
-<a class="jxr_linenumber" name="857" href="#857">857</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="858" href="#858">858</a> <em class="jxr_javadoccomment">     * Helper method for generating a string representation for a class</em>
-<a class="jxr_linenumber" name="859" href="#859">859</a> <em class="jxr_javadoccomment">     * attribute.</em>
-<a class="jxr_linenumber" name="860" href="#860">860</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="861" href="#861">861</a> <em class="jxr_javadoccomment">     * @param buf the buffer</em>
-<a class="jxr_linenumber" name="862" href="#862">862</a> <em class="jxr_javadoccomment">     * @param name the attribute's name</em>
-<a class="jxr_linenumber" name="863" href="#863">863</a> <em class="jxr_javadoccomment">     * @param val the attribute's value</em>
-<a class="jxr_linenumber" name="864" href="#864">864</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="865" href="#865">865</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> appendClassAttr(StringBuilder buf, String name,
-<a class="jxr_linenumber" name="866" href="#866">866</a>             Object val)
-<a class="jxr_linenumber" name="867" href="#867">867</a>     {
-<a class="jxr_linenumber" name="868" href="#868">868</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="869" href="#869">869</a>         {
-<a class="jxr_linenumber" name="870" href="#870">870</a>             appendAttr(buf, name, val.getClass().getName());
-<a class="jxr_linenumber" name="871" href="#871">871</a>         }
-<a class="jxr_linenumber" name="872" href="#872">872</a>     }
-<a class="jxr_linenumber" name="873" href="#873">873</a> 
-<a class="jxr_linenumber" name="874" href="#874">874</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="875" href="#875">875</a> <em class="jxr_javadoccomment">     * Helper method for generating a string representation for a number with</em>
-<a class="jxr_linenumber" name="876" href="#876">876</a> <em class="jxr_javadoccomment">     * unit attribute. If the number is 0, no text will be appended.</em>
-<a class="jxr_linenumber" name="877" href="#877">877</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="878" href="#878">878</a> <em class="jxr_javadoccomment">     * @param buf the buffer</em>
-<a class="jxr_linenumber" name="879" href="#879">879</a> <em class="jxr_javadoccomment">     * @param name the attribute's name</em>
-<a class="jxr_linenumber" name="880" href="#880">880</a> <em class="jxr_javadoccomment">     * @param val the attribute's value</em>
-<a class="jxr_linenumber" name="881" href="#881">881</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="882" href="#882">882</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> appendNoUnitAttr(StringBuilder buf, String name,
-<a class="jxr_linenumber" name="883" href="#883">883</a>             NumberWithUnit val)
-<a class="jxr_linenumber" name="884" href="#884">884</a>     {
-<a class="jxr_linenumber" name="885" href="#885">885</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong> &amp;&amp; !NumberWithUnit.ZERO.equals(val))
-<a class="jxr_linenumber" name="886" href="#886">886</a>         {
-<a class="jxr_linenumber" name="887" href="#887">887</a>             appendAttr(buf, name, val);
-<a class="jxr_linenumber" name="888" href="#888">888</a>         }
-<a class="jxr_linenumber" name="889" href="#889">889</a>     }
-<a class="jxr_linenumber" name="890" href="#890">890</a> }
+<a class="jxr_linenumber" name="720" href="#720">720</a>         StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="721" href="#721">721</a>         dumpInputComponent(buf, tag);
+<a class="jxr_linenumber" name="722" href="#722">722</a>         appendAttr(buf, <span class="jxr_string">"MODEL"</span>, tag.getModel());
+<a class="jxr_linenumber" name="723" href="#723">723</a>         appendAttr(buf, <span class="jxr_string">"ICONHANDLER"</span>, tag.getIconHandler());
+<a class="jxr_linenumber" name="724" href="#724">724</a>         appendAttr(buf, <span class="jxr_string">"EDITABLE"</span>, tag.isEditable());
+<a class="jxr_linenumber" name="725" href="#725">725</a>         appendAttr(buf, <span class="jxr_string">"ROOTVISIBLE"</span>, tag.isRootVisible());
+<a class="jxr_linenumber" name="726" href="#726">726</a>         <strong class="jxr_keyword">if</strong> (tag.isMultiSelection())
+<a class="jxr_linenumber" name="727" href="#727">727</a>         {
+<a class="jxr_linenumber" name="728" href="#728">728</a>             buf.append(<span class="jxr_string">" MULTISELECT"</span>);
+<a class="jxr_linenumber" name="729" href="#729">729</a>         }
+<a class="jxr_linenumber" name="730" href="#730">730</a>         Map&lt;String, Object&gt; icons = <strong class="jxr_keyword">new</strong> TreeMap&lt;String, Object&gt;(tag.getIcons());
+<a class="jxr_linenumber" name="731" href="#731">731</a>         <strong class="jxr_keyword">if</strong> (!icons.isEmpty())
+<a class="jxr_linenumber" name="732" href="#732">732</a>         {
+<a class="jxr_linenumber" name="733" href="#733">733</a>             buf.append(<span class="jxr_string">" ICONS {"</span>);
+<a class="jxr_linenumber" name="734" href="#734">734</a>             <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, Object&gt; entry : icons.entrySet())
+<a class="jxr_linenumber" name="735" href="#735">735</a>             {
+<a class="jxr_linenumber" name="736" href="#736">736</a>                 appendAttr(buf, <span class="jxr_string">"NAME"</span>, entry.getKey());
+<a class="jxr_linenumber" name="737" href="#737">737</a>                 buf.append(<span class="jxr_string">" [ "</span>).append(entry.getValue()).append(<span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="738" href="#738">738</a>             }
+<a class="jxr_linenumber" name="739" href="#739">739</a>             buf.append(<span class="jxr_string">" }"</span>);
+<a class="jxr_linenumber" name="740" href="#740">740</a>         }
+<a class="jxr_linenumber" name="741" href="#741">741</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLWIDTH"</span>, tag.getPreferredScrollWidth());
+<a class="jxr_linenumber" name="742" href="#742">742</a>         appendNoUnitAttr(buf, <span class="jxr_string">"SCROLLHEIGHT"</span>, tag.getPreferredScrollHeight());
+<a class="jxr_linenumber" name="743" href="#743">743</a>         <a href="../../../../../../net/sf/jguiraffe/gui/builder/components/TreeHandlerImpl.html">TreeHandlerImpl</a> handler = <strong class="jxr_keyword">new</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/components/TreeHandlerImpl.html">TreeHandlerImpl</a>();
+<a class="jxr_linenumber" name="744" href="#744">744</a>         initHandler(handler, <span class="jxr_string">"TREE"</span>, buf, TreeNodePath.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="745" href="#745">745</a>         handler.setModel(tag.getTreeModel());
+<a class="jxr_linenumber" name="746" href="#746">746</a>         <strong class="jxr_keyword">return</strong> handler;
+<a class="jxr_linenumber" name="747" href="#747">747</a>     }
+<a class="jxr_linenumber" name="748" href="#748">748</a> 
+<a class="jxr_linenumber" name="749" href="#749">749</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="750" href="#750">750</a> <em class="jxr_javadoccomment">     * Creates a string representation for the properties of the passed in</em>
+<a class="jxr_linenumber" name="751" href="#751">751</a> <em class="jxr_javadoccomment">     * component tag.</em>
+<a class="jxr_linenumber" name="752" href="#752">752</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="753" href="#753">753</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
+<a class="jxr_linenumber" name="754" href="#754">754</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
+<a class="jxr_linenumber" name="755" href="#755">755</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="756" href="#756">756</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> dumpComponent(StringBuilder buf, ComponentBaseTag tag)
+<a class="jxr_linenumber" name="757" href="#757">757</a>     {
+<a class="jxr_linenumber" name="758" href="#758">758</a>         appendAttr(buf, <span class="jxr_string">"BCOL"</span>, tag.getBackgroundColor());
+<a class="jxr_linenumber" name="759" href="#759">759</a>         appendAttr(buf, <span class="jxr_string">"FCOL"</span>, tag.getForegroundColor());
+<a class="jxr_linenumber" name="760" href="#760">760</a>         appendAttr(buf, <span class="jxr_string">"FONT"</span>, tag.getFont());
+<a class="jxr_linenumber" name="761" href="#761">761</a>         appendAttr(buf, <span class="jxr_string">"FTREF"</span>, tag.getFontRef());
+<a class="jxr_linenumber" name="762" href="#762">762</a>         appendAttr(buf, <span class="jxr_string">"TOOLTIP"</span>, tag.getToolTipData().getCaption());
+<a class="jxr_linenumber" name="763" href="#763">763</a>     }
+<a class="jxr_linenumber" name="764" href="#764">764</a> 
+<a class="jxr_linenumber" name="765" href="#765">765</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="766" href="#766">766</a> <em class="jxr_javadoccomment">     * Creates a string representation for the properties of the passed in input</em>
+<a class="jxr_linenumber" name="767" href="#767">767</a> <em class="jxr_javadoccomment">     * component tag.</em>
+<a class="jxr_linenumber" name="768" href="#768">768</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="769" href="#769">769</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
+<a class="jxr_linenumber" name="770" href="#770">770</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
+<a class="jxr_linenumber" name="771" href="#771">771</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="772" href="#772">772</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> dumpInputComponent(StringBuilder buf, InputComponentTag tag)
+<a class="jxr_linenumber" name="773" href="#773">773</a>     {
+<a class="jxr_linenumber" name="774" href="#774">774</a>         dumpComponent(buf, tag);
+<a class="jxr_linenumber" name="775" href="#775">775</a>         appendAttr(buf, <span class="jxr_string">"NAME"</span>, tag.getName());
+<a class="jxr_linenumber" name="776" href="#776">776</a>         appendAttr(buf, <span class="jxr_string">"PROP"</span>, tag.getPropertyName());
+<a class="jxr_linenumber" name="777" href="#777">777</a>         appendAttr(buf, <span class="jxr_string">"DISP"</span>, tag.getDisplayName());
+<a class="jxr_linenumber" name="778" href="#778">778</a>         appendClassAttr(buf, <span class="jxr_string">"FLDVAL"</span>, tag.getFieldValidator());
+<a class="jxr_linenumber" name="779" href="#779">779</a>         appendClassAttr(buf, <span class="jxr_string">"FRMVAL"</span>, tag.getFormValidator());
+<a class="jxr_linenumber" name="780" href="#780">780</a>         appendClassAttr(buf, <span class="jxr_string">"READTR"</span>, tag.getReadTransformer());
+<a class="jxr_linenumber" name="781" href="#781">781</a>         appendClassAttr(buf, <span class="jxr_string">"WRITETR"</span>, tag.getWriteTransformer());
+<a class="jxr_linenumber" name="782" href="#782">782</a>     }
+<a class="jxr_linenumber" name="783" href="#783">783</a> 
+<a class="jxr_linenumber" name="784" href="#784">784</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="785" href="#785">785</a> <em class="jxr_javadoccomment">     * Creates a string representation for the properties of the passed in text</em>
+<a class="jxr_linenumber" name="786" href="#786">786</a> <em class="jxr_javadoccomment">     * icon data object.</em>
+<a class="jxr_linenumber" name="787" href="#787">787</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="788" href="#788">788</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
+<a class="jxr_linenumber" name="789" href="#789">789</a> <em class="jxr_javadoccomment">     * @param data the data object</em>
+<a class="jxr_linenumber" name="790" href="#790">790</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="791" href="#791">791</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> dumpTextIconData(StringBuilder buf, TextIconData data)
+<a class="jxr_linenumber" name="792" href="#792">792</a>     {
+<a class="jxr_linenumber" name="793" href="#793">793</a>         appendAttr(buf, <span class="jxr_string">"TEXT"</span>, data.getCaption());
+<a class="jxr_linenumber" name="794" href="#794">794</a>         appendAttr(buf, <span class="jxr_string">"ICON"</span>, data.getIcon());
+<a class="jxr_linenumber" name="795" href="#795">795</a>         appendAttr(buf, <span class="jxr_string">"ALIGN"</span>, data.getAlignmentString());
+<a class="jxr_linenumber" name="796" href="#796">796</a>         <strong class="jxr_keyword">if</strong> (data.getMnemonic() != 0)
+<a class="jxr_linenumber" name="797" href="#797">797</a>         {
+<a class="jxr_linenumber" name="798" href="#798">798</a>             appendAttr(buf, <span class="jxr_string">"MNEMO"</span>, <strong class="jxr_keyword">new</strong> Character((<strong class="jxr_keyword">char</strong>) data.getMnemonic()));
+<a class="jxr_linenumber" name="799" href="#799">799</a>         }
+<a class="jxr_linenumber" name="800" href="#800">800</a>     }
+<a class="jxr_linenumber" name="801" href="#801">801</a> 
+<a class="jxr_linenumber" name="802" href="#802">802</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="803" href="#803">803</a> <em class="jxr_javadoccomment">     * Creates a string with the component name and its properties.</em>
+<a class="jxr_linenumber" name="804" href="#804">804</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="805" href="#805">805</a> <em class="jxr_javadoccomment">     * @param compName the name of the component</em>
+<a class="jxr_linenumber" name="806" href="#806">806</a> <em class="jxr_javadoccomment">     * @param buf the buffer with the properties</em>
+<a class="jxr_linenumber" name="807" href="#807">807</a> <em class="jxr_javadoccomment">     * @return the string representation</em>
+<a class="jxr_linenumber" name="808" href="#808">808</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="809" href="#809">809</a>     <strong class="jxr_keyword">protected</strong> Object toPropString(String compName, StringBuilder buf)
+<a class="jxr_linenumber" name="810" href="#810">810</a>     {
+<a class="jxr_linenumber" name="811" href="#811">811</a>         StringBuilder buf2 = <strong class="jxr_keyword">new</strong> StringBuilder(compName);
+<a class="jxr_linenumber" name="812" href="#812">812</a>         <strong class="jxr_keyword">if</strong> (buf.length() &gt; 0)
+<a class="jxr_linenumber" name="813" href="#813">813</a>         {
+<a class="jxr_linenumber" name="814" href="#814">814</a>             buf2.append(<span class="jxr_string">" ["</span>).append(buf.toString()).append(<span class="jxr_string">" ]"</span>);
+<a class="jxr_linenumber" name="815" href="#815">815</a>         }
+<a class="jxr_linenumber" name="816" href="#816">816</a>         <strong class="jxr_keyword">return</strong> buf2;
+<a class="jxr_linenumber" name="817" href="#817">817</a>     }
+<a class="jxr_linenumber" name="818" href="#818">818</a> 
+<a class="jxr_linenumber" name="819" href="#819">819</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="820" href="#820">820</a> <em class="jxr_javadoccomment">     * Creates a dummy component handler object.</em>
+<a class="jxr_linenumber" name="821" href="#821">821</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="822" href="#822">822</a> <em class="jxr_javadoccomment">     * @param compName the name of the component</em>
+<a class="jxr_linenumber" name="823" href="#823">823</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
+<a class="jxr_linenumber" name="824" href="#824">824</a> <em class="jxr_javadoccomment">     * @param tag the tag</em>
+<a class="jxr_linenumber" name="825" href="#825">825</a> <em class="jxr_javadoccomment">     * @param defType the default component type</em>
+<a class="jxr_linenumber" name="826" href="#826">826</a> <em class="jxr_javadoccomment">     * @return the component handler</em>
+<a class="jxr_linenumber" name="827" href="#827">827</a> <em class="jxr_javadoccomment">     * @throws FormBuilderException if an error occurs</em>
+<a class="jxr_linenumber" name="828" href="#828">828</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="829" href="#829">829</a>     <strong class="jxr_keyword">protected</strong> ComponentHandler createHandler(String compName, StringBuilder buf,
+<a class="jxr_linenumber" name="830" href="#830">830</a>             InputComponentTag tag, Class defType) <strong class="jxr_keyword">throws</strong> FormBuilderException
+<a class="jxr_linenumber" name="831" href="#831">831</a>     {
+<a class="jxr_linenumber" name="832" href="#832">832</a>         ComponentHandlerImpl ch = <strong class="jxr_keyword">new</strong> ComponentHandlerImpl();
+<a class="jxr_linenumber" name="833" href="#833">833</a>         initHandler(ch, compName, buf, defType);
+<a class="jxr_linenumber" name="834" href="#834">834</a>         <strong class="jxr_keyword">return</strong> ch;
+<a class="jxr_linenumber" name="835" href="#835">835</a>     }
+<a class="jxr_linenumber" name="836" href="#836">836</a> 
+<a class="jxr_linenumber" name="837" href="#837">837</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="838" href="#838">838</a> <em class="jxr_javadoccomment">     * Initializes the standard properties of the given handler object.</em>
+<a class="jxr_linenumber" name="839" href="#839">839</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="840" href="#840">840</a> <em class="jxr_javadoccomment">     * @param ch the handler</em>
+<a class="jxr_linenumber" name="841" href="#841">841</a> <em class="jxr_javadoccomment">     * @param compName the name of the component</em>
+<a class="jxr_linenumber" name="842" href="#842">842</a> <em class="jxr_javadoccomment">     * @param buf the target buffer</em>
+<a class="jxr_linenumber" name="843" href="#843">843</a> <em class="jxr_javadoccomment">     * @param defType the default component type</em>
+<a class="jxr_linenumber" name="844" href="#844">844</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="845" href="#845">845</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initHandler(ComponentHandlerImpl ch, String compName,
+<a class="jxr_linenumber" name="846" href="#846">846</a>             StringBuilder buf, Class&lt;?&gt; defType)
+<a class="jxr_linenumber" name="847" href="#847">847</a>     {
+<a class="jxr_linenumber" name="848" href="#848">848</a>         ch.setType(defType);
+<a class="jxr_linenumber" name="849" href="#849">849</a>         ch.setComponent(toPropString(compName, buf));
+<a class="jxr_linenumber" name="850" href="#850">850</a>     }
+<a class="jxr_linenumber" name="851" href="#851">851</a> 
+<a class="jxr_linenumber" name="852" href="#852">852</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="853" href="#853">853</a> <em class="jxr_javadoccomment">     * Helper method for generating string representations.</em>
+<a class="jxr_linenumber" name="854" href="#854">854</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="855" href="#855">855</a> <em class="jxr_javadoccomment">     * @param buf the buffer</em>
+<a class="jxr_linenumber" name="856" href="#856">856</a> <em class="jxr_javadoccomment">     * @param name the attribute's name</em>
+<a class="jxr_linenumber" name="857" href="#857">857</a> <em class="jxr_javadoccomment">     * @param val the attribute's value</em>
+<a class="jxr_linenumber" name="858" href="#858">858</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="859" href="#859">859</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> appendAttr(StringBuilder buf, String name, Object val)
+<a class="jxr_linenumber" name="860" href="#860">860</a>     {
+<a class="jxr_linenumber" name="861" href="#861">861</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="862" href="#862">862</a>         {
+<a class="jxr_linenumber" name="863" href="#863">863</a>             buf.append(' ').append(name).append(<span class="jxr_string">" = "</span>).append(val);
+<a class="jxr_linenumber" name="864" href="#864">864</a>         }
+<a class="jxr_linenumber" name="865" href="#865">865</a>     }
+<a class="jxr_linenumber" name="866" href="#866">866</a> 
+<a class="jxr_linenumber" name="867" href="#867">867</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="868" href="#868">868</a> <em class="jxr_javadoccomment">     * Helper method for generating a string representation for a class</em>
+<a class="jxr_linenumber" name="869" href="#869">869</a> <em class="jxr_javadoccomment">     * attribute.</em>
+<a class="jxr_linenumber" name="870" href="#870">870</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="871" href="#871">871</a> <em class="jxr_javadoccomment">     * @param buf the buffer</em>
+<a class="jxr_linenumber" name="872" href="#872">872</a> <em class="jxr_javadoccomment">     * @param name the attribute's name</em>
+<a class="jxr_linenumber" name="873" href="#873">873</a> <em class="jxr_javadoccomment">     * @param val the attribute's value</em>
+<a class="jxr_linenumber" name="874" href="#874">874</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="875" href="#875">875</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> appendClassAttr(StringBuilder buf, String name,
+<a class="jxr_linenumber" name="876" href="#876">876</a>             Object val)
+<a class="jxr_linenumber" name="877" href="#877">877</a>     {
+<a class="jxr_linenumber" name="878" href="#878">878</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="879" href="#879">879</a>         {
+<a class="jxr_linenumber" name="880" href="#880">880</a>             appendAttr(buf, name, val.getClass().getName());
+<a class="jxr_linenumber" name="881" href="#881">881</a>         }
+<a class="jxr_linenumber" name="882" href="#882">882</a>     }
+<a class="jxr_linenumber" name="883" href="#883">883</a> 
+<a class="jxr_linenumber" name="884" href="#884">884</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="885" href="#885">885</a> <em class="jxr_javadoccomment">     * Helper method for generating a string representation for a number with</em>
+<a class="jxr_linenumber" name="886" href="#886">886</a> <em class="jxr_javadoccomment">     * unit attribute. If the number is 0, no text will be appended.</em>
+<a class="jxr_linenumber" name="887" href="#887">887</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="888" href="#888">888</a> <em class="jxr_javadoccomment">     * @param buf the buffer</em>
+<a class="jxr_linenumber" name="889" href="#889">889</a> <em class="jxr_javadoccomment">     * @param name the attribute's name</em>
+<a class="jxr_linenumber" name="890" href="#890">890</a> <em class="jxr_javadoccomment">     * @param val the attribute's value</em>
+<a class="jxr_linenumber" name="891" href="#891">891</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="892" href="#892">892</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> appendNoUnitAttr(StringBuilder buf, String name,
+<a class="jxr_linenumber" name="893" href="#893">893</a>             NumberWithUnit val)
+<a class="jxr_linenumber" name="894" href="#894">894</a>     {
+<a class="jxr_linenumber" name="895" href="#895">895</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong> &amp;&amp; !NumberWithUnit.ZERO.equals(val))
+<a class="jxr_linenumber" name="896" href="#896">896</a>         {
+<a class="jxr_linenumber" name="897" href="#897">897</a>             appendAttr(buf, name, val);
+<a class="jxr_linenumber" name="898" href="#898">898</a>         }
+<a class="jxr_linenumber" name="899" href="#899">899</a>     }
+<a class="jxr_linenumber" name="900" href="#900">900</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
