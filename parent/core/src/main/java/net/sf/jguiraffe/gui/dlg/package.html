@@ -1,0 +1,44 @@
+<!--
+
+    Copyright 2006-2018 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+
+<body>
+<p>
+This package contains some common abstractions for working with standard
+dialogs.
+</p>
+<p>
+    <em>JGUIraffe</em> allows an application to make use of some standard
+    dialogs that are typically supported by UI platforms. The pattern used when
+    dealing with these dialogs is as follows:
+</p>
+<ul>
+    <li>There is a service interface specific to a standard dialog type.</li>
+    <li>The service interface defines methods for displaying the associated
+    dialog, possibly in different flavors.</li>
+    <li>The interface methods expect a parameters object that allows a
+    customization of the dialog.</li>
+    <li>The parameters object also contains a callback to be triggered when the
+    dialog is closed per OK. It can then process the result produced by the
+    dialog.</li>
+</ul>
+</body>
+</html>
