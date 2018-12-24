@@ -64,4 +64,12 @@
   <di:bean name="jguiraffe.windowManager"
     beanClassName="net.sf.jguiraffe.gui.platform.swing.builder.window.SwingWindowManager"/>
 
+  <!--
+    The factory for file chooser dialogs.
+    From this factory instances of the file chooser dialog service can be
+    obtained. The service allows displaying various dialogs related to
+    selecting files.
+  -->
+  <di:bean name="jguiraffe.fileChooserServiceFactory"
+    beanClassName="net.sf.jguiraffe.gui.platform.swing.dlg.filechooser.SwingFileChooserDialogServiceFactory"/>
 </j:jelly>
