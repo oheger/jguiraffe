@@ -117,6 +117,12 @@
     taskBean="longOperationTask">
   </a:action>
 
+  <!-- Extras select and open file action -->
+  <a:action name="extrasSelectAndOpenAction" textres="act_extrselectopen_text"
+    tooltipres="act_extrselectopen_tip" mnemonicres="act_extrselectopen_mnemo"
+    taskBean="selectAndOpenTask">
+  </a:action>
+
   <!-- The main menu -->
   <a:menubar name="mainMenu">
     <a:menu textres="menu_file_text" mnemonicres="menu_file_mnemo">
@@ -141,6 +147,7 @@
       <a:separator/>
       <a:menuitem actionName="extrasSettingsAction"/>
       <a:menuitem actionName="extrasLongOpAction"/>
+      <a:menuitem actionName="extrasSelectAndOpenAction"/>
     </a:menu>
   </a:menubar>
 
@@ -308,6 +315,14 @@
 
   <a:eventListener component="comboFS" eventType="CHANGE" beanName="comboListener"/>
 
+  <!-- The file chooser service -->
+  <di:bean name="fileChooserService" resultVar="result">
+    <di:methodInvocation method="createService" result="result">
+      <di:param refName="jguiraffe.applicationContext"/>
+      <di:invocationTarget refName="jguiraffe.fileChooserServiceFactory"/>
+    </di:methodInvocation>
+  </di:bean>
+
   <!-- Action tasks and commands -->
 
   <!-- A dummy action task. This task is associated with actions for which no
@@ -390,5 +405,14 @@
     beanClass="net.sf.jguiraffe.gui.app.CommandActionTask">
     <di:setProperty property="commandBeanName" value="longOperationCommand"/>
     <di:setProperty property="beforeEnabler" value="action:extrasLongOpAction"/>
+  </di:bean>
+
+  <!-- Extras select and open file task -->
+  <di:bean name="selectAndOpenTask"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.SelectAndOpenFileTask">
+    <di:constructor>
+      <di:param refName="fileChooserService"/>
+      <di:param refName="windowController"/>
+    </di:constructor>
   </di:bean>
 </j:jelly>

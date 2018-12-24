@@ -95,6 +95,12 @@
     nothing useful), and another window is displayed showing the progress of the
     task.
   </p>
+  <p>
+    How dialogs for selecting files are displayed is demonstrated by the
+    <em>Extras / Select and open file</em> action. The action displays a
+    standard file chooser dialog. When the user selects a file, it is opened in
+    the application registered for this file type.
+  </p>
   </subsection>
 
   <subsection name="Quick start">
