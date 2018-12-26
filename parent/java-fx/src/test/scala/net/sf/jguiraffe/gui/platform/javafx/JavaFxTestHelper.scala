@@ -15,15 +15,19 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx
 
-import java.util.concurrent.{SynchronousQueue, CountDownLatch, TimeUnit}
-
-import org.junit.Assert._
+import java.util.concurrent.{CountDownLatch, SynchronousQueue, TimeUnit}
 
 import javafx.application.Platform
 import javafx.beans.property.ReadOnlyProperty
 import javafx.embed.swing.JFXPanel
-import javax.swing.SwingUtilities
+import javafx.stage.Stage
 import javafx.util.Callback
+import javax.swing.SwingUtilities
+import net.sf.jguiraffe.gui.builder.window.{Window, WindowWrapper}
+import org.easymock.EasyMock
+import org.junit.Assert._
+
+import scala.language.implicitConversions
 
 /**
  * An object providing some utility methods for unit tests for Java FX
@@ -32,6 +36,12 @@ import javafx.util.Callback
 object JavaFxTestHelper {
   /** Constant for the default timeout. */
   private final val Timeout = 5000
+
+  /**
+    * A trait combining a JGUIraffe window with a window wrapper. This is used
+    * to create mock JavaFX windows.
+    */
+  trait WrappingWindow extends Window with WindowWrapper
 
   /**
    * Helper method for waiting for a latch using a timeout. If the latch is
@@ -50,10 +60,8 @@ object JavaFxTestHelper {
    * @return the Runnable which executes this function
    */
   implicit def toRunnable(f: () => Unit): Runnable = {
-    new Runnable() {
-      def run() {
-        f()
-      }
+    () => {
+      f()
     }
   }
 
@@ -66,11 +74,9 @@ object JavaFxTestHelper {
    */
   def runInFxThread(r: Runnable) {
     val latch = new CountDownLatch(1)
-    Platform.runLater(new Runnable {
-      def run() {
-        r.run()
-        latch.countDown()
-      }
+    Platform.runLater(() => {
+      r.run()
+      latch.countDown()
     })
     await(latch)
   }
@@ -85,11 +91,9 @@ object JavaFxTestHelper {
    */
   def invokeInFxThread[T](f: Unit => T): T = {
     val syncQueue = new SynchronousQueue[T]
-    Platform runLater new Runnable {
-      override def run(): Unit = {
-        syncQueue put f()
-      }
-    }
+    Platform runLater (() => {
+      syncQueue put f()
+    })
     val result = syncQueue.poll(Timeout, TimeUnit.MILLISECONDS)
     assertNotNull("No value retrieved", result)
     result
@@ -135,8 +139,22 @@ object JavaFxTestHelper {
    * @return a ''Callback'' object executing the passed in function
    */
   def functionToCallback[P, R](f: P => R): Callback[P, R] = {
-    new Callback[P, R] {
-      override def call(param: P): R = f(param)
-    }
+    param: P => f(param)
+  }
+
+  /**
+    * Creates a mock for a JavaFX ''Window'' object that wraps a specific
+    * ''Stage''. This is useful for tests that somehow have to access the
+    * application's main window.
+    *
+    * @param mainWnd optional ''Stage'' to be wrapped
+    * @return the mock for the JavaFX ''Window''
+    */
+  def createJavaFxWindowMock(mainWnd: Stage = EasyMock.createMock(classOf[Stage])):
+  WrappingWindow = {
+    val fxMainWnd = EasyMock.createMock(classOf[WrappingWindow])
+    EasyMock.expect(fxMainWnd.getWrappedWindow).andReturn(mainWnd).anyTimes()
+    EasyMock.replay(fxMainWnd)
+    fxMainWnd
   }
 }

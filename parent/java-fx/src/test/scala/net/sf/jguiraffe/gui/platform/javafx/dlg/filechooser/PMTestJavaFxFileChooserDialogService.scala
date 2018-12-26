@@ -21,9 +21,9 @@ import javafx.collections.FXCollections
 import javafx.stage.{DirectoryChooser, FileChooser, Stage}
 import net.sf.jguiraffe.gui.app.{ApplicationContext, TextResource}
 import net.sf.jguiraffe.gui.builder.window.{Window, WindowWrapper}
-import net.sf.jguiraffe.gui.dlg.filechooser.{DirectoryChooserOptions, FileChooserOptions,
-  FileExtensionFilter, MultiFileChooserOptions}
+import net.sf.jguiraffe.gui.dlg.filechooser.{DirectoryChooserOptions, FileChooserOptions, FileExtensionFilter, MultiFileChooserOptions}
 import net.sf.jguiraffe.gui.dlg.{DialogCanceledCallback, DialogResultCallback}
+import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.runner.RunWith
@@ -129,10 +129,9 @@ class PMTestJavaFxFileChooserDialogService extends JUnitSuite with EasyMockSugar
         val resId = EasyMock.getCurrentArguments()(0)
         resId + ResolvedKey
       }).anyTimes()
-    val fxMainWnd = mock[WrappingWindow]
-    EasyMock.expect(fxMainWnd.getWrappedWindow).andReturn(mainWnd).anyTimes()
+    val fxMainWnd = JavaFxTestHelper.createJavaFxWindowMock(mainWnd)
     EasyMock.expect(appCtx.getMainWindow).andReturn(fxMainWnd)
-    EasyMock.replay(appCtx, fxMainWnd)
+    EasyMock.replay(appCtx)
     appCtx
   }
 
