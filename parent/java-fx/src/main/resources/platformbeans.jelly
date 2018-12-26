@@ -71,4 +71,10 @@
     </di:constructor>
   </di:bean>
 
+  <!--
+    The factory for file chooser dialogs.
+  -->
+  <di:bean name="jguiraffe.fileChooserServiceFactory"
+           beanClassName="net.sf.jguiraffe.gui.platform.javafx.dlg.filechooser.JavaFxFileChooserDialogServiceFactory"/>
+
 </j:jelly>
