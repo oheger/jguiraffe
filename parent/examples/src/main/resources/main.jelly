@@ -315,14 +315,6 @@
 
   <a:eventListener component="comboFS" eventType="CHANGE" beanName="comboListener"/>
 
-  <!-- The file chooser service -->
-  <di:bean name="fileChooserService" resultVar="result">
-    <di:methodInvocation method="createService" result="result">
-      <di:param refName="jguiraffe.applicationContext"/>
-      <di:invocationTarget refName="jguiraffe.fileChooserServiceFactory"/>
-    </di:methodInvocation>
-  </di:bean>
-
   <!-- Action tasks and commands -->
 
   <!-- A dummy action task. This task is associated with actions for which no
@@ -411,7 +403,7 @@
   <di:bean name="selectAndOpenTask"
     beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.SelectAndOpenFileTask">
     <di:constructor>
-      <di:param refName="fileChooserService"/>
+      <di:param refName="jguiraffe.fileChooserService"/>
       <di:param refName="windowController"/>
     </di:constructor>
   </di:bean>

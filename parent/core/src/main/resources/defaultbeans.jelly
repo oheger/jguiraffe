@@ -304,4 +304,16 @@
     </di:methodInvocation>
   </di:bean>
 
+  <!--
+    The service to display file chooser dialogs.
+    This service can be used to allow the user to select files to be opened or
+    saved.
+  -->
+  <di:bean name="jguiraffe.fileChooserService" resultVar="result">
+    <di:methodInvocation method="createService" result="result">
+      <di:param refName="jguiraffe.applicationContext"/>
+      <di:invocationTarget refName="jguiraffe.fileChooserServiceFactory"/>
+    </di:methodInvocation>
+  </di:bean>
+
 </j:jelly>
