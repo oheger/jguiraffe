@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2006-2018 The JGUIraffe Team.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<document>
+
+ <properties>
+  <title>Standard dialogs</title>
+ </properties>
+
+<body>
+  <section name="Standard dialogs">
+  <p>
+    Applications often need to display dialogs for specific tasks such as
+    opening a file. UI libraries typically provide standard dialogs for these
+    purposes. <em>JGUIraffe</em> offers an abstraction layer through which
+    standard dialogs can be displayed and the data entered in them can be
+    processed.
+  </p>
+
+  <subsection name="Usage pattern">
+  <p>
+    Concrete standard dialogs are made available via service interfaces located
+    below the <code>net.sf.jguiraffe.gui.dlg</code> package. These interfaces
+    usually define one or more <code>showXXX()</code> methods through which
+    different variants of the underlying dialog can be displayed. The methods
+    expect an object with dialog-specific options; this can be used to
+    customize the dialog to a certain degree. There is a base class for all
+    options classes in form of the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/AbstractDialogOptions.html">
+    AbstractDialogOptions</a></code> class. It defines a number of
+    properties that are common to all standard dialogs. A concrete dialog
+    service defines its own option class or sometimes even multiple ones.
+  </p>
+  <p>
+    When the user closes a standard dialog via the OK button a result is
+    produced that needs to be passed back to the application. A dialog to open
+    a file for example returns the <code>java.io.File</code> object that the
+    user has selected. The propagation of the dialog result is done via a
+    callback object that is defined in the options for the dialog. There is a
+    generic result callback interface named
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/DialogResultCallback.html">
+    DialogResultCallback</a></code>. The base class for all option classes,
+    <code>AbstractDialogOptions</code>, expects such a callback object as a
+    constructor argument; so this information must be provided when an instance
+    is created. Optionally, an arbitrary context data object can be specified
+    together with the callback. When the callback is invoked the data object is
+    passed as well. Here an application can provide context information
+    relevant for the processing of the dialog result.
+  </p>
+  <p>
+    If the user cancels the dialog, per default no action is performed. (The
+    result callback is not invoked because no result object is available.) It
+    is, however, possible to specify a <em>canceled callback</em> (an object
+    implementing the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/DialogCanceledCallback.html">
+    DialogCanceledCallback</a></code> interface). This is optional; if such a
+    callback is present, it is invoked rather than the result callback when the
+    dialog is canceled. (Again a context data object can be specified to be
+    passed to the callback.)
+  </p>
+  <p>
+    Instances of dialog services can be obtained via the dependency injection
+    framework; they are declared in the standard beans definition file shipped
+    with <em>JGUIraffe</em> and thus can be referenced from the application's
+    bean context or from builder scripts. It is for instance possible to inject
+    a service reference into a task or command object that is triggered by a
+    UI element.
+  </p>
+  <p>
+    In the following sub sections the usage of concrete dialog services is
+    described. The examples provided with these discussions will further
+    clarify the explanations made so far.
+  </p>
+  </subsection>
+
+  <subsection name="FileChooserDialogService">
+  <p>
+    Allowing the user to select a file to be opened or saved is a frequent use
+    case. UI platforms typically support this use case by providing their own
+    dialog classes. Swing for instance has the <code>JFileChooser</code> class
+    that contains a full implementation of a file selection dialog; in JavaFX
+    there are the <code>FileChooser</code> and <code>DirectoryChooser</code>
+    classes that delegate to standard dialogs of the operating system. The
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/filechooser/FileChooserDialogService.html">
+    FileChooserDialogService</a></code> service interface serves as an
+    abstraction over these classes. It offers methods to support the following
+    use cases:
+    <ul>
+      <li>Selecting a directory</li>
+      <li>Selecting a single file to be opened</li>
+      <li>Selecting multiple files to be opened</li>
+      <li>Selecting a file to be saved</li>
+    </ul>
+  </p>
+  <p>
+    All service methods expect as single argument an options object that allows
+    a customization of the resulting dialog. As the different types of dialogs
+    supported by the service differ in the options that can be adjusted, there
+    are multiple concrete option classes. All of them allow the configuration
+    of standard dialog properties (the mandatory result callback, the optional
+    canceled callback, and the optional dialog title). In addition, they define
+    some properties specific to the dialog type.
+  </p>
+  <p>
+    The dialog to choose a directory offers the fewest customization options.
+    It is configured using an object of the
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/filechooser/DirectoryChooserOptions.html">
+    DirectoryChooserOptions</a></code> class. It allows setting the initial
+    directory that is to be displayed when the dialog is shown. The user can
+    then confirm this directory or navigate to a different one.
+  </p>
+  <p>
+    The dialogs for selecting files support some more configuration options.
+    They are defined by the abstract base class
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/filechooser/AbstractFileChooserOptions.html">
+    AbstractFileChooserOptions</a></code>; from this class the two concrete
+    option classes
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/filechooser/FileChooserOptions.html">
+    FileChooserOptions</a></code> and
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/filechooser/MultiFileChooserOptions.html">
+    MultiFileChooserOptions</a></code> are derived. (These classes only differ
+    in the result type: the former expects a single <code>java.io.File</code>
+    as result and is used for the dialogs to open a file and to save a file;
+    the latter is used by the dialog to open multiple files and thus expects a
+    list of files as result.) The configuration options defined by these
+    classes include the following properties:
+    <ul>
+      <li>the initial directory to be displayed when the dialog is opened</li>
+      <li>the initial file to be selected</li>
+      <li>an arbitrary number of filters for file extensions; each filter
+      consists of a description and a list of file extensions, e.g.
+      <code>Images (*.jpg; *.gif; *.png)</code>; by selecting one of these
+      filters, the user can restrict the files that are displayed in the
+      dialog.</li>
+    </ul>
+  </p>
+  <p>
+    The example application defines an action that displays a dialog to open a
+    file. The file is then opened with the application associated with its file
+    extension. The code can be found in the <code>SelectAndOpenFileTask</code>
+    class in the demo application. Here we present some fragments from this
+    class.
+  </p>
+  <p>
+    The open dialog should contain some filters for frequently used file types.
+    For this purpose, the class defines a couple of constants of the type
+    <code><a href="../apidocs/net/sf/jguiraffe/gui/dlg/filechooser/FileExtensionFilter.html">
+    FileExtensionFilter</a></code>. Each filter corresponds to a specific file
+    type and can consist of multiple file extensions:
+  </p>
+  <source><![CDATA[
+    /** Filter to display all files. */
+    private static final FileExtensionFilter FILTER_ALL =
+            new FileExtensionFilter(
+                    TextResource.fromResourceID("fc_filter_all"),
+                    FileExtensionFilter.EXT_ALL_FILES);
+
+    /** Filter to display image files. */
+    private static final FileExtensionFilter FILTER_IMAGES =
+            new FileExtensionFilter(
+                    TextResource.fromResourceID("fc_filter_images"), "jpg",
+                    "jpeg", "gif", "bmp", "png");
+
+    /** Filter to display audio files. */
+    private static final FileExtensionFilter FILTER_AUDIO =
+            new FileExtensionFilter(
+                    TextResource.fromResourceID("fc_filter_audio"), "mp3",
+                    "ogg", "wav", "au");
+
+    /** Filter to display text files. */
+    private static final FileExtensionFilter FILTER_TEXT =
+            new FileExtensionFilter(
+                    TextResource.fromResourceID("fc_filter_text"), "txt", "doc",
+                    "pdf");
+
+    /** The list of special file extension filters. */
+    private static final List<FileExtensionFilter> FILTERS =
+            Arrays.asList(FILTER_ALL, FILTER_IMAGES, FILTER_AUDIO, FILTER_TEXT);
+    ]]></source>
+  <p>
+    Note that there is an explicit entry to list all files - the first one
+    which is selected per default. In order to display the file chooser dialog,
+    a reference to the dialog service must be available. It is passed to the
+    constructor of the task class. We will see later how it is resolved in the
+    builder script:
+  </p>
+  <source><![CDATA[
+    /** The service for displaying file chooser dialogs. */
+    private final FileChooserDialogService fileChooserService;
+
+    /**
+     * Creates a new instance of {@code SelectAndOpenFileTask} and initializes
+     * it with a reference to the file chooser service.
+     *
+     * @param service the file chooser service
+     * @param ctrl the main window controller
+     */
+    public SelectAndOpenFileTask(FileChooserDialogService service,
+            MainWndController ctrl)
+    {
+        fileChooserService = service;
+        ...
+    }
+    ]]></source>
+  <p>
+    The service reference is used when the task gets executed, i.e. in its
+    <code>run()</code> method. It is passed an options object with some
+    configuration options. The options also contain the callback to be invoked
+    with the file selected by the user:
+  </p>
+  <source><![CDATA[
+    @Override
+    public void run()
+    {
+        DialogResultCallback<File, Void> callback =
+                new DialogResultCallback<File, Void>()
+                {
+                    @Override
+                    public void onDialogResult(File result, Void data)
+                    {
+                        openDialogResult(result);
+                    }
+                };
+        FileChooserOptions options =
+                new FileChooserOptions(callback)
+                    .setTitleResource("fc_title")
+                    .setFilters(FILTERS)
+                    .setInitialDirectory(new File(System.getProperty("java.io.tmpdir")));
+        fileChooserService.showOpenFileDialog(options);
+    }
+
+    /**
+     * Opens the file that has been selected in the file chooser dialog.
+     *
+     * @param file the result file
+     */
+    private void openDialogResult(final File file)
+    {
+        ...
+    }
+    ]]></source>
+  <p>
+    The callback used by this example just delegates to a method that further
+    processes the resulting <code>File</code> object; a context data object is
+    not needed here, therefore, the callback is of type &lt;File, Void&gt;. As
+    further configuration options a dialog title, a list of filters, and the
+    initial directory are defined. (The latter is just set to the user's
+    temporary folder. A more sophisticated implementation would probably store
+    the directory of the last file that was selected; so the next time the
+    dialog is opened, the user can continue in this same directory.)
+  </p>
+  <p>
+    The one piece that is missing is the declaration of the
+    <code>SelectAndOpenFileTask</code> instance in the builder script. (It is a
+    task class that is associated with an action.) The bean definition is shown
+    in the fragment below. The relevant part is the first parameter passed to
+    the constructor. Here the file chooser service is referenced under its
+    well-known name:
+  </p>
+  <source><![CDATA[
+  <!-- Extras select and open file task -->
+  <di:bean name="selectAndOpenTask"
+    beanClass="net.sf.jguiraffe.examples.tutorial.mainwnd.SelectAndOpenFileTask">
+    <di:constructor>
+      <di:param refName="jguiraffe.fileChooserService"/>
+      <di:param refName="windowController"/>
+    </di:constructor>
+  </di:bean>
+    ]]></source>
+  </subsection>
+  </section>
+</body>
+
+</document>

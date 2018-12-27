@@ -206,6 +206,11 @@
         <li><a href="builderscript.html#Action_tasks">Action tasks</a></li>
         <li><a href="builderscript.html#Bringing_it_all_together">Bringing it all together</a></li>
       </ul>
+      <li><a href="standarddialogs.html">Standard dialogs</a></li>
+      <ul>
+        <li><a href="standarddialogs.html#Usage_pattern">Usage pattern</a></li>
+        <li><a href="standarddialogs.html#FileChooserDialogService">FileChooserDialogService</a></li>
+      </ul>
       <li><a href="osgi.html">JGUIraffe and OSGi</a></li>
       <ul>
         <li><a href="osgi.html#Bundles">Bundles</a></li>
