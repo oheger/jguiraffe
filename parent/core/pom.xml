@@ -66,6 +66,16 @@
       <groupId>commons-jelly</groupId>
       <artifactId>commons-jelly</artifactId>
       <version>1.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-discovery</groupId>
+          <artifactId>commons-discovery</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jdom</groupId>
+          <artifactId>jdom</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -100,6 +110,13 @@
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
