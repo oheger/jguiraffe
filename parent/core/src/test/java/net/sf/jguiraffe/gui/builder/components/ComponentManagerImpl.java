@@ -15,12 +15,14 @@
  */
 package net.sf.jguiraffe.gui.builder.components;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.sf.jguiraffe.gui.builder.components.model.StaticTextData;
-import net.sf.jguiraffe.gui.builder.components.model.TreeNodePath;
+import net.sf.jguiraffe.gui.builder.components.model.*;
 import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag;
 import net.sf.jguiraffe.gui.builder.components.tags.ButtonLayoutTag;
 import net.sf.jguiraffe.gui.builder.components.tags.ButtonTag;
@@ -57,6 +59,8 @@ import net.sf.jguiraffe.gui.layout.ButtonLayout;
 import net.sf.jguiraffe.gui.layout.NumberWithUnit;
 import net.sf.jguiraffe.locators.Locator;
 import net.sf.jguiraffe.locators.LocatorUtils;
+
+import javax.swing.plaf.basic.BasicSliderUI;
 
 /**
  * This is a test implementation of the ComponentManager interface. Instead of
@@ -427,7 +431,7 @@ public class ComponentManagerImpl implements ComponentManager
             {
                 appendAttr(buf, "MAXLEN", new Integer(tag.getMaxlength()));
             }
-            return createHandler(type, buf, tag, String.class);
+            return createHandler(TextHandler.class, type, buf, String.class);
         }
     }
 
@@ -519,7 +523,7 @@ public class ComponentManagerImpl implements ComponentManager
             }
             model.append(" }");
             appendAttr(buf, "MODEL", model.toString());
-            return createHandler("COMBO", buf, tag, tag.getListModel()
+            return createHandler(ListComponentHandler.class, "COMBO", buf, tag.getListModel()
                     .getType());
         }
     }
@@ -549,7 +553,7 @@ public class ComponentManagerImpl implements ComponentManager
             appendAttr(buf, "MODEL", model.toString());
             appendNoUnitAttr(buf, "SCROLLWIDTH", tag.getPreferredScrollWidth());
             appendNoUnitAttr(buf, "SCROLLHEIGHT", tag.getPreferredScrollHeight());
-            return createHandler("LIST", buf, tag,
+            return createHandler(ListComponentHandler.class, "LIST", buf,
                     (tag.isMulti()) ? Object[].class : tag.getListModel()
                             .getType());
         }
@@ -601,7 +605,7 @@ public class ComponentManagerImpl implements ComponentManager
             StringBuilder buf = new StringBuilder();
             dumpInputComponent(buf, tag);
             dumpTextIconData(buf, tag.getTextIconData());
-            return createHandler("STATICTEXT", buf, tag, StaticTextData.class);
+            return createHandler(StaticTextHandler.class, "STATICTEXT", buf, StaticTextData.class);
         }
     }
 
@@ -625,7 +629,7 @@ public class ComponentManagerImpl implements ComponentManager
 			{
 				appendAttr(buf, "TEXT", tag.getProgressTextData().getCaption());
 			}
-			return createHandler("PROGRESSBAR", buf, tag, Integer.class);
+			return createHandler(ProgressBarHandler.class, "PROGRESSBAR", buf, Integer.class);
 		}
 	}
 
@@ -707,7 +711,7 @@ public class ComponentManagerImpl implements ComponentManager
             buf.append(" ]");
         }
         buf.append(" }");
-        return createHandler("TABLE", buf, tag, Integer.TYPE);
+        return createHandler(TableHandler.class, "TABLE", buf, Integer.TYPE);
     }
 
     public ComponentHandler<Object> createTree(TreeTag tag, boolean create)
@@ -832,6 +836,48 @@ public class ComponentManagerImpl implements ComponentManager
         ComponentHandlerImpl ch = new ComponentHandlerImpl();
         initHandler(ch, compName, buf, defType);
         return ch;
+    }
+
+    /**
+     * Creates a dummy component handler of the given interface class. This
+     * method can be used if the handler needs to implement an extended
+     * interface. It creates a proxy that implements this interface. The proxy
+     * supports the methods of the basic {@code ComponentHandler} interface,
+     * but has empty dummy implementations for extended methods.
+     *
+     * @param ifcClass the class of the handler interface to implement
+     * @param compName the name of the component
+     * @param buf      the target buffer
+     * @param defType  the default component type
+     * @param <T>      the type of the handler interface
+     * @return the component handler
+     * @throws FormBuilderException if an error occurs
+     */
+    protected <T extends ComponentHandler> T createHandler(Class<T> ifcClass, final String compName,
+                                                           StringBuilder buf, Class<?> defType) throws FormBuilderException {
+        Class<?>[] ifcClasses = new Class<?>[1];
+        ifcClasses[0] = ifcClass;
+        final ComponentHandler handler = createHandler(compName, buf, null, defType);
+        final InvocationHandler invocationHandler = new InvocationHandler() {
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (Object.class.equals(method.getDeclaringClass())) {
+                    if ("equals".equals(method.getName())) {
+                        return proxy == args[0];
+                    }
+                    if ("hashCode".equals(method.getName())) {
+                        return handler.hashCode();
+                    }
+                    if ("toString".equals(method.getName())) {
+                        return "ComponentHandler proxy for component " + compName;
+                    }
+                }
+                if (ComponentHandler.class.equals(method.getDeclaringClass())) {
+                    return method.invoke(handler, args);
+                }
+                return null;
+            }
+        };
+        return ifcClass.cast(Proxy.newProxyInstance(getClass().getClassLoader(), ifcClasses, invocationHandler));
     }
 
     /**
