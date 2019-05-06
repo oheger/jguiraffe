@@ -39,4 +39,28 @@
   -->
   <di:bean name="jguiraffe.guiSynchronizer"
     beanClassName="net.sf.jguiraffe.gui.app.TestApplication$GUISynchronizerTestImpl"/>
+
+  <!--
+    The component manager.
+    This object is used by the builder for creating GUI components. The
+    implementation specified here produces Swing UI components.
+  -->
+  <di:bean name="jguiraffe.componentManager"
+           beanClassName="net.sf.jguiraffe.gui.builder.components.ComponentManagerImpl"/>
+
+  <!--
+    The action manager.
+    This object is used by the builder for creating menus, tool bars and actions.
+    The implementation specified here uses Swing classes for this purpose.
+  -->
+  <di:bean name="jguiraffe.actionManager"
+           beanClassName="net.sf.jguiraffe.gui.builder.action.ActionManagerImpl"/>
+
+  <!--
+    The window manager.
+    This object is used by the builder for creating different kinds of windows.
+    The implementation specified here produces Swing window classes.
+  -->
+  <di:bean name="jguiraffe.windowManager"
+           beanClassName="net.sf.jguiraffe.gui.builder.window.WindowManagerImpl"/>
 </j:jelly>
