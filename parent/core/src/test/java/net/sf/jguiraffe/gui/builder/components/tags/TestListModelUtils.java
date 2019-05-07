@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 import net.sf.jguiraffe.di.BeanContext;
 import net.sf.jguiraffe.gui.builder.components.ComponentBuilderData;
 import net.sf.jguiraffe.gui.builder.components.FormBuilderException;
+import net.sf.jguiraffe.gui.builder.components.SimpleListModel;
 import net.sf.jguiraffe.gui.builder.components.model.EditableComboBoxModel;
 import net.sf.jguiraffe.gui.builder.components.model.ListModel;
 
@@ -38,11 +39,6 @@ import org.junit.Test;
  */
 public class TestListModelUtils
 {
-    /** Constant for the prefix used for value objects. */
-    private static final String VALUE = "value";
-
-    /** Constant for the prefix used for display objects. */
-    private static final String DISPLAY = "display";
 
     /** Constant for the name of the model bean. */
     private static final String MODEL_NAME = "myListModel";
@@ -56,7 +52,7 @@ public class TestListModelUtils
         SimpleListModel model1 = new SimpleListModel(10);
         for (int i = 0; i < 10; i++)
         {
-            assertEquals("Wrong value in model 1 for index " + i, VALUE + i,
+            assertEquals("Wrong value in model 1 for index " + i, SimpleListModel.VALUE + i,
                     ListModelUtils.getValue(model1, i));
         }
 
@@ -90,7 +86,7 @@ public class TestListModelUtils
         SimpleListModel model = new SimpleListModel(10);
         for (int i = 0; i < 10; i++)
         {
-            assertEquals(i, ListModelUtils.getIndex(model, VALUE + i));
+            assertEquals(i, ListModelUtils.getIndex(model, SimpleListModel.VALUE + i));
         }
     }
 
@@ -138,7 +134,7 @@ public class TestListModelUtils
     {
         SimpleListModel model = new SimpleListModel(0);
         assertEquals("Wrong result", ListModelUtils.IDX_UNDEFINED,
-                ListModelUtils.getIndex(model, VALUE));
+                ListModelUtils.getIndex(model, SimpleListModel.VALUE));
     }
 
     /**
@@ -151,7 +147,7 @@ public class TestListModelUtils
         for (int i = 0; i < model.size(); i++)
         {
             assertEquals("Wrong index for " + i, i,
-                    ListModelUtils.getDisplayIndex(model, DISPLAY + i));
+                    ListModelUtils.getDisplayIndex(model, SimpleListModel.DISPLAY + i));
         }
     }
 
@@ -427,40 +423,6 @@ public class TestListModelUtils
         EditableComboBoxModel comboModel =
                 ListModelUtils.fetchEditableComboBoxModel(null);
         assertSame("Object was transformed", this, comboModel.toValue(this));
-    }
-
-    /**
-     * Test implementation of the ListModel interface. Returns different display
-     * and value objects.
-     */
-    static class SimpleListModel implements ListModel
-    {
-        private final int size;
-
-        public SimpleListModel(int sz)
-        {
-            size = sz;
-        }
-
-        public int size()
-        {
-            return size;
-        }
-
-        public Object getDisplayObject(int index)
-        {
-            return DISPLAY + index;
-        }
-
-        public Object getValueObject(int index)
-        {
-            return VALUE + index;
-        }
-
-        public Class<?> getType()
-        {
-            return String.class;
-        }
     }
 
     /**

@@ -18,9 +18,7 @@ package net.sf.jguiraffe.gui.builder.components;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import net.sf.jguiraffe.gui.builder.components.model.*;
 import net.sf.jguiraffe.gui.builder.components.tags.BorderLayoutTag;
@@ -854,27 +852,34 @@ public class ComponentManagerImpl implements ComponentManager
      * @throws FormBuilderException if an error occurs
      */
     protected <T extends ComponentHandler> T createHandler(Class<T> ifcClass, final String compName,
-                                                           StringBuilder buf, Class<?> defType) throws FormBuilderException {
+        StringBuilder buf, Class<?> defType) throws FormBuilderException
+    {
         Class<?>[] ifcClasses = new Class<?>[1];
         ifcClasses[0] = ifcClass;
         final ComponentHandler handler = createHandler(compName, buf, null, defType);
-        final InvocationHandler invocationHandler = new InvocationHandler() {
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        final InvocationHandler invocationHandler = new InvocationHandler()
+        {
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+            {
                 if (Object.class.equals(method.getDeclaringClass())) {
-                    if ("equals".equals(method.getName())) {
+                    if ("equals".equals(method.getName()))
+                    {
                         return proxy == args[0];
                     }
-                    if ("hashCode".equals(method.getName())) {
+                    if ("hashCode".equals(method.getName()))
+                    {
                         return handler.hashCode();
                     }
-                    if ("toString".equals(method.getName())) {
+                    if ("toString".equals(method.getName()))
+                    {
                         return "ComponentHandler proxy for component " + compName;
                     }
                 }
-                if (ComponentHandler.class.equals(method.getDeclaringClass())) {
+                if (ComponentHandler.class.equals(method.getDeclaringClass()))
+                {
                     return method.invoke(handler, args);
                 }
-                return null;
+                return defaultValue(method.getReturnType());
             }
         };
         return ifcClass.cast(Proxy.newProxyInstance(getClass().getClassLoader(), ifcClasses, invocationHandler));
@@ -942,5 +947,31 @@ public class ComponentManagerImpl implements ComponentManager
         {
             appendAttr(buf, name, val);
         }
+    }
+
+    /**
+     * Returns a default value for the given type. This method is used by
+     * proxy objects created for component handlers to return meaningful
+     * default values for methods.
+     *
+     * @param clazz the class of the type in question
+     * @return the default value for this type
+     */
+    private static Object defaultValue(Class<?> clazz)
+    {
+        if (Integer.TYPE.equals(clazz))
+        {
+            return 0;
+        }
+        if (List.class.equals(clazz))
+        {
+            return new ArrayList<Object>();
+        }
+        if (ListModel.class.equals(clazz))
+        {
+            return new SimpleListModel(8);
+        }
+
+        return null;
     }
 }
