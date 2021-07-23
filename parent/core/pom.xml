@@ -98,6 +98,16 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Note: This dependency is required to fix a mysterious NoClassDefFound exception for an org.w3c.dom.ls.Document
+        class that occurred in some unit tests.
+    -->
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
