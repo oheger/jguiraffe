@@ -22,6 +22,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Set;
@@ -31,7 +34,6 @@ import net.sf.jguiraffe.di.ClassLoaderProvider;
 import net.sf.jguiraffe.di.impl.DefaultClassLoaderProvider;
 import net.sf.jguiraffe.resources.ResourceGroup;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 
 /**
@@ -137,21 +139,15 @@ public class TestBundleResourceLoader
      */
     private static ClassLoader createFailingCLMock()
     {
-        ClassLoader cl = EasyMock.createMock(ClassLoader.class);
         try
         {
-            EasyMock.expect(cl.loadClass(EasyMock.anyObject(String.class)))
-                    .andThrow(new ClassNotFoundException()).anyTimes();
-            EasyMock.expect(
-                    cl.getResourceAsStream(EasyMock.anyObject(String.class)))
-                    .andReturn(null).anyTimes();
+            return new URLClassLoader(new URL[]{new URL("file:///src/test/resources")});
         }
-        catch (ClassNotFoundException cnfex)
+        catch (MalformedURLException ex)
         {
-            fail("Unexpected exception: " + cnfex);
+            fail("Unexpected exception: " + ex);
+            return null;
         }
-        EasyMock.replay(cl);
-        return cl;
     }
 
     /**

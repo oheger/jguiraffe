@@ -72,7 +72,7 @@ public class TestDateTimeTransformer extends TestCase
         Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.set(2008, Calendar.JANUARY, 30, 17, 23, 28);
-        assertEquals("Wrong formatted date", "30.01.08 17:23", fmt.format(cal
+        assertEquals("Wrong formatted date", "30.01.08, 17:23", fmt.format(cal
                 .getTime()));
         EasyMock.verify(config);
     }
