@@ -19,8 +19,7 @@ import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.{Before, Ignore, Test}
 import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -73,6 +72,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /**
    * Tests whether a correct default sender is created.
    */
+    @Ignore
   @Test def testDefaultSender() {
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
@@ -88,6 +88,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /**
    * Tests whether focus events are converted and transferred to listeners.
    */
+    @Ignore
   @Test def testEventTransformation() {
     val obsVal = PowerMock.createMock(classOf[ObservableValue[java.lang.Boolean]])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
@@ -107,6 +108,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /**
    * Tests whether the adapter can be removed again as focus listener.
    */
+    @Ignore
   @Test def testUnregister() {
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     val sender = new TestSender

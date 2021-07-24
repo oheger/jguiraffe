@@ -575,7 +575,7 @@ object PMTestJavaFxWindow {
     * @return the mock window listener
     */
   private def createAndRegisterWindowListener(window: JavaFxWindow): WindowListener = {
-    val listener = EasyMock.createMock(classOf[WindowListener])
+    val listener: WindowListener = EasyMock.createMock(classOf[WindowListener])
     window addWindowListener listener
     listener
   }
