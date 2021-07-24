@@ -285,7 +285,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
    * Tests a close operation allowed by the strategy.
    */
   @Test def testCloseStrategyAllows() {
-    val strat = EasyMock.createMock(classOf[WindowClosingStrategy])
+    val strat: WindowClosingStrategy = EasyMock.createMock(classOf[WindowClosingStrategy])
     prepareApplyTest()
     expectWindowListener()
     expectMouseListener()

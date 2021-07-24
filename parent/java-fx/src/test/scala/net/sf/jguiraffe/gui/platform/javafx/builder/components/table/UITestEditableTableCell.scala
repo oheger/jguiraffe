@@ -61,7 +61,7 @@ class UITestEditableTableCell extends GuiTest {
   }
 
   private def createFormController(): TableFormController = {
-    val controller = EasyMock.createMock(classOf[TableFormController])
+    val controller: TableFormController = EasyMock.createMock(classOf[TableFormController])
     controller selectCurrentRow EasyMock.anyInt()
     EasyMock.expectLastCall().andAnswer(new IAnswer[Object] {
       override def answer(): Object = {

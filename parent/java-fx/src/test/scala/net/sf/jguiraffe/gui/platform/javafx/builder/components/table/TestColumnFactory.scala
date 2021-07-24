@@ -50,7 +50,7 @@ object TestColumnFactory {
    * @return the same column
    */
   private def checkValueFactory(col: TableColumn[AnyRef, AnyRef]): TableColumn[AnyRef, AnyRef] = {
-    val features = EasyMock.createMock(classOf[CellDataFeatures[AnyRef, AnyRef]])
+    val features: CellDataFeatures[AnyRef, AnyRef] = EasyMock.createMock(classOf[CellDataFeatures[AnyRef, AnyRef]])
     EasyMock.expect(features.getValue).andReturn(this)
     EasyMock.replay(features)
 

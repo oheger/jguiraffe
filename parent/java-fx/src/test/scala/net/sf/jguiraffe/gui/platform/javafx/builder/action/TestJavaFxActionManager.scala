@@ -87,11 +87,13 @@ object TestJavaFxActionManager {
    * Creates an action data object with default settings.
    * @return the data object
    */
-  private def createActionData(): ActionDataImpl =
+  private def createActionData(): ActionDataImpl = {
+    val runnable: Runnable = EasyMock.createMock(classOf[Runnable])
     ActionDataImpl(getName = "TestAction", getText = ActionText,
       getMnemonicKey = 'x', getAccelerator = TestAccelerator, getIcon = icon,
       getToolTip = ActionToolTip,
-      getTask = EasyMock.createMock(classOf[Runnable]))
+      getTask = runnable)
+  }
 
   /**
    * Creates an action with default settings.

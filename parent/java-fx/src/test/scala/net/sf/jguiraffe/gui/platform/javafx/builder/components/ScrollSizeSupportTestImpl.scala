@@ -134,7 +134,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
    * @return the newly created mock object
    */
   private def createScrollSizeMock(answer: IAnswer[Int], y: Boolean): NumberWithUnit = {
-    val result = EasyMock.createMock(classOf[NumberWithUnit])
+    val result: NumberWithUnit = EasyMock.createMock(classOf[NumberWithUnit])
     EasyMock.expect(result.toPixel(EasyMock.anyObject(classOf[UnitSizeHandler]),
       EasyMock.anyObject(), eqObj(y))).andAnswer(answer)
     EasyMock.replay(result)
@@ -146,7 +146,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
    * @return the mock ''Composite''
    */
   private def createComposite(): ContainerTag = {
-    val comp = EasyMock.createMock(classOf[ContainerTag])
+    val comp: ContainerTag = EasyMock.createMock(classOf[ContainerTag])
     EasyMock.replay(comp)
     comp
   }

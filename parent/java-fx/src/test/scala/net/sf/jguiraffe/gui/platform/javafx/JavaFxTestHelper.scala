@@ -151,7 +151,7 @@ object JavaFxTestHelper {
     */
   def createJavaFxWindowMock(mainWnd: Stage = EasyMock.createMock(classOf[Stage])):
   WrappingWindow = {
-    val fxMainWnd = EasyMock.createMock(classOf[WrappingWindow])
+    val fxMainWnd: WrappingWindow = EasyMock.createMock(classOf[WrappingWindow])
     EasyMock.expect(fxMainWnd.getWrappedWindow).andReturn(mainWnd).anyTimes()
     EasyMock.replay(fxMainWnd)
     fxMainWnd
