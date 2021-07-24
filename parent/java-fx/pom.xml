@@ -37,7 +37,7 @@
   </description>
 
   <properties>
-    <javafx.version>2.2</javafx.version>
+    <javafx.version>11</javafx.version>
     <testfx.version>3.1.2</testfx.version>
     <license.file>../../conf/License-Header.txt</license.file>
   </properties>
@@ -49,10 +49,16 @@
       <artifactId>scala-library</artifactId>
     </dependency>
 
-      <dependency>
-        <groupId>org.scala-lang.modules</groupId>
-        <artifactId>scala-parser-combinators_2.12</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-parser-combinators_2.12</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>net.sf.jguiraffe</groupId>
@@ -117,6 +123,12 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.6</version>
       </plugin>
 
       <plugin>
@@ -248,30 +260,5 @@
       </build>
     </profile>
 
-    <!--
-      Profile for building with JDK 1.7. In this version, JavaFX has to be
-      explicitly included as a system dependency. From version 1.8 on,
-      JavaFX is part of the JDK.
-    -->
-    <profile>
-      <id>JDK-1.7</id>
-      <activation>
-        <jdk>1.7</jdk>
-      </activation>
-
-      <properties>
-        <javafx.version>2.2</javafx.version>
-      </properties>
-
-      <dependencies>
-        <dependency>
-          <groupId>com.oracle</groupId>
-          <artifactId>javafx</artifactId>
-          <version>${javafx.version}</version>
-          <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
-          <scope>system</scope>
-        </dependency>
-      </dependencies>
-    </profile>
   </profiles>
 </project>
