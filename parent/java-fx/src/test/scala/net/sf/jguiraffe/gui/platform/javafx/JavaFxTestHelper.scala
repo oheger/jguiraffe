@@ -15,14 +15,13 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx
 
-import java.util.concurrent.{CountDownLatch, SynchronousQueue, TimeUnit}
-
 import javafx.application.Platform
 import javafx.beans.property.ReadOnlyProperty
-import javafx.embed.swing.JFXPanel
+
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.{CountDownLatch, SynchronousQueue, TimeUnit}
 import javafx.stage.Stage
 import javafx.util.Callback
-import javax.swing.SwingUtilities
 import net.sf.jguiraffe.gui.builder.window.{Window, WindowWrapper}
 import org.easymock.EasyMock
 import org.junit.Assert._
@@ -36,6 +35,9 @@ import scala.language.implicitConversions
 object JavaFxTestHelper {
   /** Constant for the default timeout. */
   private final val Timeout = 5000
+
+  /** Flag whether the platform is already started. */
+  private val started = new AtomicBoolean
 
   /**
     * A trait combining a JGUIraffe window with a window wrapper. This is used
@@ -104,12 +106,9 @@ object JavaFxTestHelper {
    * by a unit test class before Java FX classes are used.
    */
   def initPlatform() {
-    val latch = new CountDownLatch(1)
-    SwingUtilities.invokeLater { () =>
-      new JFXPanel
-      latch.countDown()
+    if (started.compareAndSet(false, true)) {
+      Platform.startup(() => {})
     }
-    await(latch)
   }
 
   /**
