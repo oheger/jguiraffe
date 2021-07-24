@@ -171,8 +171,8 @@ public class TestCombinedBeanStore
         int index = 0;
         for (int i = 0; i < count; i++)
         {
-            CombinedBeanStore store = new CombinedBeanStore(EasyMock
-                    .createNiceMock(BeanStore.class));
+            BeanStore mockStore = EasyMock.createMock(BeanStore.class);
+            CombinedBeanStore store = new CombinedBeanStore(mockStore);
             String name = store.getName();
             assertTrue("Wrong name prefix: " + name, name.startsWith(prefix));
             int currentIndex = Integer
