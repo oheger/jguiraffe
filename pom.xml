@@ -62,8 +62,12 @@
   </licenses>
 
   <properties>
+    <jguiraffe.parent.dir>${basedir}</jguiraffe.parent.dir>
     <license.file>${basedir}/conf/License-Header.txt</license.file>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <version.checkstyle.plugin>3.1.2</version.checkstyle.plugin>
   </properties>
 
   <dependencyManagement>
@@ -161,6 +165,22 @@
               </manifestEntries>
             </archive>
             <additionalparam>-Xdoclint:none</additionalparam>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${version.checkstyle.plugin}</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>8.44</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <configLocation>${jguiraffe.parent.dir}/conf/checkstyle.xml</configLocation>
           </configuration>
         </plugin>
       </plugins>
@@ -265,10 +285,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <configLocation>${basedir}/../../conf/checkstyle.xml</configLocation>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

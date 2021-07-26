@@ -39,6 +39,7 @@
   </description>
 
   <properties>
+    <jguiraffe.parent.dir>${basedir}/../../</jguiraffe.parent.dir>
     <license.file>../../conf/License-Header.txt</license.file>
   </properties>
 

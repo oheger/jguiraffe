@@ -39,6 +39,7 @@
   <properties>
     <javafx.version>11</javafx.version>
     <testfx.version>3.1.2</testfx.version>
+    <jguiraffe.parent.dir>${basedir}/../../</jguiraffe.parent.dir>
     <license.file>../../conf/License-Header.txt</license.file>
   </properties>
 
