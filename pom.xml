@@ -68,6 +68,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <version.checkstyle.plugin>3.1.2</version.checkstyle.plugin>
+    <version.spotbugs>4.2.3</version.spotbugs>
   </properties>
 
   <dependencyManagement>
@@ -183,6 +184,17 @@
             <configLocation>${jguiraffe.parent.dir}/conf/checkstyle.xml</configLocation>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>${version.spotbugs}</version>
+          <configuration>
+            <threshold>Normal</threshold>
+            <effort>Default</effort>
+            <excludeFilterFile>${jguiraffe.parent.dir}/conf/findbugs-exclude.xml</excludeFilterFile>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -287,23 +299,9 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>3.0.4</version>
-        <configuration>
-          <excludeFilterFile>../../conf/findbugs-exclude.xml</excludeFilterFile>
-        </configuration>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
       </plugin>
-<!-- Disabled clirr plugin as it currently cannot be invoked on Java 8.
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>clirr-maven-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <minSeverity>info</minSeverity>
-        </configuration>
-      </plugin>
--->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
