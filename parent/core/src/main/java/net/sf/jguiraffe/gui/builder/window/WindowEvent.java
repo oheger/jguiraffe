@@ -88,7 +88,7 @@ public class WindowEvent extends BuilderEvent
      * determines the action that was performed on the window when an event was
      * fired.
      */
-    public static enum Type
+    public enum Type
     {
         /** The window was activated. */
         WINDOW_ACTIVATED,

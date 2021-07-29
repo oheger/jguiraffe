@@ -97,7 +97,7 @@ public class FormFocusEvent extends FormEvent
      * An enumeration class defining the different types of focus events. Every
      * {@code FormFocusEvent} has such a type determining what exactly happened.
      */
-    public static enum Type
+    public enum Type
     {
         /** A component gained focus. */
         FOCUS_GAINED,

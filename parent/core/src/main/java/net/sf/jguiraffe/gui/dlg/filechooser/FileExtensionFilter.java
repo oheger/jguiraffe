@@ -75,7 +75,7 @@ public final class FileExtensionFilter
     {
         description = descResource;
         extensions =
-                Collections.unmodifiableList(new ArrayList<String>(extList));
+                Collections.unmodifiableList(new ArrayList<>(extList));
     }
 
     /**
@@ -130,8 +130,9 @@ public final class FileExtensionFilter
 
         FileExtensionFilter filter = (FileExtensionFilter) o;
 
-        if (!getDescription().equals(filter.getDescription()))
+        if (!getDescription().equals(filter.getDescription())) {
             return false;
+        }
         return getExtensions().equals(filter.getExtensions());
     }
 

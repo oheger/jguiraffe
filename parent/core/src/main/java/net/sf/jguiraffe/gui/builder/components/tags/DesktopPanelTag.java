@@ -136,7 +136,7 @@ public class DesktopPanelTag extends ContainerTag
      * Enumeration class that defines the allowed values for the {@code
      * dragmode} attribute.
      */
-    public static enum DragMode
+    public enum DragMode
     {
         /**
          * Constant for the drag mode <em>live</em>. This means that windows are

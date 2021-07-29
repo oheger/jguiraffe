@@ -142,7 +142,7 @@ public enum Unit
      *
      * @param n the unit short name
      */
-    private Unit(String n)
+    Unit(String n)
     {
         unitName = n;
     }
@@ -204,7 +204,7 @@ public enum Unit
     // static initializer
     static
     {
-        UNIT_NAMES = new HashMap<String, Unit>();
+        UNIT_NAMES = new HashMap<>();
         for (Unit u : values())
         {
             UNIT_NAMES.put(u.getUnitName(), u);

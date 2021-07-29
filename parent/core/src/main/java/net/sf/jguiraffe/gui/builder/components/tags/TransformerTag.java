@@ -151,7 +151,7 @@ public class TransformerTag extends TransformerBaseTag<Transformer>
     /**
      * An enumeration for the possible types of a transformer.
      */
-    public static enum Type
+    public enum Type
     {
         /**
          * A read transformer. Such transformers are invoked when data is read

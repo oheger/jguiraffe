@@ -113,8 +113,9 @@ class SwingFileExtensionFilter extends FileFilter
 
         if (getDescription() != null
                 ? !getDescription().equals(filter.getDescription())
-                : filter.getDescription() != null)
+                : filter.getDescription() != null) {
             return false;
+        }
         return acceptedExtensions.equals(filter.acceptedExtensions);
     }
 

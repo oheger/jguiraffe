@@ -262,7 +262,7 @@ public class FormMouseEvent extends FormEvent
      * @author Oliver Heger
      * @version $Id: FormMouseEvent.java 205 2012-01-29 18:29:57Z oheger $
      */
-    public static enum Type
+    public enum Type
     {
         /**
          * A mouse button was pressed.

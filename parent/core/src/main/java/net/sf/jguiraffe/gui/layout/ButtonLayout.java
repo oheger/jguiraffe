@@ -348,7 +348,7 @@ public class ButtonLayout extends PercentLayoutBase
      * @author Oliver Heger
      * @version $Id: ButtonLayout.java 205 2012-01-29 18:29:57Z oheger $
      */
-    public static enum Alignment
+    public enum Alignment
     {
         /**
          * The alignment <em>left</em>. All buttons are aligned to the left

@@ -228,7 +228,7 @@ public class LocatorConverter implements Converter
      * locators. This class is used to identify the desired locator type and to
      * create a corresponding instance.
      */
-    private static enum LocatorRepresentation
+    private enum LocatorRepresentation
     {
         /** Constant for a class path locator. */
         CLASSPATH

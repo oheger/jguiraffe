@@ -141,7 +141,7 @@ public enum FormListenerType
      *
      * @param lstnCls the event listener class
      */
-    private FormListenerType(Class<? extends EventListener> lstnCls)
+    FormListenerType(Class<? extends EventListener> lstnCls)
     {
         listenerClass = lstnCls;
     }

@@ -110,7 +110,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      */
     public TabbedPaneTag()
     {
-        tabs = new ArrayList<TabData>();
+        tabs = new ArrayList<>();
         setNoField(true);
     }
 
@@ -289,7 +289,7 @@ public class TabbedPaneTag extends InputComponentTag implements Composite
      * An enumeration class that defines the valid values for the
      * <code>placement</code> attribute.
      */
-    public static enum Placement
+    public enum Placement
     {
         /** Tabs are placed at the top. */
         TOP,
