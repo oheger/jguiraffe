@@ -1,0 +1,8 @@
+net.sf.jguiraffe.gui.platform.swing.builder.action
+net.sf.jguiraffe.gui.platform.swing.builder.components
+net.sf.jguiraffe.gui.platform.swing.builder.components.table
+net.sf.jguiraffe.gui.platform.swing.builder.event
+net.sf.jguiraffe.gui.platform.swing.builder.utils
+net.sf.jguiraffe.gui.platform.swing.builder.window
+net.sf.jguiraffe.gui.platform.swing.dlg.filechooser
+net.sf.jguiraffe.gui.platform.swing.layout

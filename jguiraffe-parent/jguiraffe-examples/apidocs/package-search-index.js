@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"net.sf.jguiraffe.examples.tutorial"},{"l":"net.sf.jguiraffe.examples.tutorial.bgtask"},{"l":"net.sf.jguiraffe.examples.tutorial.createfile"},{"l":"net.sf.jguiraffe.examples.tutorial.mainwnd"},{"l":"net.sf.jguiraffe.examples.tutorial.model"},{"l":"net.sf.jguiraffe.examples.tutorial.viewset"}]

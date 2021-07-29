@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">transient</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/components/model/TreeNodePath.html">TreeNodePath</a> path;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  
 <a class="jxr_linenumber" name="46" href="#46">46</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The type of this event. */</em>
-<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a> type;
+<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a> type;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  
 <a class="jxr_linenumber" name="49" href="#49">49</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">     * Creates a new instance of &lt;code&gt;TreeExpansionEvent&lt;/code&gt; and initializes</em>
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment">     * @param path the path to the node whose state has changed</em>
 <a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/components/model/TreeExpansionEvent.html">TreeExpansionEvent</a>(Object source, <a href="../../../../../../../net/sf/jguiraffe/gui/builder/components/model/TreeHandler.html">TreeHandler</a> handler, String name,
-<a class="jxr_linenumber" name="61" href="#61">61</a>              <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a> type, <a href="../../../../../../../net/sf/jguiraffe/gui/builder/components/model/TreeNodePath.html">TreeNodePath</a> path)
+<a class="jxr_linenumber" name="61" href="#61">61</a>              <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a> type, <a href="../../../../../../../net/sf/jguiraffe/gui/builder/components/model/TreeNodePath.html">TreeNodePath</a> path)
 <a class="jxr_linenumber" name="62" href="#62">62</a>      {
 <a class="jxr_linenumber" name="63" href="#63">63</a>          <strong class="jxr_keyword">super</strong>(source, handler, name);
 <a class="jxr_linenumber" name="64" href="#64">64</a>          <strong class="jxr_keyword">this</strong>.type = type;
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="92" href="#92">92</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * @return the event type</em>
 <a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a> getType()
+<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a> getType()
 <a class="jxr_linenumber" name="96" href="#96">96</a>      {
 <a class="jxr_linenumber" name="97" href="#97">97</a>          <strong class="jxr_keyword">return</strong> type;
 <a class="jxr_linenumber" name="98" href="#98">98</a>      }
@@ -142,7 +142,7 @@
 <a class="jxr_linenumber" name="132" href="#132">132</a> <em class="jxr_javadoccomment">     * An enumeration class defining the different types of a {@code</em>
 <a class="jxr_linenumber" name="133" href="#133">133</a> <em class="jxr_javadoccomment">     * TreeExpansionEvent}.</em>
 <a class="jxr_linenumber" name="134" href="#134">134</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="135" href="#135">135</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> enum <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a>
+<a class="jxr_linenumber" name="135" href="#135">135</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> enum <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a>
 <a class="jxr_linenumber" name="136" href="#136">136</a>     {
 <a class="jxr_linenumber" name="137" href="#137">137</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> A node of the tree was collapsed. */</em>
 <a class="jxr_linenumber" name="138" href="#138">138</a>         NODE_COLLAPSE,
@@ -154,4 +154,3 @@
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
-

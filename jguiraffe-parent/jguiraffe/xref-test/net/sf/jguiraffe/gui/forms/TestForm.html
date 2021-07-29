@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="84" href="#84">84</a>      <strong class="jxr_keyword">private</strong> BindingStrategy bindingStrategy;
 <a class="jxr_linenumber" name="85" href="#85">85</a>  
 <a class="jxr_linenumber" name="86" href="#86">86</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The form instance to be tested. */</em>
-<a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestFormValidationMessageFormat.html">FormTestImpl</a> form;
+<a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestForm.html">FormTestImpl</a> form;
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
 <a class="jxr_linenumber" name="89" href="#89">89</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> A component handler for a test field. */</em>
 <a class="jxr_linenumber" name="90" href="#90">90</a>      <strong class="jxr_keyword">private</strong> ComponentHandlerImpl chName;
@@ -140,7 +140,7 @@
 <a class="jxr_linenumber" name="130" href="#130">130</a>     {
 <a class="jxr_linenumber" name="131" href="#131">131</a>         tcontext = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TransformerContextImpl.html">TransformerContextImpl</a>();
 <a class="jxr_linenumber" name="132" href="#132">132</a>         bindingStrategy = <strong class="jxr_keyword">new</strong> BeanBindingStrategy();
-<a class="jxr_linenumber" name="133" href="#133">133</a>         form = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestFormValidationMessageFormat.html">FormTestImpl</a>(tcontext, bindingStrategy);
+<a class="jxr_linenumber" name="133" href="#133">133</a>         form = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestForm.html">FormTestImpl</a>(tcontext, bindingStrategy);
 <a class="jxr_linenumber" name="134" href="#134">134</a> 
 <a class="jxr_linenumber" name="135" href="#135">135</a>         DefaultFieldHandler fh = <strong class="jxr_keyword">new</strong> DefaultFieldHandler();
 <a class="jxr_linenumber" name="136" href="#136">136</a>         chName = <strong class="jxr_keyword">new</strong> ComponentHandlerImpl();
@@ -268,7 +268,7 @@
 <a class="jxr_linenumber" name="258" href="#258">258</a>     @Test
 <a class="jxr_linenumber" name="259" href="#259">259</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNewInstance()
 <a class="jxr_linenumber" name="260" href="#260">260</a>     {
-<a class="jxr_linenumber" name="261" href="#261">261</a>         form = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestFormValidationMessageFormat.html">FormTestImpl</a>(tcontext, bindingStrategy);
+<a class="jxr_linenumber" name="261" href="#261">261</a>         form = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestForm.html">FormTestImpl</a>(tcontext, bindingStrategy);
 <a class="jxr_linenumber" name="262" href="#262">262</a>         assertEquals(<span class="jxr_string">"Wrong TransformerCtx"</span>, tcontext, form
 <a class="jxr_linenumber" name="263" href="#263">263</a>                 .getTransformerContext());
 <a class="jxr_linenumber" name="264" href="#264">264</a>         assertEquals(<span class="jxr_string">"Wrong binding strategy"</span>, bindingStrategy, form
@@ -938,7 +938,7 @@
 <a class="jxr_linenumber" name="928" href="#928">928</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="929" href="#929">929</a> <em class="jxr_javadoccomment">     * A test implementation of Form.</em>
 <a class="jxr_linenumber" name="930" href="#930">930</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="931" href="#931">931</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestFormValidationMessageFormat.html">FormTestImpl</a> <strong class="jxr_keyword">extends</strong> Form
+<a class="jxr_linenumber" name="931" href="#931">931</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestForm.html">FormTestImpl</a> <strong class="jxr_keyword">extends</strong> Form
 <a class="jxr_linenumber" name="932" href="#932">932</a>     {
 <a class="jxr_linenumber" name="933" href="#933">933</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> A mock binding strategy. */</em>
 <a class="jxr_linenumber" name="934" href="#934">934</a>         BindingStrategy mockBindingStrategy;
@@ -949,7 +949,7 @@
 <a class="jxr_linenumber" name="939" href="#939">939</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> A counter for writeModelProperty() invocations. */</em>
 <a class="jxr_linenumber" name="940" href="#940">940</a>         <strong class="jxr_keyword">int</strong> writeModelPropertyCount;
 <a class="jxr_linenumber" name="941" href="#941">941</a> 
-<a class="jxr_linenumber" name="942" href="#942">942</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestFormValidationMessageFormat.html">FormTestImpl</a>(TransformerContext ctx, BindingStrategy strat)
+<a class="jxr_linenumber" name="942" href="#942">942</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../net/sf/jguiraffe/gui/forms/TestForm.html">FormTestImpl</a>(TransformerContext ctx, BindingStrategy strat)
 <a class="jxr_linenumber" name="943" href="#943">943</a>         {
 <a class="jxr_linenumber" name="944" href="#944">944</a>             <strong class="jxr_keyword">super</strong>(ctx, strat);
 <a class="jxr_linenumber" name="945" href="#945">945</a>         }
@@ -988,4 +988,3 @@
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
-

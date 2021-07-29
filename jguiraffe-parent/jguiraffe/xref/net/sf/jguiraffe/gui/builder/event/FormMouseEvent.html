@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="92" href="#92">92</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 20090915L;
 <a class="jxr_linenumber" name="93" href="#93">93</a>  
 <a class="jxr_linenumber" name="94" href="#94">94</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The type of this event. */</em>
-<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a> type;
+<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a> type;
 <a class="jxr_linenumber" name="96" href="#96">96</a>  
 <a class="jxr_linenumber" name="97" href="#97">97</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The X position of the mouse cursor. */</em>
 <a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> x;
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if a required parameter is missing</em>
 <a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="125" href="#125">125</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">FormMouseEvent</a>(Object source, ComponentHandler&lt;?&gt; handler,
-<a class="jxr_linenumber" name="126" href="#126">126</a>             String name, <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a> t, <strong class="jxr_keyword">int</strong> xp, <strong class="jxr_keyword">int</strong> yp, <strong class="jxr_keyword">int</strong> btn,
+<a class="jxr_linenumber" name="126" href="#126">126</a>             String name, <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a> t, <strong class="jxr_keyword">int</strong> xp, <strong class="jxr_keyword">int</strong> yp, <strong class="jxr_keyword">int</strong> btn,
 <a class="jxr_linenumber" name="127" href="#127">127</a>             Collection&lt;Modifiers&gt; mods)
 <a class="jxr_linenumber" name="128" href="#128">128</a>     {
 <a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">super</strong>(source, handler, name);
@@ -163,7 +163,7 @@
 <a class="jxr_linenumber" name="153" href="#153">153</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="154" href="#154">154</a> <em class="jxr_javadoccomment">     * @return the type of this event</em>
 <a class="jxr_linenumber" name="155" href="#155">155</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="156" href="#156">156</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a> getType()
+<a class="jxr_linenumber" name="156" href="#156">156</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a> getType()
 <a class="jxr_linenumber" name="157" href="#157">157</a>     {
 <a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">return</strong> type;
 <a class="jxr_linenumber" name="159" href="#159">159</a>     }
@@ -272,7 +272,7 @@
 <a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">     * @author Oliver Heger</em>
 <a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">     * @version $Id: FormMouseEvent.java 205 2012-01-29 18:29:57Z oheger $</em>
 <a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="265" href="#265">265</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> enum <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormMouseEvent.html">Type</a>
+<a class="jxr_linenumber" name="265" href="#265">265</a>     <strong class="jxr_keyword">public</strong> enum <a href="../../../../../../net/sf/jguiraffe/gui/builder/event/FormFocusEvent.html">Type</a>
 <a class="jxr_linenumber" name="266" href="#266">266</a>     {
 <a class="jxr_linenumber" name="267" href="#267">267</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="268" href="#268">268</a> <em class="jxr_javadoccomment">         * A mouse button was pressed.</em>
@@ -310,4 +310,3 @@
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
-
