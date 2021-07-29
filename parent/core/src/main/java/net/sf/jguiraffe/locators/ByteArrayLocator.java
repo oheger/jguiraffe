@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLStreamHandler;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -110,7 +111,7 @@ public final class ByteArrayLocator extends AbstractStreamLocator
             throw new IllegalArgumentException("Data must not be null!");
         }
 
-        return new ByteArrayLocator(data.getBytes());
+        return new ByteArrayLocator(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
