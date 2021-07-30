@@ -50,11 +50,6 @@
     </dependency>
 
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>net.sf.jguiraffe</groupId>
       <!--<artifactId>jguiraffe-swing</artifactId>-->
       <artifactId>jguiraffe-java-fx</artifactId>
