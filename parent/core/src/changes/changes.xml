@@ -28,12 +28,20 @@
   <body>
     <release version="1.4" date="TBD"
              description="TBD">
+      <action dev="oheger" type="fix" issue="48">
+        Make the project build again on a recent JDK. This required a number of
+        updates in dependencies and plugins. The minimum supported JDK version
+        has been upgraded to Java 1.8.
+      </action>
       <action dev="oheger" type="add" issue="47">
         JGUIraffe now publishes an artifact with the test classes of the core
         project. It contains dummy implementations for the central builder
         interfaces and can thus be useful for unit tests of applications based
         on the library. The test implementations have been improved in this
         respect.
+      </action>
+      <action dev="oheger" type="add" issue="46">
+        Added support for dialogs for choosing files and directories.
       </action>
       <action dev="oheger" type="add" issue="45">
         The user configuration of an application is now written to disk only if
