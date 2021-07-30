@@ -221,13 +221,22 @@
           <autoReleaseAfterClose>false</autoReleaseAfterClose>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-publish-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <scmBranch>gh-pages</scmBranch>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
   <distributionManagement>
     <site>
-      <id>gh-pages</id>
-      <url>git:ssh://git@github.com/oheger/jguiraffe.git?gh-pages#</url>
+      <id>github</id>
+      <url>scm:git:ssh://git@github.com/oheger/jguiraffe.git</url>
     </site>
 
     <snapshotRepository>
@@ -317,10 +326,12 @@
     The following profiles are used to create the artifacts required for a
     release. The required command is as follows:
 
-    mvn clean deploy site:site -P release -Dmaven.user=user -Dgpg.passphrase=***
+    mvn clean deploy -P release -Dmaven.user=user -Dgpg.passphrase=***
 
     The signed distribution artifacts are then available in the target directory
     of the distribution module.
+
+    To deploy the site to github, use mvn site:site site:stage scm-publish:publish-scm
   -->
     <profile>
       <id>release</id>
