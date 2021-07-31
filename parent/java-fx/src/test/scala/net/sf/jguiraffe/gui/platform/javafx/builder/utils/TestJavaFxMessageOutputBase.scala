@@ -192,9 +192,9 @@ class TestJavaFxMessageOutputBase extends JUnitSuite with EasyMockSugar {
    * @param expButtons an array with the expected buttons
    */
   private def checkButtons(expButtons: Button*): Unit = {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters._
     val buttonPane = findComponent(classOf[PercentLayoutPane])
-    val buttons = buttonPane.getChildrenUnmodifiable filter (_.isInstanceOf[Button])
+    val buttons = buttonPane.getChildrenUnmodifiable.asScala filter (_.isInstanceOf[Button])
     assertEquals("Wrong buttons", expButtons.toSeq, buttons.toSeq)
   }
 

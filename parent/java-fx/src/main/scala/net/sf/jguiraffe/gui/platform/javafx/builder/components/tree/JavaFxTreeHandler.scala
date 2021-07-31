@@ -167,8 +167,8 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
     // Still, in some cases, there are null entries in the selection.
     tree.getSelectionModel.getSelectedIndices
 
-    import scala.collection.JavaConversions._
-    val paths = tree.getSelectionModel.getSelectedItems filterNot (_ == null) map { item =>
+    import scala.jdk.CollectionConverters._
+    val paths = tree.getSelectionModel.getSelectedItems.asScala filterNot (_ == null) map { item =>
       new TreeNodePath(item.getValue.node)
     }
     paths.toArray

@@ -15,12 +15,14 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
-import javafx.scene.control.{TableColumn, TableCell}
-import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
-import org.apache.commons.lang.StringUtils
+import javafx.scene.control.{TableCell, TableColumn}
 import javafx.scene.input.{KeyCode, KeyEvent}
-import scala.collection.mutable.ListBuffer
+import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.cell.EditableCell
+import org.apache.commons.lang.StringUtils
+
+import scala.collection.mutable.ListBuffer
+import scala.jdk.CollectionConverters._
 
 /**
  * A specialized table cell implementation with extended edit capabilities.
@@ -85,9 +87,8 @@ private class EditableTableCell(override val formController: TableFormController
    * @return an ''Option'' for the next editable column
    */
   private def nextEditableColumn(forward: Boolean): Option[TableColumn[AnyRef, _]] = {
-    import scala.collection.JavaConversions._
     val columns = ListBuffer.empty[TableColumn[AnyRef, _]]
-    getTableView.getColumns foreach (columns ++= leafColumns(_))
+    getTableView.getColumns.asScala foreach (columns ++= leafColumns(_))
     //There is no other column that supports editing.
     if (columns.size < 2) {
       return None
@@ -123,9 +124,8 @@ private class EditableTableCell(override val formController: TableFormController
         columns += root
       }
     } else {
-      import scala.collection.JavaConversions._
-      root.getColumns foreach (columns ++= leafColumns(_))
+      root.getColumns.asScala foreach (columns ++= leafColumns(_))
     }
     columns
-  }
+  }.toSeq
 }

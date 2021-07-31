@@ -15,8 +15,6 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.Array.canBuildFrom
-
 import javafx.beans.binding.Bindings
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode

@@ -232,9 +232,9 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * serving as data model.
    */
   @Test def testConfigurationListener() {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters._
     val handler = factory.createTreeHandler(tag)
-    val listener = tag.getTreeModel.getConfigurationListeners
+    val listener = tag.getTreeModel.getConfigurationListeners.asScala
       .find(_.isInstanceOf[TreeConfigurationChangeHandler])
     val changeHandler = listener.get.asInstanceOf[TreeConfigurationChangeHandler]
     assertSame("Wrong configuration", tag.getTreeModel,

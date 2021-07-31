@@ -15,12 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
-import scala.collection.JavaConversions.mapAsScalaMap
-
-import org.apache.commons.configuration.tree.ConfigurationNode
-
 import javafx.scene.Node
 import net.sf.jguiraffe.gui.builder.components.tags.TreeIconHandler
+import org.apache.commons.configuration.tree.ConfigurationNode
 
 /**
  * The internal default implementation of the
@@ -52,7 +49,7 @@ private class NodeGraphicsHandlerImpl(val iconHandler: TreeIconHandler,
    * @return the specific map
    */
   private def createGraphicMap(iconMap: java.util.Map[String, Object]): Map[String, Node] = {
-    import collection.JavaConversions._
-    iconMap.mapValues(_.asInstanceOf[Node]).toMap
+    import scala.jdk.CollectionConverters._
+    iconMap.asScala.mapValues(_.asInstanceOf[Node]).toMap
   }
 }

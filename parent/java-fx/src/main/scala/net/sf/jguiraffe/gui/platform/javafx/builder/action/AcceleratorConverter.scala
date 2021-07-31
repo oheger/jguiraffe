@@ -82,9 +82,9 @@ private object AcceleratorConverter {
    * @return a string for the defined modifiers
    */
   private def convertModifiers(acc: Accelerator): Option[String] = {
-    import scala.collection.JavaConversions._
+    import scala.jdk.CollectionConverters._
     if (acc.getModifiers.isEmpty) None
-    else Some((acc.getModifiers map (ModifierMapping(_))).mkString("+"))
+    else Some((acc.getModifiers.asScala map (ModifierMapping(_))).mkString("+"))
   }
 }
 

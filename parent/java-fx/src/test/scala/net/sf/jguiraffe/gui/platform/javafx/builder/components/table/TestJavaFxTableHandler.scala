@@ -102,7 +102,7 @@ object TestJavaFxTableHandler {
                                        model: java.util.List[AnyRef] = createModel()):
   JavaFxTableHandler = {
     val handler = createHandler(multiSelect, model)
-    handler tableDataChanged()
+    handler.tableDataChanged()
     handler
   }
 

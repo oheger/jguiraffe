@@ -20,8 +20,8 @@ import javafx.scene.control.TreeItem
 
 import org.apache.commons.configuration.tree.ConfigurationNode
 
-import scala.collection.JavaConversions.{asScalaBuffer, asScalaSet}
 import scala.collection.mutable
+import scala.jdk.CollectionConverters._
 
 /**
  * A specialized ''TreeItem'' implementation for managing tree nodes which are
@@ -101,7 +101,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
   private[tree] def removeFromItemMap() {
     itemMap -= node
     if (childrenInitialized) {
-      super.getChildren foreach (_.asInstanceOf[ConfigTreeItem].removeFromItemMap())
+      super.getChildren.asScala foreach (_.asInstanceOf[ConfigTreeItem].removeFromItemMap())
     }
   }
 
@@ -112,7 +112,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
    */
   private def buildChildren(): ObservableList[TreeItem[ConfigNodeData]] = {
     val children = createChildrenCollection()
-    node.getChildren foreach (appendNewChild(children, _))
+    node.getChildren.asScala foreach (appendNewChild(children, _))
     children
   }
 
@@ -124,7 +124,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
     val childSet = new java.util.HashSet(getChildren())
     val newChildren = createChildrenCollection()
 
-    node.getChildren foreach { c =>
+    node.getChildren.asScala foreach { c =>
       val optItem = itemMap.get(c)
       if (optItem.isDefined) {
         childSet remove optItem.get
@@ -136,7 +136,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
     }
 
     super.getChildren setAll newChildren
-    childSet foreach (_.asInstanceOf[ConfigTreeItem].removeFromItemMap())
+    childSet.asScala foreach (_.asInstanceOf[ConfigTreeItem].removeFromItemMap())
   }
 
   /**

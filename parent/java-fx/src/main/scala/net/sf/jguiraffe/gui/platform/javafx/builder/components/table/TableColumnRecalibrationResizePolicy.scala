@@ -43,9 +43,6 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.TableColumnRecalibrato
 private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumnRecalibrator)
   extends Callback[TableView.ResizeFeatures[_], java.lang.Boolean] {
   this: ColumnWidthExtractor with TableWidthExtractor =>
-
-  import scala.collection.JavaConversions._
-
   /** The number of pending width change notifications. */
   private var pendingWidthChangeNotifications = 0
 
@@ -234,8 +231,10 @@ private class TableColumnRecalibrationResizePolicy(val recalibrator: TableColumn
      * Returns an array with the rounded widths of the table's columns.
      * @return an array with the current column widths (rounded)
      */
-    private def roundedColumnWidths(): Array[Int] =
-      (tableColumns map ((col: TableColumn[_, _]) => math.round(col.getWidth).toInt)).toArray
+    private def roundedColumnWidths(): Array[Int] = {
+      import scala.jdk.CollectionConverters._
+      (tableColumns.asScala map ((col: TableColumn[_, _]) => math.round(col.getWidth).toInt)).toArray
+    }
 
     /**
      * Helper method for obtaining a column with a specific index.

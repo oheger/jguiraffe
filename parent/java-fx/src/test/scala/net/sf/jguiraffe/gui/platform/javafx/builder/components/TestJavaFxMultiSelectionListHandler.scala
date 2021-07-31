@@ -19,8 +19,6 @@ import java.util.Arrays
 
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 
-import scala.Array.canBuildFrom
-
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame

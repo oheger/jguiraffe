@@ -23,7 +23,7 @@ import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertSame, a
 import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
 
-import scala.collection.JavaConversions.asScalaBuffer
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 
 /**
@@ -157,7 +157,7 @@ class TestConfigTreeItem extends JUnitSuite {
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     val children = item.getChildren
     assertEquals("Wrong number of children", ChildCount, children.size)
-    node.getChildren foreach { c =>
+    node.getChildren.asScala foreach { c =>
       val childItem = itemMap(c)
       assertSame("Wrong parent", item, childItem.getParent)
       assertTrue("Child not found", children.contains(childItem))
@@ -226,7 +226,7 @@ class TestConfigTreeItem extends JUnitSuite {
     item.resync()
     val children = item.getChildren
     assertEquals("Wrong number of child nodes", ChildCount + 1, children.size)
-    val newItem = children(ChildCount)
+    val newItem = children.asScala(ChildCount)
     assertSame("Wrong node", newChild, newItem.getValue.node)
     assertSame("Wrong parent", item, newItem.getParent)
     assertSame("Map not updated", newItem, itemMap(newChild))
