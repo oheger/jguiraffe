@@ -1,4 +1,113 @@
                            JGUIraffe Library
+                              Version 1.4
+                              Release Notes
+
+
+INTRODUCTION
+============
+
+This document contains the release notes for this version of the JGUIraffe
+library. JGUIraffe is a framework supporting the implementation of Java
+desktop applications using concepts like declarative UI definition, action and
+command objects, and dependency injection.
+
+After a long phase of inactivity, this release has been published to make the
+changes done in the code base available officially. As these changes include
+both bug fixes and new features, the new version is set to 1.4.
+
+In order to prepare the release, it was necessary to make the code base
+buildable on a modern JDK. Especially the dependency to JavaFX makes this
+somewhat problematic, as this library is no longer available in the JDK after
+Java 1.8. This release was built with a JDK 11, and the corresponding JavaFX
+version is used. Source and target compatibility has been set to Java 1.8.
+Also, the Scala version used by the JavaFX module has been upgraded to 2.13.
+
+Below is a list of all changes introduced by this release:
+
+New features:
+=============
+* [https://github.com/oheger/jguiraffe/issues/47]
+  JGUIraffe now publishes an artifact with the test classes of the core
+  project. It contains dummy implementations for the central builder interfaces
+  and can thus be useful for unit tests of applications based on the library.
+  The test implementations have been improved in this respect.
+
+* [https://github.com/oheger/jguiraffe/issues/46]
+  Added support for dialogs for choosing files and directories.
+
+* [https://github.com/oheger/jguiraffe/issues/45]
+  The user configuration of an application is now written to disk only if it
+  has been actually changed.
+
+* [https://github.com/oheger/jguiraffe/issues/42]
+  Improved the handling of the Escape key in windows. It is now possible to
+  declare a button as cancel button. Pressing the Escape key in the window is
+  then equivalent to clicking on this button.
+
+* [https://github.com/oheger/jguiraffe/issues/41]
+  Added a tag for exposing a variable from the Jelly context as bean.
+
+* [https://github.com/oheger/jguiraffe/issues/39]
+  Added a new shutdown() method to application which allows a forced shutdown.
+  In this mode, shutdown listeners are not asked for permission.
+
+Bug fixes
+=========
+
+* [https://github.com/oheger/jguiraffe/issues/44]
+  JavaFX now supports widget handlers for groups of radio buttons.
+
+* [https://github.com/oheger/jguiraffe/issues/43]
+  The scroll width and height of Swing components that have a scroll pane can
+  now be configured in the unit DLU.
+
+* [https://github.com/oheger/jguiraffe/issues/31]
+  Fixed dynamic growing of percent layouts when the content of controls
+  contained was changed.
+
+* [https://github.com/oheger/jguiraffe/issues/30]
+  The Export-Package header of the OSGi bundle generated for the core project
+  now includes impl packages. Some of them are useful for client bundles as
+  well.
+
+* [https://github.com/oheger/jguiraffe/issues/29]
+  JavaFX windows now handle the closeable property correctly. The default
+  values of windows flags like closeable, resizable, etc. have been changed
+  from false to true. (In most cases, these features should be enabled.)
+
+* [https://github.com/oheger/jguiraffe/issues/28]
+  Fixed an update problem with JavaFX tables that only have a single row.
+
+* [https://github.com/oheger/jguiraffe/issues/26]
+  Made shutdown handling more consistent. It is ensured that the main window is
+  closed exactly once, and that multiple invocations of shutdown() have no
+  effect.
+
+* [https://github.com/oheger/jguiraffe/issues/25]
+  Handling of close notifications has been reworked for JavaFX windows. Window
+  closed events are no longer sent when the window becomes invisible; they are
+  sent when the window is actually closed, either by clicking the X button or
+  by an invocation of the close() method.
+
+* [https://github.com/oheger/jguiraffe/issues/24]
+  JavaFX windows can now be assigned an icon.
+
+* [https://github.com/oheger/jguiraffe/issues/23]
+  JavaFX static text elements now handle icons correctly.
+
+Other changes
+=============
+
+* [https://github.com/oheger/jguiraffe/issues/48]
+  Make the project build again on a recent JDK. This required a number of
+  updates in dependencies and plugins. The minimum supported JDK version has
+  been upgraded to Java 1.8.
+
+* [https://github.com/oheger/jguiraffe/issues/49]
+  The JavaFX module now requires Scala 2.13.
+
+
+                           JGUIraffe Library
                               Version 1.3.1
                               Release Notes
 
