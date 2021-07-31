@@ -61,6 +61,17 @@
   <subsection name="News">
   <p>
   <table>
+    <tr>
+      <td>2021-08-01</td>
+      <td>
+        After a long phase of inactivity, a new release has been published: 1.4.
+        The release fixes again many problems with the JavaFX module, but also
+        adds new features like support for system file chooser dialogs. In this
+        release, also the minimum requirements for the JDK and Scala version
+        have been updated: Java 1.8 is now required, the project can be built on
+        a JDK 11. Scala 2.13 is now used for the JavaFX module.
+      </td>
+    </tr>
   <tr>
     <td>2018-11-16</td>
     <td>

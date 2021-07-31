@@ -26,8 +26,8 @@
     <author email="oheger@sourceforge.net">Oliver Heger</author>
   </properties>
   <body>
-    <release version="1.4" date="TBD"
-             description="TBD">
+    <release version="1.4" date="2021-08-01"
+             description="New features, bug fixes, and upgrades of dependencies.">
       <action dev="oheger" type="add" issue="49">
         The JavaFX module now requires Scala 2.13.
       </action>
@@ -51,7 +51,7 @@
         it has been actually changed.
       </action>
       <action dev="oheger" type="fix" issue="44">
-        JavaFX can now supports widget handlers for groups of radio buttons.
+        JavaFX now supports widget handlers for groups of radio buttons.
       </action>
       <action dev="oheger" type="fix" issue="43">
         The scroll width and height of Swing components that have a scroll pane

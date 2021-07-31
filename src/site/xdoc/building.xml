@@ -58,11 +58,9 @@ git clone https://github.com/oheger/jguiraffe.git jguiraffe-git
 mvn clean install
     ]]></source>
   <p>
-    This requires a JDK 1.6 because the <code>examples</code> module uses some
-    1.6 features. The <code>core</code> module and the integration jars for
-    specific UI platforms are compatible with JDK 1.5. They can be
-    built with a 1.5 compiler by issuing the same command in the corresponding
-    subdirectories. The resulting jar files containing all classes of the
+    This requires a JDK 11 or newer because this version of JavaFX is declared
+    in the dependencies. Otherwise, the minimum JDK version is 1.8. The
+    resulting jar files containing all classes of the
     <em>JGUIraffe</em> library can be found in the <code>target</code>
     folders of the modules.
   </p>
