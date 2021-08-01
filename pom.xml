@@ -22,7 +22,7 @@
   <groupId>net.sf.jguiraffe</groupId>
   <artifactId>jguiraffe-bom</artifactId>
   <packaging>pom</packaging>
-  <version>1.4</version>
+  <version>1.5-SNAPSHOT</version>
 
   <modules>
     <module>parent</module>
