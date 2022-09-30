@@ -93,11 +93,6 @@
    	  <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
   </dependencies>
 
   <build>
