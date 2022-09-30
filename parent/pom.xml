@@ -47,7 +47,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.scala>2.13.6</version.scala>
+    <version.scala>2.13.9</version.scala>
     <version.scala.modules>1.1.2</version.scala.modules>
     <powermock.version>2.0.2</powermock.version>
     <license.file>../conf/License-Header.txt</license.file>
