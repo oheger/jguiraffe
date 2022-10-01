@@ -132,15 +132,6 @@
         <version>2.12.2</version>
         <scope>test</scope>
       </dependency>
-
-      <!-- This forces a higher version of dom4j, which seems to be needed by Jelly 1.0.1.
-      -->
-      <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>1.6.1</version>
-        <scope>test</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

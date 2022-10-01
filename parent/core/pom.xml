@@ -76,6 +76,10 @@
           <groupId>jdom</groupId>
           <artifactId>jdom</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>pull-parser</groupId>
+          <artifactId>pull-parser</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
