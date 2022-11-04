@@ -26,6 +26,18 @@
     <author email="oheger@sourceforge.net">Oliver Heger</author>
   </properties>
   <body>
+    <release version="1.4.1" date="2022-11-05"
+             description="Upgrades of dependencies">
+      <action dev="oheger" type="update" due-to="dependabot">
+        Updated scala-library from 2.13.6 to 2.13.9.
+      </action>
+      <action dev="oheger" type="update" due-to="dependabot">
+        Updated commons-jelly from 1.0 to 1.0.1.
+      </action>
+      <action dev="oheger" type="update" due-to="dependabot">
+        Updated xercesImpl from 2.12.1 to 2.12.2.
+      </action>
+    </release>
     <release version="1.4" date="2021-08-01"
              description="New features, bug fixes, and upgrades of dependencies.">
       <action dev="oheger" type="add" issue="49">
