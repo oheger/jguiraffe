@@ -1,4 +1,28 @@
                            JGUIraffe Library
+                              Version 1.4.1
+                              Release Notes
+
+
+INTRODUCTION
+============
+
+This document contains the release notes for this version of the JGUIraffe
+library. JGUIraffe is a framework supporting the implementation of Java
+desktop applications using concepts like declarative UI definition, action and
+command objects, and dependency injection.
+
+Version 1.4.1 is a minor bugfix release that only contains upgrades of some
+dependencies triggered by dependabot to address security vulnerabilities. There
+are no other changes on source code.
+
+Changes
+=======
+
+* Updated scala-library from 2.13.6 to 2.13.9.
+* Updated commons-jelly from 1.0 to 1.0.1.
+* Updated xercesImpl from 2.12.1 to 2.12.2.
+
+                           JGUIraffe Library
                               Version 1.4
                               Release Notes
 
