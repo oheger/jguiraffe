@@ -62,6 +62,13 @@
   <p>
   <table>
     <tr>
+      <td>2022-11-05</td>
+      <td>
+        A new bugfix release 1.4.1 with some dependency updates triggered by
+        dependabot.
+      </td>
+    </tr>
+    <tr>
       <td>2021-08-01</td>
       <td>
         After a long phase of inactivity, a new release has been published: 1.4.
