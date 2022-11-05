@@ -26,6 +26,10 @@
     <author email="oheger@sourceforge.net">Oliver Heger</author>
   </properties>
   <body>
+    <release version="1.5" date="in VCS"
+             description="TODO">
+
+    </release>
     <release version="1.4.1" date="2022-11-05"
              description="Upgrades of dependencies">
       <action dev="oheger" type="update" due-to="dependabot">
