@@ -25,7 +25,7 @@
   <parent>
     <groupId>net.sf.jguiraffe</groupId>
     <artifactId>jguiraffe-parent</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.1</version>
   </parent>
 
   <artifactId>distribution</artifactId>
