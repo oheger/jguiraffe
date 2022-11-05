@@ -9,7 +9,7 @@
 <div id="overview"><a href="../../../../../../../../testapidocs/net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2021 The JGUIraffe Team.</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2022 The JGUIraffe Team.</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License")</em>
 <a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String COMP_NAME = <span class="jxr_string">"testComponent"</span>;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  
 <a class="jxr_linenumber" name="49" href="#49">49</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The form controller. */</em>
-<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> controller;
+<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> controller;
 <a class="jxr_linenumber" name="51" href="#51">51</a>  
 <a class="jxr_linenumber" name="52" href="#52">52</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The platform event manager. */</em>
 <a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/event/PlatformEventManagerImpl.html">PlatformEventManagerImpl</a> eventManager;
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>      @Before
 <a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception
 <a class="jxr_linenumber" name="60" href="#60">60</a>      {
-<a class="jxr_linenumber" name="61" href="#61">61</a>          controller = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a>();
+<a class="jxr_linenumber" name="61" href="#61">61</a>          controller = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a>();
 <a class="jxr_linenumber" name="62" href="#62">62</a>          ComponentBuilderData compData = <strong class="jxr_keyword">new</strong> ComponentBuilderData();
 <a class="jxr_linenumber" name="63" href="#63">63</a>          compData.initializeForm(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/forms/TransformerContextImpl.html">TransformerContextImpl</a>(), EasyMock
 <a class="jxr_linenumber" name="64" href="#64">64</a>                  .createNiceMock(BindingStrategy.<strong class="jxr_keyword">class</strong>));
@@ -150,7 +150,7 @@
 <a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     * A specialized form controller test implementation for testing whether</em>
 <a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * validation operations are invoked as expected.</em>
 <a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="143" href="#143">143</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> <strong class="jxr_keyword">extends</strong> FormController
+<a class="jxr_linenumber" name="143" href="#143">143</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> <strong class="jxr_keyword">extends</strong> FormController
 <a class="jxr_linenumber" name="144" href="#144">144</a>     {
 <a class="jxr_linenumber" name="145" href="#145">145</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> A counter for validate() calls. */</em>
 <a class="jxr_linenumber" name="146" href="#146">146</a>         <strong class="jxr_keyword">int</strong> validateCounter;

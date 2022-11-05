@@ -9,7 +9,7 @@
 <div id="overview"><a href="../../../../../../../../testapidocs/net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2021 The JGUIraffe Team.</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2022 The JGUIraffe Team.</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License")</em>
 <a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
@@ -93,9 +93,9 @@
 <a class="jxr_linenumber" name="83" href="#83">83</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="84" href="#84">84</a>  <em class="jxr_javadoccomment">     * @return the controller</em>
 <a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="86" href="#86">86</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> setUpController()
+<a class="jxr_linenumber" name="86" href="#86">86</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> setUpController()
 <a class="jxr_linenumber" name="87" href="#87">87</a>      {
-<a class="jxr_linenumber" name="88" href="#88">88</a>          <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a>();
+<a class="jxr_linenumber" name="88" href="#88">88</a>          <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a>();
 <a class="jxr_linenumber" name="89" href="#89">89</a>          ctrl.setComponentBuilderData(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/components/TestDefaultToolTipManager.html">ComponentBuilderDataTestImpl</a>());
 <a class="jxr_linenumber" name="90" href="#90">90</a>          ctrl.setWindowBuilderData(<strong class="jxr_keyword">new</strong> WindowBuilderData());
 <a class="jxr_linenumber" name="91" href="#91">91</a>          <strong class="jxr_keyword">return</strong> ctrl;
@@ -286,7 +286,7 @@
 <a class="jxr_linenumber" name="276" href="#276">276</a>     {
 <a class="jxr_linenumber" name="277" href="#277">277</a>         mockWidgetHandler = initHandler(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="278" href="#278">278</a>         EasyMock.replay(mockWidgetHandler);
-<a class="jxr_linenumber" name="279" href="#279">279</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = setUpController();
+<a class="jxr_linenumber" name="279" href="#279">279</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = setUpController();
 <a class="jxr_linenumber" name="280" href="#280">280</a>         assertEquals(<span class="jxr_string">"Wrong widget background color"</span>, NORMAL_BG, marker
 <a class="jxr_linenumber" name="281" href="#281">281</a>                 .getWidgetBackgroundColor(ctrl, FIELD));
 <a class="jxr_linenumber" name="282" href="#282">282</a>         assertEquals(<span class="jxr_string">"Wrong widget foreground color"</span>, NORMAL_FG, marker
@@ -303,7 +303,7 @@
 <a class="jxr_linenumber" name="293" href="#293">293</a>     {
 <a class="jxr_linenumber" name="294" href="#294">294</a>         mockWidgetHandler = initHandler(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="295" href="#295">295</a>         EasyMock.replay(mockWidgetHandler);
-<a class="jxr_linenumber" name="296" href="#296">296</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = setUpController();
+<a class="jxr_linenumber" name="296" href="#296">296</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = setUpController();
 <a class="jxr_linenumber" name="297" href="#297">297</a>         <strong class="jxr_keyword">int</strong> testCount = 12;
 <a class="jxr_linenumber" name="298" href="#298">298</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; testCount; i++)
 <a class="jxr_linenumber" name="299" href="#299">299</a>         {
@@ -362,7 +362,7 @@
 <a class="jxr_linenumber" name="352" href="#352">352</a>         map.put(FIELD, vres);
 <a class="jxr_linenumber" name="353" href="#353">353</a>         FormValidatorResults validationResults = <strong class="jxr_keyword">new</strong> DefaultFormValidatorResults(
 <a class="jxr_linenumber" name="354" href="#354">354</a>                 map);
-<a class="jxr_linenumber" name="355" href="#355">355</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = setUpController();
+<a class="jxr_linenumber" name="355" href="#355">355</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = setUpController();
 <a class="jxr_linenumber" name="356" href="#356">356</a>         marker.updateField(ctrl, FIELD, validationResults, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="357" href="#357">357</a>         EasyMock.verify(mockWidgetHandler, vres);
 <a class="jxr_linenumber" name="358" href="#358">358</a>     }
@@ -385,7 +385,7 @@
 <a class="jxr_linenumber" name="375" href="#375">375</a>         map.put(FIELD, vres);
 <a class="jxr_linenumber" name="376" href="#376">376</a>         FormValidatorResults validationResults = <strong class="jxr_keyword">new</strong> DefaultFormValidatorResults(
 <a class="jxr_linenumber" name="377" href="#377">377</a>                 map);
-<a class="jxr_linenumber" name="378" href="#378">378</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = setUpController();
+<a class="jxr_linenumber" name="378" href="#378">378</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = setUpController();
 <a class="jxr_linenumber" name="379" href="#379">379</a>         marker.updateField(ctrl, FIELD, validationResults, false);
 <a class="jxr_linenumber" name="380" href="#380">380</a>         EasyMock.verify(mockWidgetHandler, vres);
 <a class="jxr_linenumber" name="381" href="#381">381</a>     }
@@ -405,7 +405,7 @@
 <a class="jxr_linenumber" name="395" href="#395">395</a>         }
 <a class="jxr_linenumber" name="396" href="#396">396</a>         FormValidatorResults validationRes = <strong class="jxr_keyword">new</strong> DefaultFormValidatorResults(
 <a class="jxr_linenumber" name="397" href="#397">397</a>                 resmap);
-<a class="jxr_linenumber" name="398" href="#398">398</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = setUpController();
+<a class="jxr_linenumber" name="398" href="#398">398</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = setUpController();
 <a class="jxr_linenumber" name="399" href="#399">399</a>         marker.mockUpdateField = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="400" href="#400">400</a>         FormControllerValidationEvent event = <strong class="jxr_keyword">new</strong> FormControllerValidationEvent(
 <a class="jxr_linenumber" name="401" href="#401">401</a>                 ctrl, validationRes);
@@ -432,7 +432,7 @@
 <a class="jxr_linenumber" name="422" href="#422">422</a>         resmap.put(FIELD, EasyMock.createNiceMock(ValidationResult.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="423" href="#423">423</a>         FormValidatorResults validationRes = <strong class="jxr_keyword">new</strong> DefaultFormValidatorResults(
 <a class="jxr_linenumber" name="424" href="#424">424</a>                 resmap);
-<a class="jxr_linenumber" name="425" href="#425">425</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> ctrl = setUpController();
+<a class="jxr_linenumber" name="425" href="#425">425</a>         <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> ctrl = setUpController();
 <a class="jxr_linenumber" name="426" href="#426">426</a>         ctrl.validatorResults = validationRes;
 <a class="jxr_linenumber" name="427" href="#427">427</a>         marker.mockUpdateField = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="428" href="#428">428</a>         FormControllerFieldStatusEvent event = <strong class="jxr_keyword">new</strong> FormControllerFieldStatusEvent(
@@ -466,7 +466,7 @@
 <a class="jxr_linenumber" name="456" href="#456">456</a> <em class="jxr_javadoccomment">     * A specialized form controller implementation used for injecting</em>
 <a class="jxr_linenumber" name="457" href="#457">457</a> <em class="jxr_javadoccomment">     * validation results.</em>
 <a class="jxr_linenumber" name="458" href="#458">458</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="459" href="#459">459</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestFormValidationTriggerFocus.html">FormControllerTestImpl</a> <strong class="jxr_keyword">extends</strong> FormController
+<a class="jxr_linenumber" name="459" href="#459">459</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../net/sf/jguiraffe/gui/builder/window/ctrl/TestColorFieldMarker.html">FormControllerTestImpl</a> <strong class="jxr_keyword">extends</strong> FormController
 <a class="jxr_linenumber" name="460" href="#460">460</a>     {
 <a class="jxr_linenumber" name="461" href="#461">461</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The validation results to be returned. */</em>
 <a class="jxr_linenumber" name="462" href="#462">462</a>         FormValidatorResults validatorResults;

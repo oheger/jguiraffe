@@ -23,9 +23,9 @@ under the License.
     <link>https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-test-helper</link>
     <description>JGUIraffe Test Helper - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2021 The JGUIraffe Team</copyright>
+    <copyright>&#169;2022 The JGUIraffe Team</copyright>
     <item>
-      <title>File: 7,
+      <title>File: 2,
              Errors: 6,
              Warnings: 0,
              Infos: 0
@@ -55,77 +55,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  2
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-test-helper/checkstyle.html#testmsgresources_de.properties">testmsgresources_de.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-test-helper/checkstyle.html#testformbuilderresources_en.properties">testformbuilderresources_en.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-test-helper/checkstyle.html#testresources_en.properties">testresources_en.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-test-helper/checkstyle.html#testresources.properties">testresources.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://github.com/oheger/jguiraffe/jguiraffe-parent/jguiraffe-test-helper/checkstyle.html#testmsgresources_en.properties">testmsgresources_en.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
+                  1
                 </td>
               </tr>
                           <tr>
@@ -139,7 +69,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  4
+                  5
                 </td>
               </tr>
                       </tbody>
