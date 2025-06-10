@@ -1078,8 +1078,8 @@ public class TestApplication
         });
         MessageOutput mockOut = EasyMock.createMock(MessageOutput.class);
         EasyMock.expect(
-                mockOut.show(app.getApplicationContext().getMainWindow(), "OK",
-                        "Hello", MessageOutput.MESSAGE_QUESTION,
+                mockOut.show(app.getApplicationContext().getMainWindow(), "Fertig",
+                        "Guten Tag", MessageOutput.MESSAGE_QUESTION,
                         MessageOutput.BTN_YES_NO)).andReturn(
                 MessageOutput.RET_NO);
         EasyMock.replay(mockOut, tracker);
@@ -1344,7 +1344,7 @@ public class TestApplication
         ApplicationContext appCtx = app.getApplicationContext();
         assertNotNull("No application context set", appCtx);
         assertNotNull("No resource manager set", appCtx.getResourceManager());
-        assertEquals("Cannot resolve resource", "Hello", appCtx.getResource(
+        assertEquals("Cannot resolve resource", "Guten Tag", appCtx.getResource(
                 RES_GRP, "test1"));
 
         assertEquals("UI not initialized", 1, app.initGUICount);
