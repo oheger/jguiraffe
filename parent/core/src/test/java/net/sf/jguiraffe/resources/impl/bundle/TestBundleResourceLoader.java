@@ -63,11 +63,12 @@ public class TestBundleResourceLoader
         assertEquals("Abbrechen", groupDE.getResource("test3"));
         checkGroup(groupDE, Locale.GERMANY);
 
-        ResourceGroup groupEN = loader.loadGroup(Locale.US, TESTNAME);
-        assertEquals("Hello", groupEN.getResource("test1"));
-        assertEquals("OK", groupEN.getResource("test2"));
-        assertEquals("Cancel", groupEN.getResource("test3"));
-        checkGroup(groupEN, Locale.US);
+        Locale localeSpanish = new Locale("es", "ES");
+        ResourceGroup groupES = loader.loadGroup(localeSpanish, TESTNAME);
+        assertEquals("Hola", groupES.getResource("test1"));
+        assertEquals("aceptar", groupES.getResource("test2"));
+        assertEquals("cancelar", groupES.getResource("test3"));
+        checkGroup(groupES, localeSpanish);
     }
 
     /**
