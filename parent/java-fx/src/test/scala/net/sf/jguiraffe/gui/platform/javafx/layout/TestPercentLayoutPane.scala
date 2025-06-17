@@ -22,8 +22,8 @@ import org.easymock.EasyMock
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 import javafx.geometry.Insets
 import net.sf.jguiraffe.gui.layout.PercentLayoutBase

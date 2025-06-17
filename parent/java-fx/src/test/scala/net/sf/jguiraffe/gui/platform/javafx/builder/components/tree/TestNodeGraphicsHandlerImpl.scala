@@ -22,8 +22,8 @@ import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 import javafx.scene.Node
 import net.sf.jguiraffe.gui.builder.components.tags.TreeIconHandler

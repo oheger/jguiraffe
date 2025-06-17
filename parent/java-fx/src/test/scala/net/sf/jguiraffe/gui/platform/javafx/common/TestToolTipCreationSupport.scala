@@ -25,8 +25,8 @@ import org.apache.commons.jelly.{JellyContext, Tag}
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 object TestToolTipCreationSupport {
   @BeforeClass def setUpOnce(): Unit = {

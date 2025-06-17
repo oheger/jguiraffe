@@ -27,8 +27,8 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertSame, assertTrue}
 import org.junit.{BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 import scala.collection.mutable
 

@@ -25,7 +25,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import scala.beans.BeanProperty
 

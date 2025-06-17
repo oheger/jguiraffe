@@ -27,8 +27,8 @@ import org.apache.commons.configuration.tree.ConfigurationNode
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 /**
  * The companion object for ''TestTreeHandlerFactory''.

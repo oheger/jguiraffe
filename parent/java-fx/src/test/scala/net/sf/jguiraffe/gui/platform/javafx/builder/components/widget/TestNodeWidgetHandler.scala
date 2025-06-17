@@ -20,7 +20,7 @@ import javafx.scene.control.Label
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert._
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 object TestNodeWidgetHandler {
   @BeforeClass def setUpOnce(): Unit = {

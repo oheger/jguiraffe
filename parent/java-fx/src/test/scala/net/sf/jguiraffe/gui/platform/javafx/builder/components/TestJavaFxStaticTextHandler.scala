@@ -22,7 +22,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.{Before, BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
 import javafx.scene.image.Image

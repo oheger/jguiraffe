@@ -21,7 +21,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper.toRunnable
 import org.junit.Assert._
 import org.junit.{Before, BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''DefaultToolTipFactory''.

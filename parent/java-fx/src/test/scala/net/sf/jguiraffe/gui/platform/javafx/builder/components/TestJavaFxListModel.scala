@@ -18,7 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList

@@ -22,7 +22,7 @@ import net.sf.jguiraffe.gui.builder.action.Accelerator
 import net.sf.jguiraffe.gui.builder.event.{Keys, Modifiers}
 import org.junit.Assert._
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''AcceleratorConverter''.

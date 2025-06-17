@@ -22,8 +22,8 @@ import javafx.scene.control.MenuItem
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 /**
  * Test class for ''MenuItemComponentHandler''.

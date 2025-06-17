@@ -21,7 +21,7 @@ import javafx.scene.control.{Cell, TableRow, TableView}
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert._
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 object TestStyleAwareRowFactory {
   @BeforeClass def setUpOnce(): Unit = {

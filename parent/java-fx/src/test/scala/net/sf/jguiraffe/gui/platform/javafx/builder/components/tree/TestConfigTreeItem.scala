@@ -21,7 +21,7 @@ import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigur
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertSame, assertTrue}
 import org.junit.{Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable

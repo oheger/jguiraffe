@@ -21,8 +21,8 @@ import net.sf.jguiraffe.gui.platform.javafx.layout.ContainerWrapper
 import org.apache.commons.jelly.JellyContext
 import org.junit.Assert._
 import org.junit.{Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 /**
   * Test class for ''ContainerMapping''.

@@ -25,8 +25,8 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.apache.commons.jelly.JellyContext
 import org.junit.Assert.{assertEquals, assertSame}
 import org.junit.{BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 /**
  * Test class for ''ToolTipCreationCallBack''.

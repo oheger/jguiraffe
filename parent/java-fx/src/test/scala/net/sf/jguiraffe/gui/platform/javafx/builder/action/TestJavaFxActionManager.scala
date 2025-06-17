@@ -34,8 +34,8 @@ import org.easymock.EasyMock
 import org.easymock.EasyMock.{eq => eqArg}
 import org.junit.Assert._
 import org.junit.{Before, BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 /**
  * Companion object.

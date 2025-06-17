@@ -18,7 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 import net.sf.jguiraffe.gui.builder.components.Color
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.junit.{Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''JavaFxStylesHandler''.

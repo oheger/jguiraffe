@@ -19,8 +19,8 @@ import net.sf.jguiraffe.gui.app.ApplicationContext
 import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.Test
-import org.scalatest.easymock.EasyMockSugar
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
 
 /**
   * Test class for ''JavaFxFileChooserDialogServiceFactory''.

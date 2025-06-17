@@ -18,8 +18,8 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 import org.apache.commons.configuration.tree.ConfigurationNode
 import org.easymock.EasyMock
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 /**
  * Test class for ''ConfigNodeData''.

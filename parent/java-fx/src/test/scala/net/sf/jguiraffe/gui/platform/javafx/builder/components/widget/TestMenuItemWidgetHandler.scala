@@ -19,7 +19,7 @@ import javafx.scene.control.MenuItem
 
 import org.junit.Assert._
 import org.junit.{Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''MenuItemWidgetHandler''.
