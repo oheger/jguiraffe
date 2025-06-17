@@ -21,7 +21,7 @@ import java.util.Collection
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''EventListenerList''.

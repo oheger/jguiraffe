@@ -22,7 +22,7 @@ import net.sf.jguiraffe.gui.builder.components.FormBuilderException
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert._
 import org.junit.{BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 object TestComponentUtils {
   @BeforeClass def setUpOnce(): Unit = {

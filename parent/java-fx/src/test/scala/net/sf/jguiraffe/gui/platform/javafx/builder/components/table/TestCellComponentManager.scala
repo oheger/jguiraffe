@@ -30,8 +30,8 @@ import org.apache.commons.jelly._
 import org.easymock.{EasyMock, IAnswer}
 import org.junit.Assert._
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 object TestCellComponentManager {
   @BeforeClass def setUpOnce(): Unit = {

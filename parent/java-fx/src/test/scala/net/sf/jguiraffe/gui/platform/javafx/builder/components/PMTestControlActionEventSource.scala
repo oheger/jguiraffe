@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import javafx.event.ActionEvent
 import javafx.event.EventHandler

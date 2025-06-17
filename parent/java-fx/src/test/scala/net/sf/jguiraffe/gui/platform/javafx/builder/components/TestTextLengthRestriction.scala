@@ -18,7 +18,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert.assertEquals
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import javafx.scene.control.TextField
 

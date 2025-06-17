@@ -26,7 +26,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.JavaFxFont
 import org.junit.Assert._
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Companion object.

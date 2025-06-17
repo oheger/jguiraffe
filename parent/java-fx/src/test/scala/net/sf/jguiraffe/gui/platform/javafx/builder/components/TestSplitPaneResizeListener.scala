@@ -21,7 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyProperty

@@ -21,7 +21,6 @@ import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.FlowPane
 import javafx.scene.text.Text
-
 import net.sf.jguiraffe.gui.builder.components.tags.table.{ColumnRendererTag, TableFormController, TableTag}
 import net.sf.jguiraffe.gui.builder.components.tags.{BorderLayoutTag, ButtonLayoutTag, ButtonTag, CheckboxTag, ComboBoxTag, FontTag, LabelTag, ListBoxTag, PanelTag, PasswordFieldTag, PercentLayoutTag, ProgressBarTag, RadioButtonTag, SliderTag, SplitterTag, StaticTextTag, TabbedPaneTag, TextAreaTag, TextFieldTag, ToggleButtonTag, TreeTag}
 import net.sf.jguiraffe.gui.builder.components._
@@ -32,8 +31,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.NodeProperties
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.table.{CellComponentManager, TableHandlerFactory}
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.tree.TreeHandlerFactory
-import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{MenuItemWidgetHandler,
-ControlWidgetHandler, NodeWidgetHandler, JavaFxFont}
+import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.{ControlWidgetHandler, JavaFxFont, MenuItemWidgetHandler, NodeWidgetHandler}
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.JavaFxEventManager
 import net.sf.jguiraffe.gui.platform.javafx.common.{DefaultToolTipFactory, ImageWrapper, MockToolTipCreationSupport}
 import net.sf.jguiraffe.gui.platform.javafx.layout.{ContainerWrapper, JavaFxUnitSizeHandler}
@@ -43,9 +41,9 @@ import org.apache.commons.jelly.{JellyContext, Tag}
 import org.apache.commons.lang.StringUtils
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertNull, assertSame, assertTrue}
-import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.junit.{Before, BeforeClass, Test}
+import org.scalatestplus.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
 
 object TestJavaFxComponentManager {
   /** A test background color. */

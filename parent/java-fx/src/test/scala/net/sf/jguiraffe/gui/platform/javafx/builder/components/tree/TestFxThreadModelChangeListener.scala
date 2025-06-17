@@ -23,8 +23,8 @@ import org.easymock.IAnswer
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 import javafx.application.Platform
 import net.sf.jguiraffe.gui.builder.components.model.TreeModelChangeListener

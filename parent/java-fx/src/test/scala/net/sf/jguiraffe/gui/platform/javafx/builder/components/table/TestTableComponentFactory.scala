@@ -22,8 +22,8 @@ import net.sf.jguiraffe.gui.builder.components.tags.table.{TableColumnRecalibrat
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import org.junit.Assert._
 import org.junit.{BeforeClass, Before, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 object TestTableComponentFactory {
   @BeforeClass def setUpOnce(): Unit = {

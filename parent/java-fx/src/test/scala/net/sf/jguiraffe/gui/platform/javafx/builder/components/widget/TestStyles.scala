@@ -17,7 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
 import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''Styles''.

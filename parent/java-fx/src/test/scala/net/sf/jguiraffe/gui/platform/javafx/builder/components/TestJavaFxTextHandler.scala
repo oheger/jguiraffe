@@ -21,8 +21,8 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 import org.junit.Assert.{assertEquals, assertFalse, assertSame, assertTrue}
 import org.junit.{BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 object TestJavaFxTextHandler {
   @BeforeClass def setUpOnce(): Unit = {

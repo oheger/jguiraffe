@@ -30,8 +30,8 @@ import org.junit.{Before, BeforeClass, Test}
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import org.scalatest.easymock.EasyMockSugar
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
 
 /**
  * Test class for ''JavaFxPercentLayoutAdapter''.

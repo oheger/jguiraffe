@@ -25,7 +25,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 import javafx.application.Platform
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper.await

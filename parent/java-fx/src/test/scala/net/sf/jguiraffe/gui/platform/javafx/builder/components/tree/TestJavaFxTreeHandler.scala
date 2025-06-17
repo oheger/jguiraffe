@@ -26,8 +26,8 @@ import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigur
 import org.easymock.{EasyMock, IAnswer}
 import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertNull, assertSame, assertTrue}
 import org.junit.{BeforeClass, Test}
-import org.scalatest.junit.JUnitSuite
-import org.scalatest.easymock.EasyMockSugar
+import org.scalatestplus.junit.JUnitSuite
+import org.scalatestplus.easymock.EasyMockSugar
 
 import scala.collection.mutable
 

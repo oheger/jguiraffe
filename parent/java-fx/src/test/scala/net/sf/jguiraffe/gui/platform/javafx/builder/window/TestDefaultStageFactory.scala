@@ -17,7 +17,7 @@ package net.sf.jguiraffe.gui.platform.javafx.builder.window
 
 import org.junit.Test
 import org.junit.Assert._
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 
 /**
   * Test class for ''DefaultStageFactory''. This class tests some corner cases.
