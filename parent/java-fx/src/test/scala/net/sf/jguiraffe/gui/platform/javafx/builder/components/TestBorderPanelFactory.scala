@@ -19,13 +19,12 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.{FlowPane, Pane, StackPane}
-
-import net.sf.jguiraffe.gui.builder.components.ColorHelper
+import net.sf.jguiraffe.gui.builder.components.{Color, ColorHelper}
 import net.sf.jguiraffe.gui.builder.components.tags.PanelTag
 import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
 import net.sf.jguiraffe.gui.platform.javafx.builder.components.widget.JavaFxFont
 import org.junit.Assert._
-import org.junit.{BeforeClass, Before, Test}
+import org.junit.{Before, BeforeClass, Test}
 import org.scalatestplus.junit.JUnitSuite
 
 /**
@@ -192,10 +191,10 @@ class TestBorderPanelFactory extends JUnitSuite {
    * Tests that the label acting as panel title is styled correctly.
    */
   @Test def testStylesOfTitleLabel(): Unit = {
-    val tag = new PanelTag {
-      override val getColor = ColorHelper.NamedColor.BLUE.getColor
+    val tag: PanelTag = new PanelTag {
+      override val getColor: Color = ColorHelper.NamedColor.BLUE.getColor
 
-      override val getBackgroundColor = ColorHelper.NamedColor.DARK_GRAY.getColor
+      override val getBackgroundColor: Color = ColorHelper.NamedColor.DARK_GRAY.getColor
     }
     tag setTitleFont new JavaFxFont(family = Some("TestFont"))
     tag setText Title

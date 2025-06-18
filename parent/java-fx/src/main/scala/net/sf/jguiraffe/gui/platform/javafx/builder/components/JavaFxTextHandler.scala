@@ -40,7 +40,7 @@ private class JavaFxTextHandler(txtControl: TextInputControl)
   extends JavaFxComponentHandler[String](txtControl)
   with TextHandler with ChangeEventSource {
   /** The type of this handler. We deal with String data. */
-  @BeanProperty val `type` = classOf[String]
+  @BeanProperty val `type`: Class[String] = classOf[String]
 
   def getData: String = txtControl.getText
 

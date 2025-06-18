@@ -40,7 +40,7 @@ import net.sf.jguiraffe.gui.platform.javafx.common.ImageWrapper
  */
 private class JavaFxStaticTextHandler(label: Label)
   extends JavaFxComponentHandler[StaticTextData](label) with StaticTextHandler {
-  @BeanProperty val `type` = classOf[StaticTextData]
+  @BeanProperty val `type`: Class[StaticTextData] = classOf[StaticTextData]
 
   def getData: StaticTextData = {
     val data = new StaticTextDataImpl

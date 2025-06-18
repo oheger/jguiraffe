@@ -88,7 +88,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
   /**
     * An optional reference to the parent container.
     */
-  lazy val parent = parentWrapper
+  lazy val parent: Option[ContainerWrapper] = parentWrapper
 
   /**
     * Stores an optional font of this container. If defined, this font is used
@@ -256,7 +256,7 @@ object ContainerWrapper {
   type TextFontInitializer = Text => Text
 
   /** A font initializer for the default font. */
-  lazy val DefaultFontInitializer = createFontInitializer(Font.getDefault)
+  lazy val DefaultFontInitializer: TextFontInitializer = createFontInitializer(Font.getDefault)
 
   /**
    * Convenience method for converting a plain object to an instance of

@@ -16,8 +16,9 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import scala.beans.BeanProperty
-
 import javafx.scene.control.ButtonBase
+
+import java.lang
 
 /**
  * The ''ComponentHandler'' implementation for JavaFX command buttons.
@@ -43,7 +44,7 @@ private class JavaFxButtonHandler(button: ButtonBase,
   override val actionCommand: String = null)
   extends JavaFxComponentHandler[java.lang.Boolean](button)
   with ControlActionEventSource[java.lang.Boolean] {
-  @BeanProperty val `type` = classOf[java.lang.Boolean]
+  @BeanProperty val `type`: Class[lang.Boolean] = classOf[java.lang.Boolean]
 
   def getData: java.lang.Boolean = java.lang.Boolean.FALSE
 

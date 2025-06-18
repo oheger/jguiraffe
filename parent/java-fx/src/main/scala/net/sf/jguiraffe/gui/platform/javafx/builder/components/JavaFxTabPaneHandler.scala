@@ -15,8 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.beans.BeanProperty
+import javafx.beans.value.ObservableValue
 
+import scala.beans.BeanProperty
 import javafx.scene.control.TabPane
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 
@@ -32,7 +33,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 private class JavaFxTabPaneHandler(tabPane: TabPane)
   extends JavaFxComponentHandler[java.lang.Integer](tabPane)
   with ChangeEventSource {
-  @BeanProperty val `type` = classOf[Integer]
+  @BeanProperty val `type`: Class[Integer] = classOf[Integer]
 
   def getData: java.lang.Integer =
     tabPane.getSelectionModel.selectedIndexProperty.get()
@@ -47,5 +48,5 @@ private class JavaFxTabPaneHandler(tabPane: TabPane)
    * @inheritdoc This implementation returns the property of the selection
    * model responsible for storing the selected index.
    */
-  def observableValue = tabPane.getSelectionModel.selectedIndexProperty
+  def observableValue: ObservableValue[_ <: AnyRef] = tabPane.getSelectionModel.selectedIndexProperty
 }

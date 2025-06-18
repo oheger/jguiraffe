@@ -15,6 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import javafx.beans.value.ObservableValue
+import javafx.collections.ObservableList
 import javafx.scene.control.ComboBox
 import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
@@ -30,7 +32,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 private class JavaFxComboBoxHandler(combo: ComboBox[Object])
   extends JavaFxComponentHandler[Object](combo) with ListModelSupport
   with ChangeEventSource {
-  protected val displayList = combo.getItems
+  protected val displayList: ObservableList[Object] = combo.getItems
 
   def getType: Class[_] = getListModel.getType
 
@@ -69,5 +71,5 @@ private class JavaFxComboBoxHandler(combo: ComboBox[Object])
   /**
    * @inheritdoc This implementation returns the combo box's value property.
    */
-  def observableValue = combo.valueProperty
+  def observableValue: ObservableValue[_ <: AnyRef] = combo.valueProperty
 }

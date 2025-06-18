@@ -55,7 +55,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
   val closeable: Boolean)
   extends Window with WindowWrapper {
   /** The underlying wrapped window. */
-  override val getWrappedWindow = stage
+  override val getWrappedWindow: AnyRef = stage
 
   /** The parent window of this window. */
   @BeanProperty var parentWindow: Window = _

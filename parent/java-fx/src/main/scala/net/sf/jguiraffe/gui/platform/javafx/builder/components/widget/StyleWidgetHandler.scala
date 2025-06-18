@@ -33,7 +33,7 @@ import net.sf.jguiraffe.gui.builder.components.{Color, WidgetHandler}
  */
 private[components] trait StyleWidgetHandler extends WidgetHandler {
   /** The styles handler used by this object. */
-  lazy val stylesHandler = createStylesHandler()
+  lazy val stylesHandler: JavaFxStylesHandler = createStylesHandler()
 
   /** The property defining the style of the wrapped widget. */
   val style: StringProperty

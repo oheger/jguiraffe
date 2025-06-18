@@ -42,7 +42,7 @@ private object BorderPanelFactory {
   val StylePanelTitle = "bordered-panel-title"
 
   /** The default background color for title labels. */
-  val DefaultBackgroundColor = Color.newLogicInstance("-fx-control-inner-background")
+  val DefaultBackgroundColor: Color = Color.newLogicInstance("-fx-control-inner-background")
 
   /**
    * Adds the given style sheet class to the given node.

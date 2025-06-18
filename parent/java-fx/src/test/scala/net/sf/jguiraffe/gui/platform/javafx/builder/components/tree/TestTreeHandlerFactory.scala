@@ -91,8 +91,8 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
         EasyMock.anyBoolean(), EasyMock.anyBoolean()))
       .andReturn(IconName).anyTimes()
     EasyMock.replay(iconHandler)
-    val tag = new TreeTag {
-      override val getResolvedIconHandler = iconHandler
+    val tag: TreeTag = new TreeTag {
+      override val getResolvedIconHandler: TreeIconHandler = iconHandler
     }
     tag setTreeModel new HierarchicalConfiguration
     tag setName Name

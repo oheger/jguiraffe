@@ -16,13 +16,13 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.tree
 
 import javafx.scene.Node
-
 import org.apache.commons.configuration.tree.{ConfigurationNode, DefaultConfigurationNode}
 import org.easymock.EasyMock
 import org.junit.Assert.{assertEquals, assertFalse, assertNotSame, assertSame, assertTrue}
 import org.junit.{Before, Test}
 import org.scalatestplus.junit.JUnitSuite
 
+import java.util
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 
@@ -180,8 +180,8 @@ class TestConfigTreeItem extends JUnitSuite {
    * propagated to child nodes.
    */
   @Test def testResyncUninitialized(): Unit = {
-    val node = new DefaultConfigurationNode(NodeName) {
-      override def getChildren = {
+    val node: DefaultConfigurationNode = new DefaultConfigurationNode(NodeName) {
+      override def getChildren: util.List[ConfigurationNode] = {
         throw new UnsupportedOperationException("Unexpected method call!")
       }
     }
