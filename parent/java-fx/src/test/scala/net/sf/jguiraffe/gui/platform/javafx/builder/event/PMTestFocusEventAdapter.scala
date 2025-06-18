@@ -15,25 +15,27 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.event
 
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.value.{ChangeListener, ObservableValue}
+import javafx.scene.Node
+import net.sf.jguiraffe.gui.builder.event.{FormEventManager, FormFocusEvent, FormListenerType}
+import net.sf.jguiraffe.gui.forms.ComponentHandler
+import net.sf.jguiraffe.gui.platform.javafx.{FetchAnswer, JavaFxTestHelper}
 import org.easymock.EasyMock
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.{Before, Ignore, Test}
+import org.junit.Assert.{assertEquals, assertSame, assertTrue}
 import org.junit.runner.RunWith
+import org.junit.{Before, BeforeClass, Test}
 import org.powermock.api.easymock.PowerMock
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.scalatestplus.junit.JUnitSuite
-import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
-import javafx.scene.Node
-import net.sf.jguiraffe.gui.builder.event.FormEventManager
-import net.sf.jguiraffe.gui.builder.event.FormFocusEvent
-import net.sf.jguiraffe.gui.builder.event.FormListenerType
-import net.sf.jguiraffe.gui.forms.ComponentHandler
-import net.sf.jguiraffe.gui.platform.javafx.FetchAnswer
+
+object PMTestFocusEventAdapter {
+  @BeforeClass
+  def setUpBeforeClass(): Unit = {
+    JavaFxTestHelper.initPlatform()
+  }
+}
 
 /**
  * Test class for ''FocusEventAdapter''.
@@ -72,7 +74,6 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /**
    * Tests whether a correct default sender is created.
    */
-    @Ignore
   @Test def testDefaultSender(): Unit = {
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
@@ -88,7 +89,6 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /**
    * Tests whether focus events are converted and transferred to listeners.
    */
-    @Ignore
   @Test def testEventTransformation(): Unit = {
     val obsVal = PowerMock.createMock(classOf[ObservableValue[java.lang.Boolean]])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
@@ -108,7 +108,6 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /**
    * Tests whether the adapter can be removed again as focus listener.
    */
-    @Ignore
   @Test def testUnregister(): Unit = {
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     val sender = new TestSender
