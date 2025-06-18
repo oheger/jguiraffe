@@ -59,7 +59,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
   /** The pane to be tested. */
   private var pane: PercentLayoutPane = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     layout = mock[PercentLayoutBase]
     container = mock[ContainerWrapper]
     EasyMock.replay(container)
@@ -73,7 +73,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the minimum width of the layout can be calculated.
    */
-  @Test def testComputeMinWidth() {
+  @Test def testComputeMinWidth(): Unit = {
     EasyMock.expect(layout.calcMinimumLayoutSize(container)).andReturn(Size)
     whenExecuting(layout) {
       assertEquals("Wrong minimum width", Size.width + LeftInsets + RightInsets,
@@ -84,7 +84,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the minimum height of the layout can be calculated.
    */
-  @Test def testComputeMinHeight() {
+  @Test def testComputeMinHeight(): Unit = {
     EasyMock.expect(layout.calcMinimumLayoutSize(container)).andReturn(Size)
     whenExecuting(layout) {
       assertEquals("Wrong minimum height", Size.height + TopInsets + BottomInsets,
@@ -95,7 +95,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the preferred width of the layout can be calculated.
    */
-  @Test def testComputePrefWidth() {
+  @Test def testComputePrefWidth(): Unit = {
     EasyMock.expect(layout.calcPreferredLayoutSize(container)).andReturn(Size)
     whenExecuting(layout) {
       assertEquals("Wrong preferred width", Size.width + LeftInsets + RightInsets,
@@ -106,7 +106,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the preferred height of the layout can be calculated.
    */
-  @Test def testComputePrefHeight() {
+  @Test def testComputePrefHeight(): Unit = {
     EasyMock.expect(layout.calcPreferredLayoutSize(container)).andReturn(Size)
     whenExecuting(layout) {
       assertEquals("Wrong preferred height", Size.height + TopInsets + BottomInsets,
@@ -117,7 +117,7 @@ class TestPercentLayoutPane extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the layout can be applied to the child components.
    */
-  @Test def tetLayoutChildren() {
+  @Test def tetLayoutChildren(): Unit = {
     layout.performLayout(container, new Rectangle(LeftInsets, TopInsets,
       RightInsets, BottomInsets), Size)
     whenExecuting(layout) {

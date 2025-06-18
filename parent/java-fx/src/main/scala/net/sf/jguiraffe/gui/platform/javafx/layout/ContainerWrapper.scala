@@ -123,7 +123,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
    * @throws FormBuilderException if an unsupported component is added
    */
   @throws(classOf[FormBuilderException])
-  def addComponent(component: Object, constraints: Object) {
+  def addComponent(component: Object, constraints: Object): Unit = {
     components += ComponentData(ContainerWrapper.obtainPossiblyWrappedNode(component), constraints)
   }
 
@@ -131,7 +131,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
    * Initializes the layout for the represented container.
    * @param percLayout the layout
    */
-  def initLayout(percLayout: PercentLayoutBase) {
+  def initLayout(percLayout: PercentLayoutBase): Unit = {
     layout = Some(percLayout)
   }
 
@@ -224,7 +224,7 @@ class ContainerWrapper(val sizeHandler: Option[UnitSizeHandler] = None,
    * @param pane the target pane
    * @param compData an array with data about the container's components
    */
-  private def appendChildren(pane: Pane, compData: Array[ComponentData]) {
+  private def appendChildren(pane: Pane, compData: Array[ComponentData]): Unit = {
     compData foreach { cd => pane.getChildren.add(cd.component) }
   }
 

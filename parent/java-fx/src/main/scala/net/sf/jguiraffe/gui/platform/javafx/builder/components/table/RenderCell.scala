@@ -52,7 +52,7 @@ private class RenderCell(val formController: TableFormController,
    * the current row in the form controller. This causes the renderer form to be
    * initialized which in turn transfers the current values into the UI components.
    */
-  override def updateItem(item: AnyRef, empty: Boolean) {
+  override def updateItem(item: AnyRef, empty: Boolean): Unit = {
     super.updateItem(item, empty)
     if (!empty) {
       formController selectCurrentRow getIndex

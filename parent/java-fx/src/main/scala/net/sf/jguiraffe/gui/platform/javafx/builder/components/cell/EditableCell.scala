@@ -55,7 +55,7 @@ trait EditableCell[T] extends IndexedCell[T] {
    * The cell is updated correspondingly, the text field serving as cell editor
    * is created if necessary and initialized.
    */
-  override abstract def startEdit() {
+  override abstract def startEdit(): Unit = {
     super.startEdit()
     if (!textField.isDefined) {
       textField = Some(createTextField())
@@ -64,7 +64,7 @@ trait EditableCell[T] extends IndexedCell[T] {
     setContentDisplay(ContentDisplay.GRAPHIC_ONLY)
     Platform.runLater(new Runnable() {
       @Override
-      def run() {
+      def run(): Unit = {
         textField.get.selectAll()
         textField.get.requestFocus()
       }
@@ -75,7 +75,7 @@ trait EditableCell[T] extends IndexedCell[T] {
    * Cancels the current edit operation. The cell is restored with the original
    * content.
    */
-  override abstract def cancelEdit() {
+  override abstract def cancelEdit(): Unit = {
     textField = None
     super.cancelEdit()
     setText(stringRepresentation())
@@ -87,7 +87,7 @@ trait EditableCell[T] extends IndexedCell[T] {
    * @param item the current data item
    * @param empty a flag whether this cell is empty
    */
-  override abstract def updateItem(item: T, empty: Boolean) {
+  override abstract def updateItem(item: T, empty: Boolean): Unit = {
     super.updateItem(item, empty)
     if (empty) {
       setText(null)
@@ -124,7 +124,7 @@ trait EditableCell[T] extends IndexedCell[T] {
    * written back into the underlying table model.
    * @param focusLost a flag whether the commit is caused by a lost focus
    */
-  protected def performCommit(focusLost: Boolean) {
+  protected def performCommit(focusLost: Boolean): Unit = {
     textField foreach (t => commitData(t.getText, focusLost))
     setText(stringRepresentation())
   }
@@ -156,7 +156,7 @@ trait EditableCell[T] extends IndexedCell[T] {
     field setMinWidth (getWidth - getGraphicTextGap * 2)
     field setOnKeyPressed new EventHandler[KeyEvent]() {
       @Override
-      def handle(event: KeyEvent) {
+      def handle(event: KeyEvent): Unit = {
         if (keyHandlerFunction.isDefinedAt(event)) {
           keyHandlerFunction.apply(event)
         }
@@ -165,7 +165,7 @@ trait EditableCell[T] extends IndexedCell[T] {
     field.focusedProperty addListener new ChangeListener[java.lang.Boolean] {
       @Override
       def changed(observable: ObservableValue[_ <: java.lang.Boolean],
-                  oldValue: java.lang.Boolean, newValue: java.lang.Boolean) {
+                  oldValue: java.lang.Boolean, newValue: java.lang.Boolean): Unit = {
         //This focus listener fires at the end of cell editing when focus is lost
         //and when enter is pressed (because that causes the text field to lose focus).
         //The problem is that if enter is pressed then cancelEdit is called before this

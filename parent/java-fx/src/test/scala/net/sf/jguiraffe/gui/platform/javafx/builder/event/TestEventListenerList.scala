@@ -33,7 +33,7 @@ class TestEventListenerList extends JUnitSuite {
   /** The object to be tested. */
   private var sender: EventListenerList[Int, Collection[Int]] = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     sender = new EventListenerList
   }
 
@@ -43,7 +43,7 @@ class TestEventListenerList extends JUnitSuite {
    * @param listener simulates the listener
    * @param event the event value
    */
-  private def call(listener: Collection[Int], event: Int) {
+  private def call(listener: Collection[Int], event: Int): Unit = {
     listener add event
   }
 
@@ -59,7 +59,7 @@ class TestEventListenerList extends JUnitSuite {
   /**
    * Tests whether an event can be fired and propagated to a listener.
    */
-  @Test def testFire() {
+  @Test def testFire(): Unit = {
     val listener = new ArrayList[Int]
     sender.addListener(listener)
     sender.fire(nextEvent(), call)
@@ -70,7 +70,7 @@ class TestEventListenerList extends JUnitSuite {
   /**
    * Tests whether listeners can be added and removed.
    */
-  @Test def testAddAndRemoveListeners() {
+  @Test def testAddAndRemoveListeners(): Unit = {
     val l1 = new ArrayList[Int]
     val l2 = new ArrayList[Int]
     sender += l1
@@ -86,7 +86,7 @@ class TestEventListenerList extends JUnitSuite {
   /**
    * Tests that a fire() operation has no effect if no listener is registered.
    */
-  @Test def testFireNoListeners() {
+  @Test def testFireNoListeners(): Unit = {
     sender.addListener(null)
     sender.fire(nextEvent(), call)
     assertEquals("Event was created", 0, counter)

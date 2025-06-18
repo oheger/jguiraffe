@@ -67,7 +67,7 @@ class TreeHandlerFactory {
    * @param changeHandler the change handler
    */
   private def initCellFactory(tree: TreeView[ConfigNodeData],
-    changeHandler: TreeConfigurationChangeHandler) {
+    changeHandler: TreeConfigurationChangeHandler): Unit = {
     tree setCellFactory FunctionCallback(tv => new ConfigNodeTreeCell(changeHandler))
   }
 

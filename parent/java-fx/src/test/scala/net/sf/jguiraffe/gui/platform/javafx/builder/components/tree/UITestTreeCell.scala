@@ -77,7 +77,7 @@ class UITestTreeCell extends GuiTest {
     val tree = new TreeView[ConfigNodeData](createRootItem(config))
     tree setEditable true
     val changeHandler = new TreeConfigurationChangeHandler(config, new TreeModelChangeListener {
-      override def treeModelChanged(node: ConfigurationNode) {}
+      override def treeModelChanged(node: ConfigurationNode): Unit = {}
     })
     tree setCellFactory JavaFxTestHelper.functionToCallback(f => new ConfigNodeTreeCell(changeHandler))
     tree
@@ -106,7 +106,7 @@ class UITestTreeCell extends GuiTest {
   /**
    * Helper method for expanding the initial tree structure.
    */
-  private def expandTree() {
+  private def expandTree(): Unit = {
     doubleClick(Prefix)
     doubleClick("user1")
   }
@@ -130,7 +130,7 @@ class UITestTreeCell extends GuiTest {
    * Starts edit mode in the given cell.
    * @param label the label of the cell to be edited
    */
-  private def startEdit(label: String) {
+  private def startEdit(label: String): Unit = {
     val cell = findCell(label)
     click(cell).click(cell)
   }
@@ -138,7 +138,7 @@ class UITestTreeCell extends GuiTest {
   /**
    * Tests whether the expected data is displayed in the cells.
    */
-  @Test def testDisplay() {
+  @Test def testDisplay(): Unit = {
     expandTree()
     findCell("user2")
     findCell("music")
@@ -147,7 +147,7 @@ class UITestTreeCell extends GuiTest {
   /**
    * Tests whether a cell can be edited.
    */
-  @Test def testEditCell() {
+  @Test def testEditCell(): Unit = {
     expandTree()
     startEdit(Setting)
     val newContent = "mood"
@@ -161,7 +161,7 @@ class UITestTreeCell extends GuiTest {
   /**
    * Tests whether an edit operation can be canceled.
    */
-  @Test def testCancelEdit() {
+  @Test def testCancelEdit(): Unit = {
     expandTree()
     startEdit(Setting)
     `type`("esc")
@@ -175,7 +175,7 @@ class UITestTreeCell extends GuiTest {
    */
   // TODO This test currently fails due to Java bug
   // https://bugs.openjdk.java.net/browse/JDK-8089514
-  @Test @Ignore def testEditWithFocusLost() {
+  @Test @Ignore def testEditWithFocusLost(): Unit = {
     expandTree()
     startEdit(Setting)
     val newContent = "x"

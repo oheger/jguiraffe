@@ -59,7 +59,7 @@ with FormControllerCell[S, T] {
    * current value from the table cell controller and writes it into the
    * managed boolean property.
    */
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean): Unit = {
     super.updateItem(item, empty)
     val value = if (empty) false else readBooleanCellValue
     if (value != property.get()) {
@@ -111,12 +111,12 @@ with FormControllerCell[S, T] {
      * called when the cell value is updated internally. Then the next change
      * event has to be ignored.
      */
-    def ignoreChange() {
+    def ignoreChange(): Unit = {
       changesToBeIgnored += 1
     }
 
     override def changed(obs: ObservableValue[_ <: lang.Boolean], oldValue: lang.Boolean,
-                         newValue: lang.Boolean) {
+                         newValue: lang.Boolean): Unit = {
       if (changesToBeIgnored > 0) changesToBeIgnored -= 1
       else writeCellValue(newValue)
     }

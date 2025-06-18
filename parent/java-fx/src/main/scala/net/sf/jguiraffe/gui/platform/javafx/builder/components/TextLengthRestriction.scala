@@ -54,7 +54,7 @@ trait TextLengthRestriction extends TextInputControl {
    * number of allowed characters.
    * @param len the maximum number of characters allowed for this text control
    */
-  def setMaximumLength(len: Int) {
+  def setMaximumLength(len: Int): Unit = {
     maximumLengthProperty set len
   }
 
@@ -64,7 +64,7 @@ trait TextLengthRestriction extends TextInputControl {
    * parts of the new text are inserted. If the maximum text length is already
    * reached, no text can be added.
    */
-  override abstract def replaceText(start: Int, end: Int, ntxt: String) {
+  override abstract def replaceText(start: Int, end: Int, ntxt: String): Unit = {
     val replData = handleReplacement(start, end, ntxt)
     if (replData._1) {
       super.replaceText(start, end, replData._2)
@@ -77,7 +77,7 @@ trait TextLengthRestriction extends TextInputControl {
    * parts of the new text are inserted. If the maximum text length is already
    * reached, no text can be added.
    */
-  override abstract def replaceSelection(ntxt: String) {
+  override abstract def replaceSelection(ntxt: String): Unit = {
     val selRange = getSelection
     val replData = handleReplacement(selRange.getStart, selRange.getEnd, ntxt)
     if (replData._1) {

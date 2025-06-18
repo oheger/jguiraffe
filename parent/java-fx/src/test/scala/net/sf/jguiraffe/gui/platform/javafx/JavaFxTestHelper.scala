@@ -50,7 +50,7 @@ object JavaFxTestHelper {
    * not triggered within the timeout, this method causes the test to fail.
    * @param latch the latch to wait for
    */
-  def await(latch: CountDownLatch) {
+  def await(latch: CountDownLatch): Unit = {
     if(!latch.await(Timeout, TimeUnit.MILLISECONDS)) {
       fail("Timeout when waiting for latch!")
     }
@@ -74,7 +74,7 @@ object JavaFxTestHelper {
    * Because the call is blocking no further synchronization is needed.
    * @param r the runnable to be executed
    */
-  def runInFxThread(r: Runnable) {
+  def runInFxThread(r: Runnable): Unit = {
     val latch = new CountDownLatch(1)
     Platform.runLater(() => {
       r.run()
@@ -105,7 +105,7 @@ object JavaFxTestHelper {
    * Initializes the Java FX platform. This method typically has to be invoked
    * by a unit test class before Java FX classes are used.
    */
-  def initPlatform() {
+  def initPlatform(): Unit = {
     if (started.compareAndSet(false, true)) {
       Platform.startup(() => {})
     }

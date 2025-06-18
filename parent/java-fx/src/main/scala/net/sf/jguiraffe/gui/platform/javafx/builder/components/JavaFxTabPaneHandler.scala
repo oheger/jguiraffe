@@ -37,7 +37,7 @@ private class JavaFxTabPaneHandler(tabPane: TabPane)
   def getData: java.lang.Integer =
     tabPane.getSelectionModel.selectedIndexProperty.get()
 
-  def setData(idx: java.lang.Integer) {
+  def setData(idx: java.lang.Integer): Unit = {
     if (idx != null) {
       tabPane.getSelectionModel.select(idx)
     }

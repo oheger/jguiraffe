@@ -49,7 +49,7 @@ private[components] trait StyleWidgetHandler extends WidgetHandler {
    *             Then all styles are transformed to text and passed to the wrapped
    *             node.
    */
-  override def setBackgroundColor(c: Color) {
+  override def setBackgroundColor(c: Color): Unit = {
     stylesHandler setBackgroundColor c
     updateWidgetStyles()
   }
@@ -65,7 +65,7 @@ private[components] trait StyleWidgetHandler extends WidgetHandler {
    *             Then all styles are transformed to text and passed to the wrapped
    *             node.
    */
-  override def setForegroundColor(c: Color) {
+  override def setForegroundColor(c: Color): Unit = {
     stylesHandler setForegroundColor c
     updateWidgetStyles()
   }
@@ -81,7 +81,7 @@ private[components] trait StyleWidgetHandler extends WidgetHandler {
    *             ''JavaFxFont''. It applies the data of the font object to the wrapped
    *             node's styles definition,
    */
-  override def setFont(font: Object) {
+  override def setFont(font: Object): Unit = {
     stylesHandler.setFont(font.asInstanceOf[JavaFxFont])
     updateWidgetStyles()
   }
@@ -101,7 +101,7 @@ private[components] trait StyleWidgetHandler extends WidgetHandler {
    * Updates the styles of the wrapped widget. This method is called whenever
    * a property was changed that is implemented through CSS styles.
    */
-  private def updateWidgetStyles() {
+  private def updateWidgetStyles(): Unit = {
     style set stylesHandler.styles.toExternalForm()
   }
 }

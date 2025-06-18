@@ -52,7 +52,7 @@ private class ConfigNodeTreeCell(val changeHandler: TreeConfigurationChangeHandl
    * @param text the new text content of this cell
    * @param focusLost a flag whether the focus was lost
    */
-  override protected def commitData(text: String, focusLost: Boolean) {
+  override protected def commitData(text: String, focusLost: Boolean): Unit = {
     changeHandler.changeNodeName(getItem.node, text)
   }
 }

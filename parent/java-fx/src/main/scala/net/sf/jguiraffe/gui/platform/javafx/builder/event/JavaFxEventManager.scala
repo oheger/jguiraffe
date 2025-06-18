@@ -55,7 +55,7 @@ class JavaFxEventManager extends PlatformEventManager {
    * the registration of the specified listener type and delegates to it.
    */
   def registerListener(name: String, handler: ComponentHandler[_],
-    eventManager: FormEventManager, listenerType: FormListenerType) {
+    eventManager: FormEventManager, listenerType: FormListenerType): Unit = {
     registrations(listenerType).registerListener(name, handler, eventManager)
   }
 
@@ -64,7 +64,7 @@ class JavaFxEventManager extends PlatformEventManager {
    * the registration of the specified listener type and delegates to it.
    */
   def unregisterListener(name: String, handler: ComponentHandler[_],
-    eventManager: FormEventManager, listenerType: FormListenerType) {
+    eventManager: FormEventManager, listenerType: FormListenerType): Unit = {
     registrations(listenerType).unregisterListener(name, handler)
   }
 
@@ -104,7 +104,7 @@ class JavaFxEventManager extends PlatformEventManager {
      * @param eventManager the event manager
      */
     def registerListener(name: String, handler: ComponentHandler[_],
-      eventManager: FormEventManager) {
+      eventManager: FormEventManager): Unit = {
       val optListener = createAndRegisterListener(handler, name, eventManager)
       optListener foreach (listeners += name -> _)
     }
@@ -116,7 +116,7 @@ class JavaFxEventManager extends PlatformEventManager {
      * @param name the name of the component
      * @param handler the component handler
      */
-    def unregisterListener(name: String, handler: ComponentHandler[_]) {
+    def unregisterListener(name: String, handler: ComponentHandler[_]): Unit = {
       listeners.get(name).foreach(removeListener(handler, _))
     }
 
@@ -175,7 +175,7 @@ class JavaFxEventManager extends PlatformEventManager {
     }
 
     protected def removeListener(handler: ComponentHandler[_],
-      l: EventHandler[ActionEvent]) {
+      l: EventHandler[ActionEvent]): Unit = {
       eventSource[ActionEventSource](handler) foreach (_.removeActionListener(l))
     }
   }
@@ -196,7 +196,7 @@ class JavaFxEventManager extends PlatformEventManager {
     }
 
     protected def removeListener(handler: ComponentHandler[_],
-      l: ChangeListener[AnyRef]) {
+      l: ChangeListener[AnyRef]): Unit = {
       val source = eventSource[ChangeEventSource](handler)
       source foreach (_.observableValue.removeListener(l))
     }
@@ -218,7 +218,7 @@ class JavaFxEventManager extends PlatformEventManager {
     }
 
     protected def removeListener(handler: ComponentHandler[_],
-      adapter: FocusEventAdapter) {
+      adapter: FocusEventAdapter): Unit = {
       val source = eventSource[NodeEventSource](handler)
       source foreach (s => adapter.unregister(s.sourceNode))
     }
@@ -240,7 +240,7 @@ class JavaFxEventManager extends PlatformEventManager {
     }
 
     protected def removeListener(handler: ComponentHandler[_],
-      l: EventHandler[MouseEvent]) {
+      l: EventHandler[MouseEvent]): Unit = {
       val source = eventSource[NodeEventSource](handler)
       source foreach (_.sourceNode.removeEventHandler(MouseEvent.ANY, l))
     }

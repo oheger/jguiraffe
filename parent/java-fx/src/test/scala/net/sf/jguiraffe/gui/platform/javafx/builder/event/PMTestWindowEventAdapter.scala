@@ -62,7 +62,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle a window opened event.
    */
-  @Test def testSenderOpenEvent() {
+  @Test def testSenderOpenEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_OPENED)
@@ -76,7 +76,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle a window activated event.
    */
-  @Test def testSenderActivateEvent() {
+  @Test def testSenderActivateEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_ACTIVATED)
@@ -90,7 +90,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle a window deactivation event.
    */
-  @Test def testSenderDeactivateEvent() {
+  @Test def testSenderDeactivateEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_DEACTIVATED)
@@ -104,7 +104,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle a window closing event.
    */
-  @Test def testSenderClosingEvent() {
+  @Test def testSenderClosingEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_CLOSING)
@@ -118,7 +118,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle a window closed event.
    */
-  @Test def testSenderClosedEvent() {
+  @Test def testSenderClosedEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_CLOSED)
@@ -132,7 +132,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle an icon event.
    */
-  @Test def testSenderIconifiedEvent() {
+  @Test def testSenderIconifiedEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_ICONIFIED)
@@ -146,7 +146,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the sender can handle a de-icon event.
    */
-  @Test def testSenderDeiconifiedEvent() {
+  @Test def testSenderDeiconifiedEvent(): Unit = {
     val listener = mock[WindowListener]
     val wnd = mock[Window]
     val event = new WindowEvent(this, wnd, WindowEvent.Type.WINDOW_DEICONIFIED)
@@ -160,7 +160,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a window opened event can be generated.
    */
-  @Test def testHandleEventOpened() {
+  @Test def testHandleEventOpened(): Unit = {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
@@ -186,7 +186,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a window HIDING event is ignored.
    */
-  @Test def testHandleEventClosing() {
+  @Test def testHandleEventClosing(): Unit = {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
@@ -198,7 +198,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a window HIDDEN event is ignored.
    */
-  @Test def testHandleEventClosed() {
+  @Test def testHandleEventClosed(): Unit = {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
@@ -210,7 +210,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an event which is not transformed can be handled correctly.
    */
-  @Test def testHandleEventUnsupported() {
+  @Test def testHandleEventUnsupported(): Unit = {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
@@ -222,7 +222,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the registered event handler works as expected.
    */
-  @Test def testEventHandler() {
+  @Test def testEventHandler(): Unit = {
     val adapter = mock[WindowEventAdapter]
     val event = new FxWindowEvent(null, FxWindowEvent.WINDOW_SHOWING)
     adapter.handleEvent(event)
@@ -235,7 +235,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the focus listener works correctly.
    */
-  @Test def testFocusListener() {
+  @Test def testFocusListener(): Unit = {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
@@ -249,7 +249,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the listener on the icon property works correctly.
    */
-  @Test def testIconListener() {
+  @Test def testIconListener(): Unit = {
     val wnd = mock[Window]
     val sender = new MockSender
     val adapter = new WindowEventAdapter(wnd, sender)
@@ -264,7 +264,7 @@ class PMTestWindowEventAdapter extends JUnitSuite with EasyMockSugar {
    * Tests the registration and unregistration of an adapter at a Java FX
    * window.
    */
-  @Test def testApplyAndUnregister() {
+  @Test def testApplyAndUnregister(): Unit = {
     val fxWnd = PowerMock.createMock(classOf[Stage])
     val wnd = PowerMock.createMock(classOf[Window])
     val focusProp = PowerMock.createMock(classOf[ReadOnlyBooleanProperty])
@@ -324,7 +324,7 @@ class MockSender extends EventSender[WindowEvent] {
    * @param src the source of the event
    * @param evtype the expected event type
    */
-  def checkEvent(wnd: Window, src: Object, evtype: WindowEvent.Type) {
+  def checkEvent(wnd: Window, src: Object, evtype: WindowEvent.Type): Unit = {
     val ev = event.get
     assertSame("Wrong window", wnd, ev.getSourceWindow)
     assertSame("Wrong source", src, ev.getSource)
@@ -335,21 +335,21 @@ class MockSender extends EventSender[WindowEvent] {
   /**
    * Checks that no event was received.
    */
-  def checkNoEvent() {
+  def checkNoEvent(): Unit = {
     assertTrue("Got an event", event.isEmpty)
   }
 
   /**
    * Resets an already received event.
    */
-  def reset() {
+  def reset(): Unit = {
     event = None
   }
 
   /**
    * @inheritdoc This implementation just stores the event.
    */
-  def fire(ev: => WindowEvent) {
+  def fire(ev: => WindowEvent): Unit = {
     assertTrue("Too many events received", event.isEmpty)
     event = Some(ev)
   }

@@ -50,7 +50,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
   /** The cell to be tested. */
   private var cell: RenderCell = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     formController = mock[TableFormController]
     cellComponentManager = new CellComponentManagerTestImpl(new Label("Renderer"))
     cell = new RenderCell(formController, cellComponentManager)
@@ -62,7 +62,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the correct content display flag has been set.
    */
-  @Test def testRenderContentDisplay() {
+  @Test def testRenderContentDisplay(): Unit = {
     assertEquals("Wrong content display", ContentDisplay.GRAPHIC_ONLY, cell.getContentDisplay)
   }
 
@@ -76,7 +76,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests updateItem() for an empty cell.
    */
-  @Test def testUpdateItemEmpty() {
+  @Test def testUpdateItemEmpty(): Unit = {
     whenExecuting(formController) {
       cell.updateItem(this, empty = true)
       assertSame("Item not updated", this, cell.getItem)
@@ -88,7 +88,7 @@ class TestRenderCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests updateItem() if a new value is passed in.
    */
-  @Test def testUpdateItemNewValue() {
+  @Test def testUpdateItemNewValue(): Unit = {
     formController selectCurrentRow RowIndex
     whenExecuting(formController) {
       cell.updateItem(this, empty = false)

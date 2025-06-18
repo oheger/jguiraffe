@@ -47,7 +47,7 @@ private class JavaFxSliderHandler(slider: Slider)
    * @inheritdoc This implementation sets the slider's value property. If the
    * argument is '''null''', this call has no effect.
    */
-  def setData(value: Integer) {
+  def setData(value: Integer): Unit = {
     if (value != null) {
       slider setValue value.doubleValue
     }

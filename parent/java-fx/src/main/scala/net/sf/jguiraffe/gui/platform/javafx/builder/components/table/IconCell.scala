@@ -54,7 +54,7 @@ with FormControllerCell[AnyRef, T] {
    * ''TableFormController''. If it is an ''ImageWrapper'' object, the current
    * image is replaced by the new one.
    */
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean): Unit = {
     super.updateItem(item, empty)
     val image = if (empty) null else readImage
     imageView setImage image

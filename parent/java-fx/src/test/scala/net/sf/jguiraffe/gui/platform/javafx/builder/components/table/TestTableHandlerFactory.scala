@@ -219,7 +219,7 @@ class TestTableHandlerFactory extends JUnitSuite with EasyMockSugar {
    * @param columns an array with the columns
    * @param table the table view
    */
-  private def checkColumns(columns: Array[TableColumn[AnyRef, AnyRef]], table: TableView[AnyRef]) {
+  private def checkColumns(columns: Array[TableColumn[AnyRef, AnyRef]], table: TableView[AnyRef]): Unit = {
     assertEquals("Wrong number of columns", ColumnCount, table.getColumns.size)
     for (i <- 0 until ColumnCount) {
       assertEquals(s"Wrong column at $i", columns(i), table.getColumns.get(i))

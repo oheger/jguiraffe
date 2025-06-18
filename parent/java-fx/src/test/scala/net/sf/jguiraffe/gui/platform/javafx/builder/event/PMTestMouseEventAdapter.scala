@@ -50,7 +50,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether an instance can be created which serves a form event
    * manager.
    */
-  @Test def testCreateForEventManager() {
+  @Test def testCreateForEventManager(): Unit = {
     val evMan = mock[FormEventManager]
     val compHandler = mock[ComponentHandler[_]]
     val adapter = MouseEventAdapter(evMan, compHandler, ComponentName)
@@ -81,7 +81,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests a converted mouse event if there are no modifiers.
    */
-  @Test def testConvertEventNoModifiers() {
+  @Test def testConvertEventNoModifiers(): Unit = {
     val event = createEvent(MouseEvent.MOUSE_CLICKED)
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     PowerMock.replayAll()
@@ -93,7 +93,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether modifiers of a mouse event are converted correctly.
    */
-  @Test def testConvertEventWithModifiers() {
+  @Test def testConvertEventWithModifiers(): Unit = {
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     val event = createEvent(MouseEvent.MOUSE_CLICKED)
     EasyMock.expect(event.isAltDown).andReturn(true)
@@ -114,7 +114,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
    * Helper method for testing whether the pressed mouse buttons in a mouse
    * event are correctly detected.
    */
-  private def checkMouseButton(orgBtn: MouseButton, expResult: Int) {
+  private def checkMouseButton(orgBtn: MouseButton, expResult: Int): Unit = {
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     val event = createEvent(MouseEvent.MOUSE_CLICKED, orgBtn)
     PowerMock.replayAll()
@@ -126,28 +126,28 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse event with no button pressed is correctly converted.
    */
-  @Test def testConvertEventNoButton() {
+  @Test def testConvertEventNoButton(): Unit = {
     checkMouseButton(MouseButton.NONE, FormMouseEvent.NO_BUTTON)
   }
 
   /**
    * Tests whether the left button is detected when converting a mouse event.
    */
-  @Test def testConvertEventWithLeftButton() {
+  @Test def testConvertEventWithLeftButton(): Unit = {
     checkMouseButton(MouseButton.PRIMARY, FormMouseEvent.BUTTON1)
   }
 
   /**
    * Tests whether the right button is detected when converting a mouse event.
    */
-  @Test def testConvertEventWithRightButton() {
+  @Test def testConvertEventWithRightButton(): Unit = {
     checkMouseButton(MouseButton.SECONDARY, FormMouseEvent.BUTTON3)
   }
 
   /**
    * Tests whether the middle button is detected when converting a mouse event.
    */
-  @Test def testConvertEventWithMiddleButton() {
+  @Test def testConvertEventWithMiddleButton(): Unit = {
     checkMouseButton(MouseButton.MIDDLE, FormMouseEvent.BUTTON2)
   }
 
@@ -181,7 +181,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
    * @param a the answer for retrieving the event parameter object
    */
   private def checkMouseListener(listener: FormMouseListener, event: MouseEvent,
-      a: FetchAnswer[_, FormMouseEvent]) {
+      a: FetchAnswer[_, FormMouseEvent]): Unit = {
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     val listeners = new EventListenerList[FormMouseEvent, FormMouseListener]
     listeners += listener
@@ -208,7 +208,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse entered event can be processed.
    */
-  @Test def testMouseEntered() {
+  @Test def testMouseEntered(): Unit = {
     val listener = mockListener()
     listener.mouseEntered(EasyMock.anyObject(classOf[FormMouseEvent]))
     val a = registerEventAnswer()
@@ -218,7 +218,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse exited event can be processed.
    */
-  @Test def testMouseExisted() {
+  @Test def testMouseExisted(): Unit = {
     val listener = mockListener()
     listener.mouseExited(EasyMock.anyObject(classOf[FormMouseEvent]))
     val a = registerEventAnswer()
@@ -228,7 +228,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse pressed event can be processed.
    */
-  @Test def testMousePressed() {
+  @Test def testMousePressed(): Unit = {
     val listener = mockListener()
     listener.mousePressed(EasyMock.anyObject(classOf[FormMouseEvent]))
     val a = registerEventAnswer()
@@ -238,7 +238,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse released event can be processed.
    */
-  @Test def testMouseReleased() {
+  @Test def testMouseReleased(): Unit = {
     val listener = mockListener()
     listener.mouseReleased(EasyMock.anyObject(classOf[FormMouseEvent]))
     val a = registerEventAnswer()
@@ -248,7 +248,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse click event can be processed.
    */
-  @Test def testMouseClick() {
+  @Test def testMouseClick(): Unit = {
     val listener = mockListener()
     listener.mouseClicked(EasyMock.anyObject(classOf[FormMouseEvent]))
     val a = registerEventAnswer()
@@ -260,7 +260,7 @@ class PMTestMouseEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a mouse double click event can be processed.
    */
-  @Test def testMouseDoubleClick() {
+  @Test def testMouseDoubleClick(): Unit = {
     val listener = mockListener()
     listener.mouseDoubleClicked(EasyMock.anyObject(classOf[FormMouseEvent]))
     val a = registerEventAnswer()

@@ -34,7 +34,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper
  * Companion object for ''TestFxThreadModelChangeListener''.
  */
 object TestFxThreadModelChangeListener {
-  @BeforeClass def setUpOnce() {
+  @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
 }
@@ -46,7 +46,7 @@ class TestFxThreadModelChangeListener extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a change notification is correctly propagated.
    */
-  @Test def testEventPropagation() {
+  @Test def testEventPropagation(): Unit = {
     val wrappedListener = mock[TreeModelChangeListener]
     val node = mock[ConfigurationNode]
     val latch = new CountDownLatch(1)

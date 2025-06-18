@@ -36,7 +36,7 @@ import net.sf.jguiraffe.gui.platform.javafx.JavaFxTestHelper.toRunnable
  */
 object TestSplitPaneResizeListener {
   import JavaFxTestHelper._
-  @BeforeClass def setUpOnce() {
+  @BeforeClass def setUpOnce(): Unit = {
     initPlatform()
   }
 
@@ -67,7 +67,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
   /** The property to be updated by the test listener. */
   private var position: DoubleProperty = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     position = createProperty()
   }
 
@@ -75,7 +75,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
    * Checks whether the position property contains the correct value.
    * @param exp the expected value
    */
-  private def assertPosition(exp: Double) {
+  private def assertPosition(exp: Double): Unit = {
     assertEquals("Wrong value", exp,
         JavaFxTestHelper.readProperty(position).doubleValue, .001)
   }
@@ -83,7 +83,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
   /**
    * Tests whether the listener can initialize the position once.
    */
-  @Test def testInitalPosition() {
+  @Test def testInitalPosition(): Unit = {
     val listener = new SplitPaneResizeListener(100, 0, position)
     val size = createMonitoredProperty(listener)
     size set 1000
@@ -94,7 +94,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
    * Tests the initial update of the monitored property if no position is
    * defined.
    */
-  @Test def testInitialPositionUndefined() {
+  @Test def testInitialPositionUndefined(): Unit = {
     val listener = new SplitPaneResizeListener(0, 0, position)
     val size = createMonitoredProperty(listener)
     size set 1000
@@ -105,7 +105,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
    * Tests a size update if the resize weight is 0. In this case, the left/top
    * component keeps its size.
    */
-  @Test def testSizeUpdateResizeWeightZero() {
+  @Test def testSizeUpdateResizeWeightZero(): Unit = {
     val listener = new SplitPaneResizeListener(0, 0, position)
     val size = createMonitoredProperty(listener)
     position set .4
@@ -118,7 +118,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
    * Tests a size update if the resize weight is 1. In this case, the
    * right/bottom component keeps its size.
    */
-  @Test def testSizeUpdateResizeWeightOne() {
+  @Test def testSizeUpdateResizeWeightOne(): Unit = {
     val listener = new SplitPaneResizeListener(0, 1, position)
     val size = createMonitoredProperty(listener)
     position set .5
@@ -131,7 +131,7 @@ class TestSplitPaneResizeListener extends JUnitSuite {
    * Tests a size update if the additional size has to be distributed on both
    * components.
    */
-  @Test def testSizeUpdateResizeWeightDistributed() {
+  @Test def testSizeUpdateResizeWeightDistributed(): Unit = {
     val listener = new SplitPaneResizeListener(0, .25, position)
     val size = createMonitoredProperty(listener)
     position set .5

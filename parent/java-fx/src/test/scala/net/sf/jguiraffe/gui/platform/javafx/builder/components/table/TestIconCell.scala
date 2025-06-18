@@ -49,7 +49,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
   /** The cell to be tested. */
   private var cell: IconCell[AnyRef] = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     formController = mock[TableFormController]
     cell = new IconCell(formController, ColumnIndex)
     cell updateIndex RowIndex
@@ -59,7 +59,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
    * Checks whether the cell contains the expected image.
    * @param expImg the expected image
    */
-  private def checkImage(expImg: Image) {
+  private def checkImage(expImg: Image): Unit = {
     val imageView = cell.getGraphic.asInstanceOf[ImageView]
     assertEquals("Wrong image", expImg, imageView.getImage)
   }
@@ -68,7 +68,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
    * Prepares the controller mock for a get value query.
    * @param result the result to be returned
    */
-  private def expectGetValue(result: AnyRef) {
+  private def expectGetValue(result: AnyRef): Unit = {
     formController selectCurrentRow RowIndex
     EasyMock.expect(formController.getColumnValue(ColumnIndex)).andReturn(result)
   }
@@ -76,7 +76,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the UI-related properties are set correctly.
    */
-  @Test def testUIInitialization() {
+  @Test def testUIInitialization(): Unit = {
     assertEquals("Wrong content display", ContentDisplay.GRAPHIC_ONLY, cell.getContentDisplay)
     assertTrue("Wrong graphic component", cell.getGraphic.isInstanceOf[ImageView])
   }
@@ -84,7 +84,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an empty value can be set for the cell.
    */
-  @Test def testUpdateItemEmpty() {
+  @Test def testUpdateItemEmpty(): Unit = {
     whenExecuting(formController) {
       cell.updateItem(null, empty = true)
     }
@@ -94,7 +94,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an update of the item state is handled correctly.
    */
-  @Test def testUpdateItemNewImage() {
+  @Test def testUpdateItemNewImage(): Unit = {
     val image = mock[Image]
     val wrapper = mock[ImageWrapper]
     EasyMock.expect(wrapper.image).andReturn(image).anyTimes()
@@ -111,7 +111,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
    * Tests updateItem() if the cell contains an invalid value from which no image
    * can be extracted.
    */
-  @Test def testUpdateItemInvalidObject() {
+  @Test def testUpdateItemInvalidObject(): Unit = {
     expectGetValue(this)
     whenExecuting(formController) {
       cell.updateItem(this, empty = false)

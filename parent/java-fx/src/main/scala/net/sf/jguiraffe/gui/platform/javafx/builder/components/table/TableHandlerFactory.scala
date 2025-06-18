@@ -81,7 +81,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
    * @param resizePolicy the resize policy
    */
   private def createColumns(controller: TableFormController, tableView: TableView[AnyRef],
-                            resizePolicy: TableColumnRecalibrationResizePolicy) {
+                            resizePolicy: TableColumnRecalibrationResizePolicy): Unit = {
     for (i <- 0 until controller.getColumnCount) {
       val column = componentFactory.columnFactory.createColumn(controller, i)
       tableView.getColumns add column
@@ -94,7 +94,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
    * @param controller the ''TableFormController''
    * @param tableView the table view
    */
-  private def installTableWidthListener(controller: TableFormController, tableView: TableView[AnyRef]) {
+  private def installTableWidthListener(controller: TableFormController, tableView: TableView[AnyRef]): Unit = {
     val widthListener = componentFactory.createTableWidthListener(controller
       .getColumnWidthCalculator, tableView)
     componentFactory.tableWidthProperty(tableView) addListener widthListener
@@ -112,7 +112,7 @@ class TableHandlerFactory private[table](private[table] val componentFactory:
    */
   private def initializeFixedColumnWidths(controller: TableFormController, sizeHandler:
   UnitSizeHandler, composite: Composite,
-                                          builderData: ComponentBuilderData) {
+                                          builderData: ComponentBuilderData): Unit = {
     builderData.addCallBack(new ComponentBuilderCallBack {
       override def callBack(builderData: ComponentBuilderData, params: scala.Any): Unit = {
         controller.calculateFixedColumnWidths(sizeHandler, composite.getContainer)

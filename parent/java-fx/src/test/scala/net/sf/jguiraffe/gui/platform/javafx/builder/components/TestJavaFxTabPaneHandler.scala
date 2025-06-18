@@ -39,7 +39,7 @@ class TestJavaFxTabPaneHandler extends JUnitSuite {
   /** The handler to be tested. */
   private var handler: JavaFxTabPaneHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     def createTab(idx: Int): Tab = {
       val tab = new Tab
       tab setText ("Tab" + idx)
@@ -54,14 +54,14 @@ class TestJavaFxTabPaneHandler extends JUnitSuite {
   /**
    * Tests whether the correct data type is returned.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     assert(classOf[Integer] === handler.getType)
   }
 
   /**
    * Tests whether the handler's data can be set.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     handler setData 1
     assertEquals("Wrong selected index", 1,
       tabPane.getSelectionModel.getSelectedIndex)
@@ -70,7 +70,7 @@ class TestJavaFxTabPaneHandler extends JUnitSuite {
   /**
    * Tests setData() with null input.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     tabPane.getSelectionModel.select(2)
     handler setData null
     assertEquals("Selected index was changed", 2,
@@ -80,7 +80,7 @@ class TestJavaFxTabPaneHandler extends JUnitSuite {
   /**
    * Tests whether the handler's data can be queried.
    */
-  @Test def testGetData() {
+  @Test def testGetData(): Unit = {
     tabPane.getSelectionModel.select(1)
     assertEquals("Wrong selected index", 1, handler.getData.intValue())
   }
@@ -89,7 +89,7 @@ class TestJavaFxTabPaneHandler extends JUnitSuite {
    * Tests whether the correct property for change listener support is
    * returned.
    */
-  @Test def testObservableValue() {
+  @Test def testObservableValue(): Unit = {
     assertEquals("Wrong property", tabPane.getSelectionModel.selectedIndexProperty,
       handler.observableValue)
   }

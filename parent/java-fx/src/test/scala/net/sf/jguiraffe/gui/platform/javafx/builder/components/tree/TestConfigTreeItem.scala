@@ -74,7 +74,7 @@ object TestConfigTreeItem {
    * @param expanded the expanded flag
    * @param leaf the leaf flag
    */
-  private def checkGraphic(item: ConfigTreeItem, expanded: Boolean, leaf: Boolean) {
+  private def checkGraphic(item: ConfigTreeItem, expanded: Boolean, leaf: Boolean): Unit = {
     assertSame("Wrong graphic", GraphicsHandler.graphicsFor(item.node,
       expanded, leaf), item.getGraphic)
   }
@@ -89,14 +89,14 @@ class TestConfigTreeItem extends JUnitSuite {
   /** The map storing all tree items. */
   private var itemMap: mutable.Map[ConfigurationNode, ConfigTreeItem] = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     itemMap = mutable.Map.empty
   }
 
   /**
    * Tests whether the item is added to the central map.
    */
-  @Test def testAddToItemMap() {
+  @Test def testAddToItemMap(): Unit = {
     val node = createNode()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     assertEquals("Wrong number of items", 1, itemMap.size)
@@ -106,7 +106,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether the correct graphic is set for a leaf node.
    */
-  @Test def testGraphicLeaf() {
+  @Test def testGraphicLeaf(): Unit = {
     val item = new ConfigTreeItem(createNode(), GraphicsHandler, itemMap)
     checkGraphic(item, expanded = false, leaf = true)
   }
@@ -114,7 +114,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether the correct graphic is set for a non-leaf node.
    */
-  @Test def testGraphicNoLeaf() {
+  @Test def testGraphicNoLeaf(): Unit = {
     val item = new ConfigTreeItem(createNodeWithChildren(), GraphicsHandler, itemMap)
     checkGraphic(item, expanded = false, leaf = false)
   }
@@ -122,7 +122,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests isLeaf if the expected result is true.
    */
-  @Test def testIsLeafTrue() {
+  @Test def testIsLeafTrue(): Unit = {
     val item = new ConfigTreeItem(createNode(), GraphicsHandler, itemMap)
     assertTrue("Not a leaf", item.isLeaf)
   }
@@ -130,7 +130,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests isLeaf if the expected result is false.
    */
-  @Test def testIsLeafFalse() {
+  @Test def testIsLeafFalse(): Unit = {
     val item = new ConfigTreeItem(createNodeWithChildren(), GraphicsHandler, itemMap)
     assertFalse("A leaf", item.isLeaf)
   }
@@ -152,7 +152,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether the item's children can be accessed.
    */
-  @Test def testGetChildren() {
+  @Test def testGetChildren(): Unit = {
     val node = createNodeWithChildren()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     val children = item.getChildren
@@ -167,7 +167,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether the item's children are cached after initialization.
    */
-  @Test def testGetChildrenCached() {
+  @Test def testGetChildrenCached(): Unit = {
     val node = createNode()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     item.getChildren
@@ -179,7 +179,7 @@ class TestConfigTreeItem extends JUnitSuite {
    * Tests a sync operation on an uninitialized item. This should not be
    * propagated to child nodes.
    */
-  @Test def testResyncUninitialized() {
+  @Test def testResyncUninitialized(): Unit = {
     val node = new DefaultConfigurationNode(NodeName) {
       override def getChildren = {
         throw new UnsupportedOperationException("Unexpected method call!")
@@ -192,7 +192,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether a sync operation changes the value of the tree item object.
    */
-  @Test def testResyncNewNodeData() {
+  @Test def testResyncNewNodeData(): Unit = {
     val node = createNode()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     val value = item.getValue
@@ -205,7 +205,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether a sync operation can change the item's graphic.
    */
-  @Test def testResyncNewGraphic() {
+  @Test def testResyncNewGraphic(): Unit = {
     val node = createNode()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     addChildNodes(node)
@@ -216,7 +216,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether a new child node is detected by a sync operation.
    */
-  @Test def testResyncNewChild() {
+  @Test def testResyncNewChild(): Unit = {
     val node = createNodeWithChildren()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     item.getChildren // initialize
@@ -235,7 +235,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether a removed child is detected by a sync operation.
    */
-  @Test def testResyncRemovedChild() {
+  @Test def testResyncRemovedChild(): Unit = {
     val node = createNodeWithChildren()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     val removedItem = item.getChildren.get(0)
@@ -252,7 +252,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether a sync operation is propagated to child nodes.
    */
-  @Test def testResyncRecursively() {
+  @Test def testResyncRecursively(): Unit = {
     val node = createNodeWithChildren()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     val checkItem = item.getChildren.get(0)
@@ -266,7 +266,7 @@ class TestConfigTreeItem extends JUnitSuite {
    * Tests removeFromItemMap() if the node has not yet been initialized. This
    * should not have any effect on child items.
    */
-  @Test def testRemoveFromItemMapUninitialized() {
+  @Test def testRemoveFromItemMapUninitialized(): Unit = {
     val node = createNodeWithChildren()
     val child = node.getChild(0)
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
@@ -278,7 +278,7 @@ class TestConfigTreeItem extends JUnitSuite {
   /**
    * Tests whether removeFromItemMap() also removes child node entries.
    */
-  @Test def testRemoveFromItemMapRecursively() {
+  @Test def testRemoveFromItemMapRecursively(): Unit = {
     val node = createNodeWithChildren()
     val item = new ConfigTreeItem(node, GraphicsHandler, itemMap)
     item.getChildren // initialize

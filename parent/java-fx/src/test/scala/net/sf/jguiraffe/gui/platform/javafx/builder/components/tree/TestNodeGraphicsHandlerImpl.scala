@@ -41,7 +41,7 @@ object TestNodeGraphicsHandlerImpl {
   /** A mock for a graphic. */
   private var Graphic: Node = _
 
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     ConfigNode = EasyMock.createMock(classOf[ConfigurationNode])
     Graphic = EasyMock.createMock(classOf[Node])
     EasyMock.replay(ConfigNode, Graphic)
@@ -70,7 +70,7 @@ class TestNodeGraphicsHandlerImpl extends JUnitSuite with EasyMockSugar {
   /** The handler to be tested. */
   private var handler: NodeGraphicsHandlerImpl = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     iconHandler = mock[TreeIconHandler]
     handler = new NodeGraphicsHandlerImpl(iconHandler, iconMap())
   }
@@ -78,7 +78,7 @@ class TestNodeGraphicsHandlerImpl extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an existing icon can be retrieved.
    */
-  @Test def testIconExisting1() {
+  @Test def testIconExisting1(): Unit = {
     EasyMock.expect(iconHandler.getIconName(ConfigNode, false, false)).andReturn(IconName)
     whenExecuting(iconHandler) {
       assertSame("Wrong graphic", Graphic, handler.graphicsFor(ConfigNode, false, false))
@@ -89,7 +89,7 @@ class TestNodeGraphicsHandlerImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether an existing icon can be retrieved, but with a different
    * flag combination.
    */
-  @Test def testIconExisting2() {
+  @Test def testIconExisting2(): Unit = {
     EasyMock.expect(iconHandler.getIconName(ConfigNode, true, true)).andReturn(IconName)
     whenExecuting(iconHandler) {
       assertSame("Wrong graphic", Graphic, handler.graphicsFor(ConfigNode, true, true))
@@ -99,7 +99,7 @@ class TestNodeGraphicsHandlerImpl extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a non-existing name is handled gracefully.
    */
-  @Test def testIconNonExisting() {
+  @Test def testIconNonExisting(): Unit = {
     EasyMock.expect(iconHandler.getIconName(ConfigNode, true, true))
       .andReturn(IconName + "_NonExisting")
     whenExecuting(iconHandler) {

@@ -88,7 +88,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
   /** The factory to be tested. */
   private var factory: ColumnFactory = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     controller = mock[TableFormController]
     factory = new ColumnFactory
   }
@@ -103,7 +103,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    */
   private def prepareController(colIdx: Int, renderer: AnyRef= null,
                                 columnClass: ColumnClass = ColumnClass.STRING,
-                                editable: Boolean = false) {
+                                editable: Boolean = false): Unit = {
     EasyMock.expect(controller.hasRenderer(colIdx)).andReturn(renderer != null).anyTimes()
     EasyMock.expect(controller.getColumnRenderer(colIdx)).andReturn(renderer).anyTimes()
     EasyMock.expect(controller.getLogicDataClass(colIdx)).andReturn(columnClass).anyTimes()
@@ -116,7 +116,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    * are to be installed.
    * @param colIdx the column index
    */
-  private def expectInstallTransformers(colIdx: Int) {
+  private def expectInstallTransformers(colIdx: Int): Unit = {
     EasyMock.expect(controller.installTransformersForColumnType(colIdx)).andReturn(true)
   }
 
@@ -140,7 +140,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    * @param cell the cell to be checked
    * @param colIdx the expected column index
    */
-  private def checkFormControllerCell(cell: FormControllerCell[_, _], colIdx: Int) {
+  private def checkFormControllerCell(cell: FormControllerCell[_, _], colIdx: Int): Unit = {
     assertSame("Wrong form controller", controller, cell.formController)
     assertEquals("Wrong column index", colIdx, cell.columnIndex)
   }
@@ -148,7 +148,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a column with a renderer is correctly initialized.
    */
-  @Test def testColumnWithRenderer() {
+  @Test def testColumnWithRenderer(): Unit = {
     val ColIdx = 1
     val renderer = niceMock[CellComponentManager]
     prepareController(ColIdx, renderer = renderer)
@@ -165,7 +165,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    * type is created correctly.
    * @param editable a flag whether the column is editable
    */
-  private def checkColumnStandardType(editable: Boolean) {
+  private def checkColumnStandardType(editable: Boolean): Unit = {
     val ColIdx = 0
     prepareController(ColIdx, editable = editable)
     expectInstallTransformers(ColIdx)
@@ -180,7 +180,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether a correct column for a standard type is created which is not
    * editable.
    */
-  @Test def testColumnStandardTypeNotEditable() {
+  @Test def testColumnStandardTypeNotEditable(): Unit = {
     checkColumnStandardType(editable = false)
   }
 
@@ -188,14 +188,14 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether a correct column for a standard type is created which can
    * be edited.
    */
-  @Test def testColumnStandardTypeEditable() {
+  @Test def testColumnStandardTypeEditable(): Unit = {
     checkColumnStandardType(editable = true)
   }
 
   /**
    * Tests whether a column of type boolean can be created.
    */
-  @Test def testColumnBoolean() {
+  @Test def testColumnBoolean(): Unit = {
     val ColIdx = 2
     prepareController(ColIdx, columnClass = ColumnClass.BOOLEAN)
     expectInstallTransformers(ColIdx)
@@ -209,7 +209,7 @@ class TestColumnFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a column of type icon can be created.
    */
-  @Test def testColumnIcon() {
+  @Test def testColumnIcon(): Unit = {
     val ColIdx = 3
     prepareController(ColIdx, columnClass = ColumnClass.ICON)
     expectInstallTransformers(ColIdx)

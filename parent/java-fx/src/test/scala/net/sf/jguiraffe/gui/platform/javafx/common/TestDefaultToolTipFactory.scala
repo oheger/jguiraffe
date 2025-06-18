@@ -30,14 +30,14 @@ class TestDefaultToolTipFactory extends JUnitSuite {
   /** The factory to be tested. */
   private var factory: DefaultToolTipFactory = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     factory = new DefaultToolTipFactory
   }
 
   /**
    * Tests whether a tool tip can be created.
    */
-  @Test def testCreateToolTip() {
+  @Test def testCreateToolTip(): Unit = {
     val myText = "Text for a test tool tip"
     val refTip = new AtomicReference[String]
     JavaFxTestHelper.runInFxThread { () =>
@@ -49,7 +49,7 @@ class TestDefaultToolTipFactory extends JUnitSuite {
 }
 
 object TestDefaultToolTipFactory {
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
 }

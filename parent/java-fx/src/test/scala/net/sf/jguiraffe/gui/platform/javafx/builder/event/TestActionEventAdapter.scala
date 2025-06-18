@@ -38,7 +38,7 @@ class TestActionEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a correct event sender is created.
    */
-  @Test def testEventSender() {
+  @Test def testEventSender(): Unit = {
     val evMan = mock[FormEventManager]
     val compHandler = mock[ComponentHandler[_]]
     val adapter = new ActionEventAdapter(evMan, compHandler, ComponentName,
@@ -51,7 +51,7 @@ class TestActionEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an event is correctly handled and transformed.
    */
-  @Test def testHandleEvent() {
+  @Test def testHandleEvent(): Unit = {
     val compHandler = mock[ComponentHandler[_]]
     val orgEvent = new ActionEvent
     val sender = new MockSender
@@ -71,7 +71,7 @@ class TestActionEventAdapter extends JUnitSuite with EasyMockSugar {
   class MockSender extends EventSender[FormActionEvent] {
     var optEvent: Option[FormActionEvent] = None
 
-    def fire(event: => FormActionEvent) {
+    def fire(event: => FormActionEvent): Unit = {
       assertFalse("Too many events received", optEvent.isDefined)
       optEvent = Some(event)
     }

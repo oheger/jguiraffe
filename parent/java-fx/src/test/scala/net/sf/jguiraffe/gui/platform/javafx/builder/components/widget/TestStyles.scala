@@ -31,7 +31,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether an empty instance can be created.
    */
-  @Test def testInitEmpty() {
+  @Test def testInitEmpty(): Unit = {
     val styles = Styles()
     assertTrue("Got styles", styles.styleKeys.isEmpty)
   }
@@ -39,7 +39,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether an instance can be created from a styles definition.
    */
-  @Test def testInitFromDefinition() {
+  @Test def testInitFromDefinition(): Unit = {
     val styles = Styles(StylesDefinition)
     assertEquals("Wrong number of styles", 3, styles.styleKeys.size)
   }
@@ -47,7 +47,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether the value of a style can be queried.
    */
-  @Test def testQueryStyle() {
+  @Test def testQueryStyle(): Unit = {
     val styles = Styles(StylesDefinition)
     assertEquals("Wrong style value (1)", "#AA99FF",
       styles("-fx-background-color").get)
@@ -59,7 +59,7 @@ class TestStyles extends JUnitSuite {
    * Tests whether style sheet values with a string literal are parsed
    * correctly and can be queried.
    */
-  @Test def testQueryStyleWithStringLiteral() {
+  @Test def testQueryStyleWithStringLiteral(): Unit = {
     val styles = Styles(StylesDefinition)
     assertEquals("Wrong style value", "16px \"Serif;Test\"", styles("-fx-font").get)
   }
@@ -67,7 +67,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether styles can be converted to a textual representation.
    */
-  @Test def testToExternalForm() {
+  @Test def testToExternalForm(): Unit = {
     val styles = Styles(StylesDefinition)
     checkExternalForm(styles, """-fx-font: 16px "Serif;Test";""",
       "-fx-background-color: #AA99FF;",
@@ -81,7 +81,7 @@ class TestStyles extends JUnitSuite {
    * @param styles the Styles object to check
    * @param expDefs all the style definitions to check
    */
-  private def checkExternalForm(styles: Styles, expDefs: String*) {
+  private def checkExternalForm(styles: Styles, expDefs: String*): Unit = {
     val ext = styles.toExternalForm()
     for (sd <- expDefs) {
       assertTrue("Definition " + sd + " not found in " + ext, ext contains sd)
@@ -91,7 +91,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether style definitions can be removed.
    */
-  @Test def testRemoveStyles() {
+  @Test def testRemoveStyles(): Unit = {
     val styles = Styles(StylesDefinition)
     styles -= "-fx-font"
     styles -= "-fx-unknown"
@@ -102,7 +102,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether new styles can be added.
    */
-  @Test def testAddStyles() {
+  @Test def testAddStyles(): Unit = {
     val styles = Styles()
     styles += ("-fx-new", "true")
     assertEquals("Wrong styles", "-fx-new: true;\n", styles.toExternalForm)
@@ -111,7 +111,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether updateStyle() can be used to add/override styles.
    */
-  @Test def testUpdateStyleAdd() {
+  @Test def testUpdateStyleAdd(): Unit = {
     val styles = Styles()
     styles += ("-fx-new", "perhaps")
     styles.updateStyle("-fx-new", Some("true"))
@@ -123,7 +123,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether updateStyle() can be used to remove a style.
    */
-  @Test def testUpdateStyleRemove() {
+  @Test def testUpdateStyleRemove(): Unit = {
     val styles = Styles(StylesDefinition)
     styles.updateStyle("-fx-unknown", None)
     assertFalse("Style not removed", styles.styleKeys.contains("-fx-unknown"))
@@ -132,7 +132,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests the string representation.
    */
-  @Test def testToString() {
+  @Test def testToString(): Unit = {
     val styles = Styles(StylesDefinition)
     val s = styles.toString()
     assertTrue("Wrong string representation: " + s, s.contains(styles.toExternalForm()))
@@ -141,7 +141,7 @@ class TestStyles extends JUnitSuite {
   /**
    * Tests whether parsing errors are handled.
    */
-  @Test def testParseError() {
+  @Test def testParseError(): Unit = {
     val styles = Styles("-fx-test: strange: value = ?")
     assertTrue("Got styles", styles.styleKeys.isEmpty)
   }

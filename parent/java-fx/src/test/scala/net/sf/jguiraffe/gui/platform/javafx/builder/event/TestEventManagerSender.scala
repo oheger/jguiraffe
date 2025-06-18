@@ -34,14 +34,14 @@ class TestEventManagerSender extends JUnitSuite with EasyMockSugar {
   /** A mock for the form event manager. */
   private var eventManager: FormEventManager = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     eventManager = mock[FormEventManager]
   }
 
   /**
    * Tests whether an event can be fired to the event manager.
    */
-  @Test def testFire() {
+  @Test def testFire(): Unit = {
     val event = new FormChangeEvent(this, null, "test")
     eventManager.fireEvent(event, ListenerType)
     whenExecuting(eventManager) {

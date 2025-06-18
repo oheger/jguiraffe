@@ -28,7 +28,7 @@ class TestFunctionCallback {
   /**
    * Tests whether the callback works as expected.
    */
-  @Test def testCallback() {
+  @Test def testCallback(): Unit = {
     val callback = FunctionCallback(Function)
     assertEquals("Wrong result", "42", callback call 41)
   }

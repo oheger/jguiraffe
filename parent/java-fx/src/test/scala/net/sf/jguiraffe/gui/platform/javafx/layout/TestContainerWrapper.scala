@@ -71,7 +71,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /** The wrapper to be tested. */
   private var wrapper: ContainerWrapper = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     wrapper = new ContainerWrapper
   }
 
@@ -80,7 +80,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * @param pane the container to be checked
    * @param expChildren the expected children
    */
-  private def checkChildren(pane: Pane, expChildren: Node*) {
+  private def checkChildren(pane: Pane, expChildren: Node*): Unit = {
     assertEquals("Wrong number of children", expChildren.size,
       pane.getChildren.size)
     assertTrue("Child not found", expChildren.forall(pane.getChildren.contains(_)))
@@ -89,14 +89,14 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the default size handler.
    */
-  @Test def testDefaultSizeHandler() {
+  @Test def testDefaultSizeHandler(): Unit = {
     assertFalse("Got a size handler", wrapper.sizeHandler.isDefined)
   }
 
   /**
    * Tests addComponent() if the component is itself a wrapper.
    */
-  @Test def testAddComponentWrapper() {
+  @Test def testAddComponentWrapper(): Unit = {
     val comp = mock[ContainerWrapper]
     val pane = new BorderPane
     EasyMock.expect(comp.createContainer()).andReturn(pane)
@@ -111,7 +111,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests addComponent() if a plain node is added.
    */
-  @Test def testAddComponentNode() {
+  @Test def testAddComponentNode(): Unit = {
     val node = new Text("Test")
     wrapper.addComponent(node, null)
     checkChildren(wrapper.createContainer(), node)
@@ -122,14 +122,14 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * addComponent().
    */
   @Test(expected = classOf[FormBuilderException])
-  def testAddComponentUnsupported() {
+  def testAddComponentUnsupported(): Unit = {
     wrapper.addComponent(this, null)
   }
 
   /**
    * Tests whether a default font is used if none is set.
    */
-  @Test def testContainerFontUndefined() {
+  @Test def testContainerFontUndefined(): Unit = {
     assertFalse("Got an initial font", wrapper.font.isDefined)
     assertEquals("Wrong container default font", Font.getDefault,
       wrapper.getContainerFont)
@@ -138,7 +138,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the container can be assigned a font.
    */
-  @Test def testContainerFontDefined() {
+  @Test def testContainerFontDefined(): Unit = {
     val font = new Font(24)
     wrapper.font = Some(font)
     assertSame("Wrong container font", font, wrapper.getContainerFont)
@@ -147,7 +147,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests fromObject() if a type cast is possible.
    */
-  @Test def testFromObjectValid() {
+  @Test def testFromObjectValid(): Unit = {
     assertSame("Wrong result", wrapper, ContainerWrapper.fromObject(wrapper))
   }
 
@@ -155,7 +155,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * Tests fromObject() for invalid input.
    */
   @Test(expected = classOf[IllegalArgumentException])
-  def testFromObjectInvalid() {
+  def testFromObjectInvalid(): Unit = {
     ContainerWrapper.fromObject(this)
   }
 
@@ -163,7 +163,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * Tests fromObject() for null input.
    */
   @Test(expected = classOf[IllegalArgumentException])
-  def testFromObjectNull() {
+  def testFromObjectNull(): Unit = {
     ContainerWrapper.fromObject(null)
   }
 
@@ -197,7 +197,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * Tests whether a correct pane is created when a percent layout object is
    * set.
    */
-  @Test def testCreatePercentLayoutContainer() {
+  @Test def testCreatePercentLayoutContainer(): Unit = {
     val adapter = checkCreatePercentLayoutContainer()
     assertTrue("Wrong size handler",
       adapter.getSizeHandler.isInstanceOf[JavaFxUnitSizeHandler])
@@ -207,7 +207,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * Tests whether a size handler is correctly passed when creating a percent
    * layout pane.
    */
-  @Test def testCreatePercentLayoutContainerWithSizeHandler() {
+  @Test def testCreatePercentLayoutContainerWithSizeHandler(): Unit = {
     val sizeHandler = mock[UnitSizeHandler]
     wrapper = new ContainerWrapper(Some(sizeHandler))
     val adapter = checkCreatePercentLayoutContainer()
@@ -217,7 +217,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a node can be obtained which is directly passed in.
    */
-  @Test def testObtainPossiblyWrappedNodeNode() {
+  @Test def testObtainPossiblyWrappedNodeNode(): Unit = {
     val node = new Label("test")
     assertSame("Wrong result", node, ContainerWrapper.obtainPossiblyWrappedNode(node))
   }
@@ -225,7 +225,7 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a node can be obtained from a container wrapper.
    */
-  @Test def testObtainPossiblyWrappedNodeContainer() {
+  @Test def testObtainPossiblyWrappedNodeContainer(): Unit = {
     val node = new Text("Test")
     wrapper.addComponent(node, null)
     val pane = ContainerWrapper.obtainPossiblyWrappedNode(wrapper).asInstanceOf[Pane]
@@ -236,14 +236,14 @@ class TestContainerWrapper extends JUnitSuite with EasyMockSugar {
    * Tests whether invalid input is handled correctly by obtainPossiblyWrappedNode().
    */
   @Test(expected = classOf[FormBuilderException])
-  def testObtainPossiblyWrappedNodeOther() {
+  def testObtainPossiblyWrappedNodeOther(): Unit = {
     ContainerWrapper.obtainPossiblyWrappedNode(this)
   }
 
   /**
    * Tests whether a list with the components of a wrapper can be obtained.
    */
-  @Test def testGetComponents() {
+  @Test def testGetComponents(): Unit = {
     val node1 = new Label("c1")
     val node2 = new Text("c2")
     wrapper.addComponent(node1, null)

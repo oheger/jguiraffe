@@ -39,21 +39,21 @@ class TestJavaFxGUISynchronizer extends JUnitSuite {
   /** The synchronizer to be tested. */
   private var sync: JavaFxGUISynchronizer = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     sync = new JavaFxGUISynchronizer
   }
 
   /**
    * Tests isEventDispatchThread() if not called from the Java FX thread.
    */
-  @Test def testIsEventDispatchThreadFalse() {
+  @Test def testIsEventDispatchThreadFalse(): Unit = {
     assertFalse("Wrong result", sync.isEventDispatchThread)
   }
 
   /**
    * Tests isEventDispatchThread() if invoked from the Java FX thread.
    */
-  @Test def testIsEventDispatchThreadTrue() {
+  @Test def testIsEventDispatchThreadTrue(): Unit = {
     val result = new AtomicBoolean
     val latch = new CountDownLatch(1)
     Platform.runLater { () =>
@@ -67,7 +67,7 @@ class TestJavaFxGUISynchronizer extends JUnitSuite {
   /**
    * Tests an asynchronous invocation on the event dispatch thread.
    */
-  @Test def testAsyncInvoke() {
+  @Test def testAsyncInvoke(): Unit = {
     val invokeCount = new AtomicInteger
     val latch = new CountDownLatch(1)
     sync asyncInvoke { () =>
@@ -82,7 +82,7 @@ class TestJavaFxGUISynchronizer extends JUnitSuite {
   /**
    * Tests a synchronous invocation if we are already on the Java FX thread.
    */
-  @Test def testSyncInvokeFromFxThread() {
+  @Test def testSyncInvokeFromFxThread(): Unit = {
     val invokeCount = new AtomicInteger
     val latch = new CountDownLatch(1)
     Platform runLater { () =>
@@ -99,7 +99,7 @@ class TestJavaFxGUISynchronizer extends JUnitSuite {
   /**
    * Tests a synchronous invocation from another thread.
    */
-  @Test def testSyncInvokeFromOtherThread() {
+  @Test def testSyncInvokeFromOtherThread(): Unit = {
     val invokeCount = new AtomicInteger
     sync syncInvoke { () =>
       invokeCount.incrementAndGet()
@@ -111,7 +111,7 @@ class TestJavaFxGUISynchronizer extends JUnitSuite {
   /**
    * Tests whether exceptions are handled on synchronous invocations.
    */
-  @Test def testSyncInvokeWithException() {
+  @Test def testSyncInvokeWithException(): Unit = {
     val invokeCount = new AtomicInteger
     sync syncInvoke { () =>
       invokeCount.incrementAndGet()
@@ -122,7 +122,7 @@ class TestJavaFxGUISynchronizer extends JUnitSuite {
 }
 
 object TestJavaFxGUISynchronizer {
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     initPlatform
   }
 }

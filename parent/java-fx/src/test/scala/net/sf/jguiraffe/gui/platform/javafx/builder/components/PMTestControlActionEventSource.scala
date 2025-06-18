@@ -47,7 +47,7 @@ class PMTestControlActionEventSource extends JUnitSuite {
   /** The object to be tested. */
   private var handler: ActionEventSource = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     label = PowerMock.createMock(classOf[Label])
     handler = new JavaFxStaticTextHandler(label) with ControlActionEventSource[StaticTextData]
   }
@@ -55,7 +55,7 @@ class PMTestControlActionEventSource extends JUnitSuite {
   /**
    * Tests whether an action listener can be added.
    */
-  @Test def testAddActionListener() {
+  @Test def testAddActionListener(): Unit = {
     val listener = PowerMock.createMock(classOf[EventHandler[ActionEvent]])
     label.addEventHandler(ActionEvent.ACTION, listener)
     PowerMock.replayAll()
@@ -66,7 +66,7 @@ class PMTestControlActionEventSource extends JUnitSuite {
   /**
    * Tests whether an action listener can be removed.
    */
-  @Test def testRemoveActionListener() {
+  @Test def testRemoveActionListener(): Unit = {
     val listener = PowerMock.createMock(classOf[EventHandler[ActionEvent]])
     label.removeEventHandler(ActionEvent.ACTION, listener)
     PowerMock.replayAll()

@@ -122,7 +122,7 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: S
    * @param data the data object with the properties for the window
    * @param wnd the window to be initialized
    */
-  private def initWindowProperties(data: WindowData, wnd: Window) {
+  private def initWindowProperties(data: WindowData, wnd: Window): Unit = {
     val fxwnd = asFxWindow(wnd)
     wnd.setTitle(data.getTitle)
     fxwnd.windowController = data.getController
@@ -150,7 +150,7 @@ class JavaFxWindowManager(val styleSheetProvider: StyleSheetProvider, factory: S
    * @param data the data object
    * @param stage the stage to be initialized
    */
-  private def initWindowBounds(data: WindowData, stage: Stage) {
+  private def initWindowBounds(data: WindowData, stage: Stage): Unit = {
     if (defined(data.getXPos)) {
       stage.setX(data.getXPos)
     }

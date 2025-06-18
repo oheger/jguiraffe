@@ -64,7 +64,7 @@ class WindowEventAdapter private[event] (val window: Window,
    * passes it to the event sender.
    * @param event the event to be converted
    */
-  def handleEvent(event: FxWindowEvent) {
+  def handleEvent(event: FxWindowEvent): Unit = {
     event.getEventType match {
       case FxWindowEvent.WINDOW_SHOWN if !windowOpen =>
         fire(event, WindowEvent.Type.WINDOW_OPENED)
@@ -80,7 +80,7 @@ class WindowEventAdapter private[event] (val window: Window,
    * registration.
    * @param wnd the Java FX window
    */
-  def unregister(wnd: Stage) {
+  def unregister(wnd: Stage): Unit = {
     wnd.removeEventHandler(FxWindowEvent.ANY, eventHandler)
     wnd.focusedProperty().removeListener(focusListener)
     wnd.iconifiedProperty().removeListener(iconListener)
@@ -91,7 +91,7 @@ class WindowEventAdapter private[event] (val window: Window,
    * is called when the adapter is initialized.
    * @param wnd the window to register at
    */
-  private def register(wnd: Stage) {
+  private def register(wnd: Stage): Unit = {
     eventHandler = WindowEventAdapter.createEventHandler(this)
     wnd.addEventHandler(FxWindowEvent.ANY, eventHandler)
     focusListener = WindowEventAdapter.createFocusListener(this)
@@ -115,7 +115,7 @@ class WindowEventAdapter private[event] (val window: Window,
    * @param srcEvent the original FX event
    * @param evtype the type of the resulting event
    */
-  private def fire(srcEvent: FxWindowEvent, evtype: WindowEvent.Type) {
+  private def fire(srcEvent: FxWindowEvent, evtype: WindowEvent.Type): Unit = {
     sender fire convertEvent(srcEvent, evtype)
   }
 
@@ -123,7 +123,7 @@ class WindowEventAdapter private[event] (val window: Window,
    * Transforms a focus changed event into a window event.
    * @param focusGained a flag whether this window gained the focus
    */
-  private def handleFocusEvent(focusGained: Boolean) {
+  private def handleFocusEvent(focusGained: Boolean): Unit = {
     sender fire new WindowEvent(this, window,
       if (focusGained) WindowEvent.Type.WINDOW_ACTIVATED
       else WindowEvent.Type.WINDOW_DEACTIVATED)
@@ -133,7 +133,7 @@ class WindowEventAdapter private[event] (val window: Window,
    * Transforms a notification of the icon state property into a window event.
    * @param iconified a flag whether the icon state was entered
    */
-  private def handleIconEvent(iconified: Boolean) {
+  private def handleIconEvent(iconified: Boolean): Unit = {
     sender fire new WindowEvent(this, window,
       if (iconified) WindowEvent.Type.WINDOW_ICONIFIED
       else WindowEvent.Type.WINDOW_DEICONIFIED)
@@ -180,7 +180,7 @@ object WindowEventAdapter {
    */
   private[event] def createEventHandler(adapter: WindowEventAdapter): EventHandler[FxWindowEvent] =
     new EventHandler[FxWindowEvent] {
-      def handle(event: FxWindowEvent) {
+      def handle(event: FxWindowEvent): Unit = {
         adapter.handleEvent(event)
       }
     }
@@ -195,7 +195,7 @@ object WindowEventAdapter {
     new ChangeListener[java.lang.Boolean] {
       def changed(valueObs: ObservableValue[_ <: java.lang.Boolean],
         oldValue: java.lang.Boolean,
-        newValue: java.lang.Boolean) {
+        newValue: java.lang.Boolean): Unit = {
         adapter.handleFocusEvent(newValue)
       }
     }
@@ -210,7 +210,7 @@ object WindowEventAdapter {
     new ChangeListener[java.lang.Boolean] {
       def changed(valueObs: ObservableValue[_ <: java.lang.Boolean],
         oldValue: java.lang.Boolean,
-        newValue: java.lang.Boolean) {
+        newValue: java.lang.Boolean): Unit = {
         adapter.handleIconEvent(newValue)
       }
     }
@@ -223,7 +223,7 @@ object WindowEventAdapter {
   private def createEventSender(
     listeners: EventListenerList[WindowEvent, WindowListener]): EventSender[WindowEvent] = {
     new EventSender[WindowEvent] {
-      def fire(event: => WindowEvent) {
+      def fire(event: => WindowEvent): Unit = {
         listeners.fire(event, callWindowListener)
       }
     }
@@ -235,7 +235,7 @@ object WindowEventAdapter {
    * @param l the window listener
    * @param e the window event
    */
-  private def callWindowListener(l: WindowListener, e: WindowEvent) {
+  private def callWindowListener(l: WindowListener, e: WindowEvent): Unit = {
     e.getType match {
       case WindowEvent.Type.WINDOW_OPENED =>
         l.windowOpened(e)

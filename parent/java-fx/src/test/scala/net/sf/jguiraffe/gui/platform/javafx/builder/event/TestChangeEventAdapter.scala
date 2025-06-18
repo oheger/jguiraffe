@@ -37,7 +37,7 @@ class TestChangeEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a sender is created referencing the current event manager.
    */
-  @Test def testDefaultSender() {
+  @Test def testDefaultSender(): Unit = {
     val evMan = mock[FormEventManager]
     val compHandler = mock[ComponentHandler[_]]
     val adapter = new ChangeEventAdapter(evMan, compHandler, ComponentName)
@@ -49,7 +49,7 @@ class TestChangeEventAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a change event is correctly processed.
    */
-  @Test def testConvertEvent() {
+  @Test def testConvertEvent(): Unit = {
     val compHandler = mock[ComponentHandler[_]]
     val sender = new MockSender
     val obsValue = new SimpleStringProperty
@@ -70,7 +70,7 @@ class TestChangeEventAdapter extends JUnitSuite with EasyMockSugar {
     /** Stores the fired event. */
     var optEvent: Option[FormChangeEvent] = None
 
-    def fire(event: => FormChangeEvent) {
+    def fire(event: => FormChangeEvent): Unit = {
       assertFalse("Too many events fired", optEvent.isDefined)
       optEvent = Some(event)
     }

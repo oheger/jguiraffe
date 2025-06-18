@@ -33,7 +33,7 @@ class JavaFxGUISynchronizer extends GUISynchronizer {
    * @inheritdoc This implementation directly delegates to the ''Platform''
    * class.
    */
-  def asyncInvoke(r: Runnable) {
+  def asyncInvoke(r: Runnable): Unit = {
     Platform runLater r
   }
 
@@ -43,7 +43,7 @@ class JavaFxGUISynchronizer extends GUISynchronizer {
    * asynchronous invocation is performed, and synchronization is used to
    * wait for its completion.
    */
-  def syncInvoke(r: Runnable) {
+  def syncInvoke(r: Runnable): Unit = {
     JavaFxGUISynchronizer syncJavaFxInvocation (r.run _)
   }
 
@@ -73,7 +73,7 @@ object JavaFxGUISynchronizer {
    * one and waiting for its completion.
    * @param f the function to be invoked
    */
-  def syncJavaFxInvocation(f: () => Unit) {
+  def syncJavaFxInvocation(f: () => Unit): Unit = {
     if (isJavaFxThread) {
       f() // invoke directly
     } else {
@@ -85,10 +85,10 @@ object JavaFxGUISynchronizer {
    * Simulates a synchronous invocation of the given function.
    * @param f the function to be invoked
    */
-  private def invokeAndWait(f: () => Unit) {
+  private def invokeAndWait(f: () => Unit): Unit = {
     val latch = new CountDownLatch(1)
     val r = new Runnable {
-      def run() {
+      def run(): Unit = {
         try {
           f()
         } finally {

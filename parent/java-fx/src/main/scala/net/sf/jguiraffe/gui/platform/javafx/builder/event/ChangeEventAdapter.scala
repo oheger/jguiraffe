@@ -63,7 +63,7 @@ private class ChangeEventAdapter(val sender: EventSender[FormChangeEvent],
    * the sender.
    */
   override def changed(obsValue: ObservableValue[_ <: AnyRef], oldValue: AnyRef,
-    newValue: AnyRef) {
+    newValue: AnyRef): Unit = {
     sender fire (new FormChangeEvent(obsValue, componentHandler, componentName))
   }
 }

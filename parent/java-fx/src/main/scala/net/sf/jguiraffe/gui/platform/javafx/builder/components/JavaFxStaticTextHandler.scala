@@ -50,7 +50,7 @@ private class JavaFxStaticTextHandler(label: Label)
     data
   }
 
-  def setData(data: StaticTextData) {
+  def setData(data: StaticTextData): Unit = {
     val actData = if (data != null) data else new StaticTextDataImpl
     setText(actData.getText)
     setIcon(actData.getIcon)
@@ -59,7 +59,7 @@ private class JavaFxStaticTextHandler(label: Label)
 
   def getText: String = label.getText
 
-  def setText(txt: String) {
+  def setText(txt: String): Unit = {
     label setText txt
   }
 
@@ -70,7 +70,7 @@ private class JavaFxStaticTextHandler(label: Label)
    * is a JavaFX ''Node''. If so, it is passed to the wrapped label.
    * Otherwise, the label's icon is set to '''null'''.
    */
-  def setIcon(icon: Object) {
+  def setIcon(icon: Object): Unit = {
     val fxIcon = icon match {
       case nd: Node => nd
       case iw: ImageWrapper => iw.newImageView()
@@ -82,7 +82,7 @@ private class JavaFxStaticTextHandler(label: Label)
   def getAlignment: TextIconAlignment =
     convertContentDisplay(label.getContentDisplay)
 
-  def setAlignment(al: TextIconAlignment) {
+  def setAlignment(al: TextIconAlignment): Unit = {
     label setContentDisplay (convertAlignment(al))
   }
 }

@@ -56,7 +56,7 @@ private class JavaFxComboBoxHandler(combo: ComboBox[Object])
    * display object is set. Otherwise, it is transformed to a display object.
    * '''null''' values are again treated in a special way.
    */
-  def setData(data: Object) {
+  def setData(data: Object): Unit = {
     val newValue = if (data == null) null
     else {
       val idx = ListModelUtils.getIndex(getListModel, data)

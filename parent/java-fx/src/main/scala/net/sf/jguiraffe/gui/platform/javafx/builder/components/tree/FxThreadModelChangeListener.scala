@@ -38,9 +38,9 @@ private class FxThreadModelChangeListener(val listener: TreeModelChangeListener)
    * @inheritdoc This implementation propagates the current change event to the
    * wrapped listener, but in the JavaFX thread.
    */
-  override def treeModelChanged(node: ConfigurationNode) {
+  override def treeModelChanged(node: ConfigurationNode): Unit = {
     Platform.runLater(new Runnable {
-      def run() {
+      def run(): Unit = {
         listener treeModelChanged node
       }
     })

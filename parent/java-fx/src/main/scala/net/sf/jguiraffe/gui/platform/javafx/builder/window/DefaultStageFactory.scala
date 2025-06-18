@@ -129,7 +129,7 @@ object DefaultStageFactory {
     */
   def createPrimaryStage(): Option[Stage] = {
     val setupThread = new Thread {
-      override def run() {
+      override def run(): Unit = {
         try {
           Application.launch(classOf[SetupApplication])
         } catch {
@@ -158,7 +158,7 @@ object DefaultStageFactory {
    * Initializes the Scene object of the specified stage.
    * @param stage the stage
    */
-  private def initScene(stage: Stage) {
+  private def initScene(stage: Stage): Unit = {
     stage.setScene(createScene())
   }
 
@@ -190,7 +190,7 @@ object DefaultStageFactory {
    * queue.
    */
   class SetupApplication extends Application {
-    override def start(primaryStage: Stage) {
+    override def start(primaryStage: Stage): Unit = {
       LogFactory.getLog(classOf[DefaultStageFactory])
         .info("Java FX setup application starting up.")
       initScene(primaryStage)

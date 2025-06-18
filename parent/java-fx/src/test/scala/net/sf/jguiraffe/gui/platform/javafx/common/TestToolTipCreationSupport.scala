@@ -73,7 +73,7 @@ class TestToolTipCreationSupport extends JUnitSuite with EasyMockSugar {
    * @param context the ''JellyContext''
    * @param property the expected property
    */
-  private def checkRequest(context: JellyContext, property: ObjectProperty[Tooltip]) {
+  private def checkRequest(context: JellyContext, property: ObjectProperty[Tooltip]): Unit = {
     val callBack = ToolTipCreationCallBack.getInstance(context, null)
     assertSame("Wrong factory", factory, callBack.toolTipFactory)
     assertEquals("Wrong number of requests", 1, callBack.requests.size)

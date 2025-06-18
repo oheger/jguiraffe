@@ -28,7 +28,7 @@ class TestConfigNodeData extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the string representation of a node object.
    */
-  @Test def testToString() {
+  @Test def testToString(): Unit = {
     val node = mock[ConfigurationNode]
     val NodeName = "MyTestNode"
     EasyMock.expect(node.getName).andReturn(NodeName).anyTimes()

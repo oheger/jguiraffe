@@ -36,7 +36,7 @@ import scala.collection.mutable
  * Companion object for ''TestSplitPaneFactoryImpl''.
  */
 object TestSplitPaneFactoryImpl {
-  @BeforeClass def setUpOnce() {
+  @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
 }
@@ -49,7 +49,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the correct property is returned by the default function
    * for extracting the size property if orientation is vertical.
    */
-  @Test def testDefaultSizePropertyFunctionVertical() {
+  @Test def testDefaultSizePropertyFunctionVertical(): Unit = {
     val split = new SplitPane
     split setOrientation Orientation.VERTICAL
     val factory = new SplitPaneFactoryImpl
@@ -60,7 +60,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the correct property is returned by the default function
    * for extracting the size property if orientation is horizontal.
    */
-  @Test def testDefaultSizePropertyFunctionHorizontal() {
+  @Test def testDefaultSizePropertyFunctionHorizontal(): Unit = {
     val split = new SplitPane
     split setOrientation Orientation.HORIZONTAL
     val factory = new SplitPaneFactoryImpl
@@ -71,7 +71,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the correct property is returned by the default function for
    * extracting the position property.
    */
-  @Test def testDefaultPosPropertyFunction() {
+  @Test def testDefaultPosPropertyFunction(): Unit = {
     val split = new SplitPane
     split.getItems.addAll(new TextField, new TextField)
     val factory = new SplitPaneFactoryImpl
@@ -144,7 +144,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the correct items have been added to the split pane.
    */
-  @Test def testSplitPaneItems() {
+  @Test def testSplitPaneItems(): Unit = {
     val tag = createTag(JGOrientation.HORIZONTAL)
     val factory = new SplitPaneFactoryImpl
     val split = factory.createSplitPane(tag)
@@ -159,7 +159,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the items of a split pane are correctly initialized if one
    * component is a container.
    */
-  @Test def testSplitPaneItemsContainer() {
+  @Test def testSplitPaneItemsContainer(): Unit = {
     val container = mock[ContainerWrapper]
     val pane = new Pane
     EasyMock.expect(container.createContainer()).andReturn(pane)
@@ -176,7 +176,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether an unsupported split pane component is detected.
    */
   @Test(expected = classOf[FormBuilderException])
-  def testSplitPaneItemsUnsupported() {
+  def testSplitPaneItemsUnsupported(): Unit = {
     val tag = createTag(JGOrientation.HORIZONTAL, "unsupported")
     val factory = new SplitPaneFactoryImpl
     factory.createSplitPane(tag)
@@ -188,7 +188,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * @param tagOrient the orientation of the tag
    */
   private def checkSplitPaneOrientation(expOrient: Orientation,
-    tagOrient: JGOrientation) {
+    tagOrient: JGOrientation): Unit = {
     val splitPanes = mutable.Set.empty[SplitPane]
     val factory = new SplitPaneFactoryImpl(
       funcSizeProp = createSizeFunction(splitPanes, expOrient, createProperty()))
@@ -200,7 +200,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the split pane's orientation is correctly initialized if it
    * is vertical.
    */
-  @Test def testSplitPaneOrientationVertical() {
+  @Test def testSplitPaneOrientationVertical(): Unit = {
     checkSplitPaneOrientation(Orientation.VERTICAL, JGOrientation.VERTICAL)
   }
 
@@ -208,7 +208,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the split pane's orientation is correctly initialized if it
    * is horizontal.
    */
-  @Test def testSplitPaneOrientationHorizontal() {
+  @Test def testSplitPaneOrientationHorizontal(): Unit = {
     checkSplitPaneOrientation(Orientation.HORIZONTAL, JGOrientation.HORIZONTAL)
   }
 
@@ -216,7 +216,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether the correct split pane object is passed to the property
    * extraction functions.
    */
-  @Test def testSplitPanePassedToPropertyFunctions() {
+  @Test def testSplitPanePassedToPropertyFunctions(): Unit = {
     val splitPanes = mutable.Set.empty[SplitPane]
     val factory = new SplitPaneFactoryImpl(
       funcSizeProp = createSizeFunction(splitPanes, Orientation.VERTICAL, createProperty()),
@@ -229,7 +229,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
    * Tests whether a size handler is installed which can set the initial
    * position.
    */
-  @Test def testSizeHandlerPosition() {
+  @Test def testSizeHandlerPosition(): Unit = {
     val splitPanes = mutable.Set.empty[SplitPane]
     val propPos = createProperty()
     val propSize = createProperty()
@@ -248,7 +248,7 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a size handler is installed with the correct resize weight.
    */
-  @Test def testSizeHandlerResizeWeight() {
+  @Test def testSizeHandlerResizeWeight(): Unit = {
     val splitPanes = mutable.Set.empty[SplitPane]
     val propPos = createProperty()
     val propSize = createProperty()

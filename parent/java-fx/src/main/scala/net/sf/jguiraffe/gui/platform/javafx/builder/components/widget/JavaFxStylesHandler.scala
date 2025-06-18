@@ -47,7 +47,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * undefined, the style definition is removed.
    * @param col the new background color
    */
-  def setBackgroundColor(col: Color) {
+  def setBackgroundColor(col: Color): Unit = {
     setColor(JavaFxStylesHandler.StyleBackgroundColor, col)
   }
 
@@ -66,7 +66,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * undefined, the style definition is removed.
    * @param col the new foreground color
    */
-  def setForegroundColor(col: Color) {
+  def setForegroundColor(col: Color): Unit = {
     setColor(JavaFxStylesHandler.StyleForegroundColor, col)
   }
 
@@ -89,7 +89,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * in the font object are removed from the style sheet.
    * @param font the object with font-related information
    */
-  def setFont(font: JavaFxFont) {
+  def setFont(font: JavaFxFont): Unit = {
     styles.updateStyle(JavaFxStylesHandler.StyleFontFamily, font.family)
     styles.updateStyle(JavaFxStylesHandler.StyleFontSize, font.size)
     styles.updateStyle(JavaFxStylesHandler.StyleFontStyle, font.style)
@@ -104,7 +104,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * @param key the key of the style definition
    * @param col the new color
    */
-  private def setColor(key: String, col: Color) {
+  private def setColor(key: String, col: Color): Unit = {
     if (Color.UNDEFINED == col) {
       styles -= key
     } else {

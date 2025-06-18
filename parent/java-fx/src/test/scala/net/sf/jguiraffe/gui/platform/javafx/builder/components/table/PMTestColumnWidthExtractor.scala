@@ -36,14 +36,14 @@ class PMTestColumnWidthExtractor extends JUnitSuite {
   /** The test extractor. */
   private var extractor: ColumnWidthExtractor = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     extractor = new ColumnWidthExtractor {}
   }
 
   /**
    * Tests whether the correct width property is returned.
    */
-  @Test def testWidthProperty() {
+  @Test def testWidthProperty(): Unit = {
     val column = new TableColumn[AnyRef, AnyRef]
     assertSame("Wrong width property", column.widthProperty, extractor widthProperty column)
   }
@@ -51,7 +51,7 @@ class PMTestColumnWidthExtractor extends JUnitSuite {
   /**
    * Tests whether the width of a column can be extracted.
    */
-  @Test def testColumnWidth() {
+  @Test def testColumnWidth(): Unit = {
     val column = PowerMock.createMock(classOf[TableColumn[_, _]])
     val width = 100.5
     val property = new SimpleDoubleProperty(width)

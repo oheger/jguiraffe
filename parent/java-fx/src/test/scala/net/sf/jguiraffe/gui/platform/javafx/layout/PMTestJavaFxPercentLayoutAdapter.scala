@@ -51,7 +51,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /** The adapter to be tested. */
   private var adapter: JavaFxPercentLayoutAdapter = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     components = new Array(ComponentCount)
     constraints = new Array(ComponentCount)
     for (i <- 0 until ComponentCount) {
@@ -64,7 +64,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the number of components can be determined.
    */
-  @Test def testGetComponentCount() {
+  @Test def testGetComponentCount(): Unit = {
     assertEquals("Wrong number of components", ComponentCount,
       adapter.getComponentCount)
   }
@@ -72,7 +72,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a specific component can be queried.
    */
-  @Test def testGetComponent() {
+  @Test def testGetComponent(): Unit = {
     var idx = 0
     for (c <- components) {
       assertEquals("Wrong component at " + idx, c, adapter.getComponent(idx))
@@ -83,7 +83,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a specific constraints object can be queried.
    */
-  @Test def testGetConstraints() {
+  @Test def testGetConstraints(): Unit = {
     var idx = 0
     for (c <- constraints) {
       assertEquals("Wrong constraints at " + idx, c, adapter.getConstraints(idx))
@@ -116,7 +116,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the preferred component width can be obtained for nodes with
    * horizontal bias.
    */
-  @Test def testGetPreferredComponentWidthHorizontalBias() {
+  @Test def testGetPreferredComponentWidthHorizontalBias(): Unit = {
     val Width = 100
     val node = nodeWithBias(Orientation.HORIZONTAL)
     EasyMock.expect(node.prefWidth(-1)).andReturn(Width)
@@ -142,7 +142,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the preferred component width can be obtained for nodes with
    * no content bias.
    */
-  @Test def testGetPreferredComponentWidthNoBias() {
+  @Test def testGetPreferredComponentWidthNoBias(): Unit = {
     val node = nodeWithBias(null)
     EasyMock.expect(node.prefWidth(-1)).andReturn(100)
     whenExecuting(node) {
@@ -154,7 +154,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the preferred component width can be obtained for nodes with
    * vertical bias.
    */
-  @Test def testGetPreferredComponentWidthVerticalBias() {
+  @Test def testGetPreferredComponentWidthVerticalBias(): Unit = {
     val node = nodeWithBias(Orientation.VERTICAL)
     val height = 50.0
     EasyMock.expect(node.prefHeight(-1)).andReturn(height)
@@ -168,7 +168,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the preferred component height can be obtained for nodes with
    * vertical bias.
    */
-  @Test def testGetPreferredComponentHeightVerticalBias() {
+  @Test def testGetPreferredComponentHeightVerticalBias(): Unit = {
     val node = nodeWithBias(Orientation.VERTICAL)
     EasyMock.expect(node.prefHeight(-1)).andReturn(100)
     whenExecuting(node) {
@@ -180,7 +180,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the preferred component height can be obtained for nodes with
    * no bias.
    */
-  @Test def testGetPreferredComponentHeightNoBias() {
+  @Test def testGetPreferredComponentHeightNoBias(): Unit = {
     val node = nodeWithBias(null)
     EasyMock.expect(node.prefHeight(-1)).andReturn(100)
     whenExecuting(node) {
@@ -192,7 +192,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the preferred component height can be obtained for nodes with
    * horizontal bias.
    */
-  @Test def testGetPreferredComponentHeightHorizontalBias() {
+  @Test def testGetPreferredComponentHeightHorizontalBias(): Unit = {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     val width = 150.0
     EasyMock.expect(node.prefWidth(-1)).andReturn(width)
@@ -206,7 +206,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the minimum component width can be obtained for nodes with
    * horizontal bias.
    */
-  @Test def testGetMinimumComponentWidthHorizontalBias() {
+  @Test def testGetMinimumComponentWidthHorizontalBias(): Unit = {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     EasyMock.expect(node.minWidth(-1)).andReturn(100)
     whenExecuting(node) {
@@ -218,7 +218,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the minimum component width can be obtained for nodes with
    * no bias.
    */
-  @Test def testGetMinimumComponentWidthNoBias() {
+  @Test def testGetMinimumComponentWidthNoBias(): Unit = {
     val node = nodeWithBias(null)
     EasyMock.expect(node.minWidth(-1)).andReturn(100)
     whenExecuting(node) {
@@ -230,7 +230,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the minimum component width can be obtained for nodes with
    * vertical bias.
    */
-  @Test def testGetMinimumComponentWidthVerticalBias() {
+  @Test def testGetMinimumComponentWidthVerticalBias(): Unit = {
     val node = nodeWithBias(Orientation.VERTICAL)
     val height = 50.0
     EasyMock.expect(node.minHeight(-1)).andReturn(height)
@@ -244,7 +244,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the minimum component height can be obtained for nodes with
    * vertical bias.
    */
-  @Test def testGetMinimumComponentHeightVerticalBias() {
+  @Test def testGetMinimumComponentHeightVerticalBias(): Unit = {
     val node = nodeWithBias(Orientation.VERTICAL)
     EasyMock.expect(node.minHeight(-1)).andReturn(100)
     whenExecuting(node) {
@@ -256,7 +256,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the minimum component height can be obtained for nodes with
    * no bias.
    */
-  @Test def testGetMinimumComponentHeightNoBias() {
+  @Test def testGetMinimumComponentHeightNoBias(): Unit = {
     val node = nodeWithBias(null)
     EasyMock.expect(node.minHeight(-1)).andReturn(100)
     whenExecuting(node) {
@@ -268,7 +268,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
    * Tests whether the minimum component height can be obtained for nodes with
    * horizontal bias.
    */
-  @Test def testGetMinimumComponentHeightHorizontalBias() {
+  @Test def testGetMinimumComponentHeightHorizontalBias(): Unit = {
     val node = nodeWithBias(Orientation.HORIZONTAL)
     val width = 150.0
     EasyMock.expect(node.minWidth(-1)).andReturn(width)
@@ -281,7 +281,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a component's bounds can be set.
    */
-  @Test def testSetBounds() {
+  @Test def testSetBounds(): Unit = {
     val node = PowerMock.createMock(classOf[Node])
     val rect = new Rectangle(10, 20, 100, 80)
     node.setLayoutX(rect.x)
@@ -295,7 +295,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the size handler returned by the adapter.
    */
-  @Test def testGetSizeHandler() {
+  @Test def testGetSizeHandler(): Unit = {
     val sizeHandler = adapter.getSizeHandler
     assertTrue("Wrong size handler", sizeHandler.isInstanceOf[JavaFxUnitSizeHandler])
     assertSame("Multiple instances", sizeHandler, adapter.getSizeHandler)
@@ -304,7 +304,7 @@ class PMTestJavaFxPercentLayoutAdapter extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a size handler can be passed to the constructor.
    */
-  @Test def testGetSizeHandlerDefined() {
+  @Test def testGetSizeHandlerDefined(): Unit = {
     val sizeHandler = PowerMock.createMock(classOf[UnitSizeHandler])
     adapter = new JavaFxPercentLayoutAdapter(components, constraints,
       Some(sizeHandler))

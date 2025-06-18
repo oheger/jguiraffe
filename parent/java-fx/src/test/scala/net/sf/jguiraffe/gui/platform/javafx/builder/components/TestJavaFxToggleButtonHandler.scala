@@ -41,7 +41,7 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
   /** The handler to be tested. */
   private var handler: JavaFxToggleButtonHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     button = new ToggleButton
     handler = new JavaFxToggleButtonHandler(button)
   }
@@ -49,14 +49,14 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
   /**
    * Tests getData() if the expected result is false.
    */
-  @Test def testGetDataFalse() {
+  @Test def testGetDataFalse(): Unit = {
     assertEquals("Wrong result", java.lang.Boolean.FALSE, handler.getData)
   }
 
   /**
    * Tests getData() if the expected result is true.
    */
-  @Test def testGetDataTrue() {
+  @Test def testGetDataTrue(): Unit = {
     button setSelected true
     assertEquals("Wrong result", java.lang.Boolean.TRUE, handler.getData)
   }
@@ -64,7 +64,7 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
   /**
    * Tests whether the handler's data can be set.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     handler setData true
     assertTrue("Not selected", button.isSelected)
     handler setData java.lang.Boolean.FALSE
@@ -74,7 +74,7 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
   /**
    * Tests setData() with null input.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     button setSelected true
     handler setData null
     assertFalse("Still selected", button.isSelected)
@@ -84,7 +84,7 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
    * Tests whether the correct property for change listener support is
    * returned.
    */
-  @Test def testObservableValue() {
+  @Test def testObservableValue(): Unit = {
     assertEquals("Wrong property", button.selectedProperty,
       handler.observableValue)
   }
@@ -92,14 +92,14 @@ class TestJavaFxToggleButtonHandler extends JUnitSuite {
   /**
    * Tests the default action command managed by the handler.
    */
-  @Test def testActionCommandNotSet() {
+  @Test def testActionCommandNotSet(): Unit = {
     assertNull("Got an action command", handler.actionCommand)
   }
 
   /**
    * Tests whether an action command can be passed to the constructor.
    */
-  @Test def testActionCommandInitialized() {
+  @Test def testActionCommandInitialized(): Unit = {
     val Command = "TestToggleButtonActionCommand"
     handler = new JavaFxToggleButtonHandler(button, Command)
     assertEquals("Wrong action command", Command, handler.actionCommand)

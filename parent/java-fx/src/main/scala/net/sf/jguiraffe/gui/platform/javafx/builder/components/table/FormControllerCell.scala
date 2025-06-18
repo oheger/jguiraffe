@@ -51,7 +51,7 @@ trait FormControllerCell[S, T] extends TableCell[S, T] {
    * ''TableFormController''.
    * @param value the new value for this cell
    */
-  protected def writeCellValue(value: AnyRef) {
+  protected def writeCellValue(value: AnyRef): Unit = {
     selectCurrentRow()
     formController.setColumnValue(getTableView, columnIndex, value)
   }
@@ -60,7 +60,7 @@ trait FormControllerCell[S, T] extends TableCell[S, T] {
    * Selects the current row for the form controller. This method is always called
    * before data of this cell can be accessed.
    */
-  private def selectCurrentRow() {
+  private def selectCurrentRow(): Unit = {
     formController selectCurrentRow getIndex
   }
 }

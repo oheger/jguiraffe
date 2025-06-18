@@ -30,7 +30,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /** The handler to be tested. */
   private var handler: JavaFxStylesHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     styles = Styles()
     handler = new JavaFxStylesHandler(styles)
   }
@@ -38,7 +38,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether default styles are set if no object is passed in.
    */
-  @Test def testInitDefaultStyles() {
+  @Test def testInitDefaultStyles(): Unit = {
     handler = new JavaFxStylesHandler
     assertTrue("No empty styles", handler.styles.styleKeys.isEmpty)
   }
@@ -46,7 +46,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether a representation object for a font can be obtained.
    */
-  @Test def testGetFont() {
+  @Test def testGetFont(): Unit = {
     styles += ("-fx-font-family", "FontFamily")
     styles += ("-fx-font-size", "FontSize")
     styles += ("-fx-font-style", "FontStyle")
@@ -63,7 +63,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether defined attributes of a font are stored in the styles object.
    */
-  @Test def testSetFontDefined() {
+  @Test def testSetFontDefined(): Unit = {
     val font = JavaFxFont(family = Some("Family"), size = Some("Size"),
       style = Some("Style"), weight = Some("Weight"),
       fontDef = Some("Def"))
@@ -78,7 +78,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether missing font attributes are removed from the styles object.
    */
-  @Test def testSetFontUndefined() {
+  @Test def testSetFontUndefined(): Unit = {
     val font = JavaFxFont()
     styles += ("-fx-font", "someFont")
     styles += ("other", "test")
@@ -90,7 +90,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether the background color can be queried.
    */
-  @Test def testGetBackgroundColor() {
+  @Test def testGetBackgroundColor(): Unit = {
     styles += ("-fx-background-color", "bgcol")
     val col = handler.getBackgroundColor()
     assertTrue("Not a logic color", col.isLogicColor)
@@ -100,7 +100,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests the background color returned if the style sheet is undefined.
    */
-  @Test def testGetBackgroundColorUndefined() {
+  @Test def testGetBackgroundColorUndefined(): Unit = {
     assert(Color.UNDEFINED === handler.getBackgroundColor())
   }
 
@@ -108,7 +108,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
    * Tests whether an undefined background color causes the removal of the
    * style definition.
    */
-  @Test def testSetBackgroundColorUndefined() {
+  @Test def testSetBackgroundColorUndefined(): Unit = {
     styles += ("-fx-background-color", "someValue")
     handler setBackgroundColor Color.UNDEFINED
     assertTrue("Style not removed", styles.styleKeys.isEmpty)
@@ -117,7 +117,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether a logic background color can be set.
    */
-  @Test def testSetBackgroundColorLogic() {
+  @Test def testSetBackgroundColorLogic(): Unit = {
     val color = Color.newLogicInstance("coldef")
     handler setBackgroundColor color
     assertEquals("Wrong style", color.getColorDefinition,
@@ -128,7 +128,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
    * Tests whether an RGB color is correctly converted when set as background
    * color.
    */
-  @Test def testSetBackgroundColorRGB() {
+  @Test def testSetBackgroundColorRGB(): Unit = {
     val color = Color.newRGBInstance(0x80, 0xC0, 0xFF)
     handler setBackgroundColor color
     assertEquals("Wrong style", "#80c0ff", styles("-fx-background-color").get)
@@ -137,7 +137,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
   /**
    * Tests whether the foreground color can be queried.
    */
-  @Test def testGetForegroundColor() {
+  @Test def testGetForegroundColor(): Unit = {
     styles += ("-fx-text-fill", "fgcol")
     val col = handler.getForegroundColor()
     assertTrue("Not a logic color", col.isLogicColor)
@@ -149,7 +149,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
    * used as for the background color, so we do not have to test all
    * special cases.)
    */
-  @Test def testSetForegroundColor() {
+  @Test def testSetForegroundColor(): Unit = {
     val color = Color.newLogicInstance("coldef")
     handler setForegroundColor color
     assertEquals("Wrong style", color.getColorDefinition,

@@ -432,7 +432,7 @@ class TestJavaFxTableHandler extends JUnitSuite {
   /**
    * Tests whether the handler supports change events.
    */
-  @Test def testChangeEventSource() {
+  @Test def testChangeEventSource(): Unit = {
     val handler = createHandler()
     val source: ChangeEventSource = handler
     assertEquals("Wrong change event property", tableFrom(handler).getSelectionModel

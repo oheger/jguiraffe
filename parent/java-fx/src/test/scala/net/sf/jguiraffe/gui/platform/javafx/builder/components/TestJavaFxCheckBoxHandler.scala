@@ -40,7 +40,7 @@ class TestJavaFxCheckBoxHandler extends JUnitSuite {
   /** The handler to be tested. */
   private var handler: JavaFxCheckBoxHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     checkBox = new CheckBox
     handler = new JavaFxCheckBoxHandler(checkBox)
   }
@@ -48,14 +48,14 @@ class TestJavaFxCheckBoxHandler extends JUnitSuite {
   /**
    * Tests getData() if the expected result is false.
    */
-  @Test def testGetDataFalse() {
+  @Test def testGetDataFalse(): Unit = {
     assertEquals("Wrong result", java.lang.Boolean.FALSE, handler.getData)
   }
 
   /**
    * Tests getData() if the expected result is true.
    */
-  @Test def testGetDataTrue() {
+  @Test def testGetDataTrue(): Unit = {
     checkBox.setSelected(true)
     assertEquals("Wrong result", java.lang.Boolean.TRUE, handler.getData)
   }
@@ -64,7 +64,7 @@ class TestJavaFxCheckBoxHandler extends JUnitSuite {
    * Tests whether the check box's selected state can be manipulated via the
    * handler.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     handler setData java.lang.Boolean.TRUE
     assertTrue("Not selected", checkBox.isSelected)
     handler setData java.lang.Boolean.FALSE
@@ -74,7 +74,7 @@ class TestJavaFxCheckBoxHandler extends JUnitSuite {
   /**
    * Tests whether setData() can handle null input.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     checkBox setSelected true
     handler setData null
     assertFalse("Still selected", checkBox.isSelected)
@@ -83,7 +83,7 @@ class TestJavaFxCheckBoxHandler extends JUnitSuite {
   /**
    * Tests whether the correct property for change listener support is returned.
    */
-  @Test def testObservableValue() {
+  @Test def testObservableValue(): Unit = {
     assertEquals("Wrong property", checkBox.selectedProperty,
       handler.observableValue)
   }

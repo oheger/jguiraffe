@@ -50,7 +50,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
   /** A mock for the focus property. */
   private var focusProperty: ReadOnlyBooleanProperty = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     node = PowerMock.createMock(classOf[Node])
   }
 
@@ -73,7 +73,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
    * Tests whether a correct default sender is created.
    */
     @Ignore
-  @Test def testDefaultSender() {
+  @Test def testDefaultSender(): Unit = {
     val evMan = PowerMock.createMock(classOf[FormEventManager])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     PowerMock.replayAll()
@@ -89,7 +89,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
    * Tests whether focus events are converted and transferred to listeners.
    */
     @Ignore
-  @Test def testEventTransformation() {
+  @Test def testEventTransformation(): Unit = {
     val obsVal = PowerMock.createMock(classOf[ObservableValue[java.lang.Boolean]])
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     val a = prepareListenerReg()
@@ -109,7 +109,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
    * Tests whether the adapter can be removed again as focus listener.
    */
     @Ignore
-  @Test def testUnregister() {
+  @Test def testUnregister(): Unit = {
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[_]])
     val sender = new TestSender
     val aReg = prepareListenerReg()
@@ -132,7 +132,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
     /** The list with the events received. */
     private var events: List[FormFocusEvent] = Nil
 
-    def fire(event: => FormFocusEvent) {
+    def fire(event: => FormFocusEvent): Unit = {
       events = events :+ event
     }
 
@@ -141,7 +141,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
      * @param adapter the adapter object
      * @param evType the expected event type
      */
-    def checkEvent(adapter: FocusEventAdapter, evType: FormFocusEvent.Type) {
+    def checkEvent(adapter: FocusEventAdapter, evType: FormFocusEvent.Type): Unit = {
       val event = events.head
       events = events.tail
       assertSame("Wrong component handler", adapter.componentHandler,
@@ -154,7 +154,7 @@ class PMTestFocusEventAdapter extends JUnitSuite {
     /**
      * Verifies that no more events have been received.
      */
-    def verify() {
+    def verify(): Unit = {
       assertTrue("Got more events: " + events, events.isEmpty)
     }
   }

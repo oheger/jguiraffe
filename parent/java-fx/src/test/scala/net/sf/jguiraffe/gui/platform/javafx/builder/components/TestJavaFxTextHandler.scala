@@ -62,7 +62,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the correct component is passed to the parent class.
    */
-  @Test def testComponent() {
+  @Test def testComponent(): Unit = {
     val handler = createHandlerWithMock()
     assertSame("Wrong component", txtControl, handler.getComponent)
   }
@@ -70,7 +70,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the correct data type is returned.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     val handler = createHandlerWithMock()
     assertEquals("Wrong type", classOf[String], handler.getType)
   }
@@ -78,7 +78,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether control data can be queried from the handler.
    */
-  @Test def testGetData() {
+  @Test def testGetData(): Unit = {
     val handler = createHandlerWithField()
     assertEquals("Wrong component data", TestText, handler.getData)
   }
@@ -86,7 +86,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether control data can be set via the handler.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     val handler = createHandlerWithField()
     txtControl.clear()
     handler setData TestText
@@ -96,7 +96,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests hasSelection() if the expected result is true.
    */
-  @Test def testHasSelectionTrue() {
+  @Test def testHasSelectionTrue(): Unit = {
     val handler = createHandlerWithField()
     txtControl.selectRange(0, 5)
     assertTrue("No selection", handler.hasSelection)
@@ -105,7 +105,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests hasSelection() if the expected result is false.
    */
-  @Test def testHasSelectionFalse() {
+  @Test def testHasSelectionFalse(): Unit = {
     val handler = createHandlerWithField()
     assertFalse("Got a selection", handler.hasSelection)
   }
@@ -113,7 +113,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the selection start can be queried.
    */
-  @Test def testGetSelectionStart() {
+  @Test def testGetSelectionStart(): Unit = {
     val handler = createHandlerWithField()
     txtControl.selectRange(5, 8)
     assertEquals("Wrong selection start", 5, handler.getSelectionStart)
@@ -122,7 +122,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the selection end can be queried.
    */
-  @Test def testGetSelectionEnd() {
+  @Test def testGetSelectionEnd(): Unit = {
     val handler = createHandlerWithField()
     txtControl.selectRange(5, 8)
     assertEquals("Wrong selection end", 8, handler.getSelectionEnd)
@@ -131,7 +131,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the text selection can be changed.
    */
-  @Test def testSelect() {
+  @Test def testSelect(): Unit = {
     val handler = createHandlerWithField()
     handler.select(1, 5)
     val selRange = txtControl.getSelection
@@ -142,7 +142,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the complete text can be selected.
    */
-  @Test def testSelectAll() {
+  @Test def testSelectAll(): Unit = {
     val handler = createHandlerWithField()
     handler.selectAll()
     assertEquals("Wrong selection", TestText, txtControl.getSelectedText)
@@ -151,7 +151,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the selection can be cleared.
    */
-  @Test def testClearSelection() {
+  @Test def testClearSelection(): Unit = {
     val handler = createHandlerWithField()
     txtControl.selectRange(4, 10)
     handler.clearSelection()
@@ -161,7 +161,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the selected text can be queried.
    */
-  @Test def testGetSelectedText() {
+  @Test def testGetSelectedText(): Unit = {
     val handler = createHandlerWithField()
     val start = 5
     val end = 10
@@ -173,7 +173,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the selection can be replaced.
    */
-  @Test def testReplaceSelectedText() {
+  @Test def testReplaceSelectedText(): Unit = {
     val ReplText = "REPLACE"
     val handler = createHandlerWithField()
     txtControl.selectRange(0, 1)
@@ -185,7 +185,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether text can be copied to the clip-board.
    */
-  @Test def testCopy() {
+  @Test def testCopy(): Unit = {
     val handler = createHandlerWithMock()
     txtControl.copy()
     whenExecuting(txtControl) {
@@ -196,7 +196,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests a cut operation.
    */
-  @Test def testCut() {
+  @Test def testCut(): Unit = {
     val handler = createHandlerWithMock()
     txtControl.cut()
     whenExecuting(txtControl) {
@@ -207,7 +207,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests a paste operation.
    */
-  @Test def testPaste() {
+  @Test def testPaste(): Unit = {
     val handler = createHandlerWithMock()
     txtControl.paste()
     whenExecuting(txtControl) {
@@ -219,7 +219,7 @@ class TestJavaFxTextHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether the correct property for registering change listeners is
    * returned.
    */
-  @Test def testPropertyForChangeEvents() {
+  @Test def testPropertyForChangeEvents(): Unit = {
     val source: ChangeEventSource = createHandlerWithField()
     assertSame("Wrong change event source", txtControl.textProperty,
       source.observableValue)

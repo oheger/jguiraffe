@@ -58,7 +58,7 @@ private class SplitPaneResizeListener(val initialPosition: Int,
   /**
    * @inheritdoc Reacts on size changes of a ''SplitPane''.
    */
-  override def changed(obs: ObservableValue[_ <: Number], oldVal: Number, newVal: Number) {
+  override def changed(obs: ObservableValue[_ <: Number], oldVal: Number, newVal: Number): Unit = {
     if (initialUpdate(oldVal, newVal)) {
       handleInitialUpdate(newVal)
     } else {
@@ -83,7 +83,7 @@ private class SplitPaneResizeListener(val initialPosition: Int,
    * position property to the initial value if defined.
    * @param newVal the new value of the monitored property
    */
-  private def handleInitialUpdate(newVal: Number) {
+  private def handleInitialUpdate(newVal: Number): Unit = {
     if (initialPosition > 0) {
       updatePosition(initialPosition / newVal.doubleValue)
     }
@@ -94,7 +94,7 @@ private class SplitPaneResizeListener(val initialPosition: Int,
    * ''reseizeWeight'' property, the additional space is distributed on the
    * components of the associated split pane.
    */
-  private def handleResize(oldVal: Number, newVal: Number) {
+  private def handleResize(oldVal: Number, newVal: Number): Unit = {
     val diff = newVal.doubleValue - oldVal.doubleValue
     val pos = positionProperty.get
     val sizeLeftOld = oldVal.doubleValue * pos
@@ -108,9 +108,9 @@ private class SplitPaneResizeListener(val initialPosition: Int,
    * adjustments done by the split pane.
    * @param pos the new position value to be set
    */
-  private def updatePosition(pos: Double) {
+  private def updatePosition(pos: Double): Unit = {
     Platform.runLater(new Runnable {
-      def run() {
+      def run(): Unit = {
         positionProperty set pos
       }
     })
