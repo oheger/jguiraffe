@@ -67,7 +67,7 @@ object StyleSheetProvider {
  *                           shipped with this library
  */
 class StyleSheetProvider(styleSheetURLList: String, val standardStyleSheet: String) {
-  lazy val styleSheetURLs = createStyleSheetURLSet()
+  lazy val styleSheetURLs: Set[String] = createStyleSheetURLSet()
 
   /**
    * Creates a new instance of ''StyleSheetProvider'' with the specified string list

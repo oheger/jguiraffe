@@ -19,6 +19,8 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.control.CheckBox
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 
+import java.lang
+
 /**
  * A JavaFX-specific ''ComponentHandler'' implementation for managing
  * ''CheckBox'' controls.
@@ -33,7 +35,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
  */
 private class JavaFxCheckBoxHandler(checkBox: CheckBox)
   extends JavaFxButtonHandler(checkBox) with ChangeEventSource {
-  override def getData = checkBox.isSelected
+  override def getData: lang.Boolean = checkBox.isSelected
 
   /**
    * @inheritdoc This implementation returns the check box's ''selected''

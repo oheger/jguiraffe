@@ -15,8 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.beans.BeanProperty
+import javafx.scene.Node
 
+import scala.beans.BeanProperty
 import javafx.scene.control.Control
 import net.sf.jguiraffe.gui.forms.ComponentHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.NodeEventSource
@@ -37,10 +38,10 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.NodeEventSource
 private abstract class JavaFxComponentHandler[T](@BeanProperty val component: Control)
   extends ComponentHandler[T] with NodeEventSource {
   /** Per default, the outer component is the managed control. */
-  val getOuterComponent = component
+  val getOuterComponent: AnyRef = component
 
   /** The source node for events is always the managed control. */
-  val sourceNode = component
+  val sourceNode: Node = component
 
   /**
    * @inheritdoc This implementation queries the managed control's

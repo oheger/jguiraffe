@@ -50,11 +50,11 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ActionEventSource
 private class MenuItemComponentHandler(val item: MenuItem, val property: BooleanProperty,
                                        override val actionCommand: String)
   extends ComponentHandler[java.lang.Boolean] with ActionEventSource {
-  override val getComponent = item
+  override val getComponent: AnyRef = item
 
-  override val getOuterComponent = item
+  override val getOuterComponent: AnyRef = item
 
-  val getType = classOf[java.lang.Boolean]
+  val getType: Class[_] = classOf[java.lang.Boolean]
 
   /**
    * @inheritdoc

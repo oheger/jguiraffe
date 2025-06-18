@@ -204,7 +204,7 @@ class CellComponentManager(val tag: ContainerTag, val form: Form) {
  */
 private class ComponentManagerInvocationHandler(cellManager: CellComponentManager) extends
 InvocationHandler {
-  val TypeComponentHandler = classOf[ComponentHandler[_]]
+  val TypeComponentHandler: Class[ComponentHandler[_]] = classOf[ComponentHandler[_]]
 
   override def invoke(proxy: scala.Any, method: Method, args: Array[AnyRef]): AnyRef = {
     method.getReturnType match {

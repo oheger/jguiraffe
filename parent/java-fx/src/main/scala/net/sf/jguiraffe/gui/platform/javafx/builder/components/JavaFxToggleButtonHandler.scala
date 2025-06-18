@@ -19,6 +19,8 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.control.ToggleButton
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 
+import java.lang
+
 /**
  * A JavaFX ''ComponentHandler'' implementation for managing toggle button
  * components.
@@ -40,7 +42,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
  */
 private class JavaFxToggleButtonHandler(button: ToggleButton, actionCmd: String = null)
   extends JavaFxButtonHandler(button, actionCmd) with ChangeEventSource {
-  override def getData = button.isSelected
+  override def getData: lang.Boolean = button.isSelected
 
   /**
    * @inheritdoc This implementation returns the button's ''selected''

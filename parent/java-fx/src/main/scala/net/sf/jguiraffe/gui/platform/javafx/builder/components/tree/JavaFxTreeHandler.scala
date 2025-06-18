@@ -54,7 +54,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
     tree.getSelectionModel.getSelectionMode == SelectionMode.MULTIPLE
 
   /** The data type of this handler. It depends on the selection mode. */
-  @BeanProperty val `type` = if (multiSelection) classOf[Array[TreeNodePath]]
+  @BeanProperty val `type`: Class[_ >: Array[TreeNodePath] with TreeNodePath <: Object] = if (multiSelection) classOf[Array[TreeNodePath]]
   else classOf[TreeNodePath]
 
   /** The property for change listener support. */

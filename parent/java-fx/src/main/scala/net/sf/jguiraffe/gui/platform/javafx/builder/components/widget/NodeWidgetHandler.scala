@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
+import javafx.beans.property.StringProperty
 import javafx.scene.Node
 
 import scala.beans.BeanProperty
@@ -29,7 +30,7 @@ import scala.beans.BeanProperty
  */
 private[components] class NodeWidgetHandler(@BeanProperty val widget: Node) extends
 StyleWidgetHandler with NoToolTipSupport {
-  override val style = widget.styleProperty
+  override val style: StringProperty = widget.styleProperty
 
   override def isVisible: Boolean = widget.isVisible
 

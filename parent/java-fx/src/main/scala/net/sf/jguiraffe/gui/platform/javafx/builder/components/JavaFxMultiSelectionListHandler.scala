@@ -16,6 +16,8 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import javafx.beans.binding.Bindings
+import javafx.beans.value.ObservableValue
+import javafx.collections.ObservableList
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
 import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils
@@ -32,7 +34,7 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 private class JavaFxMultiSelectionListHandler(listView: ListView[Object])
   extends JavaFxComponentHandler[Object](listView) with ListModelSupport
   with ChangeEventSource {
-  override protected val displayList = listView.getItems
+  override protected val displayList: ObservableList[Object] = listView.getItems
 
   /**
    * @inheritdoc This implementation combines change events with the number of
@@ -75,5 +77,5 @@ private class JavaFxMultiSelectionListHandler(listView: ListView[Object])
     }
   }
 
-  def getType = getListModel.getType
+  def getType: Class[_] = getListModel.getType
 }

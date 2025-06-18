@@ -15,6 +15,7 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
+import javafx.beans.property.StringProperty
 import javafx.scene.control.MenuItem
 
 /**
@@ -31,11 +32,11 @@ import javafx.scene.control.MenuItem
  */
 private[components] class MenuItemWidgetHandler(item: MenuItem) extends StyleWidgetHandler with
 NoToolTipSupport {
-  override val getWidget = item
+  override val getWidget: AnyRef = item
 
   override def isVisible: Boolean = item.isVisible
 
   override def setVisible(f: Boolean): Unit = item setVisible f
 
-  override val style = item.styleProperty
+  override val style: StringProperty = item.styleProperty
 }

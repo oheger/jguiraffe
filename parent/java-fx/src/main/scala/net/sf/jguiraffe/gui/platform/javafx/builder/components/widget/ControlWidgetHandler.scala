@@ -15,8 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.widget
 
-import javafx.scene.control.Control
-
+import javafx.beans.property.ObjectProperty
+import javafx.scene.control.{Control, Tooltip}
 import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 
 /**
@@ -31,5 +31,5 @@ import net.sf.jguiraffe.gui.platform.javafx.common.ToolTipFactory
 private[components] class ControlWidgetHandler(control: Control, override val toolTipFactory:
 ToolTipFactory)
   extends NodeWidgetHandler(control) with ToolTipWidgetHandler {
-  override val toolTipProperty = control.tooltipProperty
+  override val toolTipProperty: ObjectProperty[Tooltip] = control.tooltipProperty
 }

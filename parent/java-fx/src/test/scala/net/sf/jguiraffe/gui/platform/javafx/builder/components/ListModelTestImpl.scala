@@ -40,9 +40,9 @@ class ListModelTestImpl(override val size: Int = ListModelTestImpl.DefaultSize)
   extends ListModel {
   import ListModelTestImpl._
 
-  def getType = classOf[String]
+  def getType: Class[_] = classOf[String]
 
-  def getDisplayObject(index: Int) = DisplayPrefix + index
+  def getDisplayObject(index: Int): AnyRef = DisplayPrefix + index
 
-  def getValueObject(index: Int) = ValuePrefix + index
+  def getValueObject(index: Int): AnyRef = ValuePrefix + index
 }

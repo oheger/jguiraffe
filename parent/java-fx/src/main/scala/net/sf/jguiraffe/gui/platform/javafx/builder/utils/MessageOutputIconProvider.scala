@@ -42,16 +42,16 @@ trait MessageOutputIconProvider {
   private val NameErrorIcon = "icon_error.gif"
 
   /** The image for an information message. */
-  lazy val iconInfo = loadIconFromResources(NameInfoIcon)
+  lazy val iconInfo: Image = loadIconFromResources(NameInfoIcon)
 
   /** The image for a confirmation/question message. */
-  lazy val iconQuestion = loadIconFromResources(NameQuestionIcon)
+  lazy val iconQuestion: Image = loadIconFromResources(NameQuestionIcon)
 
   /** The image for a warning message. */
-  lazy val iconWarning = loadIconFromResources(NameWarningIcon)
+  lazy val iconWarning: Image = loadIconFromResources(NameWarningIcon)
 
   /** The image for an error message. */
-  lazy val iconError = loadIconFromResources(NameErrorIcon)
+  lazy val iconError: Image = loadIconFromResources(NameErrorIcon)
 
   /**
    * Returns the image for the specified message type. The return value is

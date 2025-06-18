@@ -16,8 +16,8 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components.table
 
 import javafx.beans.property.StringProperty
+import javafx.beans.value.ObservableValue
 import javafx.scene.control.{SelectionMode, TableView}
-
 import net.sf.jguiraffe.gui.builder.components.Color
 import net.sf.jguiraffe.gui.builder.components.model.TableHandler
 import net.sf.jguiraffe.gui.builder.components.tags.table.TableFormController
@@ -74,10 +74,10 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
     table.getSelectionModel.getSelectionMode == SelectionMode.MULTIPLE
 
   /** The property for implementing support for change events. */
-  override val observableValue = table.getSelectionModel.selectedItemProperty
+  override val observableValue: ObservableValue[_ <: AnyRef] = table.getSelectionModel.selectedItemProperty
 
   /** The type of this handler. It depends in the table's selection mode. */
-  @BeanProperty val `type` = if (multipleSelection) classOf[Array[Int]]
+  @BeanProperty val `type`: Class[_ >: Array[Int] with Integer <: Serializable] = if (multipleSelection) classOf[Array[Int]]
   else Integer.TYPE
 
   override def getSelectedIndex: Int = table.getSelectionModel.getSelectedIndex

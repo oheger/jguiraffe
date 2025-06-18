@@ -31,7 +31,8 @@ package object components {
    * A mapping between JavaFX ''Side'' literals and ''JGUIraffe Placement''
    * constants.
    */
-  val PlacementMapping = Map(TabbedPaneTag.Placement.BOTTOM -> Side.BOTTOM,
+  val PlacementMapping: Map[TabbedPaneTag.Placement, Side] =
+    Map(TabbedPaneTag.Placement.BOTTOM -> Side.BOTTOM,
     TabbedPaneTag.Placement.LEFT -> Side.LEFT,
     TabbedPaneTag.Placement.RIGHT -> Side.RIGHT,
     TabbedPaneTag.Placement.TOP -> Side.TOP)

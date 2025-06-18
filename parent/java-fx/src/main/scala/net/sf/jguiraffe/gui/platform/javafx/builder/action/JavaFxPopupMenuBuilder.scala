@@ -40,7 +40,7 @@ AbstractPopupMenuBuilder(actionManager, actionBuilder) {
   /** The menu to be constructed by this builder. */
   private lazy val contextMenu = createContextMenu()
 
-  override protected[action] def getMenuUnderConstruction = contextMenu
+  override protected[action] def getMenuUnderConstruction: AnyRef = contextMenu
 
   /**
    * @inheritdoc This implementation displays the context menu that has been

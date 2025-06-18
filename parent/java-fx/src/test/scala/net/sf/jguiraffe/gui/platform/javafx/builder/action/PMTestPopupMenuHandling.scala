@@ -212,7 +212,7 @@ class PMTestPopupMenuHandling extends JUnitSuite {
  */
 private trait MockContextMenuCreator extends ContextMenuCreator {
   /** The mock context menu. */
-  val mockMenu = PowerMock.createMock(classOf[ContextMenu])
+  val mockMenu: ContextMenu = PowerMock.createMock(classOf[ContextMenu])
 
   /** A counter for the invocations. */
   var createContextMenuCount = 0

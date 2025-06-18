@@ -44,7 +44,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   val container = new ContainerWrapper
 
   /** The mock for the Composite wrapping the container. */
-  val composite = createComposite()
+  val composite: ContainerTag = createComposite()
 
   /**
     * Allows client code to explicitly set an expected container. This is used
@@ -102,12 +102,12 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   /**
    * Overrides the inherited method to always return the mock container.
    */
-  override def findContainer() = composite
+  override def findContainer(): ContainerTag = composite
 
   /**
    * @inheritdoc This implementation returns the mock scroll width object.
    */
-  override def getPreferredScrollWidth = {
+  override def getPreferredScrollWidth: NumberWithUnit = {
     if (scrollWidth == null) {
       xAnswer = new SizeAnswer(xScrollSize)
       scrollWidth = createScrollSizeMock(xAnswer, y = false)
@@ -118,7 +118,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
   /**
    * @inheritdoc This implementation returns the mock scroll height object.
    */
-  override def getPreferredScrollHeight = {
+  override def getPreferredScrollHeight: NumberWithUnit = {
     if (scrollHeight == null) {
       yAnswer = new SizeAnswer(yScrollSize)
       scrollHeight = createScrollSizeMock(yAnswer, y = true)

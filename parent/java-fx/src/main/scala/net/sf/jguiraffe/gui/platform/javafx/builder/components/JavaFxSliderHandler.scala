@@ -15,8 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.beans.BeanProperty
+import javafx.beans.value.ObservableValue
 
+import scala.beans.BeanProperty
 import javafx.scene.control.Slider
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 
@@ -33,9 +34,9 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
  */
 private class JavaFxSliderHandler(slider: Slider)
   extends JavaFxComponentHandler[Integer](slider) with ChangeEventSource {
-  @BeanProperty val `type` = classOf[Integer]
+  @BeanProperty val `type`: Class[Integer] = classOf[Integer]
 
-  override val observableValue = slider.valueProperty
+  override val observableValue: ObservableValue[_ <: AnyRef] = slider.valueProperty
 
   /**
    * @inheritdoc This implementation returns the slider's current value

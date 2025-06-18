@@ -64,7 +64,7 @@ object JavaFxGUISynchronizer {
    * @return '''true''' if the current thread is the Java FX application
    * thread, '''false''' otherwise
    */
-  def isJavaFxThread = Platform.isFxApplicationThread
+  def isJavaFxThread: Boolean = Platform.isFxApplicationThread
 
   /**
    * Invokes the specified function on the Java FX thread and waits for its

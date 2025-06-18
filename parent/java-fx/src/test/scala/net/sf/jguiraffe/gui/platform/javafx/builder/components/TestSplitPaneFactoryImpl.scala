@@ -135,9 +135,9 @@ class TestSplitPaneFactoryImpl extends JUnitSuite with EasyMockSugar {
   private def createTag(orient: JGOrientation, comp1: Object): SplitterTag = {
     val comp2 = new TextField
     new SplitterTag {
-      override val getSplitterOrientation = orient
-      override val getFirstComponent = comp1
-      override val getSecondComponent = comp2
+      override val getSplitterOrientation: JGOrientation = orient
+      override val getFirstComponent: AnyRef = comp1
+      override val getSecondComponent: AnyRef = comp2
     }
   }
 

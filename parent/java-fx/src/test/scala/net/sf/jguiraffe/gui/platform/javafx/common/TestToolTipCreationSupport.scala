@@ -51,7 +51,7 @@ class TestToolTipCreationSupport extends JUnitSuite with EasyMockSugar {
     factory = mock[ToolTipFactory]
     EasyMock.replay(factory)
     support = new ToolTipCreationSupport {
-      override val toolTipFactory = factory
+      override val toolTipFactory: ToolTipFactory = factory
     }
   }
 

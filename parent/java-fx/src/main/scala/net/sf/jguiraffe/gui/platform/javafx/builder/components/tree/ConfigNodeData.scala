@@ -27,5 +27,5 @@ import org.apache.commons.configuration.tree.ConfigurationNode
  * @param node the underlying ''ConfigurationNode''
  */
 private case class ConfigNodeData(node: ConfigurationNode) {
-  override def toString = node.getName
+  override def toString: String = node.getName
 }

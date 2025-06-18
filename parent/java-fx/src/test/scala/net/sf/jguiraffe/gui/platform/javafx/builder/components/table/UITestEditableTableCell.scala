@@ -264,7 +264,7 @@ object Author {
   val IndexLastName = 2
 
   /** A list with the indices of all defined properties. */
-  val PropertyIndices = List(IndexFirstName, IndexMiddleName, IndexLastName)
+  val PropertyIndices: List[Int] = List(IndexFirstName, IndexMiddleName, IndexLastName)
 }
 
 /**

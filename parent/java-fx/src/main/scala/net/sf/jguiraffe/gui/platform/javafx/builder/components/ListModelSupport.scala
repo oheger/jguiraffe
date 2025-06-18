@@ -16,8 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
 import javafx.collections.ObservableList
-import net.sf.jguiraffe.gui.builder.components.model.ListComponentHandler
-import net.sf.jguiraffe.gui.builder.components.model.ListModel
+import net.sf.jguiraffe.gui.builder.components.model.{EditableComboBoxModel, ListComponentHandler, ListModel}
 import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils
 
 /**
@@ -34,7 +33,7 @@ import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils
  */
 private trait ListModelSupport extends ListComponentHandler {
   /** The ''EditableComboBoxModel'' provided by the associated model. */
-  lazy val editableModel = initEditableComboBoxModel()
+  lazy val editableModel: EditableComboBoxModel = initEditableComboBoxModel()
 
   /**
    * The list to be used for backing the ''JavaFxListModel'' object's display

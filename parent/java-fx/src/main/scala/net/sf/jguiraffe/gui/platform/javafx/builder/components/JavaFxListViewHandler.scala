@@ -15,6 +15,8 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
+import javafx.beans.value.ObservableValue
+import javafx.collections.ObservableList
 import javafx.scene.control.ListView
 import net.sf.jguiraffe.gui.builder.components.tags.ListModelUtils
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
@@ -33,9 +35,9 @@ import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
 private class JavaFxListViewHandler(listView: ListView[Object])
   extends JavaFxComponentHandler[Object](listView) with ListModelSupport
   with ChangeEventSource {
-  protected val displayList = listView.getItems
+  protected val displayList: ObservableList[Object] = listView.getItems
 
-  override val observableValue = listView.getSelectionModel.selectedIndexProperty
+  override val observableValue: ObservableValue[_ <: AnyRef] = listView.getSelectionModel.selectedIndexProperty
 
   /**
    * @inheritdoc This implementation obtains the selected index from the

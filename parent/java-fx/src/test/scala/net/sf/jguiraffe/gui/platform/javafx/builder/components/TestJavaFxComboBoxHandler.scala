@@ -233,8 +233,8 @@ class TestJavaFxComboBoxHandler {
    * ''EditableComboBoxModel'' interface.
    */
   class EditableListModel extends ListModelTestImpl with EditableComboBoxModel {
-    def toDisplay(obj: Object) = obj + TransformedDisplay
+    def toDisplay(obj: Object): AnyRef = obj + TransformedDisplay
 
-    def toValue(obj: Object) = obj + TransformedValue
+    def toValue(obj: Object): AnyRef = obj + TransformedValue
   }
 }

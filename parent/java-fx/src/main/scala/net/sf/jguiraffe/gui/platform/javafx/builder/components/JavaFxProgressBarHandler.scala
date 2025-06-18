@@ -15,8 +15,9 @@
  */
 package net.sf.jguiraffe.gui.platform.javafx.builder.components
 
-import scala.beans.BeanProperty
+import javafx.beans.value.ObservableValue
 
+import scala.beans.BeanProperty
 import javafx.scene.control.ProgressBar
 import net.sf.jguiraffe.gui.builder.components.model.ProgressBarHandler
 import net.sf.jguiraffe.gui.platform.javafx.builder.event.ChangeEventSource
@@ -44,10 +45,10 @@ private class JavaFxProgressBarHandler(progressBar: ProgressBar,
   val min: Int, val max: Int) extends JavaFxComponentHandler[Integer](progressBar)
   with ProgressBarHandler with ChangeEventSource {
   /** The data type of this handler. */
-  @BeanProperty val `type` = classOf[Integer]
+  @BeanProperty val `type`: Class[Integer] = classOf[Integer]
 
   /** The property used for generating change events. */
-  override val observableValue = progressBar.progressProperty
+  override val observableValue: ObservableValue[_ <: AnyRef] = progressBar.progressProperty
 
   /**
    * Stores the progress text. JavaFX does not support an additional text

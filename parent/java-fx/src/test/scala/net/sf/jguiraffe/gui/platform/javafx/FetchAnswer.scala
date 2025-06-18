@@ -54,7 +54,7 @@ class FetchAnswer[A, V](argIdx: Int = 0, retVal: A = null) extends IAnswer[A] {
    * fail if this answer was not invoked.
    * @return the value fetched by this answer
    */
-  def value = argValue.get
+  def value: V = argValue.get
 }
 
 /**
