@@ -32,7 +32,7 @@ class TestImageWrapper extends JUnitSuite with EasyMockSugar {
   /** The wrapper to be tested. */
   private var wrapper: ImageWrapper = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     image = mock[Image]
     wrapper = ImageWrapper(image)
   }
@@ -40,7 +40,7 @@ class TestImageWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a new ImageView can be created from the wrapper.
    */
-  @Test def testImageView() {
+  @Test def testImageView(): Unit = {
     val iv = wrapper.newImageView()
     assertSame("Wrong image", image, iv.getImage)
   }
@@ -48,7 +48,7 @@ class TestImageWrapper extends JUnitSuite with EasyMockSugar {
   /**
    * Tests that each invocation of newImageView() creates a new instance.
    */
-  @Test def testImageViewNewInstance() {
+  @Test def testImageViewNewInstance(): Unit = {
     val iv = wrapper.newImageView()
     assertNotSame("Same instance", iv, wrapper.newImageView())
   }

@@ -63,7 +63,7 @@ private class JavaFxMultiSelectionListHandler(listView: ListView[Object])
    * objects to their corresponding indices in the model. Then these indices
    * are selected.
    */
-  def setData(data: Object) {
+  def setData(data: Object): Unit = {
     listView.getSelectionModel.clearSelection()
     data match {
       case arr: Array[Object] =>

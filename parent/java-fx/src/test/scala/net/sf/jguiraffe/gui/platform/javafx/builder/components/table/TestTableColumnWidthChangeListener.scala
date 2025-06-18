@@ -34,7 +34,7 @@ class TestTableColumnWidthChangeListener extends JUnitSuite with EasyMockSugar {
   /** The change listener to be tested. */
   private var listener: TableColumnWidthChangeListener = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     column = new TableColumn[AnyRef, AnyRef]
     policy = mock[TableColumnRecalibrationResizePolicy]
     listener = new TableColumnWidthChangeListener(policy, column)

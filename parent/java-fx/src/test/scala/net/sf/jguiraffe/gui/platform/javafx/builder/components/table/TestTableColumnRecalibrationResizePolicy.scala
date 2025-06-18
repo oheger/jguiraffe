@@ -58,7 +58,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   private var policy: TableColumnRecalibrationResizePolicy with MockColumnWidthExtractor with
     MockTableWidthExtractor = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     recalibrator = mock[TableColumnRecalibrator]
     policy = new TableColumnRecalibrationResizePolicy(recalibrator)
       with MockColumnWidthExtractor with MockTableWidthExtractor
@@ -111,7 +111,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * resize operation.
    * @param expected an array with the expected widths
    */
-  private def checkWidths(expected: Array[Double]) {
+  private def checkWidths(expected: Array[Double]): Unit = {
     for (i <- 0 until expected.size) {
       assertEquals(s"Wrong preferred with for column $i", expected(i),
         table.getColumns.get(i).getPrefWidth, Precision)
@@ -134,14 +134,14 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests that an undefined column in the resize features is ignored.
    */
-  @Test def testIgnoreUndefinedColumn() {
+  @Test def testIgnoreUndefinedColumn(): Unit = {
     assertFalse("Wrong result", callAndCheckWidths(resizeFeatures(null, 0), ColumnWidths))
   }
 
   /**
    * Tests whether the width of the managed table is tracked.
    */
-  @Test def testCurrentColumnWidth() {
+  @Test def testCurrentColumnWidth(): Unit = {
     assertEquals("Wrong table width", TableWidth, policy.currentTableWidth, Precision)
   }
 
@@ -149,7 +149,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Prepares the recalibrator mock to expect an invocation.
    * @param widths the expected widths
    */
-  private def expectRecalibrate(widths: Array[Double]) {
+  private def expectRecalibrate(widths: Array[Double]): Unit = {
     recalibrator recalibrate EasyMock.aryEq(widths map (math.round(_).toInt))
   }
 
@@ -157,7 +157,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Prepares the mock for the recalibrator to expect an invocation with an arbitrary
    * array.
    */
-  private def expectRecalibrateCall() {
+  private def expectRecalibrateCall(): Unit = {
     recalibrator recalibrate EasyMock.anyObject(classOf[Array[Int]])
   }
 
@@ -165,7 +165,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests a successful resize operation if the full delta can be applied to the last
    * column.
    */
-  @Test def testSuccessfulResizeOfSingleColumn() {
+  @Test def testSuccessfulResizeOfSingleColumn(): Unit = {
     val delta = 5
     val widths = Array(ColumnWidths(0), ColumnWidths(1), ColumnWidths(2) + delta,
       ColumnWidths(3) - delta)
@@ -180,7 +180,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests a failed resize operation due to minimum size restrictions.
    */
-  @Test def testFailedResizeMinimum() {
+  @Test def testFailedResizeMinimum(): Unit = {
     val lastIndex = ColumnNames.size - 1
     column(lastIndex) setMinWidth (ColumnWidths(lastIndex) - 5)
 
@@ -193,7 +193,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests a failed resize operation due to maximum size restrictions.
    */
-  @Test def testFailedResizeMaximum() {
+  @Test def testFailedResizeMaximum(): Unit = {
     val lastIndex = ColumnNames.size - 1
     column(lastIndex) setMaxWidth (ColumnWidths(lastIndex) + 5)
 
@@ -207,7 +207,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests whether the width change of one column can be distributed over multiple
    * columns to the right of the affected column.
    */
-  @Test def testSuccessfulResizeOverMultipleColumns() {
+  @Test def testSuccessfulResizeOverMultipleColumns(): Unit = {
     val lastIndex = ColumnNames.size - 1
     column(lastIndex) setMinWidth (ColumnWidths(lastIndex) - 4)
     val widths = Array(ColumnWidths(0), ColumnWidths(1) + 10, ColumnWidths(2) - 6,
@@ -223,7 +223,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests whether a resize operation of the last column can be handled.
    */
-  @Test def testSuccessfulResizeOfLastColumn() {
+  @Test def testSuccessfulResizeOfLastColumn(): Unit = {
     val lastIndex = ColumnNames.size - 1
     val delta = -16
     val widths = Array(ColumnWidths(0) - delta, ColumnWidths(1), ColumnWidths(2),
@@ -239,7 +239,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests whether a change notification of a table column in correctly processed.
    */
-  @Test def testColumnWidthChanged() {
+  @Test def testColumnWidthChanged(): Unit = {
     val delta = -8
     val ColIdx = 1
     val widths = Array(ColumnWidths(0), ColumnWidths(1), ColumnWidths(2), ColumnWidths(3) - delta)
@@ -261,7 +261,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * @param ignoredCalls the number of calls to be ignored
    */
   private def checkIgnoreColumnWidthChangedAfterResize(widths: Array[Double], delta: Double,
-                                                       ignoredCalls: Int) {
+                                                       ignoredCalls: Int): Unit = {
     expectRecalibrate(widths)
     expectRecalibrateCall()
 
@@ -278,7 +278,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests that column width changed notifications are ignored after columns
    * have been updated in a resize operation.
    */
-  @Test def testIgnoreColumnWidthChangedAfterResize() {
+  @Test def testIgnoreColumnWidthChangedAfterResize(): Unit = {
     val delta = 5
     val widths = Array(ColumnWidths(0), ColumnWidths(1) + delta, ColumnWidths(2),
       ColumnWidths(3) - delta)
@@ -289,7 +289,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests that column width change notifications are ignored after resize operations
    * that affect multiple columns.
    */
-  @Test def testIgnoreColumnWidthChangedAfterResizeMultipleColumns() {
+  @Test def testIgnoreColumnWidthChangedAfterResizeMultipleColumns(): Unit = {
     val lastIndex = ColumnNames.size - 1
     column(lastIndex) setMinWidth (ColumnWidths(lastIndex) - 4)
     val widths = Array(ColumnWidths(0), ColumnWidths(1) + 10, ColumnWidths(2) - 6,
@@ -301,7 +301,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests that column width change notifications are ignored after resize operations
    * that affect multiple columns, but some columns have not been changed.
    */
-  @Test def testIgnoreColumnWidthChangedAfterResizeColumnsNotChanged() {
+  @Test def testIgnoreColumnWidthChangedAfterResizeColumnsNotChanged(): Unit = {
     val lastIndex = ColumnNames.size - 1
     val delta = 10
     column(lastIndex) setMinWidth ColumnWidths(lastIndex)
@@ -313,7 +313,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests that no column width updates are ignored after a failed resize operation.
    */
-  @Test def testNoColumnWidthUpdatesIgnoredAfterFailedResize() {
+  @Test def testNoColumnWidthUpdatesIgnoredAfterFailedResize(): Unit = {
     val lastIndex = ColumnNames.size - 1
     val delta = 10
     column(lastIndex) setMinWidth ColumnWidths(lastIndex)
@@ -330,7 +330,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests that the width of the managed table is checked before a column change
    * event is processed.
    */
-  @Test def testIgnoreColumnWidthChangeTableResized() {
+  @Test def testIgnoreColumnWidthChangeTableResized(): Unit = {
     policy.definedTableWidth = TableWidth - 100
     whenExecuting(recalibrator) {
       policy.columnWidthChanged(column(0), 100, 150)
@@ -341,7 +341,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
    * Tests that initial column change events are ignored. In this case, the
    * table is not yet fully constructed and has no width.
    */
-  @Test def testIgnoreColumnWidthChangeDuringTableSetup() {
+  @Test def testIgnoreColumnWidthChangeDuringTableSetup(): Unit = {
     policy.definedTableWidth = 0
     policy call resizeFeatures(null, 0)
     whenExecuting(recalibrator) {
@@ -352,7 +352,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
   /**
    * Tests whether a width change listener for a column can be installed.
    */
-  @Test def testInstallWidthChangeListener() {
+  @Test def testInstallWidthChangeListener(): Unit = {
     val obsValue = mock[ObservableValue[Number]]
     val answer = new FetchAnswer[Unit, TableColumnWidthChangeListener]
     obsValue.addListener(EasyMock.anyObject(classOf[TableColumnWidthChangeListener]))
@@ -385,7 +385,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
      * Initializes the width of a specific column.
      * @param pair a tuple of a column and its associated with
      */
-    def initWidth(pair: (TableColumn[_, _], Double)) {
+    def initWidth(pair: (TableColumn[_, _], Double)): Unit = {
       columnWidths += pair
     }
 
@@ -393,7 +393,7 @@ class TestTableColumnRecalibrationResizePolicy extends JUnitSuite with EasyMockS
      * Initializes the width property of a specific column.
      * @param pair a tuple of a column and its associated with property
      */
-    def initWidthProperty(pair: (TableColumn[_, _], ObservableValue[Number])) {
+    def initWidthProperty(pair: (TableColumn[_, _], ObservableValue[Number])): Unit = {
       widthProperties += pair
     }
 

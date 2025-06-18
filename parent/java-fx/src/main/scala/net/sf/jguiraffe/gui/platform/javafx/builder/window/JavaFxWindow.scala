@@ -79,7 +79,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
    * @inheritdoc This implementation calls the stage's ''show()'' or
    * ''hide()'' methods depending on the parameter.
    */
-  def setVisible(f: Boolean) {
+  def setVisible(f: Boolean): Unit = {
     if (f) stage.show()
     else stage.hide()
   }
@@ -89,7 +89,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
    * opens the window in the Java FX application thread and waits until it
    * is open.
    */
-  def open() {
+  def open(): Unit = {
     JavaFxGUISynchronizer.syncJavaFxInvocation { () =>
       stage.getScene.setRoot(rootContainer.createContainer())
       stage.show()
@@ -121,7 +121,7 @@ private class JavaFxWindow private[window] (val stage: Stage,
 
   def getHeight: Int = stage.getHeight.toInt
 
-  def setBounds(x: Int, y: Int, w: Int, h: Int) {
+  def setBounds(x: Int, y: Int, w: Int, h: Int): Unit = {
     stage.setX(x)
     stage.setY(y)
     stage.setWidth(w)
@@ -130,15 +130,15 @@ private class JavaFxWindow private[window] (val stage: Stage,
 
   def getTitle: String = stage.getTitle
 
-  def setTitle(title: String) {
+  def setTitle(title: String): Unit = {
     stage.setTitle(title)
   }
 
-  def addWindowListener(l: WindowListener) {
+  def addWindowListener(l: WindowListener): Unit = {
     windowListeners += l
   }
 
-  def removeWindowListener(l: WindowListener) {
+  def removeWindowListener(l: WindowListener): Unit = {
     windowListeners -= l
   }
 
@@ -155,11 +155,11 @@ private class JavaFxWindow private[window] (val stage: Stage,
     windowClosingStrategy = wcs
   }
 
-  def addMouseListener(l: FormMouseListener) {
+  def addMouseListener(l: FormMouseListener): Unit = {
     mouseListeners += l
   }
 
-  def removeMouseListener(l: FormMouseListener) {
+  def removeMouseListener(l: FormMouseListener): Unit = {
     mouseListeners -= l
   }
 
@@ -170,10 +170,10 @@ private class JavaFxWindow private[window] (val stage: Stage,
    * closing event may be consumed it has to be propagated explicitly to
    * registered window listeners.
    */
-  private def registerClosingListener() {
+  private def registerClosingListener(): Unit = {
     stage.addEventFilter(javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST,
       new EventHandler[javafx.stage.WindowEvent] {
-        def handle(e: javafx.stage.WindowEvent) {
+        def handle(e: javafx.stage.WindowEvent): Unit = {
           if (!closingPermitted) {
             if (!autoClose && closeable) {
               fireClosingEvent(e)

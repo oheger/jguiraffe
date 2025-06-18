@@ -41,7 +41,7 @@ private class TableColumnWidthChangeListener(val policy: TableColumnRecalibratio
    * This implementation just triggers the policy to notify it about the width
    * change of the managed column.
    */
-  override def changed(obsValue: ObservableValue[_ <: Number], oldValue: Number, newValue: Number) {
+  override def changed(obsValue: ObservableValue[_ <: Number], oldValue: Number, newValue: Number): Unit = {
     policy.columnWidthChanged(column, oldValue.doubleValue, newValue.doubleValue)
   }
 }

@@ -52,7 +52,7 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
   /** The handler to be tested. */
   private var handler: JavaFxStaticTextHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     label = new Label
     handler = new JavaFxStaticTextHandler(label)
   }
@@ -74,14 +74,14 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
   /**
    * Tests whether the correct type is returned.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     assertEquals("Wrong data type", classOf[StaticTextData], handler.getType)
   }
 
   /**
    * Tests whether the handler's data can be queried.
    */
-  @Test def testGetData() {
+  @Test def testGetData(): Unit = {
     val icon = createIcon()
     label setGraphic icon
     label setText Text
@@ -95,7 +95,7 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
   /**
    * Tests getData() for the initial values of a label.
    */
-  @Test def testGetDataNotSet() {
+  @Test def testGetDataNotSet(): Unit = {
     val data = handler.getData
     assertNull("Got an icon", data.getIcon)
     assertTrue("Got text", StringUtils.isEmpty(data.getText))
@@ -106,7 +106,7 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
   /**
    * Tests whether the handler's data can be set.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     val data = new StaticTextDataImpl
     data setText Text
     data setIcon createIcon()
@@ -120,7 +120,7 @@ class TestJavaFxStaticTextHandler extends JUnitSuite {
   /**
    * Tests setData() if no data is provided.
    */
-  @Test def testSetDataUndefined() {
+  @Test def testSetDataUndefined(): Unit = {
     label setText Text
     label setGraphic createIcon()
     label setContentDisplay ContentDisplay.RIGHT

@@ -47,7 +47,7 @@ private class JavaFxButtonHandler(button: ButtonBase,
 
   def getData: java.lang.Boolean = java.lang.Boolean.FALSE
 
-  def setData(f: java.lang.Boolean) {
+  def setData(f: java.lang.Boolean): Unit = {
     setSelectedState(f != null && f.booleanValue)
   }
 
@@ -59,6 +59,6 @@ private class JavaFxButtonHandler(button: ButtonBase,
    * implementation is just an empty dummy.
    * @param f the new selected state of the managed component
    */
-  protected def setSelectedState(f: Boolean) {
+  protected def setSelectedState(f: Boolean): Unit = {
   }
 }

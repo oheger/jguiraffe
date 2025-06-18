@@ -33,7 +33,7 @@ private trait ControlActionEventSource[T] extends JavaFxComponentHandler[T]
    * @inheritdoc This implementation delegates to the component managed by the
    * associated component handler.
    */
-  def addActionListener(handler: EventHandler[ActionEvent]) {
+  def addActionListener(handler: EventHandler[ActionEvent]): Unit = {
     component.addEventHandler(ActionEvent.ACTION, handler)
   }
 
@@ -41,7 +41,7 @@ private trait ControlActionEventSource[T] extends JavaFxComponentHandler[T]
    * @inheritdoc This implementation delegates to the component managed by the
    * associated component handler.
    */
-  def removeActionListener(handler: EventHandler[ActionEvent]) {
+  def removeActionListener(handler: EventHandler[ActionEvent]): Unit = {
     component.removeEventHandler(ActionEvent.ACTION, handler)
   }
 }

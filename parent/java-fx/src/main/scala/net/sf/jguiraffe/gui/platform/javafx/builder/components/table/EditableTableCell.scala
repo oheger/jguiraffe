@@ -68,7 +68,7 @@ private class EditableTableCell(override val formController: TableFormController
    * This implementation passes the new text content of the cell to the
    * ''TableFormController''.
    */
-  override protected def commitData(text: String, focusLost: Boolean) {
+  override protected def commitData(text: String, focusLost: Boolean): Unit = {
     commitEdit(getItem)
     writeCellValue(text)
   }

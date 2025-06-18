@@ -60,7 +60,7 @@ private object BorderPanelFactory {
    * @param pane the panel
    * @param tag the tag defining the panel
    */
-  private def addTitleLabel(pane: StackPane, tag: PanelTag) {
+  private def addTitleLabel(pane: StackPane, tag: PanelTag): Unit = {
     val title = createTitleLabel(tag)
     pane.getChildren add addStyle(title, StylePanelTitle)
     StackPane.setAlignment(title, Pos.TOP_CENTER)

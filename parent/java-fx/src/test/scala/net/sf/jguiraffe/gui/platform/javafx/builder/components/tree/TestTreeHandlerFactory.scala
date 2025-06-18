@@ -75,7 +75,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
   /** The factory to be tested. */
   private var factory: TreeHandlerFactory = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     tag = setUpTag()
     factory = new TreeHandlerFactory
   }
@@ -104,7 +104,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * @param multiFlag the multiple selection flag for the tag
    * @param expMode the expected selection mode for the model
    */
-  private def checkSelectionMode(multiFlag: Boolean, expMode: SelectionMode) {
+  private def checkSelectionMode(multiFlag: Boolean, expMode: SelectionMode): Unit = {
     tag setMultiSelection multiFlag
     val handler = factory.createTreeHandler(tag)
     val treeview = tree(handler)
@@ -116,7 +116,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether the tree's selection model is correctly initialized if
    * single selection mode is set.
    */
-  @Test def testSingleSelectionMode() {
+  @Test def testSingleSelectionMode(): Unit = {
     checkSelectionMode(multiFlag = false, SelectionMode.SINGLE)
   }
 
@@ -124,14 +124,14 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether the tree's selection model is correctly initialized if
    * multiple selection is enabled.
    */
-  @Test def testMultipleSelectionMode() {
+  @Test def testMultipleSelectionMode(): Unit = {
     checkSelectionMode(multiFlag = true, SelectionMode.MULTIPLE)
   }
 
   /**
    * Checks whether the tree's edit flag is correctly set.
    */
-  private def checkEditable(editFlag: Boolean) {
+  private def checkEditable(editFlag: Boolean): Unit = {
     tag setEditable editFlag
     assertEquals("Wrong edit flag", editFlag,
       tree(factory.createTreeHandler(tag)).isEditable)
@@ -140,14 +140,14 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the tree's edit flag if the tree cannot be edited.
    */
-  @Test def testEditableFalse() {
+  @Test def testEditableFalse(): Unit = {
     checkEditable(editFlag = false)
   }
 
   /**
    * Tests the tree's edit flag if the tree can be edited.
    */
-  @Test def testEditableTrue() {
+  @Test def testEditableTrue(): Unit = {
     checkEditable(editFlag = true)
   }
 
@@ -155,7 +155,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Checks whether the visibility of the root node can be specified.
    * @param rootVisible the visibility flag for the root node
    */
-  private def checkShowRoot(rootVisible: Boolean) {
+  private def checkShowRoot(rootVisible: Boolean): Unit = {
     tag setRootVisible rootVisible
     assertEquals("Wrong root visibility flag", rootVisible,
         tree(factory.createTreeHandler(tag)).isShowRoot)
@@ -164,21 +164,21 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the root node can be hidden.
    */
-  @Test def testShowRootFalse() {
+  @Test def testShowRootFalse(): Unit = {
     checkShowRoot(rootVisible = false)
   }
 
   /**
    * Tests whether the root node can be displayed.
    */
-  @Test def testShowRootTrue() {
+  @Test def testShowRootTrue(): Unit = {
     checkShowRoot(rootVisible = true)
   }
 
   /**
    * Tests whether the correct cell factory is set.
    */
-  @Test def testCellFactory() {
+  @Test def testCellFactory(): Unit = {
     val treeview = tree(factory.createTreeHandler(tag))
     val cellFactory = treeview.getCellFactory
     cellFactory.call(treeview) match {
@@ -196,7 +196,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether the tree handler is sent an initial change event so it
    * initializes the item structure.
    */
-  @Test def testInitialChangeNotification() {
+  @Test def testInitialChangeNotification(): Unit = {
     val handler = factory.createTreeHandler(tag)
     val th = treeHandler(handler)
     assertFalse("Item map not initialized", th.itemMap.isEmpty)
@@ -207,7 +207,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the correct component name is set for the handler.
    */
-  @Test def testComponentName() {
+  @Test def testComponentName(): Unit = {
     val handler = treeHandler(factory.createTreeHandler(tag))
     assertEquals("Wrong name", Name, handler.name)
   }
@@ -215,7 +215,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a correct graphics handler is set.
    */
-  @Test def testGraphicsHandler() {
+  @Test def testGraphicsHandler(): Unit = {
     val icon1 = mock[Node]
     val icon2 = mock[Node]
     val node = mock[ConfigurationNode]
@@ -231,7 +231,7 @@ class TestTreeHandlerFactory extends JUnitSuite with EasyMockSugar {
    * Tests whether correct listeners have been registered at the configuration
    * serving as data model.
    */
-  @Test def testConfigurationListener() {
+  @Test def testConfigurationListener(): Unit = {
     import scala.jdk.CollectionConverters._
     val handler = factory.createTreeHandler(tag)
     val listener = tag.getTreeModel.getConfigurationListeners.asScala

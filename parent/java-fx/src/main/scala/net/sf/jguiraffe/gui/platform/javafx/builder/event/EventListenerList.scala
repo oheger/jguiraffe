@@ -34,7 +34,7 @@ class EventListenerList[E, L <: AnyRef] {
    * is passed in, this method does not have any effect.
    * @param l the listener to be added
    */
-  def addListener(l: L) {
+  def addListener(l: L): Unit = {
     if (l != null) {
       var done = false
       do {
@@ -50,7 +50,7 @@ class EventListenerList[E, L <: AnyRef] {
    * '''addListener(l)'''.
    * @param l the listener to be added
    */
-  def +=(l: L) {
+  def +=(l: L): Unit = {
     addListener(l)
   }
 
@@ -58,7 +58,7 @@ class EventListenerList[E, L <: AnyRef] {
    * Removes the given event listener from this object.
    * @param l the listener to be removed
    */
-  def removeListener(l: L) {
+  def removeListener(l: L): Unit = {
     var done = false
     do {
       val oldListeners = listeners.get
@@ -72,7 +72,7 @@ class EventListenerList[E, L <: AnyRef] {
    * '''removeListener(l)'''.
    * @param l the listener to be removed
    */
-  def -=(l: L) {
+  def -=(l: L): Unit = {
     removeListener(l)
   }
 
@@ -82,7 +82,7 @@ class EventListenerList[E, L <: AnyRef] {
    * only accessed if listeners are available; because it is created lazily
    * no instance needs to be created if there are no listeners.
    */
-  def fire(event: => E, f: (L, E) => Unit) {
+  def fire(event: => E, f: (L, E) => Unit): Unit = {
     val list = listeners.get
     if (!list.isEmpty) {
       val evObj = event

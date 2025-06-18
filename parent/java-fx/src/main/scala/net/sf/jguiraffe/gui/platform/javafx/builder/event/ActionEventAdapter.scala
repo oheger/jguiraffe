@@ -60,7 +60,7 @@ private class ActionEventAdapter(val sender: EventSender[FormActionEvent],
    * ''FormActionEvent'' and passed to the associated sender.
    * @param event the action event to be handled
    */
-  override def handle(event: ActionEvent) {
+  override def handle(event: ActionEvent): Unit = {
     sender fire (convertEvent(event))
   }
 

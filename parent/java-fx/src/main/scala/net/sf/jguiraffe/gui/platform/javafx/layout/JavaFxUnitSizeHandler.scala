@@ -140,7 +140,7 @@ object JavaFxUnitSizeHandler {
    * @param value the font size
    */
   private def updateCache(cacheMap: Map[ContainerWrapper.TextFontInitializer, (Double, Double)],
-                          init: ContainerWrapper.TextFontInitializer, value: (Double, Double)) {
+                          init: ContainerWrapper.TextFontInitializer, value: (Double, Double)): Unit = {
     var currentCache = cacheMap
     var done = false
     do {

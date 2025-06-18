@@ -104,7 +104,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * the passed in data object. If it is a ''TreeNodePath'' or an array
    * thereof, the tree's selection is set. Otherwise, it is just ignored.
    */
-  def setData(data: Object) {
+  def setData(data: Object): Unit = {
     clearSelection()
     data match {
       case paths: Array[TreeNodePath] =>
@@ -125,7 +125,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * '''Note''': This implementation assumes that it is called in
    * the FX event thread! So there must be an external component ensuring this.
    */
-  def treeModelChanged(node: ConfigurationNode) {
+  def treeModelChanged(node: ConfigurationNode): Unit = {
     if (currentRootNode ne model.getRootNode) {
       setUpTreeItemStructure()
     } else {
@@ -149,7 +149,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
     else null
   }
 
-  def setSelectedPath(path: TreeNodePath) {
+  def setSelectedPath(path: TreeNodePath): Unit = {
     clearSelection()
     addSelectedPath(path)
   }
@@ -174,7 +174,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
     paths.toArray
   }
 
-  def setSelectedPaths(paths: Array[TreeNodePath]) {
+  def setSelectedPaths(paths: Array[TreeNodePath]): Unit = {
     clearSelection()
     for (p <- paths) {
       addSelectedPath(p)
@@ -186,29 +186,29 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * selected has already been initialized. Then the corresponding tree item is
    * added to the list of selected items.
    */
-  def addSelectedPath(path: TreeNodePath) {
+  def addSelectedPath(path: TreeNodePath): Unit = {
     ensureInitialized(path.getTargetNode) foreach {
       tree.getSelectionModel select _
     }
   }
 
-  def clearSelection() {
+  def clearSelection(): Unit = {
     tree.getSelectionModel.clearSelection()
   }
 
-  def addExpansionListener(l: TreeExpansionListener) {
+  def addExpansionListener(l: TreeExpansionListener): Unit = {
     expansionListeners += l
   }
 
-  def removeExpansionListener(l: TreeExpansionListener) {
+  def removeExpansionListener(l: TreeExpansionListener): Unit = {
     expansionListeners -= l
   }
 
-  def addPreExpansionListener(l: TreePreExpansionListener) {
+  def addPreExpansionListener(l: TreePreExpansionListener): Unit = {
     preExpansionListeners += l
   }
 
-  def removePreExpansionListener(l: TreePreExpansionListener) {
+  def removePreExpansionListener(l: TreePreExpansionListener): Unit = {
     preExpansionListeners -= l
   }
 
@@ -216,7 +216,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * @inheritdoc This implementation ensures that the whole path starting with
    * the passed in target node gets expanded.
    */
-  def expand(path: TreeNodePath) {
+  def expand(path: TreeNodePath): Unit = {
     // expansion is already done by ensureInitialized()
     ensureInitialized(path.getTargetNode)
   }
@@ -226,7 +226,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * the passed in path. If this is successful, the expanded flag is set to
    * '''false'''. Other nodes on this path are not affected.
    */
-  def collapse(path: TreeNodePath) {
+  def collapse(path: TreeNodePath): Unit = {
     itemMap.get(path.getTargetNode) foreach (_.setExpanded(false))
   }
 
@@ -234,7 +234,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * Initializes the tree's item structure. This method sets a new root node
    * for the managed tree view.
    */
-  private def setUpTreeItemStructure() {
+  private def setUpTreeItemStructure(): Unit = {
     tree setRoot createRootItem()
   }
 
@@ -258,7 +258,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    */
   private def createExpansionEventHandler(): EventHandler[TreeItem.TreeModificationEvent[ConfigNodeData]] =
     new EventHandler[TreeItem.TreeModificationEvent[ConfigNodeData]] {
-      def handle(event: TreeItem.TreeModificationEvent[ConfigNodeData]) {
+      def handle(event: TreeItem.TreeModificationEvent[ConfigNodeData]): Unit = {
         fireExpansionEvent(event)
       }
     }
@@ -275,7 +275,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * prevent an endless recursion.
    * @param event the original expansion event
    */
-  private def fireExpansionEvent(event: TreeItem.TreeModificationEvent[ConfigNodeData]) {
+  private def fireExpansionEvent(event: TreeItem.TreeModificationEvent[ConfigNodeData]): Unit = {
     if (!expansionEventProcessing) {
       try {
         preExpansionListeners.fire(transformEvent(event),
@@ -350,7 +350,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * Expands the path from the given tree item up to the root item.
    * @param item the item to start with
    */
-  private def expandPath(item: TreeItem[_]) {
+  private def expandPath(item: TreeItem[_]): Unit = {
     if (item != null) {
       item setExpanded true
       expandPath(item.getParent)
@@ -366,7 +366,7 @@ private class JavaFxTreeHandler(tree: TreeView[ConfigNodeData],
    * selected before the operation was removed. In this case, we stick with
    * the tree's current selection.
    */
-  private def restoreTreeSelection() {
+  private def restoreTreeSelection(): Unit = {
     if (tree.getSelectionModel.getSelectedItem != selectionChangedProperty.get) {
       if (selectionChangedProperty.get() == null || itemMap.contains(selectionChangedProperty.get
         .getValue.node)) {

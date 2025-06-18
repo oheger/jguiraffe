@@ -54,7 +54,7 @@ object TestBorderPanelFactory {
    * Checks whether the content node has been assigned the expected CSS class.
    * @param content the content node to be checked
    */
-  private def checkContentStyle(content: Node) {
+  private def checkContentStyle(content: Node): Unit = {
     checkStyle(content, "bordered-panel-content")
   }
 

@@ -47,7 +47,7 @@ object TestJavaFxTreeHandler {
   /** A mock for the graphic handler. */
   private var GraphicsHandler: NodeGraphicsHandler = _
 
-  @BeforeClass def setUpOnce() {
+  @BeforeClass def setUpOnce(): Unit = {
     JavaFxTestHelper.initPlatform()
     GraphicsHandler = EasyMock.createNiceMock(classOf[NodeGraphicsHandler])
     EasyMock.expect(GraphicsHandler.graphicsFor(
@@ -169,7 +169,7 @@ object TestJavaFxTreeHandler {
    * @param handler the tree handler
    * @param expSel a sequence with the expected selected paths
    */
-  private def checkSelection(handler: JavaFxTreeHandler, expSel: TreeNodePath*) {
+  private def checkSelection(handler: JavaFxTreeHandler, expSel: TreeNodePath*): Unit = {
     val selItems = getTree(handler).getSelectionModel.getSelectedItems
     assertEquals("Wrong number of selected items", expSel.size, selItems.size)
     expSel foreach { p =>
@@ -188,7 +188,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the handler's type if only single selection is active.
    */
-  @Test def testGetTypeSingleSelection() {
+  @Test def testGetTypeSingleSelection(): Unit = {
     val handler = createHandler()
     assertEquals("Wrong type", classOf[TreeNodePath], handler.getType)
   }
@@ -196,7 +196,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the handler's type if multiple selection is enabled.
    */
-  @Test def testGetTypeMultiSelection() {
+  @Test def testGetTypeMultiSelection(): Unit = {
     val handler = createHandler(multiSelect = true)
     assertEquals("Wrong type", classOf[Array[TreeNodePath]], handler.getType)
   }
@@ -205,7 +205,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether the initial tree item structure is created by the first
    * model change event.
    */
-  @Test def testTreeModelChangedInitial() {
+  @Test def testTreeModelChangedInitial(): Unit = {
     val handler = createHandler()
     handler treeModelChanged handler.model.getRootNode
     val rootItem = getTree(handler).getRoot.asInstanceOf[ConfigTreeItem]
@@ -216,7 +216,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether a complete change in the associated data model is detected
    * and a new tree item structure is created in this case.
    */
-  @Test def testTreeModelChangedNewRootNode() {
+  @Test def testTreeModelChangedNewRootNode(): Unit = {
     val handler = createHandler()
     handler treeModelChanged handler.model.getRootNode
     val oldRoot = getTree(handler).getRoot
@@ -232,7 +232,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether a change event on a node which is not yet initialized is
    * ignored.
    */
-  @Test def testTreeModelChangedNotInitialized() {
+  @Test def testTreeModelChangedNotInitialized(): Unit = {
     val handler = createHandler()
     handler treeModelChanged handler.model.getRootNode
     handler treeModelChanged getNode(handler, Keys(0))
@@ -242,7 +242,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests that a sync operation is triggered on a model change event.
    */
-  @Test def testTreeModelChangedResync() {
+  @Test def testTreeModelChangedResync(): Unit = {
     val item = mock[ConfigTreeItem]
     item.resync()
     whenExecuting(item) {
@@ -360,7 +360,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a single path can be selected.
    */
-  @Test def testSetSelectedPath() {
+  @Test def testSetSelectedPath(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(3))
     handler setSelectedPath path
@@ -370,7 +370,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether multiple paths can be selected.
    */
-  @Test def testSetSelectedPaths() {
+  @Test def testSetSelectedPaths(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     val paths = (1 to 3) map { idx => getPath(handler, Keys(idx)) }
     handler setSelectedPaths paths.toArray
@@ -380,7 +380,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the old selection is cleared when setting a new one.
    */
-  @Test def testSetSelectionClearsOldSelection() {
+  @Test def testSetSelectionClearsOldSelection(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     val path1 = getPath(handler, Keys(1))
     val path2 = getPath(handler, Keys(Keys.length - 1))
@@ -392,7 +392,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a path can be added to an existing selection.
    */
-  @Test def testAddSelectedPath() {
+  @Test def testAddSelectedPath(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     val path1 = getPath(handler, Keys(1))
     val path2 = getPath(handler, Keys(Keys.length - 1))
@@ -404,7 +404,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the tree's single selection can be queried.
    */
-  @Test def testGetSelectedPath() {
+  @Test def testGetSelectedPath(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(3))
     handler setSelectedPath path
@@ -414,7 +414,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests getSelectedPath() if the tree does not have a selection.
    */
-  @Test def testGetSelectedPathNoSelection() {
+  @Test def testGetSelectedPathNoSelection(): Unit = {
     val handler = createInitializedHandler()
     assertNull("Got a selected path", handler.getSelectedPath)
   }
@@ -422,7 +422,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether all selected paths can be queried.
    */
-  @Test def testGetSelectedPaths() {
+  @Test def testGetSelectedPaths(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     val path1 = getPath(handler, Keys(0))
     val path2 = getPath(handler, Keys(2))
@@ -436,7 +436,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests querying the selected paths if there is no selection.
    */
-  @Test def testGetSelectedPathsNoSelection() {
+  @Test def testGetSelectedPathsNoSelection(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     assertTrue("Got selected paths", handler.getSelectedPaths.isEmpty)
   }
@@ -444,7 +444,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the tree's selection can be cleared.
    */
-  @Test def testClearSelection() {
+  @Test def testClearSelection(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     handler setSelectedPath getPath(handler, Keys(1))
     handler addSelectedPath getPath(handler, Keys(3))
@@ -459,7 +459,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tries to select a node which does not belong to the tree. This should have
    * no effect.
    */
-  @Test def testSetSelectedPathInvalid() {
+  @Test def testSetSelectedPathInvalid(): Unit = {
     val path = createInvalidPath()
     val handler = createInitializedHandler()
     handler setSelectedPath path
@@ -470,7 +470,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the handler's data can be queried if there is no selection.
    */
-  @Test def testGetDataSingleNoSelection() {
+  @Test def testGetDataSingleNoSelection(): Unit = {
     val handler = createInitializedHandler()
     assertNull("Got data", handler.getData)
   }
@@ -479,7 +479,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether the handler's data can be queried in multiple selection mode
    * if there is no selection.
    */
-  @Test def testGetDataMultiNoSelection() {
+  @Test def testGetDataMultiNoSelection(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     assertNull("Got data", handler.getData)
   }
@@ -487,7 +487,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests getData() if only single selection is enabled.
    */
-  @Test def testGetDataSingleSelection() {
+  @Test def testGetDataSingleSelection(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(2))
     handler setSelectedPath path
@@ -497,7 +497,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests getData() if multiple selections are allowed.
    */
-  @Test def testGetDataMultiSelection() {
+  @Test def testGetDataMultiSelection(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     val paths = Array(getPath(handler, Keys(0)), getPath(handler, Keys(3)))
     handler setSelectedPaths paths
@@ -509,7 +509,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a single selection can be set using setData().
    */
-  @Test def testSetDataSinglePath() {
+  @Test def testSetDataSinglePath(): Unit = {
     val handler = createInitializedHandler()
     handler setSelectedPath getPath(handler, Keys(0))
     val path = getPath(handler, Keys(1))
@@ -520,7 +520,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether multiple selected paths can be set using setData().
    */
-  @Test def testSetDataMultiplePaths() {
+  @Test def testSetDataMultiplePaths(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     handler setSelectedPath getPath(handler, Keys(0))
     val paths = Array(getPath(handler, Keys(1)), getPath(handler, Keys(2)))
@@ -531,7 +531,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests that all other input to setData() just clears the selection.
    */
-  @Test def testSetDataOther() {
+  @Test def testSetDataOther(): Unit = {
     val handler = createInitializedHandler(multiSelect = true)
     handler setSelectedPath getPath(handler, Keys(0))
     handler setData null
@@ -541,7 +541,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a specific node can be expanded.
    */
-  @Test def testExpand() {
+  @Test def testExpand(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(4))
     handler expand path
@@ -554,7 +554,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests expand() if the passed in path is invalid. We can only test that this
    * does not cause an exception.
    */
-  @Test def testExpandInvalid() {
+  @Test def testExpandInvalid(): Unit = {
     val handler = createInitializedHandler()
     handler expand createInvalidPath()
     assertFalse("Root node expanded", getTree(handler).getRoot.isExpanded)
@@ -563,7 +563,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a specific node can be collapsed.
    */
-  @Test def testCollapse() {
+  @Test def testCollapse(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(2))
     handler expand path
@@ -577,7 +577,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests collapse() if the passed in path is not yet initialized. In this
    * case, no action is necessary.
    */
-  @Test def testCollapseNotInitialized() {
+  @Test def testCollapseNotInitialized(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(2))
     handler collapse path
@@ -588,7 +588,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests collapse() if the passed in path is invalid. We can only test that
    * this does not cause an exception.
    */
-  @Test def testCollapseInvalid() {
+  @Test def testCollapseInvalid(): Unit = {
     val handler = createInitializedHandler()
     handler collapse createInvalidPath()
   }
@@ -596,7 +596,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an event is received when a node is collapsed.
    */
-  @Test def testExpansionListenerCollapseEvent() {
+  @Test def testExpansionListenerCollapseEvent(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(1))
     handler expand path
@@ -611,7 +611,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an event is received when a node is expanded.
    */
-  @Test def testExpansionListenerExpandEvent() {
+  @Test def testExpansionListenerExpandEvent(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(1))
     handler expand path
@@ -627,7 +627,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an expansion listener can be removed.
    */
-  @Test def testRemoveExpansionListener() {
+  @Test def testRemoveExpansionListener(): Unit = {
     val listener = mock[TreeExpansionListener]
     whenExecuting(listener) {
       val handler = createInitializedHandler()
@@ -640,7 +640,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a pre-collapse event is received.
    */
-  @Test def testPreExpansionListenerCollapse() {
+  @Test def testPreExpansionListenerCollapse(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(3))
     handler expand path
@@ -655,7 +655,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a pre-expand event is received.
    */
-  @Test def testPreExpansionListenerExpand() {
+  @Test def testPreExpansionListenerExpand(): Unit = {
     val handler = createInitializedHandler()
     val path = getPath(handler, Keys(3))
     handler expand path
@@ -671,7 +671,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a ''TreePreExpansionListener'' can be removed.
    */
-  @Test def testRemovePreExpansionListener() {
+  @Test def testRemovePreExpansionListener(): Unit = {
     val listener = mock[TreePreExpansionListener]
     whenExecuting(listener) {
       val handler = createInitializedHandler()
@@ -684,7 +684,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a listener can veto the expansion of a node.
    */
-  @Test def testVetoExpansion() {
+  @Test def testVetoExpansion(): Unit = {
     val pl1 = mock[TreePreExpansionListener]
     val pl2 = mock[TreePreExpansionListener]
     val pl3 = mock[TreePreExpansionListener]
@@ -713,7 +713,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
    * Tests whether the event handling code ignores other events than expansion
    * or collapse events.
    */
-  @Test def testOtherTreeItemEvents() {
+  @Test def testOtherTreeItemEvents(): Unit = {
     val listener = mock[TreeExpansionListener]
     whenExecuting(listener) {
       val handler = createInitializedHandler()
@@ -738,7 +738,7 @@ class TestJavaFxTreeHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether change events in the tree selection are propagated.
    */
-  @Test def testChangeEventSource() {
+  @Test def testChangeEventSource(): Unit = {
     val handler = createInitializedHandler()
     val tree = getTree(handler)
     val path = getPath(handler, Keys(1))
@@ -811,7 +811,7 @@ class TreeEventListener {
   /**
    * Notifies this object that an event was received.
    */
-  def received(e: TreeExpansionEvent) {
+  def received(e: TreeExpansionEvent): Unit = {
     assertFalse("Too many events received", event.isDefined)
     event = Some(e)
   }
@@ -824,7 +824,7 @@ class TreeEventListener {
    * @param srcItem the expected source item
    */
   def verify(handler: TreeHandler, path: TreeNodePath,
-    evType: TreeExpansionEvent.Type, srcItem: TreeItem[ConfigNodeData]) {
+    evType: TreeExpansionEvent.Type, srcItem: TreeItem[ConfigNodeData]): Unit = {
     val ev = event.get
     assertSame("Wrong handler", handler, ev.getTreeHandler)
     assertEquals("Wrong name", TestJavaFxTreeHandler.Name, ev.getName)
@@ -840,7 +840,7 @@ class TreeEventListener {
  * correct expansion and collapse events are received.
  */
 class TestExpansionListener extends TreeEventListener with TreeExpansionListener {
-  override def expansionStateChanged(ev: TreeExpansionEvent) {
+  override def expansionStateChanged(ev: TreeExpansionEvent): Unit = {
     received(ev)
   }
 }
@@ -850,7 +850,7 @@ class TestExpansionListener extends TreeEventListener with TreeExpansionListener
  * correct events are received before nodes are manipulated.
  */
 class TestPreExpansionListener extends TreeEventListener with TreePreExpansionListener {
-  override def beforeExpansionStateChange(ev: TreeExpansionEvent) {
+  override def beforeExpansionStateChange(ev: TreeExpansionEvent): Unit = {
     received(ev)
   }
 }

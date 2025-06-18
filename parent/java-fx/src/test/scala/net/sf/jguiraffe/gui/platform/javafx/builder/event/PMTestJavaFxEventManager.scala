@@ -53,7 +53,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
   /** The event manager to be tested. */
   private var evMan: JavaFxEventManager = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     formEvMan = PowerMock.createMock(classOf[FormEventManager])
     evMan = new JavaFxEventManager
   }
@@ -63,7 +63,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
    * @param sender the sender
    * @param lType the expected listener type
    */
-  private def checkSender(sender: EventSender[_], lType: FormListenerType) {
+  private def checkSender(sender: EventSender[_], lType: FormListenerType): Unit = {
     sender match {
       case evManSender: EventManagerSender[_] =>
         assertSame("Wrong event manager", formEvMan, evManSender.manager)
@@ -80,7 +80,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
    * @param lType the listener type
    */
   private def doRegistration(compHandler: ComponentHandler[_],
-    lType: FormListenerType) {
+    lType: FormListenerType): Unit = {
     evMan.registerListener(CompName, compHandler, formEvMan, lType)
     evMan.unregisterListener(CompName, compHandler, formEvMan, lType)
   }
@@ -88,7 +88,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
   /**
    * Tests whether action listeners are handled correctly.
    */
-  @Test def testActionListenerRegistration() {
+  @Test def testActionListenerRegistration(): Unit = {
     val compHandler = PowerMock.createMock(classOf[CompHandlerWithActionSource])
     val aRegister = new FetchAnswer[AnyRef, EventHandler[ActionEvent]]
     val aUnRegister = new FetchAnswer[AnyRef, EventHandler[ActionEvent]]
@@ -116,7 +116,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
    * Tests whether listener registration handles the case that the desired
    * listener interface is not supported. The registration should be ignored.
    */
-  @Test def testActionListenerNoActionSource() {
+  @Test def testActionListenerNoActionSource(): Unit = {
     val compHandler = PowerMock.createMock(classOf[ComponentHandler[AnyRef]])
     PowerMock.replayAll()
 
@@ -127,7 +127,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
   /**
    * Tests that a request to unregister an unknown listener is ignored.
    */
-  @Test def testUnregisterUnknownListener() {
+  @Test def testUnregisterUnknownListener(): Unit = {
     val compHandler = PowerMock.createMock(classOf[CompHandlerWithActionSource])
     PowerMock.replayAll()
 
@@ -138,7 +138,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
   /**
    * Tests whether change listeners are handled correctly.
    */
-  @Test def testChangeListenerRegistration() {
+  @Test def testChangeListenerRegistration(): Unit = {
     val compHandler = PowerMock.createMock(classOf[CompHandlerWithChangeSource])
     val obsValue = PowerMock.createMock(classOf[ObservableValue[AnyRef]])
     compHandler.observableValue
@@ -164,7 +164,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
    * Tests whether focus listeners are handled correctly.
    */
     @Ignore
-  @Test def testFocusListenerRegistration() {
+  @Test def testFocusListenerRegistration(): Unit = {
     /**
      * Helper method for testing a received event.
      * @param ans the answer with the event
@@ -172,7 +172,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
      * @param expType the expected event type
      */
     def checkFocusEvent(ans: FetchAnswer[_, FormFocusEvent],
-      handler: ComponentHandler[_], expType: FormFocusEvent.Type) {
+      handler: ComponentHandler[_], expType: FormFocusEvent.Type): Unit = {
       assertSame("Wrong handler", handler, ans.get.getHandler)
       assertEquals("Wrong component name", CompName, ans.get.getName)
       assertEquals("Wrong event type", expType, ans.get.getType)
@@ -216,7 +216,7 @@ class PMTestJavaFxEventManager extends JUnitSuite {
    * Tests whether mouse listeners are handled correctly.
    */
     @Ignore
-  @Test def testMouseListenerRegistration() {
+  @Test def testMouseListenerRegistration(): Unit = {
     val compHandler = PowerMock.createMock(classOf[CompHandlerWithNodeSource])
     val node = PowerMock.createMock(classOf[Node])
     EasyMock.expect(compHandler.sourceNode).andReturn(node).anyTimes()

@@ -38,7 +38,7 @@ class TestJavaFxSliderHandler {
   /** The handler to be tested. */
   private var handler: JavaFxSliderHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     slider = new Slider
     slider setMin 0
     slider setMax 100
@@ -48,14 +48,14 @@ class TestJavaFxSliderHandler {
   /**
    * Tests whether the handler returns the correct data type.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     assertEquals("Wrong type", classOf[Integer], handler.getType)
   }
 
   /**
    * Tests whether the correct property for managing change events is returned.
    */
-  @Test def testChangeEventSupport() {
+  @Test def testChangeEventSupport(): Unit = {
     assertSame("Wrong change event property", slider.valueProperty,
       handler.observableValue)
   }
@@ -64,7 +64,7 @@ class TestJavaFxSliderHandler {
    * Tests whether the correct value is returned when querying the handler's
    * data.
    */
-  @Test def testGetData() {
+  @Test def testGetData(): Unit = {
     val value = 50
     slider setValue value
     assertEquals("Wrong value", value, handler.getData.intValue)
@@ -73,7 +73,7 @@ class TestJavaFxSliderHandler {
   /**
    * Tests whether the handler's data can be set.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     val value = 25
     handler setData value
     assertEquals("Wrong value", value, slider.getValue, .001)
@@ -82,7 +82,7 @@ class TestJavaFxSliderHandler {
   /**
    * Tests setData() if the new value is null.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     val value = 25
     slider setValue value
     handler setData null

@@ -53,7 +53,7 @@ private trait ListModelSupport extends ListComponentHandler {
    * in generic list model.
    * @param dataModel the underlying list model
    */
-  def initListModel(dataModel: ListModel) {
+  def initListModel(dataModel: ListModel): Unit = {
     originalListModel = dataModel
     fxListModel = new JavaFxListModel(displayList, dataModel.getType)
     fxListModel.initFromModel(dataModel)
@@ -64,7 +64,7 @@ private trait ListModelSupport extends ListComponentHandler {
   /**
    * @inheritdoc This implementation adds the new item to the FX list model.
    */
-  def addItem(index: Int, display: Object, value: Object) {
+  def addItem(index: Int, display: Object, value: Object): Unit = {
     fxListModel.insertItem(index, display, value)
   }
 
@@ -72,7 +72,7 @@ private trait ListModelSupport extends ListComponentHandler {
    * @inheritdoc This implementation removes the specified element from the FX
    * list model.
    */
-  def removeItem(index: Int) {
+  def removeItem(index: Int): Unit = {
     fxListModel.removeItem(index)
   }
 

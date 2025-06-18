@@ -37,7 +37,7 @@ class EventManagerSender[E <: FormEvent](val manager: FormEventManager,
   /**
    * @inheritdoc This implementation directly delegates to the event manager.
    */
-  def fire(event: => E) {
+  def fire(event: => E): Unit = {
     manager.fireEvent(event, listenerType)
   }
 }

@@ -49,7 +49,7 @@ private class JavaFxListViewHandler(listView: ListView[Object])
    * @inheritdoc This implementation determines the index of the passed in
    * object. This index - if defined - is then set as selected index.
    */
-  def setData(data: Object) {
+  def setData(data: Object): Unit = {
     listView.getSelectionModel.clearSelection()
 
     if (data != null) {

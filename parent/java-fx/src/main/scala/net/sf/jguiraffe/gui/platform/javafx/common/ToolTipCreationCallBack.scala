@@ -59,7 +59,7 @@ class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * @param ctrl the control
    * @param text the text of the tool tip
    */
-  def addCreateToolTipRequest(ctrl: Control, text: String) {
+  def addCreateToolTipRequest(ctrl: Control, text: String): Unit = {
     addCreateToolTipRequest(ctrl.tooltipProperty, text)
   }
 
@@ -69,7 +69,7 @@ class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * @param prop the property in which to store the tool tip
    * @param text the text of the tool tip
    */
-  def addCreateToolTipRequest(prop: ObjectProperty[Tooltip], text: String) {
+  def addCreateToolTipRequest(prop: ObjectProperty[Tooltip], text: String): Unit = {
     toolTipRequests = ToolTipCreationRequest(prop, text) :: toolTipRequests
   }
 
@@ -83,10 +83,10 @@ class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * @inheritdoc This implementation starts the initialization of tool tips
    * asynchronously in the Java FX thread.
    */
-  override def callBack(data: ComponentBuilderData, param: Any) {
+  override def callBack(data: ComponentBuilderData, param: Any): Unit = {
     log.info("Creating tool tips.")
     Platform.runLater(new Runnable {
-      def run() {
+      def run(): Unit = {
         createAndAssignToolTips()
       }
     })
@@ -96,7 +96,7 @@ class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * Creates all requested tool tips and assigns them to the corresponding
    * controls. This method is called by ''callBack()'' in the Java FX thread.
    */
-  private[common] def createAndAssignToolTips() {
+  private[common] def createAndAssignToolTips(): Unit = {
     requests foreach (handleCreateToolTipRequest(_))
   }
 
@@ -106,7 +106,7 @@ class ToolTipCreationCallBack(val toolTipFactory: ToolTipFactory)
    * it to the correct control.
    * @param request the request to be handled
    */
-  private def handleCreateToolTipRequest(request: ToolTipCreationRequest) {
+  private def handleCreateToolTipRequest(request: ToolTipCreationRequest): Unit = {
     request.prop.set(toolTipFactory.createToolTip(request.tip))
   }
 }

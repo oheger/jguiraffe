@@ -37,14 +37,14 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
   /** The handler to be tested.*/
   private var handler: JavaFxUnitSizeHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     handler = new JavaFxUnitSizeHandler
   }
 
   /**
    * Tests whether the screen resolution can be queried.
    */
-  @Test def testGetScreenResolution() {
+  @Test def testGetScreenResolution(): Unit = {
     assertTrue("Not a valid screen resolution", handler.getScreenResolution() > 0)
   }
 
@@ -64,7 +64,7 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
    * Tests whether font sizes can be queried. This test also checks whether
    * the handler is thread-safe and correctly uses the Java FX thread.
    */
-  @Test def testGetFontSizeConcurrently() {
+  @Test def testGetFontSizeConcurrently(): Unit = {
     val ThreadCount = 16
     val container1 = new ContainerWrapper
     val container2 = new ContainerWrapper
@@ -109,7 +109,7 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
     latch: CountDownLatch) extends Thread {
     @volatile var fontSize: (Double, Double) = _
 
-    override def run() {
+    override def run(): Unit = {
       latch.await()
       fontSize = queryFontSize(container)
     }
@@ -117,7 +117,7 @@ class TestJavaFxUnitSizeHandler extends JUnitSuite {
 }
 
 object TestJavaFxUnitSizeHandler {
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
 

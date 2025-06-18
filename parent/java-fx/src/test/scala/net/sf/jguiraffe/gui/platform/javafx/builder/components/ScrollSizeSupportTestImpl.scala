@@ -90,7 +90,7 @@ trait ScrollSizeSupportTestImpl extends ScrollSizeSupport {
    * expected way.
    * @param expSizeHandler the expected size handler
    */
-  def verify(expSizeHandler: UnitSizeHandler) {
+  def verify(expSizeHandler: UnitSizeHandler): Unit = {
     assertNotNull("X scroll size not queried", scrollWidth)
     assertNotNull("Y scroll size not queried", scrollHeight)
     EasyMock.verify(scrollWidth, scrollHeight)
@@ -199,7 +199,7 @@ private class SizeAnswer(size: Int) extends IAnswer[Int] {
    * @param expSizeHandler the expected ''UnitSizeHandler''
    * @param expContainer the expected container object
    */
-  def verify(expSizeHandler: UnitSizeHandler, expContainer: Any) {
+  def verify(expSizeHandler: UnitSizeHandler, expContainer: Any): Unit = {
     assertSame("Wrong size handler", expSizeHandler, sizeHandler)
     assertSame("Wrong container", expContainer, container)
   }

@@ -45,7 +45,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /** The handler to be tested. */
   private var handler: JavaFxListViewHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     listView = new ListView
     listModel = new ListModelTestImpl
     handler = new JavaFxListViewHandler(listView)
@@ -55,7 +55,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Checks that the test list has no selection.
    */
-  private def checkNoSelection() {
+  private def checkNoSelection(): Unit = {
     assertTrue("Got a selection",
       listView.getSelectionModel.getSelectedIndices.isEmpty);
     assertNull("Got a selected item", listView.getSelectionModel.getSelectedItem)
@@ -64,7 +64,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests whether the correct display list is returned.
    */
-  @Test def testDisplayList() {
+  @Test def testDisplayList(): Unit = {
     val model = handler.getListModel.asInstanceOf[JavaFxListModel]
     assertSame("Wrong display list", listView.getItems, model.displayList)
   }
@@ -72,14 +72,14 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests whether the correct type is returned.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     assertEquals("Wrong type", listModel.getType, handler.getType)
   }
 
   /**
    * Tests setData() for null input.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     listView.getSelectionModel.selectAll()
     handler setData null
     checkNoSelection()
@@ -88,7 +88,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests setData() if a model object is passed in.
    */
-  @Test def testSetDataModelObject() {
+  @Test def testSetDataModelObject(): Unit = {
     val idx = 4
     handler setData listModel.getValueObject(idx)
     assertEquals("Wrong selected index", idx,
@@ -98,7 +98,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests setData() if an unknown object is passed in.
    */
-  @Test def testSetDataModelOtherObject() {
+  @Test def testSetDataModelOtherObject(): Unit = {
     listView.getSelectionModel.selectAll()
     handler setData "someUnknownObject"
     checkNoSelection()
@@ -107,7 +107,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests getData() if there is no selection.
    */
-  @Test def testGetDataNoSelection() {
+  @Test def testGetDataNoSelection(): Unit = {
     listView.getSelectionModel.clearSelection()
     assertNull("Got data", handler.getData)
   }
@@ -115,7 +115,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests whether the selected item can be obtained.
    */
-  @Test def testGetDataSelection() {
+  @Test def testGetDataSelection(): Unit = {
     val idx = 2
     listView.getSelectionModel.select(idx)
     assertEquals("Wrong data", listModel.getValueObject(idx), handler.getData)
@@ -124,7 +124,7 @@ class TestJavaFxListViewHandler extends JUnitSuite {
   /**
    * Tests whether the expected property for change events is returned.
    */
-  @Test def testChangeEventSource() {
+  @Test def testChangeEventSource(): Unit = {
     assertSame("Wrong observable value",
       listView.getSelectionModel.selectedIndexProperty, handler.observableValue)
   }

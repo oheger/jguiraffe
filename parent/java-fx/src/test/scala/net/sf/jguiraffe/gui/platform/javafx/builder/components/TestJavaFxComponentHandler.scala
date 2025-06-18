@@ -38,7 +38,7 @@ class TestJavaFxComponentHandler extends JUnitSuite {
   /** The test component handler. */
   private var handler: JavaFxComponentHandlerTestImpl = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     control = new Label
     handler = new JavaFxComponentHandlerTestImpl(control)
   }
@@ -46,7 +46,7 @@ class TestJavaFxComponentHandler extends JUnitSuite {
   /**
    * Tests whether the enabled state can be queried if it is true.
    */
-  @Test def testIsEnabledTrue() {
+  @Test def testIsEnabledTrue(): Unit = {
     control setDisable false
 
     assertTrue("Wrong result", handler.isEnabled)
@@ -61,7 +61,7 @@ class TestJavaFxComponentHandler extends JUnitSuite {
   /**
    * Tests whether the enabled state can be changed to true.
    */
-  @Test def testSetEnabledTrue() {
+  @Test def testSetEnabledTrue(): Unit = {
     handler setEnabled true
     assertFalse("Not enabled", control.isDisable)
   }
@@ -69,7 +69,7 @@ class TestJavaFxComponentHandler extends JUnitSuite {
   /**
    * Tests whether the enabled state can be changed to false.
    */
-  @Test def testSetEnabledFalse() {
+  @Test def testSetEnabledFalse(): Unit = {
     handler setEnabled false
     assertTrue("Not disabled", control.isDisable)
   }
@@ -77,28 +77,28 @@ class TestJavaFxComponentHandler extends JUnitSuite {
   /**
    * Tests whether the correct component is returned by the field.
    */
-  @Test def testGetComponentField() {
+  @Test def testGetComponentField(): Unit = {
     assertSame("Wrong component (field)", control, handler.component)
   }
 
   /**
    * Tests whether the correct component is returned by the get method.
    */
-  @Test def testGetComponentGetter() {
+  @Test def testGetComponentGetter(): Unit = {
     assertSame("Wrong component (getter)", control, handler.getComponent)
   }
 
   /**
    * Tests whether the correct outer component is returned.
    */
-  @Test def testGetOuterComponent() {
+  @Test def testGetOuterComponent(): Unit = {
     assertSame("Wrong outer component", control, handler.getOuterComponent)
   }
 
   /**
    * Tests whether the correct source node is returned.
    */
-  @Test def testSourceNode() {
+  @Test def testSourceNode(): Unit = {
     assertSame("Wrong source node", control, handler.sourceNode)
   }
 
@@ -111,7 +111,7 @@ class TestJavaFxComponentHandler extends JUnitSuite {
       throw new UnsupportedOperationException("Unexpected method call!")
     }
 
-    def setData(data: AnyRef) {
+    def setData(data: AnyRef): Unit = {
       throw new UnsupportedOperationException("Unexpected method call!")
     }
 

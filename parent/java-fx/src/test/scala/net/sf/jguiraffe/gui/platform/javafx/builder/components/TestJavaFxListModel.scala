@@ -53,7 +53,7 @@ class TestJavaFxListModel extends JUnitSuite {
    * @param idx the index to be checked
    * @param expIdx the index of the expected display object
    */
-  private def checkDisplayAt(model: ListModel, idx: Int, expIdx: Int) {
+  private def checkDisplayAt(model: ListModel, idx: Int, expIdx: Int): Unit = {
     assertEquals("Wrong display object at " + idx,
       ListModelTestImpl.DisplayPrefix + expIdx, model.getDisplayObject(idx))
   }
@@ -64,7 +64,7 @@ class TestJavaFxListModel extends JUnitSuite {
    * @param model the model to check
    * @param idx the index to be checked
    */
-  private def checkDisplayAt(model: ListModel, idx: Int) {
+  private def checkDisplayAt(model: ListModel, idx: Int): Unit = {
     checkDisplayAt(model, idx, idx)
   }
 
@@ -75,7 +75,7 @@ class TestJavaFxListModel extends JUnitSuite {
    * @param idx the index to be checked
    * @param expIdx the index of the expected value object
    */
-  private def checkValueAt(model: ListModel, idx: Int, expIdx: Int) {
+  private def checkValueAt(model: ListModel, idx: Int, expIdx: Int): Unit = {
     assertEquals("Wrong value object at " + idx,
       ListModelTestImpl.ValuePrefix + expIdx, model.getValueObject(idx))
   }
@@ -86,14 +86,14 @@ class TestJavaFxListModel extends JUnitSuite {
    * @param model the model to check
    * @param idx the index to be checked
    */
-  private def checkValueAt(model: ListModel, idx: Int) {
+  private def checkValueAt(model: ListModel, idx: Int): Unit = {
     checkValueAt(model, idx, idx)
   }
 
   /**
    * Tests whether the expected type is returned.
    */
-  @Test def testType() {
+  @Test def testType(): Unit = {
     val model = new JavaFxListModel(displayList(), classOf[String])
     assertEquals("Wrong type", classOf[String], model.`type`)
     assertEquals("Wrong getType", classOf[String], model.getType)
@@ -102,7 +102,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests whether the expected size is returned.
    */
-  @Test def testSize() {
+  @Test def testSize(): Unit = {
     val model = prepareModel()
     assert(ListModelTestImpl.DefaultSize === model.size)
   }
@@ -110,7 +110,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests whether the correct display objects are returned.
    */
-  @Test def testGetDisplayObject() {
+  @Test def testGetDisplayObject(): Unit = {
     val model = prepareModel()
     checkDisplayAt(model, 0)
     checkDisplayAt(model, ListModelTestImpl.DefaultSize - 1)
@@ -119,7 +119,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests whether the correct value objects are returned.
    */
-  @Test def testGetValueObject() {
+  @Test def testGetValueObject(): Unit = {
     val model = prepareModel()
     checkValueAt(model, 0)
     checkValueAt(model, ListModelTestImpl.DefaultSize - 1)
@@ -128,7 +128,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests whether the passed in value collection is correctly filled.
    */
-  @Test def testPopulateValueCollection() {
+  @Test def testPopulateValueCollection(): Unit = {
     val list = displayList()
     val model = new JavaFxListModel(list, classOf[String])
     model initFromModel (new ListModelTestImpl)
@@ -144,7 +144,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests an instance which has not yet been initialized from a model.
    */
-  @Test def testUninitialized() {
+  @Test def testUninitialized(): Unit = {
     val list = displayList()
     val model = new JavaFxListModel(list, classOf[String])
     assert(0 === model.size)
@@ -154,7 +154,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests whether a new item can be inserted.
    */
-  @Test def testInsertItem() {
+  @Test def testInsertItem(): Unit = {
     val idx = 4
     val model = prepareModel()
     model.insertItem(idx, ListModelTestImpl.DisplayPrefix,
@@ -173,7 +173,7 @@ class TestJavaFxListModel extends JUnitSuite {
   /**
    * Tests whether an item can be removed.
    */
-  @Test def testRemoveItem() {
+  @Test def testRemoveItem(): Unit = {
     val idx = 6
     val model = prepareModel()
     model.removeItem(idx)

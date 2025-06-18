@@ -32,7 +32,7 @@ class TestComponentsPackageObject extends JUnitSuite {
    * Tests whether alignment values can be converted to their JavaFX
    * counterparts.
    */
-  @Test def testConvertAlignment() {
+  @Test def testConvertAlignment(): Unit = {
     assert(ContentDisplay.LEFT === convertAlignment(TextIconAlignment.LEFT))
     assert(ContentDisplay.RIGHT === convertAlignment(TextIconAlignment.RIGHT))
     assert(ContentDisplay.CENTER === convertAlignment(TextIconAlignment.CENTER))
@@ -42,7 +42,7 @@ class TestComponentsPackageObject extends JUnitSuite {
    * Tests whether ContentDisplay values can be converted to their JGUIraffe
    * counterparts.
    */
-  @Test def testConvertContentDisplay() {
+  @Test def testConvertContentDisplay(): Unit = {
     assert(TextIconAlignment.LEFT === convertContentDisplay(ContentDisplay.LEFT))
     assert(TextIconAlignment.RIGHT === convertContentDisplay(ContentDisplay.RIGHT))
     assert(TextIconAlignment.CENTER === convertContentDisplay(ContentDisplay.CENTER))
@@ -51,7 +51,7 @@ class TestComponentsPackageObject extends JUnitSuite {
   /**
    * Tests whether Placement values can be converted to Side literals.
    */
-  @Test def testConvertPlacementToSide() {
+  @Test def testConvertPlacementToSide(): Unit = {
     assert(Side.RIGHT === convertPlacementToSide(TabbedPaneTag.Placement.RIGHT))
     assert(Side.LEFT === convertPlacementToSide(TabbedPaneTag.Placement.LEFT))
     assert(Side.BOTTOM === convertPlacementToSide(TabbedPaneTag.Placement.BOTTOM))
@@ -62,14 +62,14 @@ class TestComponentsPackageObject extends JUnitSuite {
    * Tests whether a reasonable default value is used when converting Placement
    * values to Side literals.
    */
-  @Test def testConvertSideToPlacementDefault() {
+  @Test def testConvertSideToPlacementDefault(): Unit = {
     assertEquals("Wrong default", Side.TOP, convertPlacementToSide(null))
   }
 
   /**
    * Tests whether orientation values are correctly converted.
    */
-  @Test def testConvertOrientation() {
+  @Test def testConvertOrientation(): Unit = {
     assert(javafx.geometry.Orientation.VERTICAL ==
       convertOrientation(net.sf.jguiraffe.gui.builder.components.Orientation.VERTICAL))
     assert(javafx.geometry.Orientation.HORIZONTAL ==

@@ -43,7 +43,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /** The manager to be tested. */
   private var manager: JavaFxWindowManager = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     manager = TestJavaFxWindowManager.initializedManager
   }
 
@@ -65,7 +65,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an initial and another stage can be created.
    */
-  @Test def testCreateStages() {
+  @Test def testCreateStages(): Unit = {
     val builderData = createWindowBuilderData()
     val primaryStage = manager.createFrame(builderData, new WindowDataImpl, null)
     assertSame("Different window", primaryStage,
@@ -94,7 +94,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    * Tests whether the stage's scene is initialized and whether controls can
    * be added.
    */
-  @Test def testInitScene() {
+  @Test def testInitScene(): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl
     val wndNew = manager.createFrame(builderData, windowData, null)
@@ -114,7 +114,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the window title is set.
    */
-  @Test def testInitTitle() {
+  @Test def testInitTitle(): Unit = {
     val title = "A window title"
     val builderData = createWindowBuilderData()
     val windowData = WindowDataImpl(title = title)
@@ -126,7 +126,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the window controller is set.
    */
-  @Test def testInitController() {
+  @Test def testInitController(): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = WindowDataImpl(controller = this)
     val wndNew = manager.createFrame(builderData, windowData, null)
@@ -137,7 +137,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the window's bounds are correctly initialized.
    */
-  @Test def testInitBounds() {
+  @Test def testInitBounds(): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = WindowDataImpl(xPos = 10, yPos = 20, width = 300,
       height = 200)
@@ -260,7 +260,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the modality of a new frame window.
    */
-  @Test def testCreateFrameModality() {
+  @Test def testCreateFrameModality(): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl
     val wndNew = manager.createFrame(builderData, windowData, null)
@@ -272,7 +272,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    * Tests whether the size handler is extracted from the Jelly context and
    * passed to the window's root container.
    */
-  @Test def testSizeHandlerInRootContainer() {
+  @Test def testSizeHandlerInRootContainer(): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = new WindowDataImpl
     val wndNew = manager.createFrame(builderData, windowData, null)
@@ -287,7 +287,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
    * @param modal the modal flag
    * @param expModality the expected modality value
    */
-  private def checkCreateDialog(modal: Boolean, expModality: Modality) {
+  private def checkCreateDialog(modal: Boolean, expModality: Modality): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = WindowDataImpl(title = "some title")
     val wndNew = manager.createDialog(builderData, windowData, modal, null)
@@ -300,14 +300,14 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a non-modal dialog window can be created.
    */
-  @Test def testCreateDialogNonModal() {
+  @Test def testCreateDialogNonModal(): Unit = {
     checkCreateDialog(modal = false, Modality.NONE)
   }
 
   /**
    * Tests whether a modal dialog window can be created.
    */
-  @Test def testCreateDialogModal() {
+  @Test def testCreateDialogModal(): Unit = {
     checkCreateDialog(modal = true, Modality.APPLICATION_MODAL)
   }
 
@@ -346,7 +346,7 @@ class TestJavaFxWindowManager extends JUnitSuite with EasyMockSugar {
   /**
    * Tests the creation of an internal frame.
    */
-  @Test def testCreateInternalFrame() {
+  @Test def testCreateInternalFrame(): Unit = {
     val builderData = createWindowBuilderData()
     val windowData = WindowDataImpl(title = "some title")
     val wndNew = manager.createInternalFrame(builderData, windowData, null)
@@ -419,7 +419,7 @@ object TestJavaFxWindowManager {
    */
   private var initializedManager: JavaFxWindowManager = _
 
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     val provider = createStyleSheetProvider()
     initializedManager = new JavaFxWindowManager(provider)
   }

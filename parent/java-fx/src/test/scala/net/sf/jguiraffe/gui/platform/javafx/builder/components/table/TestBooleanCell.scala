@@ -51,7 +51,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
   /** The cell to be tested. */
   private var cell: BooleanCell[Boolean, AnyRef] = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     controller = mock[TableFormController]
     table = new TableView
     cell = new BooleanCell(controller, ColumnIndex)
@@ -74,7 +74,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
    * Prepares the controller mock for a get value query.
    * @param result the result to be returned
    */
-  private def expectGetValue(result: AnyRef) {
+  private def expectGetValue(result: AnyRef): Unit = {
     controller selectCurrentRow CellIndex
     EasyMock.expect(controller.getColumnValue(ColumnIndex)).andReturn(result)
   }
@@ -82,7 +82,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the cell's value can be externally updated.
    */
-  @Test def testUpdateItem() {
+  @Test def testUpdateItem(): Unit = {
     expectGetValue(java.lang.Boolean.TRUE)
     whenExecuting(controller) {
       cell.updateItem(this, empty = false)
@@ -93,7 +93,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests updateItem() if an empty value is passed in.
    */
-  @Test def testUpdateItemEmpty() {
+  @Test def testUpdateItemEmpty(): Unit = {
     whenExecuting(controller) {
       cell.updateItem(this, empty = true)
       assertFalse("Wrong value", cellValue.getValue)
@@ -104,7 +104,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
    * Tests whether non-boolean values returned from the controller are handled
    * correctly.
    */
-  @Test def testUpdateItemInvalidValue() {
+  @Test def testUpdateItemInvalidValue(): Unit = {
     expectGetValue(this)
     whenExecuting(controller) {
       cell.updateItem(this, empty = false)
@@ -115,7 +115,7 @@ class TestBooleanCell extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether an edit operation on the cell is passed to the model.
    */
-  @Test def testEditCell() {
+  @Test def testEditCell(): Unit = {
     controller.selectCurrentRow(CellIndex)
     controller.setColumnValue(table, ColumnIndex, java.lang.Boolean.TRUE)
     whenExecuting(controller) {

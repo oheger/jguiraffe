@@ -44,7 +44,7 @@ private class JavaFxListModel(val displayList: ObservableList[Object],
    * specified model is copied into this model.
    * @param model the ''ListModel'' to be used for initialization
    */
-  def initFromModel(model: ListModel) {
+  def initFromModel(model: ListModel): Unit = {
     for (i <- 0 until model.size) {
       displayList add model.getDisplayObject(i)
       values += model.getValueObject(i)
@@ -57,7 +57,7 @@ private class JavaFxListModel(val displayList: ObservableList[Object],
    * @param display the display object
    * @param value the value object
    */
-  def insertItem(index: Int, display: Object, value: Object) {
+  def insertItem(index: Int, display: Object, value: Object): Unit = {
     values.insert(index, value)
     displayList.add(index, display)
   }
@@ -66,7 +66,7 @@ private class JavaFxListModel(val displayList: ObservableList[Object],
    * Removes the item at the specified index.
    * @param index the index of the item to be removed
    */
-  def removeItem(index: Int) {
+  def removeItem(index: Int): Unit = {
     values.remove(index)
     displayList.remove(index)
   }

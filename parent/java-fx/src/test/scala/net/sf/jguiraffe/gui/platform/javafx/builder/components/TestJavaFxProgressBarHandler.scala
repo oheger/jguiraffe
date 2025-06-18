@@ -38,7 +38,7 @@ class TestJavaFxProgressBarHandler {
   /** The handler to be tested. */
   private var handler: JavaFxProgressBarHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     progressBar = new ProgressBar
     handler = new JavaFxProgressBarHandler(progressBar, 0, 100)
   }
@@ -46,14 +46,14 @@ class TestJavaFxProgressBarHandler {
   /**
    * Tests whether the correct data type is returned for the handler.
    */
-  @Test def testType() {
+  @Test def testType(): Unit = {
     assertEquals("Wrong type", classOf[Integer], handler.getType)
   }
 
   /**
    * Tests whether the correct property for change notifications is returned.
    */
-  @Test def testChangeEventSupport() {
+  @Test def testChangeEventSupport(): Unit = {
     assertSame("Wrong change event property", progressBar.progressProperty,
       handler.observableValue)
   }
@@ -61,8 +61,8 @@ class TestJavaFxProgressBarHandler {
   /**
    * Tests whether the correct current progress value can be queried.
    */
-  @Test def testGetValue() {
-    def checkValue(p: Double, expVal: Int) {
+  @Test def testGetValue(): Unit = {
+    def checkValue(p: Double, expVal: Int): Unit = {
       progressBar setProgress p
       assertEquals("Wrong value", expVal, handler.getValue)
     }
@@ -77,8 +77,8 @@ class TestJavaFxProgressBarHandler {
   /**
    * Tests whether the progress bar's value can be set directly.
    */
-  @Test def testSetValue() {
-    def checkSetValue(value: Int, expProgr: Double) {
+  @Test def testSetValue(): Unit = {
+    def checkSetValue(value: Int, expProgr: Double): Unit = {
       handler setValue value
       assertEquals("Wrong progress", expProgr, progressBar.getProgress, .001)
     }
@@ -93,7 +93,7 @@ class TestJavaFxProgressBarHandler {
   /**
    * Tests whether the handler's data can be queried.
    */
-  @Test def testGetData() {
+  @Test def testGetData(): Unit = {
     progressBar setProgress .5
     assertEquals("Wrong value", Integer.valueOf(50), handler.getData)
   }
@@ -101,7 +101,7 @@ class TestJavaFxProgressBarHandler {
   /**
    * Tests whether the handler's data can be set to a valid value.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     handler setData Integer.valueOf(50)
     assertEquals("Wrong progress value", .5, progressBar.getProgress, .001)
   }
@@ -109,7 +109,7 @@ class TestJavaFxProgressBarHandler {
   /**
    * Tests whether setData() can deal with null values.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     val progress = .2
     progressBar setProgress progress
     handler setData null
@@ -120,7 +120,7 @@ class TestJavaFxProgressBarHandler {
    * Tests the handling of the progressText property. This property is not
    * supported by JavaFX, so the value passed to the property is just recorded.
    */
-  @Test def testProgressText() {
+  @Test def testProgressText(): Unit = {
     val text = "Test progress text"
     handler setProgressText text
     assertEquals("Wrong progress text", text, handler.getProgressText)

@@ -47,7 +47,7 @@ class TestJavaFxComboBoxHandler {
   /** The handler to be tested. */
   private var handler: JavaFxComboBoxHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     combo = new ComboBox
     handler = new JavaFxComboBoxHandler(combo)
   }
@@ -65,7 +65,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether the handler returns the correct type.
    */
-  @Test def testType() {
+  @Test def testType(): Unit = {
     val model = initListModel()
     assertEquals("Wrong type", model.getType, handler.getType)
   }
@@ -73,7 +73,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether the handler correctly initializes its list model.
    */
-  @Test def testInitializedListModel() {
+  @Test def testInitializedListModel(): Unit = {
     val model = initListModel()
     val handlerModel = handler.getListModel
     assertEquals("Wrong model size", model.size, handlerModel.size)
@@ -90,7 +90,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether the combo box's item collection is used as display collection.
    */
-  @Test def testDisplayCollection() {
+  @Test def testDisplayCollection(): Unit = {
     initListModel()
     val fxModel = handler.getListModel.asInstanceOf[JavaFxListModel]
     assertSame("Wrong display collection", combo.getItems, fxModel.displayList)
@@ -99,7 +99,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests a getData() operation for a non editable combo box.
    */
-  @Test def testGetDataNotEditableFromModel() {
+  @Test def testGetDataNotEditableFromModel(): Unit = {
     val model = initListModel()
     val selIdx = 1
     combo.getSelectionModel.select(selIdx)
@@ -109,7 +109,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether data from an empty combo box is correctly returned.
    */
-  @Test def testGetDataNonEditableNoContent() {
+  @Test def testGetDataNonEditableNoContent(): Unit = {
     initListModel()
     combo.getSelectionModel.clearSelection()
     assertNull("Got data", handler.getData)
@@ -119,7 +119,7 @@ class TestJavaFxComboBoxHandler {
    * Tests a getData() operation for an editable combo box if the data object
    * is part of the model.
    */
-  @Test def testGetDataEditableFromModel() {
+  @Test def testGetDataEditableFromModel(): Unit = {
     val model = initListModel()
     val selIdx = 2
     combo setEditable true
@@ -130,7 +130,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests getData() if the control contains a value not defined in the model.
    */
-  @Test def testGetDataEditableNotFromModel() {
+  @Test def testGetDataEditableNotFromModel(): Unit = {
     val value = "CurrentValue"
     handler initListModel (new EditableListModel)
     combo setEditable false
@@ -141,7 +141,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether a non editable combo box can be set to null.
    */
-  @Test def testSetDataNullNonEditable() {
+  @Test def testSetDataNullNonEditable(): Unit = {
     initListModel()
     handler setData null
     assertNull("Got data", combo.getValue)
@@ -150,7 +150,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether an editable combo box can be set to null.
    */
-  @Test def testSetDataNullEditable() {
+  @Test def testSetDataNullEditable(): Unit = {
     initListModel()
     combo setEditable true
     handler setData null
@@ -160,7 +160,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether for a non editable combo box data can be set.
    */
-  @Test def testSetDataNonEditable() {
+  @Test def testSetDataNonEditable(): Unit = {
     val model = initListModel()
     val selIdx = 3
     handler setData (model.getValueObject(selIdx))
@@ -171,7 +171,7 @@ class TestJavaFxComboBoxHandler {
    * Tests a setData() operation on an editable combo box if the data is
    * contained in the model.
    */
-  @Test def testSetDataEditableFromModel() {
+  @Test def testSetDataEditableFromModel(): Unit = {
     val model = initListModel()
     val selIdx = 4
     handler setData (model.getValueObject(selIdx))
@@ -182,7 +182,7 @@ class TestJavaFxComboBoxHandler {
    * Tests a setData() operation on an editable combo box if the data is not
    * contained in the model.
    */
-  @Test def testSetDataEditableNotFromModel() {
+  @Test def testSetDataEditableNotFromModel(): Unit = {
     val value = "SomeNewTestValue"
     handler.initListModel(new EditableListModel)
     combo setEditable true
@@ -193,7 +193,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether an item can be added to the list model.
    */
-  @Test def testAddItem() {
+  @Test def testAddItem(): Unit = {
     val model = initListModel()
     val newValue = "NewValueObject"
     val newDisplay = "NewDisplayObject"
@@ -209,7 +209,7 @@ class TestJavaFxComboBoxHandler {
   /**
    * Tests whether an item can be removed from the list model.
    */
-  @Test def testRemoveItem() {
+  @Test def testRemoveItem(): Unit = {
     val model = initListModel()
     val idx = 4
     handler.removeItem(idx)
@@ -224,7 +224,7 @@ class TestJavaFxComboBoxHandler {
    * Tests whether the correct property is returned for the change event
    * source.
    */
-  @Test def testChangeEventSource() {
+  @Test def testChangeEventSource(): Unit = {
     assertEquals("Wrong property", combo.valueProperty, handler.observableValue)
   }
 

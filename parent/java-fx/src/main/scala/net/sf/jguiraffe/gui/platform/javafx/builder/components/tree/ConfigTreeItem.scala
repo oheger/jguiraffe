@@ -85,7 +85,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
    * child configuration nodes, items for no longer existing configuration
    * nodes are removed. Value and graphic of this item are updated, too.
    */
-  def resync() {
+  def resync(): Unit = {
     setValue(ConfigNodeData(node))
     updateGraphic()
     if (childrenInitialized) {
@@ -98,7 +98,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
    * configuration nodes to tree items. This is necessary when nodes in the
    * hierarchical configuration structure were removed.
    */
-  private[tree] def removeFromItemMap() {
+  private[tree] def removeFromItemMap(): Unit = {
     itemMap -= node
     if (childrenInitialized) {
       super.getChildren.asScala foreach (_.asInstanceOf[ConfigTreeItem].removeFromItemMap())
@@ -120,7 +120,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
    * Synchronizes the child items of this item with the child nodes of the
    * underlying ''ConfigurationNode''.
    */
-  private def resyncChildren() {
+  private def resyncChildren(): Unit = {
     val childSet = new java.util.HashSet(getChildren())
     val newChildren = createChildrenCollection()
 
@@ -163,7 +163,7 @@ private class ConfigTreeItem(val node: ConfigurationNode,
    * Sets the correct graphic based on this tree item's state. The graphic is
    * obtained from the ''GraphicsHandler''.
    */
-  private def updateGraphic() {
+  private def updateGraphic(): Unit = {
     setGraphic(graphicsHandler.graphicsFor(node, isExpanded,
       node.getChildrenCount == 0))
   }

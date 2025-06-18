@@ -65,7 +65,7 @@ private class JavaFxProgressBarHandler(progressBar: ProgressBar,
    * @inheritdoc This implementation delegates to ''setValue()''. If the
    * passed in value is '''null''', this call has no effect.
    */
-  def setData(value: Integer) {
+  def setData(value: Integer): Unit = {
     if (value != null) {
       setValue(value.intValue)
     }
@@ -82,7 +82,7 @@ private class JavaFxProgressBarHandler(progressBar: ProgressBar,
    * the range determined by the ''min'' and ''max'' parameters. It maps the
    * value to a percentage value in the interval [0, 1].
    */
-  def setValue(v: Int) {
+  def setValue(v: Int): Unit = {
     val progress = (v - min).toDouble / (max - min).toDouble
     progressBar setProgress progress
   }

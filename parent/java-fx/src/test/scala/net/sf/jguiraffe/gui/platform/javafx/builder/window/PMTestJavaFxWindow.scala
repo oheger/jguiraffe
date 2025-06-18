@@ -56,7 +56,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /** A mock for the mouse listeners. */
   private var mouseListeners: EventListenerList[FormMouseEvent, FormMouseListener] = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     stage = PowerMock.createMock(classOf[Stage])
   }
 
@@ -76,7 +76,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the X position can be queried.
    */
-  @Test def testGetXPos() {
+  @Test def testGetXPos(): Unit = {
     val x = 3.1415
     EasyMock.expect(stage.getX).andReturn(x)
     val wnd = createWindow()
@@ -88,7 +88,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the Y position can be queried.
    */
-  @Test def testGetYPos() {
+  @Test def testGetYPos(): Unit = {
     val y = 100.0
     EasyMock.expect(stage.getY).andReturn(y)
     val wnd = createWindow()
@@ -100,7 +100,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window's width can be queried.
    */
-  @Test def testGetWidth() {
+  @Test def testGetWidth(): Unit = {
     val width = 640.4
     EasyMock.expect(stage.getWidth).andReturn(width)
     val wnd = createWindow()
@@ -112,7 +112,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window's height can be queried.
    */
-  @Test def testGetHeight() {
+  @Test def testGetHeight(): Unit = {
     val height = 480.0
     EasyMock.expect(stage.getHeight).andReturn(height)
     val wnd = createWindow()
@@ -124,7 +124,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether bounds can be set.
    */
-  @Test def testSetBounds() {
+  @Test def testSetBounds(): Unit = {
     val x = 100
     val y = 150
     val width = 641
@@ -142,7 +142,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window's title can be set.
    */
-  @Test def testGetTitle() {
+  @Test def testGetTitle(): Unit = {
     val title = "WindowTitle"
     EasyMock.expect(stage.getTitle).andReturn(title)
     val wnd = createWindow()
@@ -154,7 +154,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window's title can be set.
    */
-  @Test def testSetTitle() {
+  @Test def testSetTitle(): Unit = {
     val title = "MyWindow'sTitle"
     stage.setTitle(title)
     val wnd = createWindow()
@@ -166,7 +166,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the visible property can be queried.
    */
-  @Test def testIsVisible() {
+  @Test def testIsVisible(): Unit = {
     EasyMock.expect(stage.isShowing).andReturn(true)
     EasyMock.expect(stage.isShowing).andReturn(false)
     val wnd = createWindow()
@@ -179,7 +179,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window can be made visible.
    */
-  @Test def testSetVisibleTrue() {
+  @Test def testSetVisibleTrue(): Unit = {
     stage.show()
     val wnd = createWindow()
     PowerMock.replayAll()
@@ -190,7 +190,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window can be made invisible.
    */
-  @Test def testSetVisibleFalse() {
+  @Test def testSetVisibleFalse(): Unit = {
     stage.hide()
     val wnd = createWindow()
     PowerMock.replayAll()
@@ -201,7 +201,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the parent window can be set and queried.
    */
-  @Test def testParentWindow() {
+  @Test def testParentWindow(): Unit = {
     val parent = PowerMock.createMock(classOf[Window])
     val wnd = createWindow()
     PowerMock.replayAll()
@@ -213,7 +213,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the window's controller object can be set and queried.
    */
-  @Test def testController() {
+  @Test def testController(): Unit = {
     val wnd = createWindow()
     assertNull("Got a controller", wnd.windowController)
     wnd.windowController = this
@@ -224,7 +224,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
    * Tests whether a window can be opened. This is expected to be a blocking
    * call on the Java FX thread.
    */
-  @Test def testOpen() {
+  @Test def testOpen(): Unit = {
     val scene = PowerMock.createMock(classOf[Scene])
     EasyMock.expect(stage.getScene).andReturn(scene)
     val rootAnswer = new FetchAnswer[Object, Parent]
@@ -250,7 +250,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether a default closing strategy is set.
    */
-  @Test def testDefaultClosingStrategy() {
+  @Test def testDefaultClosingStrategy(): Unit = {
     val wnd = createWindow()
     val strat = wnd.getWindowClosingStrategy
     assertTrue("Cannot close", strat.canClose(wnd))
@@ -259,7 +259,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests a forced close operation.
    */
-  @Test def testCloseForce() {
+  @Test def testCloseForce(): Unit = {
     val strat = PowerMock.createMock(classOf[WindowClosingStrategy])
     prepareApplyTest()
     expectWindowListener()
@@ -284,7 +284,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests a close operation allowed by the strategy.
    */
-  @Test def testCloseStrategyAllows() {
+  @Test def testCloseStrategyAllows(): Unit = {
     val strat: WindowClosingStrategy = EasyMock.createMock(classOf[WindowClosingStrategy])
     prepareApplyTest()
     expectWindowListener()
@@ -309,7 +309,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests a close operation that is vetoed by the closing strategy.
    */
-  @Test def testCloseStrategyForbids() {
+  @Test def testCloseStrategyForbids(): Unit = {
     val strat = PowerMock.createMock(classOf[WindowClosingStrategy])
     val wnd = createWindow()
     EasyMock.expect(strat.canClose(wnd)).andReturn(false)
@@ -326,7 +326,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
    * @param withListeners if '''true''' mocks are prepared for default event
    * listener registrations
    */
-  private def prepareApplyTest(withListeners: Boolean = false) {
+  private def prepareApplyTest(withListeners: Boolean = false): Unit = {
     val propFocus = PowerMock.createNiceMock(classOf[ReadOnlyBooleanProperty])
     val propIcon = PowerMock.createNiceMock(classOf[ReadOnlyBooleanProperty])
     EasyMock.expect(stage.focusedProperty()).andReturn(propFocus).anyTimes()
@@ -342,7 +342,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Expects a window listener to be registered at the mock window.
    */
-  private def expectWindowListener() {
+  private def expectWindowListener(): Unit = {
     stage.addEventHandler(argEquals(FxWindowEvent.ANY),
       EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
   }
@@ -350,7 +350,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Expects a mouse listener to be registered at the mock window.
    */
-  private def expectMouseListener() {
+  private def expectMouseListener(): Unit = {
     stage.addEventHandler(argEquals(MouseEvent.ANY),
       EasyMock.anyObject(classOf[EventHandler[MouseEvent]]))
   }
@@ -359,7 +359,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
    * Expects a listener for window closing requests to be added to the mock
    * window.
    */
-  private def expectClosingListener() {
+  private def expectClosingListener(): Unit = {
     stage.addEventFilter(argEquals(FxWindowEvent.WINDOW_CLOSE_REQUEST),
       EasyMock.anyObject(classOf[EventHandler[FxWindowEvent]]))
   }
@@ -367,7 +367,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether window listeners can be added to the window.
    */
-  @Test def testWindowListenerRegistration() {
+  @Test def testWindowListenerRegistration(): Unit = {
     val wndListener = PowerMock.createMock(classOf[WindowListener])
     prepareApplyTest()
     expectWindowListener()
@@ -392,7 +392,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether mouse listeners can be added to the window.
    */
-  @Test def testMouseListenerRegistration() {
+  @Test def testMouseListenerRegistration(): Unit = {
     val mouseListener = PowerMock.createMock(classOf[FormMouseListener])
     val event = PowerMock.createNiceMock(classOf[MouseEvent])
     prepareApplyTest()
@@ -423,7 +423,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
    * Tests whether the closing listener forbids closing the window if the
    * closing strategy did not allow closing.
    */
-  @Test def testClosingListenerAutoCloseVeto() {
+  @Test def testClosingListenerAutoCloseVeto(): Unit = {
     val event = PowerMock.createMock(classOf[FxWindowEvent])
     val strategy = PowerMock.createMock(classOf[WindowClosingStrategy])
     val windowListener = PowerMock.createMock(classOf[WindowListener])
@@ -476,7 +476,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests the closing listener if the window can be closed.
    */
-  @Test def testClosingListenerAllow() {
+  @Test def testClosingListenerAllow(): Unit = {
     val event = PowerMock.createMock(classOf[FxWindowEvent])
     val strategy = PowerMock.createMock(classOf[WindowClosingStrategy])
     prepareApplyTest()
@@ -533,7 +533,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the root container can be queried.
    */
-  @Test def testGetRootContainerDefault() {
+  @Test def testGetRootContainerDefault(): Unit = {
     prepareApplyTest(withListeners = true)
     PowerMock.replayAll()
     val wnd = JavaFxWindow(stage)
@@ -545,7 +545,7 @@ class PMTestJavaFxWindow extends JUnitSuite {
    * Tests whether a size handler can be passed to the window which is then
    * propagated to the root container.
    */
-  @Test def testGetRootContainerWithSizeHandler() {
+  @Test def testGetRootContainerWithSizeHandler(): Unit = {
     val sizeHandler = PowerMock.createMock(classOf[UnitSizeHandler])
     prepareApplyTest(withListeners = true)
     PowerMock.replayAll()
@@ -557,14 +557,14 @@ class PMTestJavaFxWindow extends JUnitSuite {
   /**
    * Tests whether the wrapped window can be queried.
    */
-  @Test def testGetWrappedWindow() {
+  @Test def testGetWrappedWindow(): Unit = {
     val wnd: WindowWrapper = createWindow()
     assertSame("Wrong wrapped window", stage, wnd.getWrappedWindow)
   }
 }
 
 object PMTestJavaFxWindow {
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
 

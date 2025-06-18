@@ -36,7 +36,7 @@ class TestToolTipCreationCallBack extends JUnitSuite with EasyMockSugar {
    * Tests whether getInstance() creates a new instance which is also registered
    * as call back.
    */
-  @Test def testGetInstanceFirstAccess() {
+  @Test def testGetInstanceFirstAccess(): Unit = {
     val factory = mock[ToolTipFactory]
     val context = new JellyContext
     val tag = new LabelTag
@@ -52,7 +52,7 @@ class TestToolTipCreationCallBack extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether a single instance is assigned with a Jelly context.
    */
-  @Test def testGetInstanceCached() {
+  @Test def testGetInstanceCached(): Unit = {
     val factory = mock[ToolTipFactory]
     val context = new JellyContext
     val tag = new LabelTag
@@ -68,17 +68,17 @@ class TestToolTipCreationCallBack extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether requested tool tips are actually created.
    */
-  @Test def testProcessToolTipRequests() {
+  @Test def testProcessToolTipRequests(): Unit = {
     val TipPrefix = "tip"
 
-    def testTip(comp: Control, expIdx: Int) {
+    def testTip(comp: Control, expIdx: Int): Unit = {
       assertEquals("Wrong tool tip text", TipPrefix + expIdx,
         comp.getTooltip().getText())
     }
 
     val latch = new CountDownLatch(1)
     val callBack = new ToolTipCreationCallBack(new DefaultToolTipFactory) {
-      override def createAndAssignToolTips() {
+      override def createAndAssignToolTips(): Unit = {
         super.createAndAssignToolTips()
         latch.countDown()
       }
@@ -100,7 +100,7 @@ class TestToolTipCreationCallBack extends JUnitSuite with EasyMockSugar {
 }
 
 object TestToolTipCreationCallBack {
-  @BeforeClass def setUpBeforeClass() {
+  @BeforeClass def setUpBeforeClass(): Unit = {
     JavaFxTestHelper.initPlatform()
   }
 }
@@ -117,7 +117,7 @@ class ComponentBuilderDataCallBackAccess extends ComponentBuilderData {
    * @inheritdoc This implementation also adds the passed in call back to the
    * accessible call back list.
    */
-  override def addCallBack(callBack: ComponentBuilderCallBack, param: Any) {
+  override def addCallBack(callBack: ComponentBuilderCallBack, param: Any): Unit = {
     addedCallBacks = callBack :: addedCallBacks
   }
 }

@@ -52,7 +52,7 @@ private class JavaFxToggleButtonHandler(button: ToggleButton, actionCmd: String 
    * @inheritdoc This implementation changes the selected state of the
    * managed toggle button.
    */
-  override protected def setSelectedState(f: Boolean) {
+  override protected def setSelectedState(f: Boolean): Unit = {
     button setSelected f
   }
 }

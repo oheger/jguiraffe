@@ -71,7 +71,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
    */
   @throws(classOf[FormBuilderException])
   def addContainerComponent(container: Object, component: Object,
-    constraints: Object) {
+    constraints: Object): Unit = {
     as[ContainerWrapper](container).addComponent(component, constraints)
   }
 
@@ -79,7 +79,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
    * @inheritdoc This implementation is able to set a ''PercentLayoutBase''
    * object into a ''ContainerWrapper''.
    */
-  def setContainerLayout(container: Object, layout: Object) {
+  def setContainerLayout(container: Object, layout: Object): Unit = {
     as[ContainerWrapper](container).initLayout(as[PercentLayoutBase](layout))
   }
 
@@ -126,7 +126,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
    * @inheritdoc This implementation expects that the label argument is of type
    * ''Label'' and the component is an arbitrary ''Node''.
    */
-  def linkLabel(label: Object, component: Object, text: String) {
+  def linkLabel(label: Object, component: Object, text: String): Unit = {
     val fxlab = label.asInstanceOf[Label]
     fxlab.setLabelFor(component.asInstanceOf[Node])
     if (StringUtils.isNotEmpty(text)) {
@@ -581,7 +581,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
    * @param data the ''TextIconData'' object with special properties for the label
    */
   private def initLabeled(label: Labeled, tag: ComponentBaseTag,
-    data: TextIconData) {
+    data: TextIconData): Unit = {
     label.setText(ComponentUtils.mnemonicText(data.getCaption,
       data.getMnemonic))
     label setMnemonicParsing true
@@ -617,7 +617,7 @@ class JavaFxComponentManager private[components](override val toolTipFactory: To
    * @param tip the text of the tool tip
    */
   private def initToolTip(tag: ComponentBaseTag,
-    property: ObjectProperty[Tooltip], tip: String) {
+    property: ObjectProperty[Tooltip], tip: String): Unit = {
     addCreateToolTipRequest(tag, property, tip)
   }
 }
@@ -753,7 +753,7 @@ object JavaFxComponentManager {
    * @param tag the current tag
    * @param ctrl the control to be initialized
    */
-  private def initScrollSize(tag: FormBaseTag with ScrollSizeSupport, ctrl: Control) {
+  private def initScrollSize(tag: FormBaseTag with ScrollSizeSupport, ctrl: Control): Unit = {
     val sizeHandler = fetchSizeHandler(tag)
     val containerMapping = ContainerMapping fromContext tag.getContext
     val container = containerMapping.getContainerFromComposite(

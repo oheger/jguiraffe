@@ -40,14 +40,14 @@ class TestTextLengthRestriction extends JUnitSuite {
   /** The text field to be tested. */
   private var field: RestrictedTextField = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     field = new TextField with TextLengthRestriction
   }
 
   /**
    * Tests whether the restriction can be disabled.
    */
-  @Test def testNoRestriction() {
+  @Test def testNoRestriction(): Unit = {
     field setText TestText
     field.insertText(0, "a")
     assertEquals("Wrong text", "a" + TestText, field.getText)
@@ -56,7 +56,7 @@ class TestTextLengthRestriction extends JUnitSuite {
   /**
    * Tests that no text can be added if the maximum length is reached.
    */
-  @Test def testAppendTextFull() {
+  @Test def testAppendTextFull(): Unit = {
     field setMaximumLength TestText.length
     field setText TestText
     field appendText TestText
@@ -66,7 +66,7 @@ class TestTextLengthRestriction extends JUnitSuite {
   /**
    * Tests whether text can be appended if it fits into the length restriction.
    */
-  @Test def testAppendSuccess() {
+  @Test def testAppendSuccess(): Unit = {
     field setMaximumLength TestText.length
     field appendText TestText
     assertEquals("Wrong text", TestText, field.getText)
@@ -76,7 +76,7 @@ class TestTextLengthRestriction extends JUnitSuite {
    * Tests whether text is partly appended if some character fit into the
    * restriction.
    */
-  @Test def testAppendPartly() {
+  @Test def testAppendPartly(): Unit = {
     field setMaximumLength 15
     field setText TestText
     field appendText TestText
@@ -86,7 +86,7 @@ class TestTextLengthRestriction extends JUnitSuite {
   /**
    * Tests whether the restriction also works with the current selection.
    */
-  @Test def testReplaceSelection() {
+  @Test def testReplaceSelection(): Unit = {
     field setMaximumLength TestText.length
     field setText TestText
     field.selectRange(0, 2)

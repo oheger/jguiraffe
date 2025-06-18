@@ -44,7 +44,7 @@ private class JavaFxTextHandler(txtControl: TextInputControl)
 
   def getData: String = txtControl.getText
 
-  def setData(txt: String) {
+  def setData(txt: String): Unit = {
     txtControl setText txt
   }
 
@@ -54,33 +54,33 @@ private class JavaFxTextHandler(txtControl: TextInputControl)
 
   def getSelectionEnd: Int = txtControl.getSelection.getEnd
 
-  def select(start: Int, end: Int) {
+  def select(start: Int, end: Int): Unit = {
     txtControl.selectRange(start, end)
   }
 
-  def selectAll() {
+  def selectAll(): Unit = {
     txtControl.selectAll()
   }
 
-  def clearSelection() {
+  def clearSelection(): Unit = {
     txtControl.deselect()
   }
 
   def getSelectedText: String = txtControl.getSelectedText
 
-  def replaceSelectedText(text: String) {
+  def replaceSelectedText(text: String): Unit = {
     txtControl.replaceSelection(text)
   }
 
-  def copy() {
+  def copy(): Unit = {
     txtControl.copy()
   }
 
-  def cut() {
+  def cut(): Unit = {
     txtControl.cut()
   }
 
-  def paste() {
+  def paste(): Unit = {
     txtControl.paste()
   }
 

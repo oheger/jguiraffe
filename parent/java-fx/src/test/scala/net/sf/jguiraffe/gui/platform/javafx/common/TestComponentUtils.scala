@@ -60,14 +60,14 @@ class TestComponentUtils extends JUnitSuite {
   /**
    * Tests whether mnemonicText() can handle null input.
    */
-  @Test def testMnemonicTextNull() {
+  @Test def testMnemonicTextNull(): Unit = {
     assertNull("Wrong result", ComponentUtils.mnemonicText(null, 'x'))
   }
 
   /**
    * Tests whether a text with a mnemonic is correctly manipulated.
    */
-  @Test def testMnemonicTextFound() {
+  @Test def testMnemonicTextFound(): Unit = {
     assertEquals("Wrong result (1)", "A _Test", ComponentUtils.mnemonicText("A Test", 'T'))
     assertEquals("Wrong result (2)", "_Test", ComponentUtils.mnemonicText("Test", 'T'))
     assertEquals("Wrong result (3)", "ab_c", ComponentUtils.mnemonicText("abc", 'c'))
@@ -77,7 +77,7 @@ class TestComponentUtils extends JUnitSuite {
   /**
    * Tests whether whether case is ignored when searching for mnemonics.
    */
-  @Test def testMnemonicTextCase() {
+  @Test def testMnemonicTextCase(): Unit = {
     assertEquals("Wrong result (1)", "a_bc", ComponentUtils.mnemonicText("abc", 'B'))
     assertEquals("Wrong result (2)", "A_BC", ComponentUtils.mnemonicText("ABC", 'b'))
   }
@@ -85,7 +85,7 @@ class TestComponentUtils extends JUnitSuite {
   /**
    * Tests mnemonicText() if the mnemonic cannot be found.
    */
-  @Test def testMnemonicTextNotFound() {
+  @Test def testMnemonicTextNotFound(): Unit = {
     assertEquals("Wrong result (1)", "check", ComponentUtils.mnemonicText("check", 'z'))
     assertEquals("Wrong result (2)", "", ComponentUtils.mnemonicText("", 'a'))
   }

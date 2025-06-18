@@ -148,8 +148,8 @@ class UITestEditableTableCell extends GuiTest {
   /**
    * Tests whether the table contains the expected content.
    */
-  @Test def testTableContent() {
-    def findAuthor(author: Author) {
+  @Test def testTableContent(): Unit = {
+    def findAuthor(author: Author): Unit = {
       find(author.firstName)
       find(author.lastName)
       find(author.middleName)
@@ -161,7 +161,7 @@ class UITestEditableTableCell extends GuiTest {
   /**
    * Tests whether a cell can be edited.
    */
-  @Test def testEditCell() {
+  @Test def testEditCell(): Unit = {
     val Row = 0
     val NewName = "New"
     startEdit(Row)
@@ -174,7 +174,7 @@ class UITestEditableTableCell extends GuiTest {
   /**
    * Tests whether an edit operation can be canceled.
    */
-  @Test def testCancelEdit() {
+  @Test def testCancelEdit(): Unit = {
     val Row = 1
     val oldName = tableData(Row).firstName
     startEdit(Row)
@@ -187,7 +187,7 @@ class UITestEditableTableCell extends GuiTest {
   /**
    * Tests whether a focus lost event causes a commit, too.
    */
-  @Test def testCommitOnFocusLost() {
+  @Test def testCommitOnFocusLost(): Unit = {
     val Row = 0
     val NewName = "New"
     startEdit(Row)
@@ -205,7 +205,7 @@ class UITestEditableTableCell extends GuiTest {
    * @param propertyIdx2 the index of the 2nd property to be edited
    * @param shift flag whether the SHIFT key should be pressed
    */
-  private def checkTabHandling(row: Int, propertyIdx1: Int, propertyIdx2: Int, shift: Boolean) {
+  private def checkTabHandling(row: Int, propertyIdx1: Int, propertyIdx2: Int, shift: Boolean): Unit = {
     val NewName1 = "New1"
     val NewName2 = "New2"
     startEdit(tableData(row).getProperty(propertyIdx1))
@@ -227,28 +227,28 @@ class UITestEditableTableCell extends GuiTest {
   /**
    * Tests whether the tab key can be used to jump to the next editable cell.
    */
-  @Test def testTabToNextEditableCell() {
+  @Test def testTabToNextEditableCell(): Unit = {
     checkTabHandling(2, Author.IndexFirstName, Author.IndexLastName, shift = false)
   }
 
   /**
    * Tests whether a tab at the last editable column moves to the first one.
    */
-  @Test def testTabToNextEditableCellCircular() {
+  @Test def testTabToNextEditableCellCircular(): Unit = {
     checkTabHandling(1, Author.IndexLastName, Author.IndexFirstName, shift = false)
   }
 
   /**
    * Tests whether shift+tab can be used to jump to the previous editable cell.
    */
-  @Test def testShiftTabToNextEditableCell() {
+  @Test def testShiftTabToNextEditableCell(): Unit = {
     checkTabHandling(0, Author.IndexLastName, Author.IndexFirstName, shift = true)
   }
 
   /**
    * Tests whether shift+tab at the first editable column moves to the last one.
    */
-  @Test def testShiftTabToNextEditableCellCircular() {
+  @Test def testShiftTabToNextEditableCellCircular(): Unit = {
     checkTabHandling(0, Author.IndexFirstName, Author.IndexLastName, shift = true)
   }
 }
@@ -296,7 +296,7 @@ private class Author(@BeanProperty var firstName: String, @BeanProperty var midd
    * @param index the index of the property
    * @param value the new value for this property
    */
-  def setProperty(index: Int, value: String) {
+  def setProperty(index: Int, value: String): Unit = {
     index match {
       case IndexFirstName => firstName = value
       case IndexMiddleName => middleName = value

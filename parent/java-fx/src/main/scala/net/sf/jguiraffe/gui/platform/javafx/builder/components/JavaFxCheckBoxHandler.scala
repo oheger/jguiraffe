@@ -45,7 +45,7 @@ private class JavaFxCheckBoxHandler(checkBox: CheckBox)
    * @inheritdoc This implementation sets the selected state of the managed
    * check box.
    */
-  override protected def setSelectedState(f: Boolean) {
+  override protected def setSelectedState(f: Boolean): Unit = {
     checkBox.setSelected(f)
   }
 }

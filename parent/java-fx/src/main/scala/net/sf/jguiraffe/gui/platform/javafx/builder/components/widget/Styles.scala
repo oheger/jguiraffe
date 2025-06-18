@@ -44,7 +44,7 @@ private[components] class Styles private (map: Map[String, String]) {
    * definition for this key is overridden.
    * @param styleDef a key value pair with the style key and its value
    */
-  def +=(styleDef: (String, String)) {
+  def +=(styleDef: (String, String)): Unit = {
     stylesMap = stylesMap + styleDef
   }
 
@@ -52,7 +52,7 @@ private[components] class Styles private (map: Map[String, String]) {
    * Removes the styles definition for the given key from this object.
    * @param key the key of the styles definition to be removed
    */
-  def -=(key: String) {
+  def -=(key: String): Unit = {
     stylesMap = stylesMap - key
   }
 
@@ -66,7 +66,7 @@ private[components] class Styles private (map: Map[String, String]) {
    * @param key the key of the style to be updated
    * @param value the value of this style as an ''Option''
    */
-  def updateStyle(key: String, value: Option[String]) {
+  def updateStyle(key: String, value: Option[String]): Unit = {
     value match {
       case Some(x) => +=(key, x)
       case None => -=(key)

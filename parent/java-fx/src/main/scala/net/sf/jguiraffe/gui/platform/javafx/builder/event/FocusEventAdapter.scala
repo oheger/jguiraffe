@@ -45,7 +45,7 @@ private class FocusEventAdapter(val sender: EventSender[FormFocusEvent],
   private val changeListener = new ChangeListener[java.lang.Boolean] {
     def changed(valueObs: ObservableValue[_ <: java.lang.Boolean],
       oldValue: java.lang.Boolean,
-      newValue: java.lang.Boolean) {
+      newValue: java.lang.Boolean): Unit = {
       sender.fire(createEvent(newValue.booleanValue()))
     }
   }
@@ -67,7 +67,7 @@ private class FocusEventAdapter(val sender: EventSender[FormFocusEvent],
    * generated for this node any longer.
    * @param node the node
    */
-  def unregister(node: Node) {
+  def unregister(node: Node): Unit = {
     node.focusedProperty().removeListener(changeListener)
   }
 
@@ -75,7 +75,7 @@ private class FocusEventAdapter(val sender: EventSender[FormFocusEvent],
    * Registers this instance as focus listener at the specified node.
    * @param node the node
    */
-  def register(node: Node) {
+  def register(node: Node): Unit = {
     node.focusedProperty().addListener(changeListener)
   }
 

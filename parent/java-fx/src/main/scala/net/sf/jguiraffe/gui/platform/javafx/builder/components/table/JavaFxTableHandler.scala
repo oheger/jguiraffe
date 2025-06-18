@@ -203,7 +203,7 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
   /**
    * Updates the property which exposes the current styles for selected rows.
    */
-  private def updateSelectionStyles() {
+  private def updateSelectionStyles(): Unit = {
     selectionStyles set selectionStylesHandler.styles.toExternalForm()
   }
 

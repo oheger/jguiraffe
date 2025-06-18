@@ -44,7 +44,7 @@ class MouseEventAdapter private (val sender: EventSender[FormMouseEvent],
    * event to a JGUIraffe event and passes it to the current event sender.
    * @param event the event to be processed
    */
-  override def handle(event: MouseEvent) {
+  override def handle(event: MouseEvent): Unit = {
     event.getEventType match {
       case MouseEvent.MOUSE_ENTERED =>
         fire(event, FormMouseEvent.Type.MOUSE_ENTERED)
@@ -86,7 +86,7 @@ class MouseEventAdapter private (val sender: EventSender[FormMouseEvent],
    * @param event the original Java FX event
    * @param eventtype the type of the converted event
    */
-  private def fire(event: MouseEvent, eventtype: FormMouseEvent.Type) {
+  private def fire(event: MouseEvent, eventtype: FormMouseEvent.Type): Unit = {
     sender fire convertEvent(event, eventtype)
   }
 
@@ -159,7 +159,7 @@ object MouseEventAdapter {
   private def createEventSender(
     listeners: EventListenerList[FormMouseEvent, FormMouseListener]): EventSender[FormMouseEvent] = {
     new EventSender[FormMouseEvent] {
-      def fire(event: => FormMouseEvent) {
+      def fire(event: => FormMouseEvent): Unit = {
         listeners.fire(event, callMouseListener)
       }
     }
@@ -170,7 +170,7 @@ object MouseEventAdapter {
    * @param l the mouse listener to call
    * @param e the mouse event
    */
-  private def callMouseListener(l: FormMouseListener, e: FormMouseEvent) {
+  private def callMouseListener(l: FormMouseListener, e: FormMouseEvent): Unit = {
     e.getType() match {
       case FormMouseEvent.Type.MOUSE_CLICKED =>
         l.mouseClicked(e)

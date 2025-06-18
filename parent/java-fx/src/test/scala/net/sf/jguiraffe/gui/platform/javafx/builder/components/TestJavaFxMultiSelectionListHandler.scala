@@ -50,7 +50,7 @@ class TestJavaFxMultiSelectionListHandler {
   /** The handler to be tested. */
   private var handler: JavaFxMultiSelectionListHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     listView = new ListView
     listModel = new ListModelTestImpl
     handler = new JavaFxMultiSelectionListHandler(listView)
@@ -60,7 +60,7 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests whether the correct display list is returned.
    */
-  @Test def testDisplayList() {
+  @Test def testDisplayList(): Unit = {
     val model = handler.getListModel.asInstanceOf[JavaFxListModel]
     assertSame("Wrong display list", listView.getItems, model.displayList)
   }
@@ -68,14 +68,14 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests whether the correct type is returned.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     assertEquals("Wrong type", listModel.getType, handler.getType)
   }
 
   /**
    * Tests whether the list's selection model has been correctly initialized.
    */
-  @Test def testSelectionModel() {
+  @Test def testSelectionModel(): Unit = {
     assertEquals("Wrong selection mode", SelectionMode.MULTIPLE,
       listView.getSelectionModel.getSelectionMode())
   }
@@ -83,7 +83,7 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests whether data can be queried if there is no selection.
    */
-  @Test def testGetDataNoSelection() {
+  @Test def testGetDataNoSelection(): Unit = {
     listView.getSelectionModel.clearSelection()
     assertNull("Got data", handler.getData)
   }
@@ -91,7 +91,7 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests whether getData() returns the selected indices.
    */
-  @Test def testGetDataSelectedIndices() {
+  @Test def testGetDataSelectedIndices(): Unit = {
     val idx1 = 1
     val idx2 = 4
     val expected = Array(listModel.getValueObject(idx1),
@@ -105,7 +105,7 @@ class TestJavaFxMultiSelectionListHandler {
    * Helper method for testing setData() if there is no selection.
    * @param data the data object to be passed to the handler
    */
-  private def checkSetDataNoSelection(data: Object) {
+  private def checkSetDataNoSelection(data: Object): Unit = {
     listView.getSelectionModel.selectAll()
     handler setData data
     assertTrue("Got a selection",
@@ -115,21 +115,21 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests setData() for null input.
    */
-  @Test def testSetDataNull() {
+  @Test def testSetDataNull(): Unit = {
     checkSetDataNoSelection(null)
   }
 
   /**
    * Tests setData() if an empty array is passed in.
    */
-  @Test def testSetDataEmptyArray() {
+  @Test def testSetDataEmptyArray(): Unit = {
     checkSetDataNoSelection(Array.empty[Object])
   }
 
   /**
    * Tests setData() if value objects are provided.
    */
-  @Test def testSetDataValues() {
+  @Test def testSetDataValues(): Unit = {
     val indices = Array(0, 1, 4, 7)
     val values = indices map { listModel.getValueObject(_) }
     listView.getSelectionModel.selectIndices(2, 3, 5, 6)
@@ -147,7 +147,7 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests whether setData() can handle a single selection.
    */
-  @Test def testSetDataSingleValue() {
+  @Test def testSetDataSingleValue(): Unit = {
     val idx = 3
     handler setData Array(listModel.getValueObject(idx))
     val selection = listView.getSelectionModel.getSelectedIndices
@@ -158,10 +158,10 @@ class TestJavaFxMultiSelectionListHandler {
   /**
    * Tests whether the correct property is used for the change event source.
    */
-  @Test def testChangeEventSource() {
+  @Test def testChangeEventSource(): Unit = {
     var triggeredChanges: Int = 0
     handler.observableValue.addListener(new ChangeListener[Number] {
-      def changed(obs: ObservableValue[_ <: Number], oldVal: Number, newVal: Number) {
+      def changed(obs: ObservableValue[_ <: Number], oldVal: Number, newVal: Number): Unit = {
         triggeredChanges += 1
       }
     })

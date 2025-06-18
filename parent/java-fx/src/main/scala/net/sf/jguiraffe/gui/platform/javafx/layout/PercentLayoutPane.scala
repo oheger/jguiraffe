@@ -67,7 +67,7 @@ class PercentLayoutPane(val percentLayout: PercentLayoutBase,
    * of this pane. Then it delegates to the associated ''PercentLayoutBase''
    * object to apply the layout based on this data.
    */
-  protected[layout] override def layoutChildren() {
+  protected[layout] override def layoutChildren(): Unit = {
     val insets = getInsets
     percentLayout.performLayout(wrapper, new Rectangle(insets.getLeft.toInt,
       insets.getTop.toInt, insets.getRight.toInt, insets.getBottom.toInt),

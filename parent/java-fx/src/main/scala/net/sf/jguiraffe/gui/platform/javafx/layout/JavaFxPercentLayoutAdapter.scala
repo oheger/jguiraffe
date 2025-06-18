@@ -57,7 +57,7 @@ class JavaFxPercentLayoutAdapter(components: Array[Node],
     getSize(node, vert, getPreferredWidth(node), node.prefHeight)
   }
 
-  def setComponentBounds(component: Object, bounds: Rectangle) {
+  def setComponentBounds(component: Object, bounds: Rectangle): Unit = {
     val node = asNode(component)
     node.setLayoutX(bounds.x)
     node.setLayoutY(bounds.y)

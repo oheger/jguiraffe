@@ -52,7 +52,7 @@ private abstract class JavaFxComponentHandler[T](@BeanProperty val component: Co
    * @inheritdoc This implementation sets the ''disable'' property on the
    * managed control.
    */
-  def setEnabled(f: Boolean) {
+  def setEnabled(f: Boolean): Unit = {
     component setDisable !f
   }
 }

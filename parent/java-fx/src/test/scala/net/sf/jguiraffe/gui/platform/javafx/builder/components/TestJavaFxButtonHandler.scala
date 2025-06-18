@@ -41,7 +41,7 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
   /** The handler to be tested. */
   private var handler: JavaFxButtonHandler = _
 
-  @Before def setUp() {
+  @Before def setUp(): Unit = {
     button = mock[ButtonBase]
     handler = new JavaFxButtonHandler(button)
   }
@@ -49,7 +49,7 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the handler supports adding action listeners.
    */
-  @Test def testActionListenerSupport() {
+  @Test def testActionListenerSupport(): Unit = {
     assertTrue("No control action listener support",
       handler.isInstanceOf[ControlActionEventSource[java.lang.Boolean]])
   }
@@ -57,7 +57,7 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
   /**
    * Tests whether the correct data type is returned.
    */
-  @Test def testGetType() {
+  @Test def testGetType(): Unit = {
     assertEquals("Wrong data type", classOf[java.lang.Boolean], handler.getType)
   }
 
@@ -65,7 +65,7 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
    * Tests the dummy getData() implementation. Here we can only test that the
    * button control is not manipulated.
    */
-  @Test def testGetData() {
+  @Test def testGetData(): Unit = {
     whenExecuting(button) {
       assertEquals("Wrong result", java.lang.Boolean.FALSE, handler.getData)
     }
@@ -75,7 +75,7 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
    * Tests the dummy setData() implementation. Here we can only test that the
    * button control is not touched.
    */
-  @Test def testSetData() {
+  @Test def testSetData(): Unit = {
     whenExecuting(button) {
       handler setData java.lang.Boolean.TRUE
     }
@@ -85,14 +85,14 @@ class TestJavaFxButtonHandler extends JUnitSuite with EasyMockSugar {
    * Tests the action command of the action event source if it has not been
    * initialized.
    */
-  @Test def testDefaultActionCommand() {
+  @Test def testDefaultActionCommand(): Unit = {
     assertNull("Got an action command", handler.actionCommand)
   }
 
   /**
    * Tests whether an action command can be passed to the constructor.
    */
-  @Test def testConfiguredActionCommand() {
+  @Test def testConfiguredActionCommand(): Unit = {
     val Command = "TestButtonActionCommand"
     handler = new JavaFxButtonHandler(button, Command)
     assertEquals("Wrong action command", Command, handler.actionCommand)
