@@ -58,7 +58,7 @@ private[components] trait StyleWidgetHandler extends WidgetHandler {
    * @inheritdoc The foreground color is obtained from the wrapped node's
    *             styles.
    */
-  override def getForegroundColor: Color = stylesHandler.getForegroundColor()
+  override def getForegroundColor: Color = stylesHandler.getForegroundColor
 
   /**
    * @inheritdoc This implementation passes the color to the styles handler.
@@ -102,6 +102,6 @@ private[components] trait StyleWidgetHandler extends WidgetHandler {
    * a property was changed that is implemented through CSS styles.
    */
   private def updateWidgetStyles(): Unit = {
-    style set stylesHandler.styles.toExternalForm()
+    style set stylesHandler.styles.toExternalForm
   }
 }

@@ -93,7 +93,7 @@ private[components] class Styles private (map: Map[String, String]) {
    * returned string is random.
    * @return a string representation for all contained style definitions
    */
-  def toExternalForm(): String = {
+  def toExternalForm: String = {
     val buf = new StringBuilder(Styles.BufSize)
     stylesMap foreach { styleDef =>
       buf ++= styleDef._1
@@ -108,7 +108,7 @@ private[components] class Styles private (map: Map[String, String]) {
    * Creates a string representation for this object. This string contains
    * the currently defined style sheets in textual form.
    */
-  override def toString() = s"Styles {\n${toExternalForm}}"
+  override def toString = s"Styles {\n$toExternalForm}"
 }
 
 /**
@@ -146,7 +146,7 @@ private[components] object Styles {
    * @return a newly created instance initialized with these styles definitions
    */
   def apply(styleDef: String): Styles = {
-    if (Log.isDebugEnabled()) {
+    if (Log.isDebugEnabled) {
       Log.debug("Parsing styles definition: " + styleDef)
     }
 

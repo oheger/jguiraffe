@@ -112,8 +112,8 @@ package object components {
     properties.font foreach stylesHandler.setFont
     properties.id foreach node.setId
 
-    val styleDef = stylesHandler.styles.toExternalForm()
-    if (!styleDef.isEmpty) {
+    val styleDef = stylesHandler.styles.toExternalForm
+    if (styleDef.nonEmpty) {
       node setStyle styleDef
     }
     node

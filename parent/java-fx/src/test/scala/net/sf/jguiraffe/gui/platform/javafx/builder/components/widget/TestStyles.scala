@@ -82,7 +82,7 @@ class TestStyles extends JUnitSuite {
    * @param expDefs all the style definitions to check
    */
   private def checkExternalForm(styles: Styles, expDefs: String*): Unit = {
-    val ext = styles.toExternalForm()
+    val ext = styles.toExternalForm
     for (sd <- expDefs) {
       assertTrue("Definition " + sd + " not found in " + ext, ext contains sd)
     }
@@ -96,7 +96,7 @@ class TestStyles extends JUnitSuite {
     styles -= "-fx-font"
     styles -= "-fx-unknown"
     assertEquals("Wrong remaining styles", "-fx-background-color: #AA99FF;\n",
-      styles.toExternalForm())
+      styles.toExternalForm)
   }
 
   /**
@@ -135,7 +135,7 @@ class TestStyles extends JUnitSuite {
   @Test def testToString(): Unit = {
     val styles = Styles(StylesDefinition)
     val s = styles.toString()
-    assertTrue("Wrong string representation: " + s, s.contains(styles.toExternalForm()))
+    assertTrue("Wrong string representation: " + s, s.contains(styles.toExternalForm))
   }
 
   /**

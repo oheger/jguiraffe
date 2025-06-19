@@ -176,7 +176,7 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
     table.getItems addAll(0, model)
   }
 
-  override def getSelectionBackground: Color = selectionStylesHandler.getBackgroundColor()
+  override def getSelectionBackground: Color = selectionStylesHandler.getBackgroundColor
 
   /**
    * @inheritdoc
@@ -188,7 +188,7 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
     updateSelectionStyles()
   }
 
-  override def getSelectionForeground: Color = selectionStylesHandler.getForegroundColor()
+  override def getSelectionForeground: Color = selectionStylesHandler.getForegroundColor
 
   /**
    * @inheritdoc
@@ -204,7 +204,7 @@ private class JavaFxTableHandler(table: TableView[AnyRef],
    * Updates the property which exposes the current styles for selected rows.
    */
   private def updateSelectionStyles(): Unit = {
-    selectionStyles set selectionStylesHandler.styles.toExternalForm()
+    selectionStyles set selectionStylesHandler.styles.toExternalForm
   }
 
   /**
