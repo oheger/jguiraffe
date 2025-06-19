@@ -52,7 +52,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
     styles += ("-fx-font-style", "FontStyle")
     styles += ("-fx-font-weight", "FontWeight")
     styles += ("-fx-font", "Font")
-    val font = handler.getFont()
+    val font = handler.getFont
     assertEquals("Wrong family", "FontFamily", font.family.get)
     assertEquals("Wrong size", "FontSize", font.size.get)
     assertEquals("Wrong style", "FontStyle", font.style.get)
@@ -92,7 +92,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
    */
   @Test def testGetBackgroundColor(): Unit = {
     styles += ("-fx-background-color", "bgcol")
-    val col = handler.getBackgroundColor()
+    val col = handler.getBackgroundColor
     assertTrue("Not a logic color", col.isLogicColor)
     assertEquals("Wrong color definition", "bgcol", col.getColorDefinition)
   }
@@ -101,7 +101,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
    * Tests the background color returned if the style sheet is undefined.
    */
   @Test def testGetBackgroundColorUndefined(): Unit = {
-    assert(Color.UNDEFINED === handler.getBackgroundColor())
+    assert(Color.UNDEFINED === handler.getBackgroundColor)
   }
 
   /**
@@ -139,7 +139,7 @@ class TestJavaFxStylesHandler extends JUnitSuite {
    */
   @Test def testGetForegroundColor(): Unit = {
     styles += ("-fx-text-fill", "fgcol")
-    val col = handler.getForegroundColor()
+    val col = handler.getForegroundColor
     assertTrue("Not a logic color", col.isLogicColor)
     assertEquals("Wrong color definition", "fgcol", col.getColorDefinition)
   }

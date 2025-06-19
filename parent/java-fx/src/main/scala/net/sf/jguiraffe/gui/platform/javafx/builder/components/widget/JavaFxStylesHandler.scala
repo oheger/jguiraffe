@@ -38,7 +38,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * ''Color'' instance representing an undefined color.
    * @return the background color
    */
-  def getBackgroundColor(): Color =
+  def getBackgroundColor: Color =
     styleToColor(JavaFxStylesHandler.StyleBackgroundColor)
 
   /**
@@ -57,7 +57,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * ''Color'' instance representing an undefined color.
    * @return the foreground color
    */
-  def getForegroundColor(): Color =
+  def getForegroundColor: Color =
     styleToColor(JavaFxStylesHandler.StyleForegroundColor)
 
   /**
@@ -76,7 +76,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
    * the returned font object are undefined.
    * @return a ''Font'' object with the corresponding styles definitions
    */
-  def getFont(): JavaFxFont =
+  def getFont: JavaFxFont =
     JavaFxFont(family = styles(JavaFxStylesHandler.StyleFontFamily),
       size = styles(JavaFxStylesHandler.StyleFontSize),
       style = styles(JavaFxStylesHandler.StyleFontStyle),
@@ -100,7 +100,7 @@ private[components] class JavaFxStylesHandler(val styles: Styles = Styles()) {
   /**
    * Sets a color. The value of the color is written into the corresponding
    * style definition. If the color is undefined, the key is removed from
-   * the stye sheet.
+   * the style sheet.
    * @param key the key of the style definition
    * @param col the new color
    */
