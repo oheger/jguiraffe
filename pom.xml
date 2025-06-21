@@ -68,20 +68,20 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <version.antrun.plugin>1.7</version.antrun.plugin>
-    <version.assembly.plugin>2.5.2</version.assembly.plugin>
-    <version.checkstyle.plugin>3.1.2</version.checkstyle.plugin>
-    <version.gpg.plugin>1.5</version.gpg.plugin>
+    <version.assembly.plugin>3.7.1</version.assembly.plugin>
+    <version.checkstyle.plugin>3.6.0</version.checkstyle.plugin>
+    <version.gpg.plugin>3.2.7</version.gpg.plugin>
     <version.javadoc.plugin>2.10.4</version.javadoc.plugin>
     <version.license.plugin>2.3</version.license.plugin>
     <version.scala.plugin>4.9.5</version.scala.plugin>
-    <version.scm-publish.plugin>3.0.0</version.scm-publish.plugin>
+    <version.scm-publish.plugin>3.3.0</version.scm-publish.plugin>
     <version.site.plugin>3.9.1</version.site.plugin>
     <version.spotbugs.plugin>4.9.3.0</version.spotbugs.plugin>
 
     <version.changes.plugin>2.6</version.changes.plugin>
-    <version.jxr.plugin>2.3</version.jxr.plugin>
-    <version.project-info.plugin>3.1.2</version.project-info.plugin>
-    <version.surefire-report.plugin>2.21.0</version.surefire-report.plugin>
+    <version.jxr.plugin>3.6.0</version.jxr.plugin>
+    <version.project-info.plugin>3.9.0</version.project-info.plugin>
+    <version.surefire-report.plugin>3.5.3</version.surefire-report.plugin>
   </properties>
 
   <dependencyManagement>
@@ -198,13 +198,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>${version.checkstyle.plugin}</version>
-          <dependencies>
-            <dependency>
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>8.44</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <configLocation>${jguiraffe.parent.dir}/conf/checkstyle.xml</configLocation>
           </configuration>
