@@ -48,7 +48,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.scala>2.13.16</version.scala>
-    <version.scala.modules>1.1.2</version.scala.modules>
     <powermock.version>2.0.9</powermock.version>
     <license.file>../conf/License-Header.txt</license.file>
 
@@ -75,12 +74,6 @@
         <groupId>org.scala-lang</groupId>
         <artifactId>scala-library</artifactId>
         <version>${version.scala}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.scala-lang.modules</groupId>
-        <artifactId>scala-parser-combinators_2.13</artifactId>
-        <version>${version.scala.modules}</version>
       </dependency>
 
       <dependency>
