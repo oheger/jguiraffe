@@ -16,7 +16,7 @@
 package net.sf.jguiraffe.gui.platform.javafx.common
 
 import javafx.scene.image.Image
-
+import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.{Before, Test}
 import org.scalatestplus.junit.JUnitSuite
@@ -33,7 +33,8 @@ class TestImageWrapper extends JUnitSuite with EasyMockSugar {
   private var wrapper: ImageWrapper = _
 
   @Before def setUp(): Unit = {
-    image = mock[Image]
+    image = niceMock[Image]
+    EasyMock.replay(image)
     wrapper = ImageWrapper(image)
   }
 
