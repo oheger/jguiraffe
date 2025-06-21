@@ -67,8 +67,21 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <version.antrun.plugin>1.7</version.antrun.plugin>
+    <version.assembly.plugin>2.5.2</version.assembly.plugin>
     <version.checkstyle.plugin>3.1.2</version.checkstyle.plugin>
-    <version.spotbugs>4.2.3</version.spotbugs>
+    <version.gpg.plugin>1.5</version.gpg.plugin>
+    <version.javadoc.plugin>2.10.4</version.javadoc.plugin>
+    <version.license.plugin>2.3</version.license.plugin>
+    <version.scala.plugin>4.9.5</version.scala.plugin>
+    <version.scm-publish.plugin>3.0.0</version.scm-publish.plugin>
+    <version.site.plugin>3.9.1</version.site.plugin>
+    <version.spotbugs.plugin>4.9.3.0</version.spotbugs.plugin>
+
+    <version.changes.plugin>2.6</version.changes.plugin>
+    <version.jxr.plugin>2.3</version.jxr.plugin>
+    <version.project-info.plugin>3.1.2</version.project-info.plugin>
+    <version.surefire-report.plugin>2.21.0</version.surefire-report.plugin>
   </properties>
 
   <dependencyManagement>
@@ -105,8 +118,14 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${version.antrun.plugin}</version>
+        </plugin>
+
+        <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>${version.assembly.plugin}</version>
           <executions>
             <execution>
               <phase>package</phase>
@@ -128,7 +147,7 @@
         <plugin>
           <groupId>com.mycila</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>2.3</version>
+          <version>${version.license.plugin}</version>
           <configuration>
             <header>${license.file}</header>
             <includes>
@@ -157,8 +176,14 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${version.gpg.plugin}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.4</version>
+          <version>${version.javadoc.plugin}</version>
           <configuration>
             <archive>
               <manifestEntries>
@@ -186,14 +211,56 @@
         </plugin>
 
         <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>${version.scala.plugin}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-publish-plugin</artifactId>
+          <version>${version.scm-publish.plugin}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${version.site.plugin}</version>
+        </plugin>
+
+        <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>${version.spotbugs}</version>
+          <version>${version.spotbugs.plugin}</version>
           <configuration>
             <threshold>Normal</threshold>
             <effort>Default</effort>
             <excludeFilterFile>${jguiraffe.parent.dir}/conf/findbugs-exclude.xml</excludeFilterFile>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${version.project-info.plugin}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>2.21.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -202,7 +269,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.9.1</version>
       </plugin>
 
       <plugin>
@@ -225,7 +291,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
-        <version>3.0.0</version>
         <configuration>
           <scmBranch>gh-pages</scmBranch>
         </configuration>
@@ -250,7 +315,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.1.2</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -268,7 +332,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.6</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -284,12 +347,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.21.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -340,15 +401,6 @@
       </activation>
 
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <version>1.7</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -365,8 +417,8 @@
               into the generated jar artifacts.
           -->
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
             <executions>
               <execution>
                 <id>javadoc.licenses</id>
@@ -408,7 +460,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
