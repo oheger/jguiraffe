@@ -95,7 +95,7 @@ class TestIconCell extends JUnitSuite with EasyMockSugar {
    * Tests whether an update of the item state is handled correctly.
    */
   @Test def testUpdateItemNewImage(): Unit = {
-    val image = mock[Image]
+    val image = niceMock[Image]
     val wrapper = mock[ImageWrapper]
     EasyMock.expect(wrapper.image).andReturn(image).anyTimes()
     expectGetValue(wrapper)
