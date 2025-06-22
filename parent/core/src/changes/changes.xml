@@ -27,8 +27,22 @@
   </properties>
   <body>
     <release version="1.5" date="in VCS"
-             description="TODO">
-
+             description="JavaFX stylesheet parsing and dependency updates">
+      <action dev="oheger" type="update" due-to="dependabot">
+        Updated commons-beanutils from 1.9.4 to 1.11.0.
+      </action>
+      <action dev="oheger" type="update">
+        Updated commons-logging from 1.1.3 to 1.3.5.
+      </action>
+      <action dev="oheger" type="update">
+        Updated scala-library from 2.13.9 to 2.13.16.
+      </action>
+      <action dev="oheger" type="update">
+        Changed the parsing of CSS stylesheets in the JavaFX module. The new
+        algorithm is more lenient and can handle more corner cases. It does no
+        longer require the scala-parser-combinators dependency; so this could
+        be dropped.
+      </action>
     </release>
     <release version="1.4.1" date="2022-11-05"
              description="Upgrades of dependencies">
