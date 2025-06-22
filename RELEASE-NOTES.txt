@@ -1,4 +1,36 @@
                            JGUIraffe Library
+                              Version 1.5
+                              Release Notes
+
+INTRODUCTION
+============
+
+This document contains the release notes for this version of the JGUIraffe
+library. JGUIraffe is a framework supporting the implementation of Java
+desktop applications using concepts like declarative UI definition, action and
+command objects, and dependency injection.
+
+Version 1.5 contains one major change, which is related to the parsing of
+CSS stylesheets in the JavaFX module. In the past, this was done using the
+scala-parser-combinators library. Having this additional dependency was
+problematic in some situations, especially when there were conflicts with
+different Scala versions (e.g. a Scala 3 project including JGUIraffe).
+Therefore, one goal for this release was to get rid of this dependency. The new
+parsing algorithm supports even more features of CSS and is more failure
+tolerant.
+
+Other changes are limited to dependency updates and changes to the internal
+build structure.
+
+Changes
+=======
+
+* Updated commons-beanutils from 1.9.4 to 1.11.0.
+* Updated commons-logging from 1.1.3 to 1.3.5.
+* Updated scala-library from 2.13.9 to 2.13.16.
+* Changed the parsing of CSS stylesheets in the JavaFX module.
+
+                           JGUIraffe Library
                               Version 1.4.1
                               Release Notes
 
