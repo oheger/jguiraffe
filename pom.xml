@@ -69,15 +69,20 @@
 
     <version.antrun.plugin>1.7</version.antrun.plugin>
     <version.assembly.plugin>3.7.1</version.assembly.plugin>
+    <version.bundle.plugin>6.0.0</version.bundle.plugin>
     <version.central-publishing.plugin>0.8.0</version.central-publishing.plugin>
     <version.checkstyle.plugin>3.6.0</version.checkstyle.plugin>
+    <version.compiler.plugin>3.14.0</version.compiler.plugin>
     <version.gpg.plugin>3.2.7</version.gpg.plugin>
+    <version.jar.plugin>3.4.2</version.jar.plugin>
     <version.javadoc.plugin>2.10.4</version.javadoc.plugin>
     <version.license.plugin>2.3</version.license.plugin>
     <version.scala.plugin>4.9.5</version.scala.plugin>
     <version.scm-publish.plugin>3.3.0</version.scm-publish.plugin>
     <version.site.plugin>3.9.1</version.site.plugin>
+    <version.source.plugin>3.3.1</version.source.plugin>
     <version.spotbugs.plugin>4.9.3.0</version.spotbugs.plugin>
+    <version.surefire.plugin>3.5.3</version.surefire.plugin>
 
     <version.changes.plugin>2.6</version.changes.plugin>
     <version.jxr.plugin>3.6.0</version.jxr.plugin>
@@ -146,6 +151,32 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${version.bundle.plugin}</version>
+          <inherited>true</inherited>
+          <executions>
+            <execution>
+              <id>bundle-manifest</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>manifest</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <instructions>
+              <_nouses>true</_nouses>
+              <_versionpolicy>
+                [$(version;==;$(@)), $(version;+;$(@)))
+              </_versionpolicy>
+              <Built-By>${maven.user}</Built-By>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </instructions>
+          </configuration>
+        </plugin>
+
+        <plugin>
           <groupId>com.mycila</groupId>
           <artifactId>license-maven-plugin</artifactId>
           <version>${version.license.plugin}</version>
@@ -177,14 +208,47 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${version.compiler.plugin}</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>${version.gpg.plugin}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${version.jar.plugin}</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>${maven.user}</Built-By>
+                <Implementation-Version>${project.version}</Implementation-Version>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${version.javadoc.plugin}</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
           <configuration>
             <archive>
               <manifestEntries>
@@ -255,6 +319,43 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>${version.project-info.plugin}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${version.source.plugin}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>${maven.user}</Built-By>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${version.surefire.plugin}</version>
+          <configuration>
+            <argLine>
+              -enableassertions
+              --add-opens=java.base/java.io=ALL-UNNAMED
+              --add-opens=java.base/java.lang=ALL-UNNAMED
+              --add-opens=java.base/java.security=ALL-UNNAMED
+              --add-opens=java.base/java.util=ALL-UNNAMED
+            </argLine>
+          </configuration>
         </plugin>
 
         <plugin>
