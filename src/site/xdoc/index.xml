@@ -62,6 +62,14 @@
   <p>
   <table>
     <tr>
+      <td>2025-06-23</td>
+      <td>
+        Version 1.5 is published which drops the dependency to the
+        <em>scala-parser-combinators</em> library from the
+        <em>JavaFX</em> module.
+      </td>
+    </tr>
+    <tr>
       <td>2022-11-05</td>
       <td>
         A new bugfix release 1.4.1 with some dependency updates triggered by
