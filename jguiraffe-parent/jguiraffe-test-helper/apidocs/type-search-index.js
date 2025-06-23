@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"net.sf.jguiraffe","l":"JGuiraffeTestHelper"},{"p":"net.sf.jguiraffe","l":"PersonBean"}]
+typeSearchIndex = [{"l":"Alle Klassen und Schnittstellen","u":"allclasses-index.html"},{"p":"net.sf.jguiraffe","l":"JGuiraffeTestHelper"},{"p":"net.sf.jguiraffe","l":"PersonBean"}];updateSearchResults();

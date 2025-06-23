@@ -9,7 +9,7 @@
 <div id="overview"><a href="../../../../../../testapidocs/net/sf/jguiraffe/gui/app/TestApplication.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2022 The JGUIraffe Team.</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2025 The JGUIraffe Team.</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License")</em>
 <a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Locator SCRIPT_LOCATOR = ClassPathLocator.getInstance(SCRIPT);
 <a class="jxr_linenumber" name="124" href="#124">124</a> 
 <a class="jxr_linenumber" name="125" href="#125">125</a>     <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The application object to test. */</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a> app;
+<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a> app;
 <a class="jxr_linenumber" name="127" href="#127">127</a> 
 <a class="jxr_linenumber" name="128" href="#128">128</a>     <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The file with the user configuration. */</em>
 <a class="jxr_linenumber" name="129" href="#129">129</a>     <strong class="jxr_keyword">private</strong> File usrConfFile;
@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="131" href="#131">131</a>     @Before
 <a class="jxr_linenumber" name="132" href="#132">132</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception
 <a class="jxr_linenumber" name="133" href="#133">133</a>     {
-<a class="jxr_linenumber" name="134" href="#134">134</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>();
+<a class="jxr_linenumber" name="134" href="#134">134</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>();
 <a class="jxr_linenumber" name="135" href="#135">135</a>     }
 <a class="jxr_linenumber" name="136" href="#136">136</a> 
 <a class="jxr_linenumber" name="137" href="#137">137</a>     @After
@@ -965,7 +965,7 @@
 <a class="jxr_linenumber" name="955" href="#955">955</a>         mockCtx.setMainWindow(mockWindow);
 <a class="jxr_linenumber" name="956" href="#956">956</a>         tracker.initMainWindow(mockWindow);
 <a class="jxr_linenumber" name="957" href="#957">957</a>         EasyMock.replay(mockCtx, mockWindow, mockBuilder, windowContext, tracker);
-<a class="jxr_linenumber" name="958" href="#958">958</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>(tracker);
+<a class="jxr_linenumber" name="958" href="#958">958</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>(tracker);
 <a class="jxr_linenumber" name="959" href="#959">959</a> 
 <a class="jxr_linenumber" name="960" href="#960">960</a>         app.initGUI(mockCtx);
 <a class="jxr_linenumber" name="961" href="#961">961</a>         assertSame(<span class="jxr_string">"Wrong main window bean context"</span>, windowContext,
@@ -1075,7 +1075,7 @@
 <a class="jxr_linenumber" name="1065" href="#1065">1065</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testShutdownQuit()
 <a class="jxr_linenumber" name="1066" href="#1066">1066</a>     {
 <a class="jxr_linenumber" name="1067" href="#1067">1067</a>         MainWindowCloseTracker tracker = EasyMock.createMock(MainWindowCloseTracker.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="1068" href="#1068">1068</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>(tracker);
+<a class="jxr_linenumber" name="1068" href="#1068">1068</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>(tracker);
 <a class="jxr_linenumber" name="1069" href="#1069">1069</a>         app.setConfigResourceName(CONFIG_MAX);
 <a class="jxr_linenumber" name="1070" href="#1070">1070</a>         app.setApplicationContext(app.createApplicationContext());
 <a class="jxr_linenumber" name="1071" href="#1071">1071</a>         app.setCommandQueue(<strong class="jxr_keyword">new</strong> CommandQueueImpl(createSynchronizer())
@@ -1088,8 +1088,8 @@
 <a class="jxr_linenumber" name="1078" href="#1078">1078</a>         });
 <a class="jxr_linenumber" name="1079" href="#1079">1079</a>         MessageOutput mockOut = EasyMock.createMock(MessageOutput.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="1080" href="#1080">1080</a>         EasyMock.expect(
-<a class="jxr_linenumber" name="1081" href="#1081">1081</a>                 mockOut.show(app.getApplicationContext().getMainWindow(), <span class="jxr_string">"OK"</span>,
-<a class="jxr_linenumber" name="1082" href="#1082">1082</a>                         <span class="jxr_string">"Hello"</span>, MessageOutput.MESSAGE_QUESTION,
+<a class="jxr_linenumber" name="1081" href="#1081">1081</a>                 mockOut.show(app.getApplicationContext().getMainWindow(), <span class="jxr_string">"Fertig"</span>,
+<a class="jxr_linenumber" name="1082" href="#1082">1082</a>                         <span class="jxr_string">"Guten Tag"</span>, MessageOutput.MESSAGE_QUESTION,
 <a class="jxr_linenumber" name="1083" href="#1083">1083</a>                         MessageOutput.BTN_YES_NO)).andReturn(
 <a class="jxr_linenumber" name="1084" href="#1084">1084</a>                 MessageOutput.RET_NO);
 <a class="jxr_linenumber" name="1085" href="#1085">1085</a>         EasyMock.replay(mockOut, tracker);
@@ -1120,7 +1120,7 @@
 <a class="jxr_linenumber" name="1110" href="#1110">1110</a>             EasyMock.expect(queue.isPending()).andReturn(Boolean.FALSE);
 <a class="jxr_linenumber" name="1111" href="#1111">1111</a>         }
 <a class="jxr_linenumber" name="1112" href="#1112">1112</a>         queue.shutdown(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="1113" href="#1113">1113</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>(tracker);
+<a class="jxr_linenumber" name="1113" href="#1113">1113</a>         app = <strong class="jxr_keyword">new</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>(tracker);
 <a class="jxr_linenumber" name="1114" href="#1114">1114</a>         app.setConfigResourceName(CONFIG_MAX);
 <a class="jxr_linenumber" name="1115" href="#1115">1115</a>         app.setApplicationContext(app.createApplicationContext());
 <a class="jxr_linenumber" name="1116" href="#1116">1116</a>         EasyMock.expect(factory.getBeanBuilder()).andStubReturn(builder);
@@ -1349,12 +1349,12 @@
 <a class="jxr_linenumber" name="1339" href="#1339">1339</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="1340" href="#1340">1340</a> <em class="jxr_javadoccomment">     * @param app the application to be tested</em>
 <a class="jxr_linenumber" name="1341" href="#1341">1341</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="1342" href="#1342">1342</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> checkRunningApp(<a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a> app)
+<a class="jxr_linenumber" name="1342" href="#1342">1342</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> checkRunningApp(<a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a> app)
 <a class="jxr_linenumber" name="1343" href="#1343">1343</a>     {
 <a class="jxr_linenumber" name="1344" href="#1344">1344</a>         ApplicationContext appCtx = app.getApplicationContext();
 <a class="jxr_linenumber" name="1345" href="#1345">1345</a>         assertNotNull(<span class="jxr_string">"No application context set"</span>, appCtx);
 <a class="jxr_linenumber" name="1346" href="#1346">1346</a>         assertNotNull(<span class="jxr_string">"No resource manager set"</span>, appCtx.getResourceManager());
-<a class="jxr_linenumber" name="1347" href="#1347">1347</a>         assertEquals(<span class="jxr_string">"Cannot resolve resource"</span>, <span class="jxr_string">"Hello"</span>, appCtx.getResource(
+<a class="jxr_linenumber" name="1347" href="#1347">1347</a>         assertEquals(<span class="jxr_string">"Cannot resolve resource"</span>, <span class="jxr_string">"Guten Tag"</span>, appCtx.getResource(
 <a class="jxr_linenumber" name="1348" href="#1348">1348</a>                 RES_GRP, <span class="jxr_string">"test1"</span>));
 <a class="jxr_linenumber" name="1349" href="#1349">1349</a> 
 <a class="jxr_linenumber" name="1350" href="#1350">1350</a>         assertEquals(<span class="jxr_string">"UI not initialized"</span>, 1, app.initGUICount);
@@ -1499,7 +1499,7 @@
 <a class="jxr_linenumber" name="1489" href="#1489">1489</a> <em class="jxr_javadoccomment">     * A test class derived from Application to test if the command line is</em>
 <a class="jxr_linenumber" name="1490" href="#1490">1490</a> <em class="jxr_javadoccomment">     * parsed.</em>
 <a class="jxr_linenumber" name="1491" href="#1491">1491</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="1492" href="#1492">1492</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">TestApp</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>
+<a class="jxr_linenumber" name="1492" href="#1492">1492</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">TestApp</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>
 <a class="jxr_linenumber" name="1493" href="#1493">1493</a>     {
 <a class="jxr_linenumber" name="1494" href="#1494">1494</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> paramFound;
 <a class="jxr_linenumber" name="1495" href="#1495">1495</a> 
@@ -1526,7 +1526,7 @@
 <a class="jxr_linenumber" name="1516" href="#1516">1516</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="1517" href="#1517">1517</a> <em class="jxr_javadoccomment">     * A specialized Application implementation that is easier to test.</em>
 <a class="jxr_linenumber" name="1518" href="#1518">1518</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="1519" href="#1519">1519</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a> <strong class="jxr_keyword">extends</strong> Application
+<a class="jxr_linenumber" name="1519" href="#1519">1519</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a> <strong class="jxr_keyword">extends</strong> Application
 <a class="jxr_linenumber" name="1520" href="#1520">1520</a>     {
 <a class="jxr_linenumber" name="1521" href="#1521">1521</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> A flag whether the main window was shown.*/</em>
 <a class="jxr_linenumber" name="1522" href="#1522">1522</a>         <strong class="jxr_keyword">boolean</strong> windowShown;
@@ -1561,12 +1561,12 @@
 <a class="jxr_linenumber" name="1551" href="#1551">1551</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="1552" href="#1552">1552</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> overrideGetPlatformBeansLocator = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="1553" href="#1553">1553</a> 
-<a class="jxr_linenumber" name="1554" href="#1554">1554</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>()
+<a class="jxr_linenumber" name="1554" href="#1554">1554</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>()
 <a class="jxr_linenumber" name="1555" href="#1555">1555</a>         {
 <a class="jxr_linenumber" name="1556" href="#1556">1556</a>             <strong class="jxr_keyword">super</strong>();
 <a class="jxr_linenumber" name="1557" href="#1557">1557</a>         }
 <a class="jxr_linenumber" name="1558" href="#1558">1558</a> 
-<a class="jxr_linenumber" name="1559" href="#1559">1559</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplicationShutdownActionTask.html">ApplicationTestImpl</a>(MainWindowCloseTracker tracker)
+<a class="jxr_linenumber" name="1559" href="#1559">1559</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../net/sf/jguiraffe/gui/app/TestApplication.html">ApplicationTestImpl</a>(MainWindowCloseTracker tracker)
 <a class="jxr_linenumber" name="1560" href="#1560">1560</a>         {
 <a class="jxr_linenumber" name="1561" href="#1561">1561</a>             <strong class="jxr_keyword">super</strong>(tracker);
 <a class="jxr_linenumber" name="1562" href="#1562">1562</a>         }

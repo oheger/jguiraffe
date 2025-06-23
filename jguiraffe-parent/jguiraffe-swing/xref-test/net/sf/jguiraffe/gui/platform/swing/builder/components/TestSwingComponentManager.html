@@ -9,7 +9,7 @@
 <div id="overview"><a href="../../../../../../../../../testapidocs/net/sf/jguiraffe/gui/platform/swing/builder/components/TestSwingComponentManager.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2022 The JGUIraffe Team.</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2006-2025 The JGUIraffe Team.</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License")</em>
 <a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
@@ -714,7 +714,7 @@
 <a class="jxr_linenumber" name="704" href="#704">704</a>             <strong class="jxr_keyword">throws</strong> FormBuilderException
 <a class="jxr_linenumber" name="705" href="#705">705</a>     {
 <a class="jxr_linenumber" name="706" href="#706">706</a>         ComboBoxTag tag = <strong class="jxr_keyword">new</strong> ComboBoxTag();
-<a class="jxr_linenumber" name="707" href="#707">707</a>         tag.setListModel(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/TestSwingComponentManager.html">ListModelImpl</a>(10));
+<a class="jxr_linenumber" name="707" href="#707">707</a>         tag.setListModel(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/ListModelImpl.html">ListModelImpl</a>(10));
 <a class="jxr_linenumber" name="708" href="#708">708</a>         tag.setEditable(editable);
 <a class="jxr_linenumber" name="709" href="#709">709</a>         ComponentHandler&lt;?&gt; ch = manager.createComboBox(tag, false);
 <a class="jxr_linenumber" name="710" href="#710">710</a>         assertTrue(<span class="jxr_string">"Wrong handler class"</span>, ch instanceof SwingComboBoxHandler);
@@ -729,7 +729,7 @@
 <a class="jxr_linenumber" name="719" href="#719">719</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCreateComboBoxCreate() <strong class="jxr_keyword">throws</strong> FormBuilderException
 <a class="jxr_linenumber" name="720" href="#720">720</a>     {
 <a class="jxr_linenumber" name="721" href="#721">721</a>         ComboBoxTag tag = <strong class="jxr_keyword">new</strong> ComboBoxTag();
-<a class="jxr_linenumber" name="722" href="#722">722</a>         tag.setListModel(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/TestSwingComponentManager.html">ListModelImpl</a>(10));
+<a class="jxr_linenumber" name="722" href="#722">722</a>         tag.setListModel(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/ListModelImpl.html">ListModelImpl</a>(10));
 <a class="jxr_linenumber" name="723" href="#723">723</a>         assertNull(<span class="jxr_string">"Non-null result for create == true"</span>,
 <a class="jxr_linenumber" name="724" href="#724">724</a>                 manager.createComboBox(tag, <strong class="jxr_keyword">true</strong>));
 <a class="jxr_linenumber" name="725" href="#725">725</a>     }
@@ -777,7 +777,7 @@
 <a class="jxr_linenumber" name="767" href="#767">767</a>     {
 <a class="jxr_linenumber" name="768" href="#768">768</a>         ListBoxTag tag = <strong class="jxr_keyword">new</strong> ListBoxTag();
 <a class="jxr_linenumber" name="769" href="#769">769</a>         initTag(tag);
-<a class="jxr_linenumber" name="770" href="#770">770</a>         tag.setListModel(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/TestSwingComponentManager.html">ListModelImpl</a>(10));
+<a class="jxr_linenumber" name="770" href="#770">770</a>         tag.setListModel(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/ListModelImpl.html">ListModelImpl</a>(10));
 <a class="jxr_linenumber" name="771" href="#771">771</a>         tag.setName(<span class="jxr_string">"testList"</span>);
 <a class="jxr_linenumber" name="772" href="#772">772</a>         <strong class="jxr_keyword">try</strong>
 <a class="jxr_linenumber" name="773" href="#773">773</a>         {
@@ -1906,11 +1906,11 @@
 <a class="jxr_linenumber" name="1896" href="#1896">1896</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="1897" href="#1897">1897</a> <em class="jxr_javadoccomment">     * Test implementation of the ListModel interface.</em>
 <a class="jxr_linenumber" name="1898" href="#1898">1898</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="1899" href="#1899">1899</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/TestSwingComponentManager.html">ListModelImpl</a> <strong class="jxr_keyword">implements</strong> ListModel
+<a class="jxr_linenumber" name="1899" href="#1899">1899</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/ListModelImpl.html">ListModelImpl</a> <strong class="jxr_keyword">implements</strong> ListModel
 <a class="jxr_linenumber" name="1900" href="#1900">1900</a>     {
 <a class="jxr_linenumber" name="1901" href="#1901">1901</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> count;
 <a class="jxr_linenumber" name="1902" href="#1902">1902</a> 
-<a class="jxr_linenumber" name="1903" href="#1903">1903</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/TestSwingComponentManager.html">ListModelImpl</a>(<strong class="jxr_keyword">int</strong> cnt)
+<a class="jxr_linenumber" name="1903" href="#1903">1903</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../../net/sf/jguiraffe/gui/platform/swing/builder/components/ListModelImpl.html">ListModelImpl</a>(<strong class="jxr_keyword">int</strong> cnt)
 <a class="jxr_linenumber" name="1904" href="#1904">1904</a>         {
 <a class="jxr_linenumber" name="1905" href="#1905">1905</a>             count = cnt;
 <a class="jxr_linenumber" name="1906" href="#1906">1906</a>         }
