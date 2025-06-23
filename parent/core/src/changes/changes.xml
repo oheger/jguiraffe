@@ -26,6 +26,9 @@
     <author email="oheger@sourceforge.net">Oliver Heger</author>
   </properties>
   <body>
+    <release version="1.6" date="in VCS" description="TODO">
+
+    </release>
     <release version="1.5" date="2025-06-22"
              description="JavaFX stylesheet parsing and dependency updates">
       <action dev="oheger" type="update" due-to="dependabot">
